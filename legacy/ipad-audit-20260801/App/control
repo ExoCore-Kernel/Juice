@@ -1,0 +1,8 @@
+Package: com.jack.juice
+Name: Juice
+Version: 0.1.0
+Architecture: iphoneos-arm64
+Description: Experimental Windows compatibility layer for iOS.
+Maintainer: Jack
+Author: Jack
+Section: Applications

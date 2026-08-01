@@ -1,0 +1,237 @@
+/*
+ * fltmgr.sys
+ *
+ * Copyright 2015 Austin English
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#include <stdarg.h>
+
+#include "ntstatus.h"
+#include "windef.h"
+#include "winternl.h"
+#include "ddk/fltkernel.h"
+
+#include "wine/debug.h"
+
+WINE_DEFAULT_DEBUG_CHANNEL(fltmgr);
+
+NTSTATUS WINAPI DriverEntry( DRIVER_OBJECT *driver, UNICODE_STRING *path )
+{
+    TRACE( "(%p, %s)\n", driver, debugstr_w(path->Buffer) );
+
+    return STATUS_SUCCESS;
+}
+
+void WINAPI FltInitializePushLock( EX_PUSH_LOCK *lock )
+{
+    FIXME( "(%p): stub\n", lock );
+}
+
+void WINAPI FltDeletePushLock( EX_PUSH_LOCK *lock )
+{
+    FIXME( "(%p): stub\n", lock );
+}
+
+void WINAPI FltAcquirePushLockExclusive( EX_PUSH_LOCK *lock )
+{
+    FIXME( "(%p): stub\n", lock );
+}
+
+void WINAPI FltReleasePushLock( EX_PUSH_LOCK *lock )
+{
+    FIXME( "(%p): stub\n", lock );
+}
+
+NTSTATUS WINAPI FltRegisterFilter( PDRIVER_OBJECT driver, const FLT_REGISTRATION *reg, PFLT_FILTER *filter )
+{
+    FIXME( "(%p,%p,%p): stub\n", driver, reg, filter );
+
+    if(filter)
+        *filter = UlongToHandle(0xdeadbeaf);
+
+    return STATUS_SUCCESS;
+}
+
+NTSTATUS WINAPI FltStartFiltering( PFLT_FILTER filter )
+{
+    FIXME( "(%p): stub\n", filter );
+
+    return STATUS_SUCCESS;
+}
+
+void WINAPI FltUnregisterFilter( PFLT_FILTER filter )
+{
+    FIXME( "(%p): stub\n", filter );
+}
+
+void* WINAPI FltGetRoutineAddress(LPCSTR name)
+{
+    HMODULE mod = GetModuleHandleW(L"fltmgr.sys");
+    void *func;
+
+    func = GetProcAddress(mod, name);
+    if (func)
+        TRACE( "%s -> %p\n", debugstr_a(name), func );
+    else
+        FIXME( "%s not found\n", debugstr_a(name) );
+
+    return func;
+}
+
+NTSTATUS WINAPI FltBuildDefaultSecurityDescriptor(PSECURITY_DESCRIPTOR *descriptor, ACCESS_MASK access)
+{
+    PACL dacl;
+    NTSTATUS ret = STATUS_INSUFFICIENT_RESOURCES;
+    DWORD sid_len;
+    SID *sid;
+    SID *sid_system = NULL;
+    PSECURITY_DESCRIPTOR sec_desc = NULL;
+    SID_IDENTIFIER_AUTHORITY auth = { SECURITY_NULL_SID_AUTHORITY };
+
+    *descriptor = NULL;
+
+    sid_len = RtlLengthRequiredSid(2);
+    sid = ExAllocatePool(PagedPool, sid_len);
+    if (!sid)
+        goto done;
+    RtlInitializeSid(sid, &auth, 2);
+    sid->SubAuthority[1] = DOMAIN_GROUP_RID_ADMINS;
+    sid->SubAuthority[0] = SECURITY_BUILTIN_DOMAIN_RID;
+
+    sid_len = RtlLengthRequiredSid(1);
+    sid_system = ExAllocatePool(PagedPool, sid_len);
+    if (!sid_system)
+        goto done;
+    RtlInitializeSid(sid_system, &auth, 1);
+    sid_system->SubAuthority[0] = SECURITY_LOCAL_SYSTEM_RID;
+
+    sid_len = SECURITY_DESCRIPTOR_MIN_LENGTH + sizeof(ACL) +
+            sizeof(ACCESS_ALLOWED_ACE) + RtlLengthSid(sid) +
+            sizeof(ACCESS_ALLOWED_ACE) + RtlLengthSid(sid_system);
+
+    sec_desc = ExAllocatePool(PagedPool, sid_len);
+    if (!sec_desc)
+    {
+        ret = STATUS_NO_MEMORY;
+        goto done;
+    }
+
+    RtlCreateSecurityDescriptor(sec_desc, SECURITY_DESCRIPTOR_REVISION);
+    dacl = (PACL)((char*)sec_desc + SECURITY_DESCRIPTOR_MIN_LENGTH);
+    RtlCreateAcl(dacl, sid_len - SECURITY_DESCRIPTOR_MIN_LENGTH, ACL_REVISION);
+    RtlAddAccessAllowedAce(dacl, ACL_REVISION, access, sid);
+    RtlAddAccessAllowedAce(dacl, ACL_REVISION, access, sid_system);
+    RtlSetDaclSecurityDescriptor(sec_desc, 1, dacl, 0);
+    *descriptor = sec_desc;
+    ret = STATUS_SUCCESS;
+
+done:
+    ExFreePool(sid);
+    ExFreePool(sid_system);
+    return ret;
+}
+
+void WINAPI FltFreeSecurityDescriptor(PSECURITY_DESCRIPTOR descriptor)
+{
+    ExFreePool(descriptor);
+}
+
+NTSTATUS WINAPI FltAllocateContext(PFLT_FILTER filter, FLT_CONTEXT_TYPE context, SIZE_T size, POOL_TYPE type, PFLT_CONTEXT *out)
+{
+    FIXME("%p, %d, %Iu, %u, %p\n", filter, context, size, type, *out);
+    return STATUS_NOT_SUPPORTED;
+}
+
+void WINAPI FltReleaseContext(PFLT_CONTEXT context)
+{
+    FIXME("%p\n", context);
+}
+
+NTSTATUS WINAPI FltGetStreamContext(PFLT_INSTANCE instance, PFILE_OBJECT  fileobject, PFLT_CONTEXT  *context)
+{
+    FIXME("%p, %p, %p\n", instance, fileobject, context);
+    return STATUS_NOT_SUPPORTED;
+}
+
+NTSTATUS WINAPI FltSetStreamContext(PFLT_INSTANCE instance, PFILE_OBJECT fileobject, FLT_SET_CONTEXT_OPERATION operation,
+        PFLT_CONTEXT new_context, PFLT_CONTEXT *old_context)
+{
+    FIXME("%p, %p, %d, %p, %p\n", instance, fileobject, operation, new_context, old_context);
+    return STATUS_NOT_SUPPORTED;
+}
+
+NTSTATUS WINAPI FltQueryInformationFile(PFLT_INSTANCE instance, PFILE_OBJECT fileobject, PVOID information,
+        ULONG length, FILE_INFORMATION_CLASS file_information_class, PULONG ret_len)
+{
+    FIXME("%p, %p, %p, %lu, %d, %p\n", instance, fileobject, information, length, file_information_class, ret_len);
+    return STATUS_NOT_SUPPORTED;
+}
+
+NTSTATUS WINAPI FltGetFileNameInformationUnsafe(PFILE_OBJECT fileobject, PFLT_INSTANCE instance,
+        FLT_FILE_NAME_OPTIONS options, PFLT_FILE_NAME_INFORMATION *FileNameInformation)
+{
+    FIXME("%p, %p, %lu, %p\n", fileobject, instance, options, FileNameInformation);
+    return STATUS_NOT_SUPPORTED;
+}
+
+NTSTATUS WINAPI FltReadFile(PFLT_INSTANCE instance, PFILE_OBJECT fileobject, PLARGE_INTEGER offset,
+        ULONG length, PVOID buffer, FLT_IO_OPERATION_FLAGS flags, PULONG read,
+        PFLT_COMPLETED_ASYNC_IO_CALLBACK callback, PVOID context)
+{
+    FIXME("%p, %p, %p, %lu, %p, 0x%lx, %p, %p, %p\n", instance, fileobject, offset, length, buffer, flags, read, callback, context);
+    return STATUS_NOT_SUPPORTED;
+}
+
+NTSTATUS WINAPI FltParseFileNameInformation(PFLT_FILE_NAME_INFORMATION information)
+{
+    FIXME("%p\n", information);
+    return STATUS_NOT_SUPPORTED;
+}
+
+void WINAPI FltReleaseFileNameInformation(PFLT_FILE_NAME_INFORMATION information)
+{
+    FIXME("%p\n", information);
+}
+
+NTSTATUS WINAPI FltGetFileNameInformation(PFLT_CALLBACK_DATA callback, FLT_FILE_NAME_OPTIONS options, PFLT_FILE_NAME_INFORMATION *information)
+{
+    FIXME("%p, %lu, %p\n", callback, options, information);
+    return STATUS_NOT_SUPPORTED;
+}
+
+NTSTATUS WINAPI FltCreateCommunicationPort(PFLT_FILTER filter, PFLT_PORT *port, POBJECT_ATTRIBUTES attributes,
+        PVOID cookie, PFLT_CONNECT_NOTIFY  connect_callback, PFLT_DISCONNECT_NOTIFY disconnect_callback,
+        PFLT_MESSAGE_NOTIFY message_callback, LONG max_connections)
+{
+    FIXME("%p, %p, %p, %p, %p, %p, %p, %ld\n", filter, port, attributes, cookie, connect_callback, disconnect_callback,
+                        message_callback, max_connections);
+    return STATUS_NOT_SUPPORTED;
+}
+
+void WINAPI FltCloseCommunicationPort (PFLT_PORT ServerPort)
+{
+    FIXME("%p\n", ServerPort);
+}
+
+NTSTATUS WINAPI FltEnumerateVolumes (PFLT_FILTER filter, PFLT_VOLUME *volumes, ULONG size, PULONG returned)
+{
+    FIXME("%p, %p, %lu, %p\n", filter, volumes, size, returned);
+
+    if (returned)
+        *returned = 0;
+    return STATUS_NOT_SUPPORTED;
+}

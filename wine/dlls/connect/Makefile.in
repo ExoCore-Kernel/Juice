@@ -1,0 +1,4 @@
+MODULE    = connect.dll
+
+SOURCES = \
+	main.c

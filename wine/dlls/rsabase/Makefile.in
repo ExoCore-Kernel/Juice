@@ -1,0 +1,4 @@
+MODULE    = rsabase.dll
+IMPORTS   = rsaenh
+
+VER_PRODUCTVERSION = 5,1,2600,2180

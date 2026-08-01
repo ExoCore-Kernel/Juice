@@ -1,0 +1,13 @@
+* text=auto
+*.c text eol=lf
+*.h text eol=lf
+*.m text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.plist text eol=lf
+*.reg text eol=crlf
+*.dll binary
+*.exe binary
+*.nls binary
+*.png binary

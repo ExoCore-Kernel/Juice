@@ -1,0 +1,28 @@
+/*
+ * Copyright 2023 Rémi Bernon for CodeWeavers
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#pragma makedep testdll
+
+#define VER_VERSION_UNICODE_LANG "047F04B0" /* LANG_INVARIANT/SUBLANG_DEFAULT */
+#define VER_VERSION_TRANSLATION 0x047F,0x04B0
+#define VER_FILETYPE VFT_DRV
+#define VER_FILESUBTYPE VFT2_DRV_INPUTMETHOD
+#define VER_INTERNALNAME_STR "ime_wrapper.dll"
+#define VER_FILEDESCRIPTION_STR "WineTest IME"
+
+#include "common.ver"

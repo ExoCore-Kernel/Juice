@@ -1,0 +1,20 @@
+MODULE    = dmusic.dll
+IMPORTS   = dxguid uuid ole32 advapi32 dsound user32 winmm
+
+VER_FILEDESCRIPTION_STR = "Wine DirectMusic"
+VER_PRODUCTVERSION      = 5,3,1,904
+VER_OLESELFREGISTER     = 1
+
+SOURCES = \
+	band.c \
+	buffer.c \
+	clock.c \
+	collection.c \
+	dmobject.c \
+	dmusic.c \
+	dmusic.idl \
+	dmusic_main.c \
+	download.c \
+	instrument.c \
+	port.c \
+	wave.c

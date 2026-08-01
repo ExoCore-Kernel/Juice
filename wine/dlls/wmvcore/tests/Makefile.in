@@ -1,0 +1,6 @@
+TESTDLL   = wmvcore.dll
+IMPORTS   = ole32 shcore wmvcore
+
+SOURCES = \
+	rsrc.rc \
+	wmvcore.c

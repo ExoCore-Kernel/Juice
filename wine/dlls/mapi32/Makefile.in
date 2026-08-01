@@ -1,0 +1,14 @@
+MODULE    = mapi32.dll
+IMPORTLIB = mapi32
+IMPORTS   = uuid shlwapi shell32 user32 advapi32
+
+VER_FILEDESCRIPTION_STR = "Wine Messaging API"
+VER_PRODUCTVERSION      = 1,0,0,0
+
+SOURCES = \
+	imalloc.c \
+	mapi32.rc \
+	mapi32_main.c \
+	prop.c \
+	sendmail.c \
+	util.c

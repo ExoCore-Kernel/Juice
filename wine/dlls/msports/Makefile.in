@@ -1,0 +1,4 @@
+MODULE    = msports.dll
+
+SOURCES = \
+	msports.c

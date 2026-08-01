@@ -1,0 +1,6 @@
+#!/var/jb/usr/bin/sh
+export M4="/var/jb/usr/bin/m4"
+export TMPDIR="$HOME/Juice/tmp"
+mkdir -p "$TMPDIR"
+export BISON_PKGDATADIR="/var/jb/usr/share/bison"
+exec "/var/jb/usr/bin/bison" "$@"

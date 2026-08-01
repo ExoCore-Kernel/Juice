@@ -1,0 +1,5 @@
+MODULE    = wevtapi.dll
+IMPORTLIB = wevtapi
+
+SOURCES = \
+	main.c

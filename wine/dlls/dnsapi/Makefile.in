@@ -1,0 +1,14 @@
+MODULE    = dnsapi.dll
+UNIXLIB   = dnsapi.so
+IMPORTLIB = dnsapi
+DELAYIMPORTS = netapi32
+UNIX_LIBS    = $(RESOLV_LIBS)
+
+VER_PRODUCTVERSION = 5,2,3790,4318
+
+SOURCES = \
+	libresolv.c \
+	main.c \
+	name.c \
+	query.c \
+	record.c

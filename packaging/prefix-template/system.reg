@@ -1,0 +1,32 @@
+WINE REGISTRY Version 2
+;; All keys relative to REGISTRY\\Machine
+
+#arch=win64
+
+[Software\\Classes\\Wow6432Node] 1784050117
+#time=1dd13b63471ece2
+
+[Software\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\\009] 1784050117
+#time=1dd13b63471ece2
+
+[Software\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones] 1784101258
+#time=1dd142d46e937fa
+
+[System\\ControlSet001\\Control\\Nls\\Codepage] 1784101258
+#time=1dd142d46e9b928
+"ACP"="000"
+"MACCP"="10000"
+"OEMCP"="000"
+
+[System\\ControlSet001\\Control\\TimeZoneInformation] 1784101258
+#time=1dd142d46e9a802
+"StandardName"=""
+"TimeZoneKeyName"=""
+
+[System\\CurrentControlSet] 1784050117
+#time=1dd13b63471ece2
+#link
+"SymbolicLinkValue"=hex(6):5c,00,52,00,65,00,67,00,69,00,73,00,74,00,72,00,79,\
+  00,5c,00,4d,00,61,00,63,00,68,00,69,00,6e,00,65,00,5c,00,53,00,79,00,73,00,\
+  74,00,65,00,6d,00,5c,00,43,00,6f,00,6e,00,74,00,72,00,6f,00,6c,00,53,00,65,\
+  00,74,00,30,00,30,00,31,00

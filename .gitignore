@@ -1,0 +1,16 @@
+.DS_Store
+build/
+dist/
+*.tipa
+*.ipa
+*.tar.gz
+*.sha256
+Diamond*/
+__pycache__/
+*.pyc
+*.orig
+*.before-*
+*.backup
+*.touch-backup
+*.juice-debug-backup
+wine/.git/

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+JBROOT="${JBROOT:-/var/jb}"
+export M4="${M4:-$JBROOT/usr/bin/m4}"
+export BISON_PKGDATADIR="${BISON_PKGDATADIR:-$JBROOT/usr/share/bison}"
+export TMPDIR="${JUICE_TMPDIR:-$ROOT/build/tmp}"
+
+test -x "$JBROOT/usr/bin/bison" || { echo "Missing Bison." >&2; exit 2; }
+test -x "$M4" || { echo "Missing M4: $M4" >&2; exit 2; }
+test -d "$BISON_PKGDATADIR" || {
+  echo "Missing Bison data directory: $BISON_PKGDATADIR" >&2
+  exit 2
+}
+mkdir -p "$TMPDIR"
+exec "$JBROOT/usr/bin/bison" "$@"

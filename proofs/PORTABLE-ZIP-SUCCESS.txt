@@ -1,0 +1,26 @@
+Juice portable ZIP / external ARM64 application proof
+Device test date: 2026-07-20 (device local time)
+
+Working TIPA:
+  Juice-Portable-ZIP-X18-v3-20260720.tipa
+  SHA-256 3171d50833f8bcf3f61d8d85786954f951eddb1107d86f77e1f757167b67d564
+
+Imported directory:
+  /var/mobile/Documents/JuiceData/Imported/Notepad4_en_ARM64_v26.07r6234-2A93D712-381E-4848-AC12-CE6190793ECC
+  8 files retained
+  executables: Notepad4.exe, matepath.exe
+
+Compatibility log evidence (Notepad4-retry8.log):
+  [JuiceWine] host-page expanding executable section .text: section=0x140001000 mapping=0x140000000 size=1687552
+  [JuiceWine] redirected KUSER_SHARED_DATA fault addr=0x7ffe0296 pc=0x1400013ac to 0x17ffe0000
+
+Display log evidence (Juice-GUI-Headless.log):
+  DISPLAY_EVENT WINDOW pid=33079 hwnd=0x100f2 rect=272,16 736x736 visible=1
+  DISPLAY_EVENT FRAME pid=33079 hwnd=0x100f2 size=768x768 stride=3072 bytes=2359296 count=1
+  DISPLAY_EVENT FRAME pid=33079 hwnd=0x100f2 size=768x768 stride=3072 bytes=2359296 count=2
+  DISPLAY_EVENT FRAME pid=33079 hwnd=0x100f2 size=768x768 stride=3072 bytes=2359296 count=3
+  JUICE_GUI_FRAME_RECEIVED pid=33079 hwnd=0x100f2 frame=768x768 path=/var/mobile/Documents/Juice-frame-33079.png
+
+Proof frame:
+  proofs/Notepad4-portable-success.png
+  SHA-256 b57ed696584fdce2680a41cbe0e54e7d4c10b55f69baa56af572f7b39fede151

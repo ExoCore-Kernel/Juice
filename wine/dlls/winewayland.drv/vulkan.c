@@ -1,0 +1,110 @@
+/* WAYLANDDRV Vulkan implementation
+ *
+ * Copyright 2017 Roderick Colenbrander
+ * Copyright 2021 Alexandros Frantzis
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#if 0
+#pragma makedep unix
+#endif
+
+#include "config.h"
+
+#include <dlfcn.h>
+#include <stdlib.h>
+
+#include "ntstatus.h"
+#include "waylanddrv.h"
+#include "wine/debug.h"
+
+#include "wine/vulkan.h"
+#include "wine/vulkan_driver.h"
+
+WINE_DEFAULT_DEBUG_CHANNEL(vulkan);
+
+static const struct vulkan_driver_funcs wayland_vulkan_driver_funcs;
+
+static VkResult wayland_vulkan_surface_create(struct client_surface *client, const struct vulkan_instance *instance, VkSurfaceKHR *handle)
+{
+    VkResult res;
+    VkWaylandSurfaceCreateInfoKHR create_info_host;
+    struct wayland_client_surface *surface = impl_from_client_surface(client);
+    HWND hwnd = client->hwnd;
+
+    TRACE("%s %p %p\n", debugstr_client_surface(client), instance, handle);
+
+    create_info_host.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+    create_info_host.pNext = NULL;
+    create_info_host.flags = 0; /* reserved */
+    create_info_host.display = process_wayland.wl_display;
+    create_info_host.surface = surface->wl_surface;
+    if ((res = instance->p_vkCreateWaylandSurfaceKHR(instance->host.instance, &create_info_host, NULL /* allocator */, handle))) return res;
+    set_client_surface(hwnd, surface);
+
+    TRACE("Created surface=0x%s\n", wine_dbgstr_longlong(*handle));
+    return VK_SUCCESS;
+}
+
+static VkBool32 wayland_get_physical_device_presentation_support(struct vulkan_physical_device *physical_device,
+                                                                 uint32_t index)
+{
+    struct vulkan_instance *instance = physical_device->instance;
+
+    TRACE("%p %u\n", physical_device, index);
+
+    return instance->p_vkGetPhysicalDeviceWaylandPresentationSupportKHR(physical_device->host.physical_device, index,
+                                                                        process_wayland.wl_display);
+}
+
+static void wayland_map_instance_extensions(struct vulkan_instance_extensions *extensions)
+{
+    if (extensions->has_VK_KHR_win32_surface) extensions->has_VK_KHR_wayland_surface = 1;
+    if (extensions->has_VK_KHR_wayland_surface) extensions->has_VK_KHR_win32_surface = 1;
+}
+
+static void wayland_map_device_extensions(struct vulkan_device_extensions *extensions)
+{
+    if (extensions->has_VK_KHR_external_memory_win32) extensions->has_VK_KHR_external_memory_fd = 1;
+    if (extensions->has_VK_KHR_external_memory_fd) extensions->has_VK_KHR_external_memory_win32 = 1;
+    if (extensions->has_VK_KHR_external_semaphore_win32) extensions->has_VK_KHR_external_semaphore_fd = 1;
+    if (extensions->has_VK_KHR_external_semaphore_fd) extensions->has_VK_KHR_external_semaphore_win32 = 1;
+    if (extensions->has_VK_KHR_external_fence_win32) extensions->has_VK_KHR_external_fence_fd = 1;
+    if (extensions->has_VK_KHR_external_fence_fd) extensions->has_VK_KHR_external_fence_win32 = 1;
+}
+
+static const struct vulkan_driver_funcs wayland_vulkan_driver_funcs =
+{
+    .p_vulkan_surface_create = wayland_vulkan_surface_create,
+    .p_get_physical_device_presentation_support = wayland_get_physical_device_presentation_support,
+    .p_map_instance_extensions = wayland_map_instance_extensions,
+    .p_map_device_extensions = wayland_map_device_extensions,
+};
+
+/**********************************************************************
+ *           WAYLAND_VulkanInit
+ */
+UINT WAYLAND_VulkanInit(UINT version, void *vulkan_handle, const struct vulkan_driver_funcs **driver_funcs)
+{
+    if (version != WINE_VULKAN_DRIVER_VERSION)
+    {
+        ERR("version mismatch, win32u wants %u but driver has %u\n", version, WINE_VULKAN_DRIVER_VERSION);
+        return STATUS_INVALID_PARAMETER;
+    }
+
+    *driver_funcs = &wayland_vulkan_driver_funcs;
+    return STATUS_SUCCESS;
+}

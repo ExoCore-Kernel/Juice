@@ -1,0 +1,4 @@
+MODULE    = fwpuclnt.dll
+
+SOURCES = \
+	main.c

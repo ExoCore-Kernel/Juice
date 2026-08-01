@@ -1,0 +1,553 @@
+/*
+ * Dlls load order support
+ *
+ * Copyright 1999 Bertho Stultiens
+ * Copyright 2003 Alexandre Julliard
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#if 0
+#pragma makedep unix
+#endif
+
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+#include "ntstatus.h"
+#include "windef.h"
+#include "winternl.h"
+#include "verrsrc.h"
+#include "unix_private.h"
+
+#include "wine/debug.h"
+
+WINE_DEFAULT_DEBUG_CHANNEL(module);
+
+#define LOADORDER_ALLOC_CLUSTER	32	/* Allocate with 32 entries at a time */
+
+struct module_loadorder
+{
+    const WCHAR        *modulename;
+    enum loadorder      loadorder;
+};
+
+static struct
+{
+    int                 count;
+    int                 alloc;
+    struct module_loadorder *order;
+} env_list;
+
+struct version_info
+{
+    WORD  len;
+    WORD  val_len;
+    WORD  type;
+    WCHAR key[1];
+};
+
+struct version_entry
+{
+    const struct version_info *info;
+    const void                *value;
+    const void                *next;
+    const void                *child;
+};
+
+static const WCHAR separatorsW[] = {',',' ','\t',0};
+
+static HANDLE std_key;
+static HANDLE app_key;
+static BOOL init_done;
+static BOOL main_exe_loaded;
+
+/***************************************************************************
+ *	get_version_entry
+ *
+ * Validate a version resource entry and fill a descriptor to it.
+ */
+static BOOL get_version_entry( struct version_entry *entry, const void *ptr, const void *end )
+{
+    unsigned int len;
+    const struct version_info *info = ptr;
+
+    if ((const char *)(info + 1) > (const char *)end) return FALSE;
+    if ((const char *)info + info->len > (const char *)end) return FALSE;
+
+    for (len = 0; info->key[len]; len++)
+        if (offsetof(struct version_info, key[len + 1]) > info->len) return FALSE;
+
+    len = (offsetof(struct version_info, key[len + 1]) + 3) & ~3;
+    if (len + info->val_len * (info->type ? 2 : 1) > info->len) return FALSE;
+
+    entry->info  = info;
+    entry->value = (const char *)info + len;
+    entry->child = (const char *)info + len + ((info->val_len * (info->type ? 2 : 1) + 3) & ~3);
+    entry->next  = (const char *)info + ((info->len + 3) & ~3);
+    return TRUE;
+}
+
+/***************************************************************************
+ *	version_find_key
+ *
+ * Find a specific key in a version resource block.
+ */
+static BOOL version_find_key( const struct version_entry *parent, const WCHAR *name,
+                              struct version_entry *child )
+{
+    struct version_entry ret;
+
+    if (!get_version_entry( &ret, parent->child, parent->next )) return FALSE;
+    for (;;)
+    {
+        if (!wcsicmp( ret.info->key, name )) break;
+        if (!get_version_entry( &ret, ret.next, parent->next )) return FALSE;
+    }
+    *child = ret;
+    return TRUE;
+}
+
+/***************************************************************************
+ *	cmp_sort_func	(internal, static)
+ *
+ * Sorting and comparing function used in sort and search of loadorder
+ * entries.
+ */
+static int cmp_sort_func(const void *s1, const void *s2)
+{
+    return wcsicmp( ((const struct module_loadorder *)s1)->modulename,
+                    ((const struct module_loadorder *)s2)->modulename );
+}
+
+
+/***************************************************************************
+ *	get_basename
+ *
+ * Return the base name of a file name (i.e. remove the path components).
+ */
+static WCHAR *get_basename( WCHAR *name )
+{
+    WCHAR *ptr;
+
+    if (name[0] && name[1] == ':') name += 2;  /* strip drive specification */
+    if ((ptr = wcsrchr( name, '\\' ))) name = ptr + 1;
+    if ((ptr = wcsrchr( name, '/' ))) name = ptr + 1;
+    return name;
+}
+
+/***************************************************************************
+ *	remove_dll_ext
+ *
+ * Remove extension if it is ".dll".
+ */
+static inline void remove_dll_ext( WCHAR *name )
+{
+    static const WCHAR dllW[] = {'.','d','l','l',0};
+    WCHAR *p = wcsrchr( name, '.' );
+
+    if (p && !wcsicmp( p, dllW )) *p = 0;
+}
+
+
+/***************************************************************************
+ *	debugstr_loadorder
+ *
+ * Return a loadorder in printable form.
+ */
+static const char *debugstr_loadorder( enum loadorder lo )
+{
+    switch(lo)
+    {
+    case LO_DISABLED: return "";
+    case LO_NATIVE: return "n";
+    case LO_BUILTIN: return "b";
+    case LO_NATIVE_BUILTIN: return "n,b";
+    case LO_BUILTIN_NATIVE: return "b,n";
+    case LO_DEFAULT: return "default";
+    default: return "??";
+    }
+}
+
+
+/***************************************************************************
+ *	parse_load_order
+ *
+ * Parses the loadorder options from the configuration and puts it into
+ * a structure.
+ */
+static enum loadorder parse_load_order( const WCHAR *order )
+{
+    enum loadorder ret = LO_DISABLED;
+
+    while (*order)
+    {
+        order += wcsspn( order, separatorsW );
+        switch(*order)
+        {
+        case 'N':  /* native */
+        case 'n':
+            if (ret == LO_DISABLED) ret = LO_NATIVE;
+            else if (ret == LO_BUILTIN) return LO_BUILTIN_NATIVE;
+            break;
+        case 'B':  /* builtin */
+        case 'b':
+            if (ret == LO_DISABLED) ret = LO_BUILTIN;
+            else if (ret == LO_NATIVE) return LO_NATIVE_BUILTIN;
+            break;
+        }
+        order += wcscspn( order, separatorsW );
+    }
+    return ret;
+}
+
+
+/***************************************************************************
+ *	add_load_order
+ *
+ * Adds an entry in the list of environment overrides.
+ */
+static void add_load_order( const struct module_loadorder *lo )
+{
+    int i;
+
+    for(i = 0; i < env_list.count; i++)
+    {
+        if (!cmp_sort_func( lo, &env_list.order[i] ))
+        {
+            /* replace existing option */
+            env_list.order[i].loadorder = lo->loadorder;
+            return;
+        }
+    }
+
+    if (i >= env_list.alloc)
+    {
+        /* No space in current array, make it larger */
+        env_list.alloc += LOADORDER_ALLOC_CLUSTER;
+        env_list.order = realloc( env_list.order, env_list.alloc * sizeof(*lo) );
+    }
+    env_list.order[i].loadorder  = lo->loadorder;
+    env_list.order[i].modulename = lo->modulename;
+    env_list.count++;
+}
+
+
+/***************************************************************************
+ *	add_load_order_set
+ *
+ * Adds a set of entries in the list of command-line overrides from the key parameter.
+ */
+static void add_load_order_set( WCHAR *entry )
+{
+    struct module_loadorder ldo;
+    WCHAR *end = wcschr( entry, '=' );
+
+    if (!end) return;
+    *end++ = 0;
+    ldo.loadorder = parse_load_order( end );
+
+    while (*entry)
+    {
+        entry += wcsspn( entry, separatorsW );
+        end = entry + wcscspn( entry, separatorsW );
+        if (*end) *end++ = 0;
+        if (*entry)
+        {
+            remove_dll_ext( entry );
+            ldo.modulename = entry;
+            add_load_order( &ldo );
+            entry = end;
+        }
+    }
+}
+
+
+/***************************************************************************
+ *	init_load_order
+ */
+static void init_load_order(void)
+{
+    WCHAR *entry, *next, *order;
+    const char *overrides = getenv( "WINEDLLOVERRIDES" );
+
+    /* @@ Wine registry key: HKCU\Software\Wine\DllOverrides */
+    open_hkcu_key( "Software\\Wine\\DllOverrides", &std_key );
+
+    init_done = TRUE;
+
+    if (!overrides) return;
+    order = entry = malloc( (strlen(overrides) + 1) * sizeof(WCHAR) );
+    ntdll_umbstowcs( overrides, strlen(overrides) + 1, order, strlen(overrides) + 1 );
+    while (*entry)
+    {
+        while (*entry == ';') entry++;
+        if (!*entry) break;
+        next = wcschr( entry, ';' );
+        if (next) *next++ = 0;
+        else next = entry + wcslen(entry);
+        add_load_order_set( entry );
+        entry = next;
+    }
+
+    /* sort the array for quick lookup */
+    if (env_list.count)
+        qsort(env_list.order, env_list.count, sizeof(env_list.order[0]), cmp_sort_func);
+
+    /* note: we don't free the string because the stored module names point inside it */
+}
+
+
+/***************************************************************************
+ *	get_env_load_order
+ *
+ * Get the load order for a given module from the WINEDLLOVERRIDES environment variable.
+ */
+static inline enum loadorder get_env_load_order( const WCHAR *module )
+{
+    struct module_loadorder tmp, *res;
+
+    tmp.modulename = module;
+    /* some bsearch implementations (Solaris) are buggy when the number of items is 0 */
+    if (env_list.count &&
+        (res = bsearch(&tmp, env_list.order, env_list.count, sizeof(env_list.order[0]), cmp_sort_func)))
+        return res->loadorder;
+    return LO_INVALID;
+}
+
+
+/***************************************************************************
+ *	open_app_key
+ *
+ * Get the registry key for the app-specific DllOverrides list.
+ */
+static HANDLE open_app_key( const WCHAR *app_name )
+{
+    static const WCHAR dlloverridesW[] = {'\\','D','l','l','O','v','e','r','r','i','d','e','s',0};
+    OBJECT_ATTRIBUTES attr;
+    UNICODE_STRING nameW;
+    HANDLE root, app_key = 0;
+
+    if (!open_hkcu_key( "Software\\Wine\\AppDefaults", &root ))
+    {
+        ULONG len = wcslen( app_name ) + ARRAY_SIZE(dlloverridesW);
+        nameW.Length = (len - 1) * sizeof(WCHAR);
+        nameW.Buffer = malloc( len * sizeof(WCHAR) );
+        wcscpy( nameW.Buffer, app_name );
+        wcscat( nameW.Buffer, dlloverridesW );
+        InitializeObjectAttributes( &attr, &nameW, 0, root, NULL );
+
+        /* @@ Wine registry key: HKCU\Software\Wine\AppDefaults\app.exe\DllOverrides */
+        NtOpenKey( &app_key, KEY_ALL_ACCESS, &attr );
+        NtClose( root );
+        free( nameW.Buffer );
+    }
+    return app_key;
+}
+
+
+/***************************************************************************
+ *	get_registry_value
+ *
+ * Load the registry loadorder value for a given module.
+ */
+static enum loadorder get_registry_value( HANDLE hkey, WCHAR *module )
+{
+    UNICODE_STRING valueW;
+    char buffer[80];
+    DWORD count;
+
+    valueW.Length = wcslen( module ) * sizeof(WCHAR);
+    valueW.Buffer = module;
+
+    if (!NtQueryValueKey( hkey, &valueW, KeyValuePartialInformation,
+                                 buffer, sizeof(buffer), &count ))
+    {
+        WCHAR *str = (WCHAR *)((KEY_VALUE_PARTIAL_INFORMATION *)buffer)->Data;
+        return parse_load_order( str );
+    }
+    return LO_INVALID;
+}
+
+
+/***************************************************************************
+ *	get_load_order_value
+ *
+ * Get the load order for the exact specified module string, looking in:
+ * 1. The WINEDLLOVERRIDES environment variable
+ * 2. The per-application DllOverrides key
+ * 3. The standard DllOverrides key
+ */
+static enum loadorder get_load_order_value( HANDLE std_key, HANDLE app_key, WCHAR *module )
+{
+    enum loadorder ret;
+
+    if ((ret = get_env_load_order( module )) != LO_INVALID)
+    {
+        TRACE( "got environment %s for %s\n", debugstr_loadorder(ret), debugstr_w(module) );
+        return ret;
+    }
+
+    if (app_key && ((ret = get_registry_value( app_key, module )) != LO_INVALID))
+    {
+        TRACE( "got app defaults %s for %s\n", debugstr_loadorder(ret), debugstr_w(module) );
+        return ret;
+    }
+
+    if (std_key && ((ret = get_registry_value( std_key, module )) != LO_INVALID))
+    {
+        TRACE( "got standard key %s for %s\n", debugstr_loadorder(ret), debugstr_w(module) );
+        return ret;
+    }
+
+    return ret;
+}
+
+
+/***********************************************************************
+ *           version_heuristics
+ *
+ * Determine loadorder using heuristics based on the version resource.
+ */
+static enum loadorder version_heuristics( const UNICODE_STRING *nt_name,
+                                          const struct pe_mapping_info *pe_mapping )
+{
+    static const struct { WCHAR name[32]; enum loadorder lo; } vendors[] =
+    {
+        { {'M','i','c','r','o','s','o','f','t',0}, LO_DEFAULT },
+        { {'T','w','a','i','n',' ','W','o','r','k','i','n','g',' ','G','r','o','u','p',0}, LO_BUILTIN },
+        { {0}, LO_NATIVE_BUILTIN }
+    };
+    static const WCHAR fileinfoW[] = {'S','t','r','i','n','g','F','i','l','e','I','n','f','o',0};
+    static const WCHAR companyW[] = {'C','o','m','p','a','n','y','N','a','m','e',0};
+
+    struct version_entry entry;
+    const VS_FIXEDFILEINFO *fileinfo;
+    const WCHAR *name;
+    ULONG i, len;
+
+    if (!pe_mapping) return LO_INVALID;
+    if (pe_mapping->image.wine_builtin || pe_mapping->image.wine_fakedll) return LO_INVALID;
+    if (!pe_mapping->version_len)
+    {
+        TRACE( "preferring native with no version for %s\n", debugstr_us( nt_name ));
+        return LO_NATIVE_BUILTIN;
+    }
+    if (!get_version_entry( &entry, pe_mapping->version_res,
+                            (char *)pe_mapping->version_res + pe_mapping->version_len )) return LO_INVALID;
+    fileinfo = entry.value;
+    if (entry.info->val_len < sizeof(*fileinfo)) return LO_INVALID;
+    if (fileinfo->dwSignature != VS_FFI_SIGNATURE) return LO_INVALID;
+
+    if (!version_find_key( &entry, fileinfoW, &entry )) return LO_INVALID;
+    /* get the first child (usually "040904B0") */
+    if (!get_version_entry( &entry, entry.child, entry.next )) return LO_INVALID;
+    if (!version_find_key( &entry, companyW, &entry )) return LO_INVALID;
+    if (!entry.info->type || !entry.info->val_len) return LO_INVALID;
+
+    name = entry.value;
+    len = entry.info->val_len;
+    if (!name[len - 1]) len--;
+
+    for (i = 0; i < vendors[i].name[0]; i++)
+    {
+        if (len < wcslen(vendors[i].name)) continue;
+        if (wcsnicmp( name, vendors[i].name, wcslen(vendors[i].name) )) continue;
+        break;
+    }
+    TRACE( "got %s vendor %s for %s\n", debugstr_loadorder( vendors[i].lo ),
+           debugstr_wn( name, len ), debugstr_us( nt_name ));
+    return vendors[i].lo;
+}
+
+
+/***************************************************************************
+ *	set_load_order_app_name
+ */
+void set_load_order_app_name( const WCHAR *app_name )
+{
+    const WCHAR *p;
+
+    if ((p = wcsrchr( app_name, '\\' ))) app_name = p + 1;
+    app_key = open_app_key( app_name );
+    main_exe_loaded = TRUE;
+}
+
+
+/***************************************************************************
+ *	get_load_order   (internal)
+ *
+ * Return the loadorder of a module.
+ * The system directory and '.dll' extension is stripped from the path.
+ */
+enum loadorder get_load_order( const UNICODE_STRING *nt_name, BOOL is_system_dir,
+                               const struct pe_mapping_info *pe_mapping )
+{
+    static const WCHAR prefixW[] = {'\\','?','?','\\'};
+    enum loadorder ret = LO_INVALID;
+    const WCHAR *path = nt_name->Buffer;
+    unsigned int len = nt_name->Length / sizeof(WCHAR);
+    WCHAR *module, *basename;
+
+    if (!init_done) init_load_order();
+
+    if (len > 4 && !wcsncmp( path, prefixW, 4 ))
+    {
+        path += 4;
+        len -= 4;
+    }
+
+    if (!(module = malloc( (len + 2) * sizeof(WCHAR) ))) return ret;
+    memcpy( module + 1, path, len * sizeof(WCHAR) );  /* reserve module[0] for the wildcard char */
+    module[len + 1] = 0;
+    remove_dll_ext( module + 1 );
+    basename = get_basename( module + 1 );
+
+    /* first explicit module name */
+    if ((ret = get_load_order_value( std_key, app_key, is_system_dir ? basename : module+1 )) != LO_INVALID)
+        goto done;
+
+    /* then module basename preceded by '*' */
+    basename[-1] = '*';
+    if ((ret = get_load_order_value( std_key, app_key, basename-1 )) != LO_INVALID)
+        goto done;
+
+    /* now some heuristics for explicit paths */
+    if (!is_system_dir)
+    {
+        /* module basename without '*' */
+        if (((ret = get_load_order_value( std_key, app_key, basename )) != LO_INVALID))
+            goto done;
+
+        if (!main_exe_loaded)  /* if loading the main exe, try native first */
+        {
+            ret = LO_NATIVE_BUILTIN;
+            TRACE( "got main exe default %s for %s\n", debugstr_loadorder(ret), debugstr_us(nt_name) );
+            goto done;
+        }
+        ret = version_heuristics( nt_name, pe_mapping );
+        if (ret != LO_INVALID) goto done;
+    }
+
+    /* and last the hard-coded default */
+    ret = LO_DEFAULT;
+    TRACE( "got hardcoded %s for %s\n", debugstr_loadorder(ret), debugstr_us(nt_name) );
+
+ done:
+    free( module );
+    return ret;
+}

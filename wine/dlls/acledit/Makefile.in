@@ -1,0 +1,4 @@
+MODULE    = acledit.dll
+
+SOURCES = \
+	main.c

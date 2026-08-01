@@ -1,0 +1,13 @@
+MODULE    = wintrust.dll
+IMPORTLIB = wintrust
+IMPORTS   = crypt32 user32 advapi32
+DELAYIMPORTS = cryptui imagehlp
+
+VER_PRODUCTVERSION = 6,1,7601,23769
+
+SOURCES = \
+	asn.c \
+	crypt.c \
+	register.c \
+	softpub.c \
+	wintrust_main.c

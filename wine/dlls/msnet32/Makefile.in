@@ -1,0 +1,4 @@
+MODULE    = msnet32.dll
+
+SOURCES = \
+	msnet_main.c

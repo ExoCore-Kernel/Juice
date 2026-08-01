@@ -1,0 +1,67 @@
+WINE REGISTRY Version 2
+;; All keys relative to REGISTRY\\User\\S-1-5-21-0-0-0-1000
+
+#arch=win64
+
+[Control Panel\\International] 1784101258
+#time=1dd142d46e9b78e
+"iCalendarType"="1"
+"iCountry"="61"
+"iCurrDigits"="2"
+"iCurrency"="0"
+"iDate"="1"
+"iDigits"="2"
+"iFirstDayOfWeek"="0"
+"iFirstWeekOfYear"="0"
+"iLZero"="1"
+"iMeasure"="0"
+"iNegCurr"="0"
+"iNegNumber"="1"
+"iPaperSize"="9"
+"iTime"="0"
+"iTimePrefix"="0"
+"iTLZero"="0"
+"Locale"="00000c09"
+"LocaleName"="en-AU"
+"NumShape"="1"
+"s1159"="am"
+"s2359"="pm"
+"sCountry"="Australia"
+"sCurrency"="$"
+"sDate"="/"
+"sDecimal"="."
+"sGrouping"="3;0"
+"sLanguage"="ENA"
+"sList"=","
+"sLongDate"="dddd, d MMMM yyyy"
+"sMonDecimalSep"="."
+"sMonGrouping"="3;0"
+"sMonThousandSep"=","
+"sNativeDigits"="0123456789"
+"sNegativeSign"="-"
+"sPositiveSign"=""
+"sShortDate"="dd/MM/yyyy"
+"sShortTime"="h:mm tt"
+"sThousand"=","
+"sTime"=":"
+"sTimeFormat"="h:mm:ss tt"
+"sYearMonth"="MMMM yyyy"
+
+[Control Panel\\International\\Geo] 1784101258
+#time=1dd142d46e9b7fc
+"Name"="AU"
+"Nation"="12"
+
+[Control Panel\\International\\\xd83c\xdf0e\xd83c\xdf0f\xd83c\xdf0d] 1784101258
+#time=1dd142d46e9b018
+"Currencies"="AUD"
+
+[Environment] 1784050118
+#time=1dd13b63522d35e
+
+[Volatile Environment] 1784050118
+#time=1dd13b63522d43a
+
+[Software\\Wine\\Drivers] 1770000000
+#time=1d0000000000000
+"Graphics"="ios"

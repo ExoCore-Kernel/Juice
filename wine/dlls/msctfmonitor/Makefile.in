@@ -1,0 +1,4 @@
+MODULE    = msctfmonitor.dll
+
+SOURCES = \
+	main.c

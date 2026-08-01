@@ -1,0 +1,112 @@
+#!/var/jb/usr/bin/sh
+set -eu
+
+export JUICE_PE_BUILD_DIR="${JUICE_PE_BUILD_DIR:-$HOME/Juice/build/wine-arm64-pe-ios}"
+
+python3 - "$@" <<'PY'
+import hashlib
+import os
+import re
+import shutil
+import sys
+from pathlib import Path
+
+args = sys.argv[1:]
+build_dir = Path(os.environ["JUICE_PE_BUILD_DIR"])
+work_dir = Path.cwd()
+
+pattern = re.compile(
+    r'(?m)^([ \t]*\.incbin[ \t]+)"([^"\n]+)"([^\n]*)$'
+)
+
+for asm_arg in args:
+    if not asm_arg.endswith((".s", ".S")):
+        continue
+
+    asm_path = Path(asm_arg)
+
+    if not asm_path.is_file():
+        continue
+
+    text = asm_path.read_text(
+        encoding="utf-8",
+        errors="surrogateescape",
+    )
+
+    staged = {}
+
+    def replace_incbin(match):
+        original = match.group(2)
+        resource = Path(original)
+
+        candidates = []
+
+        if resource.is_absolute():
+            candidates.append(resource)
+        else:
+            candidates.extend([
+                work_dir / resource,
+                asm_path.parent / resource,
+                build_dir / resource,
+            ])
+
+        source = next(
+            (candidate for candidate in candidates if candidate.is_file()),
+            None,
+        )
+
+        if source is None:
+            raise SystemExit(
+                "juice-winebuild-cc: cannot locate incbin resource: "
+                + original
+            )
+
+        source = source.resolve()
+        key = str(source)
+
+        if key not in staged:
+            digest = hashlib.sha256(
+                key.encode("utf-8")
+            ).hexdigest()[:12]
+
+            suffix = source.suffix or ".bin"
+            staged_name = f".juice-incbin-{digest}{suffix}"
+            destination = work_dir / staged_name
+
+            if (
+                not destination.exists()
+                or destination.stat().st_size != source.stat().st_size
+            ):
+                shutil.copyfile(source, destination)
+
+            staged[key] = staged_name
+
+        return (
+            match.group(1)
+            + '"'
+            + staged[key]
+            + '"'
+            + match.group(3)
+        )
+
+    new_text, count = pattern.subn(replace_incbin, text)
+
+    if count:
+        asm_path.write_text(
+            new_text,
+            encoding="utf-8",
+            errors="surrogateescape",
+        )
+
+        print(
+            f"juice-winebuild-cc: staged "
+            f"{len(staged)} resource file(s) in {work_dir}; "
+            f"rewrote {count} incbin directive(s)",
+            file=sys.stderr,
+        )
+PY
+
+exec /var/jb/usr/bin/clang \
+    --target=aarch64-windows \
+    -fuse-ld=lld \
+    "$@"

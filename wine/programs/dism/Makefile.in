@@ -1,0 +1,8 @@
+MODULE    = dism.exe
+
+EXTRADLLFLAGS = -mconsole -municode
+
+VER_PRODUCTVERSION = 10,0,18362,900
+
+SOURCES = \
+	dism.c

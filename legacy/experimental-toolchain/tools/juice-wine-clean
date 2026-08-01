@@ -1,0 +1,21 @@
+#!/var/jb/usr/bin/bash
+set -u
+
+J=/var/jb/var/mobile/Juice
+B="$J/build/wine-ios"
+RT="$J/runtime/lib/wine/aarch64-windows"
+
+unset WINELOADERNOEXEC
+unset WINELOADER
+unset WINESERVER
+unset WINEARCH
+unset WINEDLLOVERRIDES
+unset DYLD_INSERT_LIBRARIES
+unset DYLD_LIBRARY_PATH
+
+export WINEPREFIX="${JUICE_WINEPREFIX:-$J/prefixes/arm64-test}"
+export WINEDLLPATH="$B/dlls/ntdll:$B/dlls:$RT"
+export WINEDEBUG="${JUICE_WINEDEBUG:--all}"
+
+exec "$J/tools/juice-wine-trace-parent" \
+    "$B/loader/wine" "$@"

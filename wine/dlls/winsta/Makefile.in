@@ -1,0 +1,4 @@
+MODULE    = winsta.dll
+
+SOURCES = \
+	main.c

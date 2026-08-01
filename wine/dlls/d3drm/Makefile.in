@@ -1,0 +1,21 @@
+MODULE    = d3drm.dll
+IMPORTLIB = d3drm
+IMPORTS   = d3dxof ddraw
+
+EXTRADLLFLAGS = -Wb,--prefer-native
+
+VER_FILEDESCRIPTION_STR = "Wine Direct3D Retained Mode Utility Functions"
+VER_PRODUCTVERSION      = 5,0,2134,14
+
+SOURCES = \
+	d3drm.c \
+	d3drm_main.c \
+	device.c \
+	face.c \
+	frame.c \
+	light.c \
+	material.c \
+	math.c \
+	meshbuilder.c \
+	texture.c \
+	viewport.c

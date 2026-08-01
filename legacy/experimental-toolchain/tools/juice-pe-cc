@@ -1,0 +1,2 @@
+#!/var/jb/usr/bin/sh
+exec "/var/jb/usr/bin/clang" --target=aarch64-windows -fuse-ld=lld "$@"

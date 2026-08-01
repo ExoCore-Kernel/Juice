@@ -1,0 +1,4 @@
+MODULE    = inkobj.dll
+
+SOURCES = \
+	inkobj.c

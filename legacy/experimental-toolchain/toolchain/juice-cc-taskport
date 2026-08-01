@@ -1,0 +1,130 @@
+#!/var/jb/usr/bin/bash
+
+set -u
+
+case "$(basename "$0")" in
+    *cxx*|*++*)
+        REAL_COMPILER="/var/jb/usr/bin/clang++"
+        ;;
+    *)
+        REAL_COMPILER="/var/jb/usr/bin/clang"
+        ;;
+esac
+
+"$REAL_COMPILER" "$@"
+result=$?
+
+if [[ $result -ne 0 ]]; then
+    exit "$result"
+fi
+
+output=""
+previous=""
+compile_only=0
+
+for argument in "$@"; do
+    if [[ "$previous" == "-o" ]]; then
+        output="$argument"
+        previous=""
+        continue
+    fi
+
+    case "$argument" in
+        -o)
+            previous="-o"
+            ;;
+        -o*)
+            output="${argument#-o}"
+            ;;
+        -c|-E|-S)
+            compile_only=1
+            ;;
+    esac
+done
+
+if [[ $compile_only -eq 1 ]]; then
+    exit 0
+fi
+
+if [[ -z "$output" ]]; then
+    output="a.out"
+fi
+
+if [[ "$output" != /* ]]; then
+    output="$PWD/$output"
+fi
+
+if [[ ! -f "$output" ]]; then
+    exit 0
+fi
+
+if ! file "$output" | grep -Eq 'Mach-O.*(executable|dynamically linked shared library|bundle)'; then
+    exit 0
+fi
+
+CARRIER="$HOME/Juice/trust-carrier"
+CARRIER_APP="$CARRIER/Payload/JuiceTrust.app"
+CARRIER_TARGET="$CARRIER_APP/Tools/ct-sign-target"
+ENTITLEMENTS="$CARRIER/cli-taskport-entitlements.plist"
+IPA="$CARRIER/JuiceAutoSign.ipa"
+LOG="$CARRIER/autosign.log"
+
+if [[ ! -d "$CARRIER_APP" ]]; then
+    echo "Juice Trust carrier not found: $CARRIER_APP" >&2
+    exit 90
+fi
+
+if [[ ! -f "$ENTITLEMENTS" ]]; then
+    echo "CLI entitlements not found: $ENTITLEMENTS" >&2
+    exit 91
+fi
+
+mkdir -p "$CARRIER_APP/Tools"
+
+cp -f "$output" "$CARRIER_TARGET"
+chmod 755 "$CARRIER_TARGET"
+
+ldid -S"$ENTITLEMENTS" -Cadhoc "$CARRIER_TARGET"
+
+(
+    cd "$CARRIER"
+    rm -f "$IPA"
+    zip -qry "$IPA" Payload
+)
+
+TROLLSTORE_HELPER="$(
+    find /var/containers/Bundle/Application \
+        -type f \
+        -path '*/TrollStore.app/trollstorehelper' \
+        2>/dev/null |
+    head -n 1
+)"
+
+if [[ ! -x "$TROLLSTORE_HELPER" ]]; then
+    echo "TrollStore helper was not found" >&2
+    exit 92
+fi
+
+sudo "$TROLLSTORE_HELPER" install force "$IPA" >"$LOG" 2>&1
+
+INSTALLED_APP="$(
+    find /var/containers/Bundle/Application \
+        -type d \
+        -name JuiceTrust.app \
+        2>/dev/null |
+    head -n 1
+)"
+
+PATCHED="$INSTALLED_APP/Tools/ct-sign-target"
+
+if [[ ! -f "$PATCHED" ]]; then
+    echo "TrollStore did not produce the patched executable" >&2
+    cat "$LOG" >&2
+    exit 93
+fi
+
+cp -f "$PATCHED" "$output"
+chmod 755 "$output"
+
+echo "[Juice CoreTrust TaskPort] signed $(basename "$output")" >&2
+exit 0

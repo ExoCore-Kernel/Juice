@@ -1,0 +1,17 @@
+MODULE    = inetcpl.cpl
+IMPORTS   = comctl32 shlwapi user32 advapi32
+DELAYIMPORTS = cryptui wininet ole32 urlmon shell32
+
+EXTRADLLFLAGS = -Wb,--prefer-native
+
+VER_FILEDESCRIPTION_STR = "Internet Control Panel"
+VER_PRODUCTVERSION      = 8,0,6001,18939
+
+SOURCES = \
+	connections.c \
+	content.c \
+	general.c \
+	inetcpl.c \
+	inetcpl.rc \
+	inetcpl.svg \
+	security.c

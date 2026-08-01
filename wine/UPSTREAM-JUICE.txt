@@ -1,0 +1,8 @@
+Upstream: https://gitlab.winehq.org/wine/wine.git
+Mirror used: https://github.com/wine-mirror/wine.git
+Base commit: 6eb2e4c32cc9e271856146df11ed3a5c2cf29234
+Version line: Wine 11.13 development source
+
+This directory contains the complete source plus Juice's iOS changes. The
+audit patch is ../patches/wine-ios.patch. Wine's own COPYING.LIB and LICENSE
+files govern this directory.

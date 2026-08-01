@@ -1,0 +1,181 @@
+============================================================
+ Juice FreeType rebuild audit
+ Date: Sun Jul 26 17:16:02 AWST 2026
+============================================================
+
+=== 1. Existing Juice paths ===
+FOUND: /var/jb/var/mobile/Juice/src/wine-11.13
+FOUND: /var/jb/var/mobile/Juice/build/wine-ios
+FOUND: /var/jb/var/mobile/Juice/build/wine-arm64-pe
+FOUND: /var/jb/var/mobile/Juice/runtime
+FOUND: /var/jb/var/mobile/Juice/prefixes/arm64-test
+FOUND: /var/jb/var/mobile/Juice/tools
+FOUND: /var/mobile/Documents/Juice-Success-Backups
+
+=== 2. Disk space ===
+Filesystem                                                                                                                                  Size   Used  Avail Capacity iused    ifree %iused  Mounted on
+/dev/disk1s5                                                                                                                                60Gi   18Gi  1.2Gi    94%  175960 12679400    1%   /private/preboot
+/dev/disk1s2                                                                                                                                60Gi   35Gi  1.2Gi    97%  574260 12679400    4%   /private/var
+
+=== 3. Golden recovery archives ===
+
+Checking: /var/mobile/Documents/Juice-Success-Backups/Juice-CMD-REG-GOLDEN-20260716-002432.sha256
+Juice-CMD-REG-GOLDEN-20260716-002432.tar.gz: OK
+Juice-CMD-REG-GOLDEN-20260716-002432-metadata.tar.gz: OK
+
+=== 4. Source version ===
+Wine version 11.13
+ M configure
+ M dlls/kernel32/process.c
+ M dlls/kernel32/sync.c
+ M dlls/kernelbase/sync.c
+ M dlls/ntdll/loader.c
+ M dlls/ntdll/signal_arm64.c
+ M dlls/ntdll/thread.c
+ M dlls/ntdll/unix/cdrom.c
+ M dlls/ntdll/unix/env.c
+ M dlls/ntdll/unix/file.c
+ M dlls/ntdll/unix/loader.c
+ M dlls/ntdll/unix/server.c
+ M dlls/ntdll/unix/signal_arm64.c
+ M dlls/ntdll/unix/system.c
+ M dlls/ntdll/unix/virtual.c
+ M dlls/ntoskrnl.exe/instr.c
+ M dlls/win32u/defwnd.c
+ M dlls/win32u/driver.c
+ M dlls/win32u/menu.c
+ M dlls/win32u/message.c
+ M dlls/win32u/sysparams.c
+ M dlls/win32u/win32u_private.h
+ M dlls/win32u/window.c
+ M server/process.h
+ M tools/winebuild/res32.c
+?? configure.ac.before-wineios
+?? dlls/ntdll/unix/cdrom.c.before-juice-ios-cdrom
+?? dlls/ntdll/unix/file.c.before-juice-ios-file
+?? dlls/ntdll/unix/loader.c.before-juice-ios-loader
+?? dlls/ntdll/unix/server.c.before-juice-ios-bootstrap
+?? dlls/ntdll/unix/system.c.before-juice-ios-power
+?? dlls/ntdll/unix/virtual.c.before-juice-ios-mach-vm
+?? dlls/win32u/window.c.juice-debug-backup
+?? dlls/wineios.drv/
+?? server/process.h.before-juice-ios
+?? tools/winebuild/res32.c.before-absolute-incbin
+6eb2e4c32cc9e271856146df11ed3a5c2cf29234
+
+=== 5. Original configure arguments ===
+
+--- /var/jb/var/mobile/Juice/build/wine-ios ---
+--build=aarch64-apple-darwin22.6.0 --host=aarch64-apple-darwin22.6.0 --prefix=/var/jb/var/mobile/Juice/runtime --enable-archs=none --disable-tests --disable-win16 --without-mingw --without-x --without-wayland --without-coreaudio --without-cups --without-dbus --without-ffmpeg --without-fontconfig --without-freetype --without-gettext --without-gphoto --without-gnutls --without-gssapi --without-gstreamer --without-krb5 --without-netapi --without-opencl --without-opengl --without-oss --without-pcap --without-pcsclite --without-pulse --without-sane --without-sdl --without-udev --without-usb --without-v4l2 --without-vulkan build_alias=aarch64-apple-darwin22.6.0 host_alias=aarch64-apple-darwin22.6.0 CC=/var/jb/var/mobile/Juice/toolchain/juice-cc CFLAGS=-O2 CXX=/var/jb/var/mobile/Juice/toolchain/juice-cxx CXXFLAGS=-O2
+
+FreeType-related configuration:
+/var/jb/var/mobile/Juice/build/wine-ios/config.log:  $ /var/jb/var/mobile/Juice/src/wine-11.13/configure --build=aarch64-apple-darwin22.6.0 --host=aarch64-apple-darwin22.6.0 --prefix=/var/jb/var/mobile/Juice/runtime --enable-archs=none --disable-tests --disable-win16 --without-mingw --without-x --without-wayland --without-coreaudio --without-cups --without-dbus --without-ffmpeg --without-fontconfig --without-freetype --without-gettext --without-gphoto --without-gnutls --without-gssapi --without-gstreamer --without-krb5 --without-netapi --without-opencl --without-opengl --without-oss --without-pcap --without-pcsclite --without-pulse --without-sane --without-sdl --without-udev --without-usb --without-v4l2 --without-vulkan build_alias=aarch64-apple-darwin22.6.0 host_alias=aarch64-apple-darwin22.6.0 CC=/var/jb/var/mobile/Juice/toolchain/juice-cc CFLAGS=-O2 CXX=/var/jb/var/mobile/Juice/toolchain/juice-cxx CXXFLAGS=-O2 --no-create --no-recursion
+/var/jb/var/mobile/Juice/build/wine-ios/config.log:ac_cv_env_FREETYPE_CFLAGS_set=''
+/var/jb/var/mobile/Juice/build/wine-ios/config.log:ac_cv_env_FREETYPE_CFLAGS_value=''
+/var/jb/var/mobile/Juice/build/wine-ios/config.log:ac_cv_env_FREETYPE_LIBS_set=''
+/var/jb/var/mobile/Juice/build/wine-ios/config.log:ac_cv_env_FREETYPE_LIBS_value=''
+/var/jb/var/mobile/Juice/build/wine-ios/config.log:FREETYPE_CFLAGS=''
+/var/jb/var/mobile/Juice/build/wine-ios/config.log:FREETYPE_LIBS=''
+/var/jb/var/mobile/Juice/build/wine-ios/config.status:ac_cs_config='--build=aarch64-apple-darwin22.6.0 --host=aarch64-apple-darwin22.6.0 --prefix=/var/jb/var/mobile/Juice/runtime --enable-archs=none --disable-tests --disable-win16 --without-mingw --without-x --without-wayland --without-coreaudio --without-cups --without-dbus --without-ffmpeg --without-fontconfig --without-freetype --without-gettext --without-gphoto --without-gnutls --without-gssapi --without-gstreamer --without-krb5 --without-netapi --without-opencl --without-opengl --without-oss --without-pcap --without-pcsclite --without-pulse --without-sane --without-sdl --without-udev --without-usb --without-v4l2 --without-vulkan build_alias=aarch64-apple-darwin22.6.0 host_alias=aarch64-apple-darwin22.6.0 CC=/var/jb/var/mobile/Juice/toolchain/juice-cc CFLAGS=-O2 CXX=/var/jb/var/mobile/Juice/toolchain/juice-cxx CXXFLAGS=-O2'
+/var/jb/var/mobile/Juice/build/wine-ios/config.status:  set X /var/jb/usr/bin/sh '/var/jb/var/mobile/Juice/src/wine-11.13/configure'  '--build=aarch64-apple-darwin22.6.0' '--host=aarch64-apple-darwin22.6.0' '--prefix=/var/jb/var/mobile/Juice/runtime' '--enable-archs=none' '--disable-tests' '--disable-win16' '--without-mingw' '--without-x' '--without-wayland' '--without-coreaudio' '--without-cups' '--without-dbus' '--without-ffmpeg' '--without-fontconfig' '--without-freetype' '--without-gettext' '--without-gphoto' '--without-gnutls' '--without-gssapi' '--without-gstreamer' '--without-krb5' '--without-netapi' '--without-opencl' '--without-opengl' '--without-oss' '--without-pcap' '--without-pcsclite' '--without-pulse' '--without-sane' '--without-sdl' '--without-udev' '--without-usb' '--without-v4l2' '--without-vulkan' 'build_alias=aarch64-apple-darwin22.6.0' 'host_alias=aarch64-apple-darwin22.6.0' 'CC=/var/jb/var/mobile/Juice/toolchain/juice-cc' 'CFLAGS=-O2' 'CXX=/var/jb/var/mobile/Juice/toolchain/juice-cxx' 'CXXFLAGS=-O2' $ac_configure_extra_args --no-create --no-recursion
+/var/jb/var/mobile/Juice/build/wine-ios/config.status:FREETYPE_CFLAGS = 
+/var/jb/var/mobile/Juice/build/wine-ios/config.status:FREETYPE_LIBS = 
+/var/jb/var/mobile/Juice/build/wine-ios/include/config.h:/* Define to 1 if you have the <ft2build.h> header file. */
+/var/jb/var/mobile/Juice/build/wine-ios/include/config.h:/* #undef HAVE_FT2BUILD_H */
+/var/jb/var/mobile/Juice/build/wine-ios/include/config.h:/* Define to the soname of the libfreetype library. */
+/var/jb/var/mobile/Juice/build/wine-ios/include/config.h:/* #undef SONAME_LIBFREETYPE */
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:FREETYPE_CFLAGS = 
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:FREETYPE_LIBS = 
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:dlls/dwrite/freetype.o: /var/jb/var/mobile/Juice/src/wine-11.13/dlls/dwrite/freetype.c
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:	$(CC) -c -o $@ /var/jb/var/mobile/Juice/src/wine-11.13/dlls/dwrite/freetype.c -Idlls/dwrite \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:dlls/dwrite/freetype.o: include/config.h /var/jb/var/mobile/Juice/src/wine-11.13/include/ntstatus.h \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:dlls/dwrite/dwrite.so: dlls/dwrite/freetype.o dlls/ntdll/ntdll.so
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:  dlls/dwrite/freetype.o dlls/ntdll/ntdll.so $(LDFLAGS)
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:	rm -f dlls/dwrite/dwrite.so dlls/dwrite/freetype.o
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:dlls/win32u/freetype.o: /var/jb/var/mobile/Juice/src/wine-11.13/dlls/win32u/freetype.c
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:	$(CC) -c -o $@ /var/jb/var/mobile/Juice/src/wine-11.13/dlls/win32u/freetype.c -Idlls/win32u \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:dlls/win32u/freetype.o: include/config.h /var/jb/var/mobile/Juice/src/wine-11.13/include/ntstatus.h \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:  dlls/win32u/emfdrv.o dlls/win32u/font.o dlls/win32u/freetype.o dlls/win32u/gdiobj.o \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:  dlls/win32u/emfdrv.o dlls/win32u/font.o dlls/win32u/freetype.o dlls/win32u/gdiobj.o \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:  dlls/win32u/emfdrv.o dlls/win32u/font.o dlls/win32u/freetype.o dlls/win32u/gdiobj.o \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:  dlls/dwmapi/version.res dlls/dwrite/dwrite.so dlls/dwrite/freetype.o dlls/dx8vb/version.res \
+/var/jb/var/mobile/Juice/build/wine-ios/Makefile:  dlls/win32u/freetype.o dlls/win32u/gdiobj.o dlls/win32u/hook.o dlls/win32u/imm.o \
+
+--- /var/jb/var/mobile/Juice/build/wine-arm64-pe ---
+--build=aarch64-apple-darwin22.6.0 --host=aarch64-apple-darwin22.6.0 --prefix=/var/jb/var/mobile/Juice/runtime-arm64 --enable-archs=aarch64 --with-mingw=/var/jb/usr/bin/clang --disable-tests --disable-win16 --without-x --without-wayland --without-coreaudio --without-cups --without-dbus --without-ffmpeg --without-fontconfig --without-freetype --without-gettext --without-gphoto --without-gnutls --without-gssapi --without-gstreamer --without-krb5 --without-netapi --without-opencl --without-opengl --without-oss --without-pcap --without-pcsclite --without-pulse --without-sane --without-sdl --without-udev --without-usb --without-v4l2 --without-vulkan build_alias=aarch64-apple-darwin22.6.0 host_alias=aarch64-apple-darwin22.6.0 CC=/var/jb/var/mobile/Juice/toolchain/juice-cc CFLAGS=-O2 CXX=/var/jb/var/mobile/Juice/toolchain/juice-cxx CXXFLAGS=-O2
+
+FreeType-related configuration:
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.log:  $ /var/jb/var/mobile/Juice/src/wine-11.13/configure --build=aarch64-apple-darwin22.6.0 --host=aarch64-apple-darwin22.6.0 --prefix=/var/jb/var/mobile/Juice/runtime-arm64 --enable-archs=aarch64 --with-mingw=/var/jb/usr/bin/clang --disable-tests --disable-win16 --without-x --without-wayland --without-coreaudio --without-cups --without-dbus --without-ffmpeg --without-fontconfig --without-freetype --without-gettext --without-gphoto --without-gnutls --without-gssapi --without-gstreamer --without-krb5 --without-netapi --without-opencl --without-opengl --without-oss --without-pcap --without-pcsclite --without-pulse --without-sane --without-sdl --without-udev --without-usb --without-v4l2 --without-vulkan
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.log:ac_cv_env_FREETYPE_CFLAGS_set=''
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.log:ac_cv_env_FREETYPE_CFLAGS_value=''
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.log:ac_cv_env_FREETYPE_LIBS_set=''
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.log:ac_cv_env_FREETYPE_LIBS_value=''
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.log:FREETYPE_CFLAGS=''
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.log:FREETYPE_LIBS=''
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.status:ac_cs_config='--build=aarch64-apple-darwin22.6.0 --host=aarch64-apple-darwin22.6.0 --prefix=/var/jb/var/mobile/Juice/runtime-arm64 --enable-archs=aarch64 --with-mingw=/var/jb/usr/bin/clang --disable-tests --disable-win16 --without-x --without-wayland --without-coreaudio --without-cups --without-dbus --without-ffmpeg --without-fontconfig --without-freetype --without-gettext --without-gphoto --without-gnutls --without-gssapi --without-gstreamer --without-krb5 --without-netapi --without-opencl --without-opengl --without-oss --without-pcap --without-pcsclite --without-pulse --without-sane --without-sdl --without-udev --without-usb --without-v4l2 --without-vulkan build_alias=aarch64-apple-darwin22.6.0 host_alias=aarch64-apple-darwin22.6.0 CC=/var/jb/var/mobile/Juice/toolchain/juice-cc CFLAGS=-O2 CXX=/var/jb/var/mobile/Juice/toolchain/juice-cxx CXXFLAGS=-O2'
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.status:  set X /bin/sh '/var/jb/var/mobile/Juice/src/wine-11.13/configure'  '--build=aarch64-apple-darwin22.6.0' '--host=aarch64-apple-darwin22.6.0' '--prefix=/var/jb/var/mobile/Juice/runtime-arm64' '--enable-archs=aarch64' '--with-mingw=/var/jb/usr/bin/clang' '--disable-tests' '--disable-win16' '--without-x' '--without-wayland' '--without-coreaudio' '--without-cups' '--without-dbus' '--without-ffmpeg' '--without-fontconfig' '--without-freetype' '--without-gettext' '--without-gphoto' '--without-gnutls' '--without-gssapi' '--without-gstreamer' '--without-krb5' '--without-netapi' '--without-opencl' '--without-opengl' '--without-oss' '--without-pcap' '--without-pcsclite' '--without-pulse' '--without-sane' '--without-sdl' '--without-udev' '--without-usb' '--without-v4l2' '--without-vulkan' 'build_alias=aarch64-apple-darwin22.6.0' 'host_alias=aarch64-apple-darwin22.6.0' 'CC=/var/jb/var/mobile/Juice/toolchain/juice-cc' 'CFLAGS=-O2' 'CXX=/var/jb/var/mobile/Juice/toolchain/juice-cxx' 'CXXFLAGS=-O2' $ac_configure_extra_args --no-create --no-recursion
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.status:FREETYPE_CFLAGS = 
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/config.status:FREETYPE_LIBS = 
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/include/config.h:/* Define to 1 if you have the <ft2build.h> header file. */
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/include/config.h:/* #undef HAVE_FT2BUILD_H */
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/include/config.h:/* Define to the soname of the libfreetype library. */
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/include/config.h:/* #undef SONAME_LIBFREETYPE */
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:FREETYPE_CFLAGS = 
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:FREETYPE_LIBS = 
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:dlls/dwrite/freetype.o: /var/jb/var/mobile/Juice/src/wine-11.13/dlls/dwrite/freetype.c
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:	$(CC) -c -o $@ /var/jb/var/mobile/Juice/src/wine-11.13/dlls/dwrite/freetype.c -Idlls/dwrite \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:dlls/dwrite/freetype.o: include/config.h /var/jb/var/mobile/Juice/src/wine-11.13/include/ntstatus.h \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:dlls/dwrite/dwrite.so: dlls/dwrite/freetype.o dlls/ntdll/ntdll.so
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:  dlls/dwrite/freetype.o dlls/ntdll/ntdll.so $(LDFLAGS)
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:  dlls/dwrite/aarch64-windows/dwrite.dll dlls/dwrite/freetype.o
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:dlls/win32u/freetype.o: /var/jb/var/mobile/Juice/src/wine-11.13/dlls/win32u/freetype.c
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:	$(CC) -c -o $@ /var/jb/var/mobile/Juice/src/wine-11.13/dlls/win32u/freetype.c -Idlls/win32u \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:dlls/win32u/freetype.o: include/config.h /var/jb/var/mobile/Juice/src/wine-11.13/include/ntstatus.h \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:  dlls/win32u/emfdrv.o dlls/win32u/font.o dlls/win32u/freetype.o dlls/win32u/gdiobj.o \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:  dlls/win32u/emfdrv.o dlls/win32u/font.o dlls/win32u/freetype.o dlls/win32u/gdiobj.o \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:  dlls/win32u/freetype.o dlls/win32u/gdiobj.o dlls/win32u/hook.o dlls/win32u/imm.o \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:  dlls/dwrite/aarch64-windows/dwrite.dll dlls/dwrite/freetype.o dlls/dx8vb/version.res \
+/var/jb/var/mobile/Juice/build/wine-arm64-pe/Makefile:  dlls/win32u/emfdrv.o dlls/win32u/font.o dlls/win32u/freetype.o dlls/win32u/gdiobj.o \
+
+=== 6. pkg-config availability ===
+pkg-config=/var/jb/usr/bin/pkg-config
+PKG_CONFIG_PATH=/var/jb/usr/lib/pkgconfig:/var/jb/usr/share/pkgconfig
+Package freetype2 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `freetype2.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'freetype2' found
+Package freetype2 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `freetype2.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'freetype2' found
+Package freetype2 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `freetype2.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'freetype2' found
+
+=== 7. FreeType headers and libraries ===
+
+=== 8. Inspecting FreeType libraries ===
+
+=== 9. Selecting iPhoneOS SDK ===
+SDK=/var/jb/usr/share/SDKs/iPhoneOS.sdk
+
+=== 10. Compiling a native FreeType probe ===
+CC=/var/jb/usr/bin/clang
+FT_CFLAGS=-I/var/jb/usr/include/freetype2
+FT_LIBS=-L/var/jb/usr/lib -lfreetype
+
+Compile command:
+/var/jb/usr/bin/clang -target arm64-apple-ios16.0 -isysroot /var/jb/usr/share/SDKs/iPhoneOS.sdk -miphoneos-version-min=16.0 -I/var/jb/usr/include/freetype2 freetype_probe.c -L/var/jb/usr/lib -lfreetype
+/var/jb/var/mobile/Juice/tmp/freetype-audit-20260726-171602/freetype_probe.c:2:10: fatal error: 'ft2build.h' file not found
+#include <ft2build.h>
+         ^~~~~~~~~~~~
+1 error generated.
+PROBE_COMPILE_STATUS=1
+
+============================================================
+RESULT=FREETYPE_NOT_READY_OR_PROBE_FAILED
+LOG=/var/jb/var/mobile/Juice/logs/freetype-audit-20260726-171602.log
+WORK=/var/jb/var/mobile/Juice/tmp/freetype-audit-20260726-171602
+NO_LIVE_WINE_RUNTIME_WAS_MODIFIED
+============================================================

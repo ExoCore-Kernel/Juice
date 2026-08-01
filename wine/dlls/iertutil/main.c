@@ -1,0 +1,563 @@
+/*
+ * Copyright 2024-2026 Zhiyi Zhang for CodeWeavers
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#include "private.h"
+#include "iertutil_classes.h"
+
+WINE_DEFAULT_DEBUG_CHANNEL(iertutil);
+
+struct uri
+{
+    IUriRuntimeClass IUriRuntimeClass_iface;
+    IUri *uri;
+    LONG ref;
+};
+
+static inline struct uri *impl_from_IUriRuntimeClass(IUriRuntimeClass *iface)
+{
+    return CONTAINING_RECORD(iface, struct uri, IUriRuntimeClass_iface);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_QueryInterface(IUriRuntimeClass *iface, REFIID iid, void **out)
+{
+    TRACE("iface %p, iid %s, out %p stub!\n", iface, debugstr_guid(iid), out);
+
+    if (IsEqualGUID(iid, &IID_IUnknown)
+        || IsEqualGUID(iid, &IID_IInspectable)
+        || IsEqualGUID(iid, &IID_IUriRuntimeClass))
+    {
+        IUnknown_AddRef(iface);
+        *out = iface;
+        return S_OK;
+    }
+
+    FIXME("%s not implemented, returning E_NOINTERFACE.\n", debugstr_guid(iid));
+    *out = NULL;
+    return E_NOINTERFACE;
+}
+
+static ULONG STDMETHODCALLTYPE uri_AddRef(IUriRuntimeClass *iface)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+    ULONG ref = InterlockedIncrement(&impl->ref);
+    TRACE("iface %p, ref %lu.\n", iface, ref);
+    return ref;
+}
+
+static ULONG STDMETHODCALLTYPE uri_Release(IUriRuntimeClass *iface)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+    ULONG ref = InterlockedDecrement(&impl->ref);
+
+    TRACE("iface %p, ref %lu.\n", iface, ref);
+
+    if (!ref)
+    {
+        IUri_Release(impl->uri);
+        free(impl);
+    }
+
+    return ref;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_GetIids(IUriRuntimeClass *iface, ULONG *iid_count,
+        IID **iids)
+{
+    FIXME("iface %p, iid_count %p, iids %p stub!\n", iface, iid_count, iids);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_GetRuntimeClassName(IUriRuntimeClass *iface,
+                                                         HSTRING *class_name)
+{
+    FIXME("iface %p, class_name %p stub!\n", iface, class_name);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_GetTrustLevel(IUriRuntimeClass *iface, TrustLevel *trust_level)
+{
+    FIXME("iface %p, trust_level %p stub!\n", iface, trust_level);
+    return E_NOTIMPL;
+}
+
+static HRESULT uri_prop_to_hstring(IUri *uri, Uri_PROPERTY prop, HSTRING *out)
+{
+    BSTR bstr = NULL;
+    HRESULT hr;
+
+    hr = IUri_GetPropertyBSTR(uri, prop, &bstr, 0);
+    if (FAILED(hr))
+    {
+        *out = NULL;
+        return hr;
+    }
+
+    if (hr == S_FALSE || !SysStringLen(bstr))
+    {
+        SysFreeString(bstr);
+        *out = NULL;
+        return S_OK;
+    }
+
+    hr = WindowsCreateString(bstr, SysStringLen(bstr), out);
+    SysFreeString(bstr);
+    return hr;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_AbsoluteUri(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_ABSOLUTE_URI, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_DisplayUri(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_DISPLAY_URI, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Domain(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_DOMAIN, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Extension(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_EXTENSION, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Fragment(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_FRAGMENT, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Host(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_HOST, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Password(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_PASSWORD, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Path(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_PATH, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Query(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_QUERY, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_QueryParsed(IUriRuntimeClass *iface,
+                                                 IWwwFormUrlDecoderRuntimeClass **decoder)
+{
+    FIXME("iface %p, decoder %p stub!\n", iface, decoder);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_RawUri(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_RAW_URI, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_SchemeName(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_SCHEME_NAME, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_UserName(IUriRuntimeClass *iface, HSTRING *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    return uri_prop_to_hstring(impl->uri, Uri_PROPERTY_USER_NAME, value);
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Port(IUriRuntimeClass *iface, INT32 *value)
+{
+    struct uri *impl = impl_from_IUriRuntimeClass(iface);
+    DWORD port;
+    HRESULT hr;
+
+    TRACE("iface %p, value %p.\n", iface, value);
+
+    hr = IUri_GetPropertyDWORD(impl->uri, Uri_PROPERTY_PORT, &port, 0);
+    if (hr == S_OK)
+    {
+        *value = port;
+        return S_OK;
+    }
+
+    return S_FALSE;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Suspicious(IUriRuntimeClass *iface, boolean *value)
+{
+    FIXME("iface %p, value %p stub!\n", iface, value);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_Equals(IUriRuntimeClass *iface, IUriRuntimeClass *uri,
+                                            boolean *value)
+{
+    FIXME("iface %p, uri %p, value %p stub!\n", iface, uri, value);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_CombineUri(IUriRuntimeClass *iface, HSTRING relative_uri,
+                                                IUriRuntimeClass **instance)
+{
+    FIXME("iface %p, relative_uri %s, instance %p stub!\n", iface, debugstr_hstring(relative_uri), instance);
+    return E_NOTIMPL;
+}
+
+static const struct IUriRuntimeClassVtbl uri_vtbl =
+{
+    uri_QueryInterface,
+    uri_AddRef,
+    uri_Release,
+    /* IInspectable methods */
+    uri_GetIids,
+    uri_GetRuntimeClassName,
+    uri_GetTrustLevel,
+    /* IUriRuntimeClass methods */
+    uri_AbsoluteUri,
+    uri_DisplayUri,
+    uri_Domain,
+    uri_Extension,
+    uri_Fragment,
+    uri_Host,
+    uri_Password,
+    uri_Path,
+    uri_Query,
+    uri_QueryParsed,
+    uri_RawUri,
+    uri_SchemeName,
+    uri_UserName,
+    uri_Port,
+    uri_Suspicious,
+    uri_Equals,
+    uri_CombineUri,
+};
+
+struct iertutil
+{
+    IActivationFactory IActivationFactory_iface;
+    IUriRuntimeClassFactory IUriRuntimeClassFactory_iface;
+    LONG ref;
+};
+
+static inline struct iertutil *impl_from_IActivationFactory(IActivationFactory *iface)
+{
+    return CONTAINING_RECORD(iface, struct iertutil, IActivationFactory_iface);
+}
+
+static HRESULT STDMETHODCALLTYPE iertutil_QueryInterface(IActivationFactory *iface, REFIID iid,
+                                                         void **out)
+{
+    struct iertutil *impl = impl_from_IActivationFactory(iface);
+
+    TRACE("iface %p, iid %s, out %p stub!\n", iface, debugstr_guid(iid), out);
+
+    if (IsEqualGUID(iid, &IID_IUnknown)
+        || IsEqualGUID(iid, &IID_IInspectable)
+        || IsEqualGUID(iid, &IID_IAgileObject)
+        || IsEqualGUID(iid, &IID_IActivationFactory))
+    {
+        IUnknown_AddRef(iface);
+        *out = iface;
+        return S_OK;
+    }
+    else if (IsEqualGUID(iid, &IID_IUriRuntimeClassFactory))
+    {
+        IUriRuntimeClassFactory_AddRef(&impl->IUriRuntimeClassFactory_iface);
+        *out = &impl->IUriRuntimeClassFactory_iface;
+        return S_OK;
+    }
+
+    FIXME("%s not implemented, returning E_NOINTERFACE.\n", debugstr_guid(iid));
+    *out = NULL;
+    return E_NOINTERFACE;
+}
+
+static ULONG STDMETHODCALLTYPE iertutil_AddRef(IActivationFactory *iface)
+{
+    struct iertutil *impl = impl_from_IActivationFactory(iface);
+    ULONG ref = InterlockedIncrement(&impl->ref);
+    TRACE("iface %p, ref %lu.\n", iface, ref);
+    return ref;
+}
+
+static ULONG STDMETHODCALLTYPE iertutil_Release(IActivationFactory *iface)
+{
+    struct iertutil *impl = impl_from_IActivationFactory(iface);
+    ULONG ref = InterlockedDecrement(&impl->ref);
+    TRACE("iface %p, ref %lu.\n", iface, ref);
+    return ref;
+}
+
+static HRESULT STDMETHODCALLTYPE iertutil_GetIids(IActivationFactory *iface, ULONG *iid_count,
+                                                  IID **iids)
+{
+    FIXME("iface %p, iid_count %p, iids %p stub!\n", iface, iid_count, iids);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE iertutil_GetRuntimeClassName(IActivationFactory *iface,
+                                                              HSTRING *class_name)
+{
+    FIXME("iface %p, class_name %p stub!\n", iface, class_name);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE iertutil_GetTrustLevel(IActivationFactory *iface,
+                                                        TrustLevel *trust_level)
+{
+    FIXME("iface %p, trust_level %p stub!\n", iface, trust_level);
+    return E_NOTIMPL;
+}
+
+static HRESULT STDMETHODCALLTYPE iertutil_ActivateInstance(IActivationFactory *iface,
+                                                           IInspectable **instance)
+{
+    FIXME("iface %p, instance %p stub!\n", iface, instance);
+    return E_NOTIMPL;
+}
+
+static const struct IActivationFactoryVtbl activation_factory_vtbl =
+{
+    iertutil_QueryInterface,
+    iertutil_AddRef,
+    iertutil_Release,
+    /* IInspectable methods */
+    iertutil_GetIids,
+    iertutil_GetRuntimeClassName,
+    iertutil_GetTrustLevel,
+    /* IActivationFactory methods */
+    iertutil_ActivateInstance,
+};
+
+DEFINE_IINSPECTABLE(uri_factory, IUriRuntimeClassFactory, struct iertutil, IActivationFactory_iface)
+
+static HRESULT STDMETHODCALLTYPE uri_factory_CreateUri(IUriRuntimeClassFactory *iface,
+                                                       HSTRING uri_string,
+                                                       IUriRuntimeClass **instance)
+{
+    const WCHAR *raw_buffer;
+    struct uri *uri_impl;
+    HRESULT hr;
+    IUri *uri;
+
+    TRACE("iface %p, uri_string %s, instance %p.\n", iface, debugstr_hstring(uri_string), instance);
+
+    if (!uri_string)
+        return E_POINTER;
+
+    raw_buffer = WindowsGetStringRawBuffer(uri_string, NULL);
+    hr = CreateUri(raw_buffer, Uri_CREATE_ALLOW_IMPLICIT_FILE_SCHEME | Uri_CREATE_NO_DECODE_EXTRA_INFO, 0, &uri);
+    if (FAILED(hr))
+    {
+        *instance = NULL;
+        return E_INVALIDARG;
+    }
+
+    uri_impl = calloc(1, sizeof(*uri_impl));
+    if (!uri_impl)
+    {
+        IUri_Release(uri);
+        return E_OUTOFMEMORY;
+    }
+
+    uri_impl->IUriRuntimeClass_iface.lpVtbl = &uri_vtbl;
+    uri_impl->uri = uri;
+    uri_impl->ref = 1;
+
+    *instance = &uri_impl->IUriRuntimeClass_iface;
+    return S_OK;
+}
+
+static HRESULT STDMETHODCALLTYPE uri_factory_CreateWithRelativeUri(IUriRuntimeClassFactory *iface,
+                                                                   HSTRING base_uri,
+                                                                   HSTRING relative_uri,
+                                                                   IUriRuntimeClass **instance)
+{
+    FIXME("iface %p, base_uri %s, relative_uri %s, instance %p stub!\n", iface,
+          debugstr_hstring(base_uri), debugstr_hstring(relative_uri), instance);
+    return E_NOTIMPL;
+}
+
+static const struct IUriRuntimeClassFactoryVtbl uri_factory_vtbl =
+{
+    uri_factory_QueryInterface,
+    uri_factory_AddRef,
+    uri_factory_Release,
+    /* IInspectable methods */
+    uri_factory_GetIids,
+    uri_factory_GetRuntimeClassName,
+    uri_factory_GetTrustLevel,
+    /* IUriRuntimeClassFactory methods */
+    uri_factory_CreateUri,
+    uri_factory_CreateWithRelativeUri,
+};
+
+static struct iertutil iertutil =
+{
+    {&activation_factory_vtbl},
+    {&uri_factory_vtbl},
+    1
+};
+
+typedef struct
+{
+    IClassFactory IClassFactory_iface;
+    HRESULT (*pfnCreateInstance)(IUnknown *pUnkOuter, LPVOID *ppObj);
+} ClassFactory;
+
+static inline ClassFactory *impl_from_IClassFactory(IClassFactory *iface)
+{
+    return CONTAINING_RECORD(iface, ClassFactory, IClassFactory_iface);
+}
+
+static HRESULT WINAPI CF_QueryInterface(IClassFactory *iface, REFIID riid, void **ppv)
+{
+    *ppv = NULL;
+
+    if (IsEqualGUID(riid, &IID_IUnknown) || IsEqualGUID(riid, &IID_IClassFactory))
+    {
+        *ppv = iface;
+        return S_OK;
+    }
+
+    WARN("(%p)->(%s %p)\n", iface, debugstr_guid(riid), ppv);
+    return E_NOINTERFACE;
+}
+
+static ULONG WINAPI CF_AddRef(IClassFactory *iface)
+{
+    return 2;
+}
+
+static ULONG WINAPI CF_Release(IClassFactory *iface)
+{
+    return 1;
+}
+
+static HRESULT WINAPI CF_CreateInstance(IClassFactory *iface, IUnknown *outer, REFIID riid,
+                                        void **ppv)
+{
+    ClassFactory *This = impl_from_IClassFactory(iface);
+    IUnknown *unk;
+    HRESULT hr;
+
+    TRACE("(%p)->(%p %s %p)\n", iface, outer, debugstr_guid(riid), ppv);
+
+    *ppv = NULL;
+
+    if (outer && !IsEqualGUID(riid, &IID_IUnknown))
+        return CLASS_E_NOAGGREGATION;
+
+    hr = This->pfnCreateInstance(outer, (void **)&unk);
+    if (FAILED(hr))
+        return hr;
+
+    hr = IUnknown_QueryInterface(unk, riid, ppv);
+    IUnknown_Release(unk);
+    return hr;
+}
+
+static HRESULT WINAPI CF_LockServer(IClassFactory *iface, BOOL dolock)
+{
+    TRACE("(%d)\n", dolock);
+    return S_OK;
+}
+
+static const IClassFactoryVtbl ClassFactoryVtbl =
+{
+    CF_QueryInterface,
+    CF_AddRef,
+    CF_Release,
+    CF_CreateInstance,
+    CF_LockServer
+};
+
+static ClassFactory CUriCF = {{&ClassFactoryVtbl}, Uri_Construct};
+
+HRESULT WINAPI DllGetClassObject(REFCLSID clsid, REFIID riid, void **out)
+{
+    TRACE("clsid %s, riid %s, out %p.\n", debugstr_guid(clsid), debugstr_guid(riid), out);
+
+    if (IsEqualGUID(clsid, &CLSID_CUri))
+        return IClassFactory_QueryInterface(&CUriCF.IClassFactory_iface, riid, out);
+
+    FIXME("%s: no class found.\n", debugstr_guid(clsid));
+    return CLASS_E_CLASSNOTAVAILABLE;
+}
+
+HRESULT WINAPI DllGetActivationFactory(HSTRING classid, IActivationFactory **factory)
+{
+    TRACE("classid %s, factory %p.\n", debugstr_hstring(classid), factory);
+    *factory = &iertutil.IActivationFactory_iface;
+    IUnknown_AddRef(*factory);
+    return S_OK;
+}

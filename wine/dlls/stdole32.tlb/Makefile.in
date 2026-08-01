@@ -1,0 +1,9 @@
+MODULE    = stdole32.tlb
+
+EXTRAIDLFLAGS = --oldtlb --win32
+EXTRADLLFLAGS = -Wb,--data-only
+
+VER_FILEDESCRIPTION_STR = "Wine stdole32"
+
+SOURCES = \
+	std_ole_v1.idl

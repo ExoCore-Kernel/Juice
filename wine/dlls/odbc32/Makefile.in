@@ -1,0 +1,11 @@
+MODULE    = odbc32.dll
+UNIXLIB   = odbc32.so
+IMPORTLIB = odbc32
+IMPORTS   = advapi32
+
+VER_FILEDESCRIPTION_STR = "Wine ODBC Library"
+VER_PRODUCTVERSION      = 3,520,6301,0
+
+SOURCES = \
+	proxyodbc.c \
+	unixlib.c

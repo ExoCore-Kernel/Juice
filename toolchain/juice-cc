@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+
+set -u
+
+case "$(basename "$0")" in
+    *cxx*|*++*)
+        REAL_COMPILER="/var/jb/usr/bin/clang++"
+        ;;
+    *)
+        REAL_COMPILER="/var/jb/usr/bin/clang"
+        ;;
+esac
+
+"$REAL_COMPILER" "$@"
+result=$?
+
+if [[ $result -ne 0 ]]; then
+    exit "$result"
+fi
+
+output=""
+previous=""
+compile_only=0
+
+for argument in "$@"; do
+    if [[ "$previous" == "-o" ]]; then
+        output="$argument"
+        previous=""
+        continue
+    fi
+
+    case "$argument" in
+        -o)
+            previous="-o"
+            ;;
+        -o*)
+            output="${argument#-o}"
+            ;;
+        -c|-E|-S)
+            compile_only=1
+            ;;
+    esac
+done
+
+if [[ $compile_only -eq 1 ]]; then
+    exit 0
+fi
+
+if [[ -z "$output" ]]; then
+    output="a.out"
+fi
+
+if [[ "$output" != /* ]]; then
+    output="$PWD/$output"
+fi
+
+if [[ ! -f "$output" ]]; then
+    exit 0
+fi
+
+if ! file "$output" | grep -Eq 'Mach-O.*(executable|dynamically linked shared library|bundle)'; then
+    exit 0
+fi
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
+CARRIER="${JUICE_TRUST_CARRIER:-$REPO_ROOT/build/trust-carrier}"
+CARRIER_APP="$CARRIER/Payload/JuiceTrust.app"
+CARRIER_TARGET="$CARRIER_APP/Tools/ct-sign-target"
+ENTITLEMENTS="${JUICE_CHILD_ENTITLEMENTS:-$REPO_ROOT/config/child-entitlements.plist}"
+IPA="$CARRIER/JuiceAutoSign.ipa"
+LOG="$CARRIER/autosign.log"
+LOCK="$CARRIER/.autosign.lock"
+LDID="${LDID:-/var/jb/usr/bin/ldid}"
+ZIP="${ZIP:-/var/jb/usr/bin/zip}"
+SUDO="${SUDO:-/var/jb/usr/bin/sudo}"
+
+if [[ ! -d "$CARRIER_APP" ]]; then
+    echo "Juice Trust carrier not found: $CARRIER_APP" >&2
+    exit 90
+fi
+
+if [[ ! -f "$ENTITLEMENTS" ]]; then
+    echo "CLI entitlements not found: $ENTITLEMENTS" >&2
+    exit 91
+fi
+
+lock_attempt=0
+until mkdir "$LOCK" 2>/dev/null; do
+    lock_attempt=$((lock_attempt + 1))
+    if [[ $lock_attempt -ge 3000 ]]; then
+        echo "Timed out waiting for the CoreTrust signing lock: $LOCK" >&2
+        exit 94
+    fi
+    sleep 0.1
+done
+release_lock()
+{
+    rmdir "$LOCK" 2>/dev/null || true
+}
+trap release_lock EXIT
+
+mkdir -p "$CARRIER_APP/Tools"
+
+cp -f "$output" "$CARRIER_TARGET"
+chmod 755 "$CARRIER_TARGET"
+
+"$LDID" -S"$ENTITLEMENTS" -Cadhoc "$CARRIER_TARGET"
+
+(
+    cd "$CARRIER"
+    rm -f "$IPA"
+    "$ZIP" -qry "$IPA" Payload
+)
+
+TROLLSTORE_HELPER="$(
+    find /var/containers/Bundle/Application \
+        -type f \
+        -path '*/TrollStore.app/trollstorehelper' \
+        -print -quit \
+        2>/dev/null
+)"
+
+if [[ ! -x "$TROLLSTORE_HELPER" ]]; then
+    echo "TrollStore helper was not found" >&2
+    exit 92
+fi
+
+"$SUDO" "$TROLLSTORE_HELPER" install force "$IPA" >"$LOG" 2>&1
+
+INSTALLED_APP="$(
+    find /var/containers/Bundle/Application \
+        -type d \
+        -name JuiceTrust.app \
+        -print -quit \
+        2>/dev/null
+)"
+
+PATCHED="$INSTALLED_APP/Tools/ct-sign-target"
+
+if [[ ! -f "$PATCHED" ]]; then
+    echo "TrollStore did not produce the patched executable" >&2
+    cat "$LOG" >&2
+    exit 93
+fi
+
+cp -f "$PATCHED" "$output"
+chmod 755 "$output"
+
+echo "[Juice CoreTrust] signed $(basename "$output")" >&2
+exit 0

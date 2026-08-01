@@ -1,0 +1,13 @@
+MODULE    = amstream.dll
+IMPORTS   = strmiids strmbase uuid ole32 advapi32 ddraw msvcrt
+
+VER_PRODUCTVERSION = 6,5,1,900
+
+SOURCES = \
+	amstream_classes.idl \
+	audiodata.c \
+	audiostream.c \
+	ddrawstream.c \
+	filter.c \
+	main.c \
+	multimedia.c

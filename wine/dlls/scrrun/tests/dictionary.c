@@ -1,0 +1,1641 @@
+/*
+ * Copyright (C) 2012 Alistair Leslie-Hughes
+ * Copyright 2015 Nikolay Sivov for CodeWeavers
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#define COBJMACROS
+#include <stdio.h>
+
+#include "windows.h"
+#include "ole2.h"
+#include "oleauto.h"
+#include "olectl.h"
+#include "dispex.h"
+
+#include "wine/test.h"
+
+#include "scrrun.h"
+
+#define test_provideclassinfo(a, b) _test_provideclassinfo((IDispatch*)a, b, __LINE__)
+static void _test_provideclassinfo(IDispatch *disp, const GUID *guid, int line)
+{
+    IProvideClassInfo *classinfo;
+    TYPEATTR *attr;
+    ITypeInfo *ti;
+    IUnknown *unk;
+    HRESULT hr;
+
+    hr = IDispatch_QueryInterface(disp, &IID_IProvideClassInfo, (void **)&classinfo);
+    ok_(__FILE__,line) (hr == S_OK, "Failed to get IProvideClassInfo, %#lx.\n", hr);
+
+    hr = IProvideClassInfo_GetClassInfo(classinfo, &ti);
+    ok_(__FILE__,line) (hr == S_OK, "GetClassInfo() failed, %#lx.\n", hr);
+
+    hr = ITypeInfo_GetTypeAttr(ti, &attr);
+    ok_(__FILE__,line) (hr == S_OK, "GetTypeAttr() failed, %#lx.\n", hr);
+
+    ok_(__FILE__,line) (IsEqualGUID(&attr->guid, guid), "Unexpected typeinfo %s, expected %s\n", wine_dbgstr_guid(&attr->guid),
+        wine_dbgstr_guid(guid));
+
+    hr = IProvideClassInfo_QueryInterface(classinfo, &IID_IUnknown, (void **)&unk);
+    ok(hr == S_OK, "Failed to QI for IUnknown.\n");
+    ok(unk == (IUnknown *)disp, "Got unk %p, original %p\n", unk, disp);
+    IUnknown_Release(unk);
+
+    IProvideClassInfo_Release(classinfo);
+    ITypeInfo_ReleaseTypeAttr(ti, attr);
+    ITypeInfo_Release(ti);
+}
+
+static void test_interfaces(void)
+{
+    HRESULT hr;
+    IDispatch *disp;
+    IDispatchEx *dispex;
+    IDictionary *dict;
+    IObjectWithSite *site;
+    VARIANT key, value;
+    VARIANT_BOOL exists;
+    LONG count = 0;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDispatch, (void**)&disp);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&key);
+    VariantInit(&value);
+
+    hr = IDispatch_QueryInterface(disp, &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDispatch_QueryInterface(disp, &IID_IObjectWithSite, (void**)&site);
+    ok(hr == E_NOINTERFACE, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDispatch_QueryInterface(disp, &IID_IDispatchEx, (void**)&dispex);
+    ok(hr == E_NOINTERFACE, "Unexpected hr %#lx.\n", hr);
+
+    test_provideclassinfo(disp, &CLSID_Dictionary);
+
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(L"a");
+    V_VT(&value) = VT_BSTR;
+    V_BSTR(&value) = SysAllocString(L"a");
+    hr = IDictionary_Add(dict, &key, &value);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    VariantClear(&value);
+
+    exists = VARIANT_FALSE;
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(exists == VARIANT_TRUE, "Expected TRUE but got FALSE.\n");
+    VariantClear(&key);
+
+    exists = VARIANT_TRUE;
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(L"b");
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(exists == VARIANT_FALSE, "Expected FALSE but got TRUE.\n");
+    VariantClear(&key);
+
+    hr = IDictionary_get_Count(dict, &count);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(count == 1, "Unexpected value %lu.\n", count);
+
+    IDictionary_Release(dict);
+    IDispatch_Release(disp);
+}
+
+static void test_comparemode(void)
+{
+    CompareMethod method;
+    IDictionary *dict;
+    VARIANT key, item;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    if (0) /* crashes on native */
+        hr = IDictionary_get_CompareMode(dict, NULL);
+
+    method = 10;
+    hr = IDictionary_get_CompareMode(dict, &method);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(method == BinaryCompare, "got %d\n", method);
+
+    /* invalid mode value is not checked */
+    hr = IDictionary_put_CompareMode(dict, 10);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_get_CompareMode(dict, &method);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(method == 10, "got %d\n", method);
+
+    hr = IDictionary_put_CompareMode(dict, DatabaseCompare);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_get_CompareMode(dict, &method);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(method == DatabaseCompare, "got %d\n", method);
+
+    /* try to change mode of a non-empty dict */
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 0;
+    VariantInit(&item);
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_put_CompareMode(dict, BinaryCompare);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL, "Unexpected hr %#lx.\n", hr);
+
+    IDictionary_Release(dict);
+}
+
+static DWORD get_str_hash(const WCHAR *str, CompareMethod method)
+{
+    DWORD hash = 0;
+
+    while (*str) {
+        WCHAR ch;
+
+        if (method == TextCompare || method == DatabaseCompare)
+            ch = PtrToInt(CharLowerW(IntToPtr(*str)));
+        else
+            ch = *str;
+
+        hash += (hash << 4) + ch;
+        str++;
+    }
+
+    return hash % 1201;
+}
+
+static DWORD get_num_hash(FLOAT num)
+{
+    return (*((DWORD*)&num)) % 1201;
+}
+
+static DWORD get_ptr_hash(void *ptr)
+{
+    DWORD hash = PtrToUlong(ptr);
+#ifdef _WIN64
+    hash ^= (ULONG_PTR)ptr >> 32;
+#endif
+    return hash % 1201;
+}
+
+typedef union
+{
+    struct
+    {
+        unsigned int m : 23;
+        unsigned int exp_bias : 8;
+        unsigned int sign : 1;
+    } i;
+    float f;
+} R4_FIELDS;
+
+typedef union
+{
+    struct
+    {
+        unsigned int m_lo : 32;     /* 52 bits of precision */
+        unsigned int m_hi : 20;
+        unsigned int exp_bias : 11; /* bias == 1023 */
+        unsigned int sign : 1;
+    } i;
+    double d;
+} R8_FIELDS;
+
+static HRESULT WINAPI test_unk_QI(IUnknown *iface, REFIID riid, void **obj)
+{
+    if (IsEqualIID(riid, &IID_IUnknown)) {
+        *obj = iface;
+        return S_OK;
+    }
+
+    ok(0, "unexpected %s\n", wine_dbgstr_guid(riid));
+    *obj = NULL;
+    return E_NOINTERFACE;
+}
+
+static HRESULT WINAPI test_unk_no_QI(IUnknown *iface, REFIID riid, void **obj)
+{
+    *obj = NULL;
+    return E_NOINTERFACE;
+}
+
+static ULONG WINAPI test_unk_AddRef(IUnknown *iface)
+{
+    return 2;
+}
+
+static ULONG WINAPI test_unk_Release(IUnknown *iface)
+{
+    return 1;
+}
+
+static const IUnknownVtbl test_unk_vtbl = {
+    test_unk_QI,
+    test_unk_AddRef,
+    test_unk_Release
+};
+
+static const IUnknownVtbl test_unk_no_vtbl = {
+    test_unk_no_QI,
+    test_unk_AddRef,
+    test_unk_Release
+};
+
+static HRESULT WINAPI test_disp_QI(IDispatch *iface, REFIID riid, void **obj)
+{
+    if (IsEqualIID(riid, &IID_IDispatch) || IsEqualIID(riid, &IID_IUnknown)) {
+        *obj = iface;
+        return S_OK;
+    }
+
+    ok(0, "unexpected %s\n", wine_dbgstr_guid(riid));
+    *obj = NULL;
+    return E_NOINTERFACE;
+}
+
+static ULONG WINAPI test_disp_AddRef(IDispatch *iface)
+{
+    ok(0, "unexpected\n");
+    return 2;
+}
+
+static ULONG WINAPI test_disp_Release(IDispatch *iface)
+{
+    return 1;
+}
+
+static HRESULT WINAPI test_disp_GetTypeInfoCount(IDispatch *iface, UINT *count)
+{
+    ok(0, "unexpected call\n");
+    return E_NOTIMPL;
+}
+
+static HRESULT WINAPI test_disp_GetTypeInfo(IDispatch *iface, UINT index, LCID lcid, ITypeInfo **ti)
+{
+    ok(0, "unexpected call\n");
+    return E_NOTIMPL;
+}
+
+static HRESULT WINAPI test_disp_GetIDsOfNames(IDispatch *iface, REFIID riid, LPOLESTR *names,
+    UINT name_count, LCID lcid, DISPID *dispid)
+{
+    ok(0, "unexpected call\n");
+    return E_NOTIMPL;
+}
+
+static HRESULT WINAPI test_disp_Invoke(IDispatch *iface, DISPID dispid, REFIID riid,
+    LCID lcid, WORD flags, DISPPARAMS *params, VARIANT *result, EXCEPINFO *excepinfo, UINT *arg_err)
+{
+    ok(0, "unexpected call\n");
+    return E_NOTIMPL;
+}
+
+static const IDispatchVtbl test_disp_vtbl = {
+    test_disp_QI,
+    test_disp_AddRef,
+    test_disp_Release,
+    test_disp_GetTypeInfoCount,
+    test_disp_GetTypeInfo,
+    test_disp_GetIDsOfNames,
+    test_disp_Invoke
+};
+
+static IUnknown test_unk = { &test_unk_vtbl };
+static IUnknown test_unk2 = { &test_unk_no_vtbl };
+static IDispatch test_disp = { &test_disp_vtbl };
+
+/* A dispatch object whose QueryInterface(IID_IUnknown) can be made to fail,
+ * modelling a COM object that has been logically destroyed while still
+ * referenced as a dictionary key. */
+struct degen_disp
+{
+    IDispatch IDispatch_iface;
+    BOOL qi_unknown_fails;
+};
+
+static HRESULT WINAPI degen_QI(IDispatch *iface, REFIID riid, void **obj)
+{
+    struct degen_disp *d = CONTAINING_RECORD(iface, struct degen_disp, IDispatch_iface);
+
+    if (IsEqualIID(riid, &IID_IDispatch)) {
+        *obj = iface;
+        return S_OK;
+    }
+    if (IsEqualIID(riid, &IID_IUnknown)) {
+        if (d->qi_unknown_fails) {
+            *obj = NULL;
+            return E_NOINTERFACE;
+        }
+        *obj = iface;
+        return S_OK;
+    }
+    *obj = NULL;
+    return E_NOINTERFACE;
+}
+
+static ULONG WINAPI degen_AddRef(IDispatch *iface) { return 2; }
+static ULONG WINAPI degen_Release(IDispatch *iface) { return 1; }
+
+static const IDispatchVtbl degen_disp_vtbl = {
+    degen_QI,
+    degen_AddRef,
+    degen_Release,
+    test_disp_GetTypeInfoCount,
+    test_disp_GetTypeInfo,
+    test_disp_GetIDsOfNames,
+    test_disp_Invoke
+};
+
+static void test_object_key_hashfail(void)
+{
+    struct degen_disp obj = { { &degen_disp_vtbl }, FALSE };
+    VARIANT_BOOL exists;
+    IDictionary *dict;
+    VARIANT key, item;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_DISPATCH;
+    V_DISPATCH(&key) = &obj.IDispatch_iface;
+    V_VT(&item) = VT_I4;
+    V_I4(&item) = 42;
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Add: %#lx.\n", hr);
+
+    exists = VARIANT_FALSE;
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == S_OK, "Exists (live): %#lx.\n", hr);
+    ok(exists == VARIANT_TRUE, "expected the key to exist\n");
+
+    /* The object is now degenerate: hashing the key fails. Exists and Remove
+     * must surface that failure rather than report the key as absent. */
+    obj.qi_unknown_fails = TRUE;
+
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL, "Exists (degenerate): %#lx.\n", hr);
+
+    hr = IDictionary_Remove(dict, &key);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL, "Remove (degenerate): %#lx.\n", hr);
+
+    /* Restore the object and confirm the key is still present and removable. */
+    obj.qi_unknown_fails = FALSE;
+    hr = IDictionary_Remove(dict, &key);
+    ok(hr == S_OK, "Remove (restored): %#lx.\n", hr);
+
+    IDictionary_Release(dict);
+}
+
+static void test_hash_value(void)
+{
+    /* string test data */
+    static const WCHAR str_hash_tests[][10] =
+    {
+        L"abcd",
+        L"aBCd1",
+        L"123",
+        L"A",
+        L"a",
+        L""
+    };
+
+    static const int int_hash_tests[] = {
+        0, -1, 100, 1, 255
+    };
+
+    static const FLOAT float_hash_tests[] = {
+        0.0, -1.0, 100.0, 1.0, 255.0, 1.234, 2175.0, 6259.0
+    };
+
+    IDictionary *dict;
+    VARIANT key, hash;
+    IDispatch *disp;
+    DWORD expected;
+    IUnknown *unk;
+    R8_FIELDS fx8;
+    R4_FIELDS fx4;
+    HRESULT hr;
+    unsigned i;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = NULL;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(!V_I4(&hash), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    for (i = 0; i < ARRAY_SIZE(str_hash_tests); ++i)
+    {
+        expected = get_str_hash(str_hash_tests[i], BinaryCompare);
+
+        hr = IDictionary_put_CompareMode(dict, BinaryCompare);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+        V_VT(&key) = VT_BSTR;
+        V_BSTR(&key) = SysAllocString(str_hash_tests[i]);
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: db mode: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+        VariantClear(&key);
+
+        expected = get_str_hash(str_hash_tests[i], TextCompare);
+        hr = IDictionary_put_CompareMode(dict, TextCompare);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+        V_VT(&key) = VT_BSTR;
+        V_BSTR(&key) = SysAllocString(str_hash_tests[i]);
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: db mode: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+        VariantClear(&key);
+
+        expected = get_str_hash(str_hash_tests[i], DatabaseCompare);
+        hr = IDictionary_put_CompareMode(dict, DatabaseCompare);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+        V_VT(&key) = VT_BSTR;
+        V_BSTR(&key) = SysAllocString(str_hash_tests[i]);
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: db mode: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+        VariantClear(&key);
+    }
+
+    V_VT(&key) = VT_INT;
+    V_INT(&key) = 1;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u, "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_UINT;
+    V_UINT(&key) = 1;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u, "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_I1;
+    V_I1(&key) = 1;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u || broken(V_I4(&hash) == 0xa1), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_I8;
+    V_I8(&key) = 1;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u, "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_UI2;
+    V_UI2(&key) = 1;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u, "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_UI4;
+    V_UI4(&key) = 1;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u, "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    for (i = 0; i < ARRAY_SIZE(int_hash_tests); i++) {
+        SHORT i2;
+        BYTE ui1;
+        LONG i4;
+
+        expected = get_num_hash(int_hash_tests[i]);
+
+        V_VT(&key) = VT_I2;
+        V_I2(&key) = int_hash_tests[i];
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        i2 = int_hash_tests[i];
+        V_VT(&key) = VT_I2|VT_BYREF;
+        V_I2REF(&key) = &i2;
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        V_VT(&key) = VT_I4;
+        V_I4(&key) = int_hash_tests[i];
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        i4 = int_hash_tests[i];
+        V_VT(&key) = VT_I4|VT_BYREF;
+        V_I4REF(&key) = &i4;
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        expected = get_num_hash((FLOAT)(BYTE)int_hash_tests[i]);
+        V_VT(&key) = VT_UI1;
+        V_UI1(&key) = int_hash_tests[i];
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        ui1 = int_hash_tests[i];
+        V_VT(&key) = VT_UI1|VT_BYREF;
+        V_UI1REF(&key) = &ui1;
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+    }
+
+    /* nan */
+    fx4.f = 10.0;
+    fx4.i.exp_bias = 0xff;
+
+    V_VT(&key) = VT_R4;
+    V_R4(&key) = fx4.f;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u || broken(V_I4(&hash) == 0 /* win2k */ ||
+        V_I4(&hash) == 0x1f4 /* vista, win2k8 */), "Unexpected hr %#lx.\n", V_I4(&hash));
+
+    /* inf */
+    fx4.f = 10.0;
+    fx4.i.m = 0;
+    fx4.i.exp_bias = 0xff;
+
+    V_VT(&key) = VT_R4;
+    V_R4(&key) = fx4.f;
+    V_I4(&hash) = 10;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(!V_I4(&hash), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    /* nan */
+    fx8.d = 10.0;
+    fx8.i.exp_bias = 0x7ff;
+
+    V_VT(&key) = VT_R8;
+    V_R8(&key) = fx8.d;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u || broken(V_I4(&hash) == 0 /* win2k */ ||
+        V_I4(&hash) == 0x1f4 /* vista, win2k8 */), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_DATE;
+    V_DATE(&key) = fx8.d;
+    VariantInit(&hash);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k, win2k3 */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u || broken(V_I4(&hash) == 0 /* win2k */ ||
+        V_I4(&hash) == 0x1f4 /* vista, win2k8 */), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    /* inf */
+    fx8.d = 10.0;
+    fx8.i.m_lo = 0;
+    fx8.i.m_hi = 0;
+    fx8.i.exp_bias = 0x7ff;
+
+    V_VT(&key) = VT_R8;
+    V_R8(&key) = fx8.d;
+    V_I4(&hash) = 10;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(!V_I4(&hash), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_DATE;
+    V_DATE(&key) = fx8.d;
+    V_I4(&hash) = 10;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(!V_I4(&hash), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    for (i = 0; i < ARRAY_SIZE(float_hash_tests); i++) {
+        double dbl;
+        FLOAT flt;
+        DATE date;
+
+        expected = get_num_hash(float_hash_tests[i]);
+
+        V_VT(&key) = VT_R4;
+        V_R4(&key) = float_hash_tests[i];
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        flt = float_hash_tests[i];
+        V_VT(&key) = VT_R4|VT_BYREF;
+        V_R4REF(&key) = &flt;
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        V_VT(&key) = VT_R8;
+        V_R8(&key) = float_hash_tests[i];
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        dbl = float_hash_tests[i];
+        V_VT(&key) = VT_R8|VT_BYREF;
+        V_R8REF(&key) = &dbl;
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        V_VT(&key) = VT_DATE;
+        V_DATE(&key) = float_hash_tests[i];
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+
+        V_VT(&key) = VT_DATE|VT_BYREF;
+        date = float_hash_tests[i];
+        V_DATEREF(&key) = &date;
+        VariantInit(&hash);
+        hr = IDictionary_get_HashVal(dict, &key, &hash);
+        ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+        ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+        ok(V_I4(&hash) == expected, "%d: got hash %#lx, expected %#lx.\n", i, V_I4(&hash), expected);
+    }
+
+    /* interface pointers as keys */
+    V_VT(&key) = VT_UNKNOWN;
+    V_UNKNOWN(&key) = 0;
+    VariantInit(&hash);
+    V_I4(&hash) = 1;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(!V_I4(&hash), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    /* QI doesn't work */
+    V_VT(&key) = VT_UNKNOWN;
+    V_UNKNOWN(&key) = &test_unk2;
+    VariantInit(&hash);
+    expected = get_ptr_hash(&test_unk2);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL || broken(hr == S_OK) /* win2k */, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == ~0u, "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_UNKNOWN;
+    V_UNKNOWN(&key) = &test_unk;
+    VariantInit(&hash);
+    expected = get_ptr_hash(&test_unk);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == expected, "got hash %#lx, expected %#lx\n", V_I4(&hash), expected);
+
+    /* interface without IDispatch support */
+    V_VT(&key) = VT_DISPATCH;
+    V_DISPATCH(&key) = (IDispatch*)&test_unk;
+    VariantInit(&hash);
+    expected = get_ptr_hash(&test_unk);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == expected, "got hash %#lx, expected %#lx\n", V_I4(&hash), expected);
+
+    V_VT(&key) = VT_DISPATCH;
+    V_DISPATCH(&key) = &test_disp;
+    VariantInit(&hash);
+    expected = get_ptr_hash(&test_disp);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == expected, "got hash %#lx, expected %#lx\n", V_I4(&hash), expected);
+
+    /* same with BYREF */
+if (0) { /* crashes on native */
+    V_VT(&key) = VT_UNKNOWN|VT_BYREF;
+    V_UNKNOWNREF(&key) = 0;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+}
+    unk = NULL;
+    V_VT(&key) = VT_UNKNOWN|VT_BYREF;
+    V_UNKNOWNREF(&key) = &unk;
+    VariantInit(&hash);
+    V_I4(&hash) = 1;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(!V_I4(&hash), "Unexpected hash %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_UNKNOWN|VT_BYREF;
+    unk = &test_unk;
+    V_UNKNOWNREF(&key) = &unk;
+    VariantInit(&hash);
+    expected = get_ptr_hash(&test_unk);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == expected, "got hash %#lx, expected %#lx\n", V_I4(&hash), expected);
+
+    /* interface without IDispatch support */
+    V_VT(&key) = VT_DISPATCH|VT_BYREF;
+    unk = &test_unk;
+    V_DISPATCHREF(&key) = (IDispatch**)&unk;
+    VariantInit(&hash);
+    expected = get_ptr_hash(&test_unk);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == expected, "got hash %#lx, expected %#lx\n", V_I4(&hash), expected);
+
+    V_VT(&key) = VT_DISPATCH|VT_BYREF;
+    disp = &test_disp;
+    V_DISPATCHREF(&key) = &disp;
+    VariantInit(&hash);
+    expected = get_ptr_hash(&test_disp);
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "got %d\n", V_VT(&hash));
+    ok(V_I4(&hash) == expected, "got hash %#lx, expected %#lx\n", V_I4(&hash), expected);
+
+    V_VT(&key) = VT_BOOL;
+    V_BOOL(&key) = VARIANT_FALSE;
+    V_I4(&hash) = 5678;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "Unexpected hash type %d.\n", V_VT(&hash));
+    ok(V_I4(&hash) == get_num_hash(0.0f), "Unexpected hash value %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_BOOL;
+    V_BOOL(&key) = VARIANT_TRUE;
+    V_I4(&hash) = 5678;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "Unexpected hash type %d.\n", V_VT(&hash));
+    ok(V_I4(&hash) == get_num_hash((FLOAT)VARIANT_TRUE), "Unexpected hash value %#lx.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_EMPTY;
+    V_I4(&key) = 1234;
+    V_I4(&hash) = 5678;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "Unexpected hash type %d.\n", V_VT(&hash));
+    ok(V_I4(&hash) == 0, "Unexpected hash value %ld.\n", V_I4(&hash));
+
+    V_VT(&key) = VT_NULL;
+    V_I4(&key) = 1234;
+    V_I4(&hash) = 5678;
+    hr = IDictionary_get_HashVal(dict, &key, &hash);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash) == VT_I4, "Unexpected hash type %d.\n", V_VT(&hash));
+    ok(V_I4(&hash) == 0, "Unexpected hash value %ld.\n", V_I4(&hash));
+
+    IDictionary_Release(dict);
+}
+
+static void test_Exists(void)
+{
+    VARIANT_BOOL exists;
+    IDictionary *dict;
+    VARIANT key, item;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    if (0) /* crashes on native */
+        hr = IDictionary_Exists(dict, NULL, NULL);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 0;
+    hr = IDictionary_Exists(dict, &key, NULL);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 0;
+    exists = VARIANT_TRUE;
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(exists == VARIANT_FALSE, "got %x\n", exists);
+
+    VariantInit(&item);
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_R4;
+    V_R4(&key) = 0.0;
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == CTL_E_KEY_ALREADY_EXISTS, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 0;
+    hr = IDictionary_Exists(dict, &key, NULL);
+    ok(hr == CTL_E_ILLEGALFUNCTIONCALL, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 0;
+    exists = VARIANT_FALSE;
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(exists == VARIANT_TRUE, "got %x\n", exists);
+
+    /* key of different type, but resolves to same hash value */
+    V_VT(&key) = VT_R4;
+    V_R4(&key) = 0.0;
+    exists = VARIANT_FALSE;
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(exists == VARIANT_TRUE, "got %x\n", exists);
+
+    IDictionary_Release(dict);
+}
+
+static void test_Keys(void)
+{
+    VARIANT key, keys, item;
+    IDictionary *dict;
+    LONG index;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_Keys(dict, NULL);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&keys);
+    hr = IDictionary_Keys(dict, &keys);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&keys) == (VT_ARRAY|VT_VARIANT), "got %d\n", V_VT(&keys));
+    VariantClear(&keys);
+
+    V_VT(&key) = VT_R4;
+    V_R4(&key) = 0.0;
+    VariantInit(&item);
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&keys);
+    hr = IDictionary_Keys(dict, &keys);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&keys) == (VT_ARRAY|VT_VARIANT), "got %d\n", V_VT(&keys));
+
+    VariantInit(&key);
+    index = 0;
+    hr = SafeArrayGetElement(V_ARRAY(&keys), &index, &key);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&key) == VT_R4, "got %d\n", V_VT(&key));
+
+    index = SafeArrayGetDim(V_ARRAY(&keys));
+    ok(index == 1, "Unexpected value %ld.\n", index);
+
+    hr = SafeArrayGetUBound(V_ARRAY(&keys), 1, &index);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(index == 0, "Unexpected value %ld.\n", index);
+
+    VariantClear(&keys);
+
+    hr = IDictionary_RemoveAll(dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    /* Integer key type. */
+    V_VT(&key) = VT_I4;
+    V_I4(&key) = 0;
+    VariantInit(&item);
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&keys);
+    hr = IDictionary_Keys(dict, &keys);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&keys) == (VT_ARRAY|VT_VARIANT), "got %d\n", V_VT(&keys));
+
+    VariantInit(&key);
+    index = 0;
+    hr = SafeArrayGetElement(V_ARRAY(&keys), &index, &key);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&key) == VT_I4, "got %d\n", V_VT(&key));
+
+    VariantClear(&keys);
+
+    IDictionary_Release(dict);
+}
+
+static void test_Remove(void)
+{
+    VARIANT key, item;
+    IDictionary *dict;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    if (0)
+        hr = IDictionary_Remove(dict, NULL);
+
+    /* nothing added yet */
+    V_VT(&key) = VT_R4;
+    V_R4(&key) = 0.0;
+    hr = IDictionary_Remove(dict, &key);
+    ok(hr == CTL_E_ELEMENT_NOT_FOUND, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&item);
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_Remove(dict, &key);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    IDictionary_Release(dict);
+}
+
+static void test_Item(void)
+{
+    VARIANT key, item;
+    IDictionary *dict;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 10;
+    V_VT(&item) = VT_I2;
+    V_I2(&item) = 123;
+    hr = IDictionary_get_Item(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&item) == VT_EMPTY, "got %d\n", V_VT(&item));
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 10;
+    V_VT(&item) = VT_I2;
+    hr = IDictionary_get_Item(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&item) == VT_EMPTY, "got %d\n", V_VT(&item));
+
+    IDictionary_Release(dict);
+}
+
+static void test_Add(void)
+{
+    VARIANT item, key1, key2, hash1, hash2;
+    IDictionary *dict;
+    HRESULT hr;
+    BSTR str;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    str = SysAllocString(L"testW");
+    V_VT(&key1) = VT_I2;
+    V_I2(&key1) = 1;
+    V_VT(&item) = VT_BSTR|VT_BYREF;
+    V_BSTRREF(&item) = &str;
+    hr = IDictionary_Add(dict, &key1, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_get_Item(dict, &key1, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&item) == VT_BSTR, "got %d\n", V_VT(&item));
+
+    SysFreeString(str);
+
+    /* Items with matching key hashes, float keys. */
+    V_VT(&key1) = VT_R4;
+    V_R4(&key1) = 2175.0;
+
+    V_VT(&key2) = VT_R4;
+    V_R4(&key2) = 6259.0;
+
+    VariantInit(&hash1);
+    hr = IDictionary_get_HashVal(dict, &key1, &hash1);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    VariantInit(&hash2);
+    hr = IDictionary_get_HashVal(dict, &key1, &hash2);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&hash1) == VT_I4, "Unexpected type %d.\n", V_VT(&hash1));
+    ok(V_VT(&hash2) == VT_I4, "Unexpected type %d.\n", V_VT(&hash2));
+    ok(V_I4(&hash1) == V_I4(&hash2), "Unexpected hash %#lx.\n", V_I4(&hash1));
+
+    V_VT(&item) = VT_BSTR;
+    V_BSTR(&item) = SysAllocString(L"float1");
+
+    hr = IDictionary_Add(dict, &key1, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    hr = IDictionary_Add(dict, &key2, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key1) = VT_I4;
+    V_I4(&key1) = 2175;
+
+    hr = IDictionary_Add(dict, &key1, &item);
+    ok(hr == CTL_E_KEY_ALREADY_EXISTS, "Unexpected hr %#lx.\n", hr);
+
+    VariantClear(&item);
+
+    /* Empty and null keys. */
+    hr = IDictionary_RemoveAll(dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key1) = VT_EMPTY;
+    V_I4(&key1) = 1;
+
+    V_VT(&item) = VT_BSTR;
+    V_BSTR(&item) = SysAllocString(L"empty");
+
+    hr = IDictionary_Add(dict, &key1, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key2) = VT_EMPTY;
+    V_I4(&key2) = 2;
+
+    hr = IDictionary_Add(dict, &key2, &item);
+    ok(hr == CTL_E_KEY_ALREADY_EXISTS, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key2) = VT_NULL;
+    V_I4(&key2) = 2;
+
+    hr = IDictionary_Add(dict, &key2, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_RemoveAll(dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_Add(dict, &key2, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_Add(dict, &key2, &item);
+    ok(hr == CTL_E_KEY_ALREADY_EXISTS, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_Add(dict, &key1, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantClear(&item);
+
+    IDictionary_Release(dict);
+}
+
+static void add_str_item(IDictionary *dict, const WCHAR *name, int value)
+{
+    VARIANT key, item;
+    HRESULT hr;
+
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(name);
+    V_VT(&item) = VT_I2;
+    V_I2(&item) = value;
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Add %s: %#lx.\n", wine_dbgstr_w(name), hr);
+    VariantClear(&key);
+}
+
+static void check_key_at(IDictionary *dict, LONG index, const WCHAR *expect, BOOL todo)
+{
+    VARIANT keys, key;
+    HRESULT hr;
+
+    VariantInit(&keys);
+    hr = IDictionary_Keys(dict, &keys);
+    ok(hr == S_OK, "Keys: %#lx.\n", hr);
+
+    VariantInit(&key);
+    hr = SafeArrayGetElement(V_ARRAY(&keys), &index, &key);
+    ok(hr == S_OK, "GetElement %ld: %#lx.\n", index, hr);
+    todo_wine_if(todo) ok(V_VT(&key) == VT_BSTR && !lstrcmpW(V_BSTR(&key), expect),
+            "key at %ld: got %s, expected %s.\n", index, wine_dbgstr_variant(&key), wine_dbgstr_w(expect));
+    VariantClear(&key);
+    VariantClear(&keys);
+}
+
+static BOOL exists_str(IDictionary *dict, const WCHAR *name)
+{
+    VARIANT_BOOL exists = VARIANT_FALSE;
+    VARIANT key;
+    HRESULT hr;
+
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(name);
+    hr = IDictionary_Exists(dict, &key, &exists);
+    ok(hr == S_OK, "Exists %s: %#lx.\n", wine_dbgstr_w(name), hr);
+    VariantClear(&key);
+    return exists == VARIANT_TRUE;
+}
+
+static void test_put_Key(void)
+{
+    VARIANT key, newkey, item;
+    IDictionary *dict;
+    BOOL has_y;
+    LONG count;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    add_str_item(dict, L"a", 1);
+    add_str_item(dict, L"b", 2);
+    add_str_item(dict, L"c", 3);
+
+    /* Renaming an existing key keeps its value and enumeration position. */
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(L"b");
+    V_VT(&newkey) = VT_BSTR;
+    V_BSTR(&newkey) = SysAllocString(L"x");
+    hr = IDictionary_put_Key(dict, &key, &newkey);
+    ok(hr == S_OK, "put_Key: %#lx.\n", hr);
+    VariantClear(&key);
+    VariantClear(&newkey);
+
+    ok(!exists_str(dict, L"b"), "old key 'b' should be gone\n");
+    ok(exists_str(dict, L"x"), "new key 'x' should exist\n");
+
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(L"x");
+    VariantInit(&item);
+    hr = IDictionary_get_Item(dict, &key, &item);
+    ok(hr == S_OK, "get_Item: %#lx.\n", hr);
+    ok(V_VT(&item) == VT_I2 && V_I2(&item) == 2, "renamed item: %s.\n", wine_dbgstr_variant(&item));
+    VariantClear(&key);
+    VariantClear(&item);
+
+    hr = IDictionary_get_Count(dict, &count);
+    ok(hr == S_OK, "get_Count: %#lx.\n", hr);
+    ok(count == 3, "Unexpected count %ld.\n", count);
+
+    check_key_at(dict, 0, L"a", FALSE);
+    check_key_at(dict, 1, L"x", FALSE);
+    check_key_at(dict, 2, L"c", FALSE);
+
+    /* Renaming a key that does not exist fails and changes nothing. */
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(L"zzz");
+    V_VT(&newkey) = VT_BSTR;
+    V_BSTR(&newkey) = SysAllocString(L"y");
+    hr = IDictionary_put_Key(dict, &key, &newkey);
+    ok(hr == CTL_E_ELEMENT_NOT_FOUND, "put_Key of missing key: %#lx.\n", hr);
+    VariantClear(&key);
+    VariantClear(&newkey);
+
+    hr = IDictionary_get_Count(dict, &count);
+    ok(hr == S_OK, "get_Count: %#lx.\n", hr);
+    ok(count == 3, "Unexpected count %ld.\n", count);
+    has_y = exists_str(dict, L"y");
+    ok(!has_y, "missing-key rename should not create 'y'\n");
+
+    IDictionary_Release(dict);
+
+    /* Renaming onto an existing key fails and leaves the dictionary intact. */
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    add_str_item(dict, L"a", 1);
+    add_str_item(dict, L"b", 2);
+
+    V_VT(&key) = VT_BSTR;
+    V_BSTR(&key) = SysAllocString(L"b");
+    V_VT(&newkey) = VT_BSTR;
+    V_BSTR(&newkey) = SysAllocString(L"a");
+    hr = IDictionary_put_Key(dict, &key, &newkey);
+    ok(hr == CTL_E_KEY_ALREADY_EXISTS, "put_Key onto existing key: %#lx.\n", hr);
+    VariantClear(&key);
+    VariantClear(&newkey);
+
+    ok(exists_str(dict, L"b"), "key 'b' should be intact after failed rename\n");
+    hr = IDictionary_get_Count(dict, &count);
+    ok(hr == S_OK, "get_Count: %#lx.\n", hr);
+    ok(count == 2, "Unexpected count %ld.\n", count);
+
+    IDictionary_Release(dict);
+}
+
+/* Add two keys to a fresh dictionary; returns TRUE if the second key is
+ * treated as a duplicate of the first. */
+static BOOL keys_match(VARIANT *key1, VARIANT *key2)
+{
+    IDictionary *dict;
+    VARIANT item;
+    HRESULT hr;
+
+    if (FAILED(CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict)))
+        return FALSE;
+
+    V_VT(&item) = VT_I2;
+    V_I2(&item) = 1;
+    if (FAILED(IDictionary_Add(dict, key1, &item)))
+    {
+        IDictionary_Release(dict);
+        return FALSE;
+    }
+
+    hr = IDictionary_Add(dict, key2, &item);
+    IDictionary_Release(dict);
+    return hr == CTL_E_KEY_ALREADY_EXISTS;
+}
+
+static void test_empty_key(void)
+{
+    static const VARTYPE zero_keys[] = {
+        VT_I2, VT_I4, VT_UI1, VT_R4, VT_R8, VT_DATE,
+    };
+    VARIANT_BOOL exists;
+    IDictionary *dict;
+    VARIANT a, b, item;
+    HRESULT hr;
+    unsigned i;
+
+    /* Empty matches the zero/default value of any numeric type. */
+    for (i = 0; i < ARRAY_SIZE(zero_keys); i++)
+    {
+        V_VT(&a) = VT_EMPTY;
+        V_VT(&b) = zero_keys[i];
+        if (zero_keys[i] == VT_R8 || zero_keys[i] == VT_DATE)
+            V_R8(&b) = 0.0;
+        else if (zero_keys[i] == VT_R4)
+            V_R4(&b) = 0.0f;
+        else
+            V_I4(&b) = 0;
+        ok(keys_match(&a, &b), "Empty should match zero key vt %d\n", zero_keys[i]);
+    }
+
+    /* Empty matches the empty string, but not a non-empty one. */
+    V_VT(&a) = VT_EMPTY;
+    V_VT(&b) = VT_BSTR;
+    V_BSTR(&b) = SysAllocString(L"");
+    ok(keys_match(&a, &b), "Empty should match empty string\n");
+    VariantClear(&b);
+
+    V_VT(&b) = VT_BSTR;
+    V_BSTR(&b) = SysAllocString(L"0");
+    ok(!keys_match(&a, &b), "Empty should not match \"0\"\n");
+    VariantClear(&b);
+
+    /* Empty does not match a non-zero number or Null. */
+    V_VT(&b) = VT_I2;
+    V_I2(&b) = 5;
+    ok(!keys_match(&a, &b), "Empty should not match I2 5\n");
+
+    V_VT(&b) = VT_NULL;
+    ok(!keys_match(&a, &b), "Empty should not match Null\n");
+
+    /* A numeric zero does not match the empty string (only Empty bridges). */
+    V_VT(&a) = VT_I2;
+    V_I2(&a) = 0;
+    V_VT(&b) = VT_BSTR;
+    V_BSTR(&b) = SysAllocString(L"");
+    ok(!keys_match(&a, &b), "I2 0 should not match empty string\n");
+    VariantClear(&b);
+
+    /* Null matches only Null. */
+    V_VT(&a) = VT_NULL;
+    V_VT(&b) = VT_NULL;
+    ok(keys_match(&a, &b), "Null should match Null\n");
+
+    /* Exists and Remove accept an Empty key, matching a zero-valued entry. */
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&a) = VT_I2;
+    V_I2(&a) = 0;
+    VariantInit(&item);
+    hr = IDictionary_Add(dict, &a, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&b) = VT_EMPTY;
+    exists = VARIANT_FALSE;
+    hr = IDictionary_Exists(dict, &b, &exists);
+    ok(hr == S_OK, "Exists with Empty key: %#lx.\n", hr);
+    ok(exists == VARIANT_TRUE, "Empty should find I2 0, got %x\n", exists);
+
+    hr = IDictionary_Remove(dict, &b);
+    ok(hr == S_OK, "Remove with Empty key: %#lx.\n", hr);
+
+    IDictionary_Release(dict);
+}
+
+static void test_bool_key(void)
+{
+    VARIANT_BOOL exists;
+    IDictionary *dict;
+    VARIANT a, b, item;
+    HRESULT hr;
+
+    /* Boolean keys match the equal numeric value across types: True is -1,
+     * False is 0. */
+    V_VT(&a) = VT_BOOL;
+    V_BOOL(&a) = VARIANT_TRUE;
+    V_VT(&b) = VT_I2;
+    V_I2(&b) = -1;
+    ok(keys_match(&a, &b), "True should match I2 -1\n");
+
+    V_VT(&a) = VT_BOOL;
+    V_BOOL(&a) = VARIANT_FALSE;
+    V_VT(&b) = VT_I2;
+    V_I2(&b) = 0;
+    ok(keys_match(&a, &b), "False should match I2 0\n");
+
+    /* False is the zero/default value, so it matches an Empty key. */
+    V_VT(&a) = VT_BOOL;
+    V_BOOL(&a) = VARIANT_FALSE;
+    V_VT(&b) = VT_EMPTY;
+    ok(keys_match(&a, &b), "False should match Empty\n");
+
+    /* True and False are distinct keys. */
+    V_VT(&a) = VT_BOOL;
+    V_BOOL(&a) = VARIANT_TRUE;
+    V_VT(&b) = VT_BOOL;
+    V_BOOL(&b) = VARIANT_FALSE;
+    ok(!keys_match(&a, &b), "True should not match False\n");
+
+    /* A script can use a comparison result (a Boolean) as the key to Exists
+     * and Remove. */
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&a) = VT_I2;
+    V_I2(&a) = -1;
+    VariantInit(&item);
+    hr = IDictionary_Add(dict, &a, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&b) = VT_BOOL;
+    V_BOOL(&b) = VARIANT_TRUE;
+    exists = VARIANT_FALSE;
+    hr = IDictionary_Exists(dict, &b, &exists);
+    ok(hr == S_OK, "Exists with Boolean key: %#lx.\n", hr);
+    ok(exists == VARIANT_TRUE, "True should find I2 -1, got %x\n", exists);
+
+    hr = IDictionary_Remove(dict, &b);
+    ok(hr == S_OK, "Remove with Boolean key: %#lx.\n", hr);
+
+    IDictionary_Release(dict);
+}
+
+static void test_IEnumVARIANT(void)
+{
+    IUnknown *enum1, *enum2;
+    IEnumVARIANT *enumvar;
+    VARIANT key, item;
+    IDictionary *dict;
+    ULONG fetched;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void**)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    if (0) /* crashes on native */
+        hr = IDictionary__NewEnum(dict, NULL);
+
+    hr = IDictionary__NewEnum(dict, &enum1);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary__NewEnum(dict, &enum2);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(enum1 != enum2, "got %p, %p\n", enum2, enum1);
+    IUnknown_Release(enum2);
+
+    hr = IUnknown_QueryInterface(enum1, &IID_IEnumVARIANT, (void**)&enumvar);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    IUnknown_Release(enum1);
+
+    /* dictionary is empty */
+    hr = IEnumVARIANT_Skip(enumvar, 1);
+    ok(hr == S_FALSE, "Unexpected hr %#lx.\n", hr);
+
+    hr = IEnumVARIANT_Skip(enumvar, 0);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 1;
+    V_VT(&item) = VT_I4;
+    V_I4(&item) = 100;
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IEnumVARIANT_Skip(enumvar, 0);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IEnumVARIANT_Reset(enumvar);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    hr = IEnumVARIANT_Skip(enumvar, 1);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    hr = IEnumVARIANT_Skip(enumvar, 1);
+    ok(hr == S_FALSE, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 4000;
+    V_VT(&item) = VT_I4;
+    V_I4(&item) = 200;
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 0;
+    V_VT(&item) = VT_I4;
+    V_I4(&item) = 300;
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IEnumVARIANT_Reset(enumvar);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&key);
+    hr = IEnumVARIANT_Next(enumvar, 1, &key, &fetched);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&key) == VT_I2, "got %d\n", V_VT(&key));
+    ok(V_I2(&key) == 1, "got %d\n", V_I2(&key));
+    ok(fetched == 1, "Unexpected value %lu.\n", fetched);
+
+    hr = IEnumVARIANT_Reset(enumvar);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    hr = IDictionary_Remove(dict, &key);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&key);
+    hr = IEnumVARIANT_Next(enumvar, 1, &key, &fetched);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&key) == VT_I2, "got %d\n", V_VT(&key));
+    ok(V_I2(&key) == 4000, "got %d\n", V_I2(&key));
+    ok(fetched == 1, "Unexpected value %lu.\n", fetched);
+
+    VariantInit(&key);
+    hr = IEnumVARIANT_Next(enumvar, 1, &key, &fetched);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&key) == VT_I2, "got %d\n", V_VT(&key));
+    ok(V_I2(&key) == 0, "got %d\n", V_I2(&key));
+    ok(fetched == 1, "Unexpected value %lu.\n", fetched);
+
+    /* enumeration reached the bottom, add one more pair */
+    VariantInit(&key);
+    hr = IEnumVARIANT_Next(enumvar, 1, &key, &fetched);
+    ok(hr == S_FALSE, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 13;
+    V_VT(&item) = VT_I4;
+    V_I4(&item) = 350;
+    hr = IDictionary_Add(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    /* still doesn't work until Reset() */
+    VariantInit(&key);
+    hr = IEnumVARIANT_Next(enumvar, 1, &key, &fetched);
+    ok(hr == S_FALSE, "Unexpected hr %#lx.\n", hr);
+
+    IEnumVARIANT_Release(enumvar);
+    IDictionary_Release(dict);
+}
+
+static void test_putref_Item(void)
+{
+    IUnknown *obj = &test_unk;
+    VARIANT key, item, item2;
+    IDictionary *dict;
+    HRESULT hr;
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDictionary, (void **)&dict);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 10;
+    V_VT(&item) = VT_UNKNOWN;
+    V_UNKNOWN(&item) = obj;
+    hr = IDictionary_putref_Item(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+
+    VariantInit(&item2);
+    hr = IDictionary_get_Item(dict, &key, &item2);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&item2) == VT_UNKNOWN, "Unexpected type.\n");
+    ok(V_UNKNOWN(&item2) == obj, "Unexpected value.\n");
+    VariantClear(&item2);
+
+    V_VT(&key) = VT_I2;
+    V_I2(&key) = 11;
+    V_VT(&item) = VT_UNKNOWN|VT_BYREF;
+    V_UNKNOWNREF(&item) = &obj;
+    hr = IDictionary_putref_Item(dict, &key, &item);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    hr = IDictionary_get_Item(dict, &key, &item2);
+    ok(hr == S_OK, "Unexpected hr %#lx.\n", hr);
+    ok(V_VT(&item2) == VT_UNKNOWN, "Unexpected type.\n");
+    ok(V_UNKNOWN(&item2) == obj, "Unexpected value.\n");
+
+    IDictionary_Release(dict);
+}
+
+START_TEST(dictionary)
+{
+    IDispatch *disp;
+    HRESULT hr;
+
+    CoInitialize(NULL);
+
+    hr = CoCreateInstance(&CLSID_Dictionary, NULL, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER,
+            &IID_IDispatch, (void**)&disp);
+    if(FAILED(hr)) {
+        win_skip("Dictionary object is not supported: hr %#lx.\n", hr);
+        CoUninitialize();
+        return;
+    }
+    IDispatch_Release(disp);
+
+    test_interfaces();
+    test_comparemode();
+    test_hash_value();
+    test_Exists();
+    test_Keys();
+    test_Remove();
+    test_Item();
+    test_Add();
+    test_object_key_hashfail();
+    test_put_Key();
+    test_empty_key();
+    test_bool_key();
+    test_IEnumVARIANT();
+    test_putref_Item();
+
+    CoUninitialize();
+}

@@ -1,0 +1,11 @@
+@ stub ComDBClaimNextFreePort
+@ stub ComDBClaimPort
+@ stdcall ComDBClose(long)
+@ stub ComDBGetCurrentPortUsage
+@ stdcall ComDBOpen(ptr)
+@ stub ComDBReleasePort
+@ stub ComDBResizeDatabase
+@ stub ParallelPortPropPageProvider
+@ stub PortsClassInstaller
+@ stub SerialDisplayAdvancedSettings
+@ stub SerialPortPropPageProvider
