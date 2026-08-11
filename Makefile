@@ -1,7 +1,7 @@
 ROOT := $(CURDIR)
 BASH := $(if $(wildcard /var/jb/usr/bin/bash),/var/jb/usr/bin/bash,/bin/bash)
 
-.PHONY: verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build x64-components x64-runtime x64-tipa verify-fex
+.PHONY: verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa verify-fex
 
 verify: ; $(BASH) scripts/verify-source.sh
 preflight: ; $(BASH) scripts/preflight-device.sh
@@ -22,4 +22,7 @@ arm64-smoke-build: ; $(BASH) scripts/build-arm64-smoke-linux.sh
 x64-components: ; $(BASH) scripts/build-experimental-x86_64-linux.sh
 x64-runtime: ; $(BASH) scripts/assemble-x86_64-runtime.sh
 x64-tipa: ; JUICE_X64_RUNTIME_STAGE="$(ROOT)/build/x86_64-runtime-stage" $(BASH) scripts/package-tipa.sh
+win32-components: ; $(BASH) scripts/build-experimental-win32-linux.sh
+win32-runtime: ; JUICE_REQUIRE_WIN32=1 $(BASH) scripts/assemble-x86_64-runtime.sh
+win32-tipa: ; JUICE_X64_RUNTIME_STAGE="$(ROOT)/build/x86_64-runtime-stage" $(BASH) scripts/package-tipa.sh
 verify-fex: ; $(BASH) scripts/fetch-fex-linux.sh && $(BASH) scripts/verify-fex-patch.sh
