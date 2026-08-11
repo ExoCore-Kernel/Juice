@@ -38,6 +38,16 @@ static char **CopyStrings(NSArray<NSString *> *a){char **v=calloc(a.count+1,size
 static void FreeStrings(char **v){if(!v)return;for(size_t i=0;v[i];i++)free(v[i]);free(v);}
 static void CopyControlString(char *destination,size_t capacity,NSString *value){if(!capacity)return;destination[0]=0;if(value.length) [value getCString:destination maxLength:capacity encoding:NSUTF8StringEncoding];}
 
+@interface WineWindowState : NSObject
+@property(nonatomic) uint64_t hwnd;
+@property(nonatomic) CGRect frame;
+@property(nonatomic,strong) UIImage *image;
+@property(nonatomic) BOOL visible;
+@property(nonatomic) int clientFD;
+@end
+@implementation WineWindowState
+@end
+
 @interface WineCanvas : UIImageView
 @property(nonatomic) uint64_t hwnd;
 @property(nonatomic) BOOL rightClick;
@@ -60,16 +70,22 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
 @property(nonatomic,strong) UISegmentedControl *mode,*clickMode;
 @property(nonatomic,strong) UISwitch *x64Switch,*winebootSwitch;
 @property(nonatomic,strong) UIStackView *form;
-@property(nonatomic,strong) UIButton *fullscreenButton;
+@property(nonatomic,strong) UIButton *fullscreenButton,*experimentalButton;
 @property(nonatomic,strong) NSLayoutConstraint *canvasHeightConstraint,*canvasBottomConstraint;
 @property(nonatomic,copy) NSArray<NSLayoutConstraint *> *windowedConstraints;
 @property(nonatomic) int listenFD,activeClient,controlListenFD,controlPickerFD;
 @property(nonatomic,strong) NSMutableArray<NSNumber *> *clients;
+@property(nonatomic,strong) NSMutableDictionary<NSNumber *,WineWindowState *> *wineWindows;
+@property(nonatomic,strong) NSMutableArray<NSNumber *> *wineWindowOrder;
 @property(nonatomic,copy) NSString *socketPath,*controlSocketPath,*grape,*prefix;
 @property(nonatomic,strong) UIDocumentPickerViewController *controlPicker;
 @property(nonatomic) uint32_t controlRequestID,controlFilters;
 @property(nonatomic) pid_t child,server;
-@property(nonatomic) int childInput;
+@property(nonatomic) int childInput,lastLegacyClient,inputClient;
+@property(nonatomic) uint64_t lastLegacyHwnd,inputHwnd;
+@property(nonatomic) CGSize wineDesktopSize;
+@property(nonatomic,strong) UIImage *lastLegacyImage;
+@property(nonatomic) BOOL experimentalMultiWindow,experimentalX64;
 @property(nonatomic) BOOL didAutoLaunch,reportedFrame,fullscreen,usingX64,serverUsingX64,desktopMode,prefixNeedsInitialization;
 @property(nonatomic,copy) NSString *persistentLogPath;
 @end
@@ -79,6 +95,15 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  [super viewDidLoad];
  self.view.backgroundColor=UIColor.systemBackgroundColor;
  self.clients=[NSMutableArray array];
+ self.wineWindows=[NSMutableDictionary dictionary];
+ self.wineWindowOrder=[NSMutableArray array];
+ self.wineDesktopSize=CGSizeMake(1024,768);
+ self.lastLegacyClient=self.inputClient=-1;
+ NSUserDefaults *defaults=NSUserDefaults.standardUserDefaults;
+ id multi=[defaults objectForKey:@"JuiceExperimentalMultiWindow"];
+ id x64=[defaults objectForKey:@"JuiceExperimentalX64"];
+ self.experimentalMultiWindow=multi?[multi boolValue]:NO;
+ self.experimentalX64=x64?[x64 boolValue]:YES;
  self.listenFD=self.activeClient=self.controlListenFD=self.controlPickerFD=-1;
  self.child=self.server=-1;
  self.childInput=-1;
@@ -90,6 +115,8 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  [self buildUI];
  [self startDisplayServer];
  [self startControlServer];
+ [self append:[NSString stringWithFormat:@"EXPERIMENTAL_STATE multi_window=%d x86_64=%d\n",
+  self.experimentalMultiWindow,self.experimentalX64]];
  [self append:@"GUI_READY\n"];
 }
 -(void)viewDidAppear:(BOOL)animated
@@ -103,7 +130,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  if([NSFileManager.defaultManager fileExistsAtPath:x64Flag])
  {
   [NSFileManager.defaultManager removeItemAtPath:x64Flag error:nil];
-  self.x64Switch.on=YES;
+  [self applyExperimentalX64Enabled:YES];
   self.exeField.text=[NSBundle.mainBundle.bundlePath stringByAppendingPathComponent:@"Grape-X64/tests/x86_64-smoke.exe"];
   [self append:@"AUTO_LAUNCH_X86_64_SMOKE\n"];
  }
@@ -125,13 +152,13 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   dispatch_get_main_queue(),^{[self launchRequested];});
 }
 -(UITextField *)field:(NSString *)text{UITextField *f=[UITextField new];f.borderStyle=UITextBorderStyleRoundedRect;f.placeholder=text;f.autocorrectionType=UITextAutocorrectionTypeNo;f.autocapitalizationType=UITextAutocapitalizationTypeNone;return f;}
--(UIButton *)button:(NSString *)title action:(SEL)a{UIButton *b=[UIButton buttonWithType:UIButtonTypeSystem];[b setTitle:title forState:0];[b addTarget:self action:a forControlEvents:UIControlEventTouchUpInside];return b;}
+-(UIButton *)button:(NSString *)title action:(SEL)a{UIButton *b=[UIButton buttonWithType:UIButtonTypeSystem];[b setTitle:title forState:0];if(a)[b addTarget:self action:a forControlEvents:UIControlEventTouchUpInside];return b;}
 -(void)buildUI
 {
  self.canvas=[WineCanvas new];
  self.canvas.translatesAutoresizingMaskIntoConstraints=NO;
  __weak typeof(self) weakSelf=self;
- self.canvas.input=^(JuiceMsg message){[weakSelf broadcast:&message size:sizeof(message)];};
+ self.canvas.input=^(JuiceMsg message){[weakSelf handleCanvasInput:message];};
 
  self.log=[UITextView new];
  self.log.editable=NO;
@@ -156,7 +183,9 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  [self.clickMode addTarget:self action:@selector(clickModeChanged) forControlEvents:UIControlEventValueChanged];
 
  self.x64Switch=[UISwitch new];
- self.x64Switch.on=NO;
+ self.x64Switch.on=self.experimentalX64;
+ [self.x64Switch addTarget:self action:@selector(experimentalX64SwitchChanged)
+  forControlEvents:UIControlEventValueChanged];
  UILabel *x64Label=[UILabel new];
  x64Label.text=@"Experimental x86_64 (auto-detect)";
  x64Label.font=[UIFont systemFontOfSize:13 weight:UIFontWeightSemibold];
@@ -202,10 +231,20 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  self.fullscreenButton.layer.cornerRadius=7;
  self.fullscreenButton.contentEdgeInsets=UIEdgeInsetsMake(6,10,6,10);
 
+ self.experimentalButton=[self button:@"Experimental" action:nil];
+ self.experimentalButton.translatesAutoresizingMaskIntoConstraints=NO;
+ self.experimentalButton.backgroundColor=[UIColor colorWithWhite:0 alpha:.55];
+ self.experimentalButton.tintColor=UIColor.whiteColor;
+ self.experimentalButton.layer.cornerRadius=7;
+ self.experimentalButton.contentEdgeInsets=UIEdgeInsetsMake(6,10,6,10);
+ self.experimentalButton.showsMenuAsPrimaryAction=YES;
+ [self rebuildExperimentalMenu];
+
  [self.view addSubview:self.canvas];
  [self.view addSubview:self.form];
  [self.view addSubview:self.log];
  [self.view addSubview:self.fullscreenButton];
+ [self.view addSubview:self.experimentalButton];
  UILayoutGuide *safe=self.view.safeAreaLayoutGuide;
  self.canvasHeightConstraint=[self.canvas.heightAnchor constraintEqualToAnchor:safe.heightAnchor multiplier:.48];
  self.canvasBottomConstraint=[self.canvas.bottomAnchor constraintEqualToAnchor:safe.bottomAnchor];
@@ -225,7 +264,9 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   [self.canvas.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor],
   self.canvasHeightConstraint,
   [self.fullscreenButton.topAnchor constraintEqualToAnchor:safe.topAnchor constant:6],
-  [self.fullscreenButton.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor constant:-8]
+  [self.fullscreenButton.trailingAnchor constraintEqualToAnchor:safe.trailingAnchor constant:-8],
+  [self.experimentalButton.topAnchor constraintEqualToAnchor:safe.topAnchor constant:6],
+  [self.experimentalButton.leadingAnchor constraintEqualToAnchor:safe.leadingAnchor constant:8]
  ]];
  [NSLayoutConstraint activateConstraints:self.windowedConstraints];
 }
@@ -268,10 +309,142 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  [NSUserDefaults.standardUserDefaults setBool:self.winebootSwitch.on forKey:@"JuiceSkipWineboot"];
  [self append:[NSString stringWithFormat:@"WINEBOOT_OPTION skip_after_init=%d\n",self.winebootSwitch.on]];
 }
--(BOOL)broadcastMessage:(JuiceMsg *)message payload:(NSData *)payload
+-(void)experimentalX64SwitchChanged
+{
+ [self applyExperimentalX64Enabled:self.x64Switch.on];
+}
+-(void)applyExperimentalX64Enabled:(BOOL)enabled
+{
+ self.experimentalX64=enabled;
+ self.x64Switch.on=enabled;
+ [NSUserDefaults.standardUserDefaults setBool:enabled forKey:@"JuiceExperimentalX64"];
+ [self rebuildExperimentalMenu];
+ [self append:[NSString stringWithFormat:@"EXPERIMENTAL_X86_64 enabled=%d\n",enabled]];
+}
+-(void)applyExperimentalMultiWindowEnabled:(BOOL)enabled
+{
+ self.experimentalMultiWindow=enabled;
+ self.inputClient=-1;
+ self.inputHwnd=0;
+ [NSUserDefaults.standardUserDefaults setBool:enabled forKey:@"JuiceExperimentalMultiWindow"];
+ [self rebuildExperimentalMenu];
+ if(enabled)[self compositeWineDesktop];
+ else
+ {
+  self.canvas.image=self.lastLegacyImage;
+  self.canvas.hwnd=self.lastLegacyHwnd;
+  if(self.lastLegacyClient>=0)self.activeClient=self.lastLegacyClient;
+ }
+ [self append:[NSString stringWithFormat:@"EXPERIMENTAL_MULTI_WINDOW enabled=%d tracked=%lu\n",
+  enabled,(unsigned long)self.wineWindows.count]];
+}
+-(void)rebuildExperimentalMenu
+{
+ if(!self.experimentalButton)return;
+ __weak typeof(self) weakSelf=self;
+ UIAction *multi=[UIAction actionWithTitle:@"Multi-window compositing"
+  image:nil identifier:nil discoverabilityTitle:@"Render menus, dialogs and popups over their application"
+  attributes:0 state:self.experimentalMultiWindow?UIMenuElementStateOn:UIMenuElementStateOff
+  handler:^(__unused UIAction *action){[weakSelf applyExperimentalMultiWindowEnabled:!weakSelf.experimentalMultiWindow];}];
+ UIAction *x64=[UIAction actionWithTitle:@"x86-64 / FEX translation"
+  image:nil identifier:nil discoverabilityTitle:@"Allow the experimental x86-64 runtime"
+  attributes:0 state:self.experimentalX64?UIMenuElementStateOn:UIMenuElementStateOff
+  handler:^(__unused UIAction *action){[weakSelf applyExperimentalX64Enabled:!weakSelf.experimentalX64];}];
+ self.experimentalButton.menu=[UIMenu menuWithTitle:@"Experimental features" children:@[multi,x64]];
+}
+-(WineWindowState *)windowStateForHwnd:(uint64_t)hwnd create:(BOOL)create client:(int)fd
+{
+ NSNumber *key=@(hwnd);
+ WineWindowState *state=self.wineWindows[key];
+ if(!state&&create)
+ {
+  state=[WineWindowState new];
+  state.hwnd=hwnd;
+  state.visible=YES;
+  state.clientFD=fd;
+  self.wineWindows[key]=state;
+  [self.wineWindowOrder addObject:key];
+ }
+ if(state&&fd>=0)state.clientFD=fd;
+ return state;
+}
+-(void)updateWindowMessage:(JuiceMsg)message client:(int)fd
+{
+ NSNumber *key=@(message.hwnd);
+ WineWindowState *state=self.wineWindows[key];
+ BOOL newlyCreated=!state;
+ BOOL wasVisible=state.visible;
+ state=[self windowStateForHwnd:message.hwnd create:YES client:fd];
+ if(message.width>0&&message.height>0)
+  state.frame=CGRectMake(message.x,message.y,message.width,message.height);
+ state.visible=message.flags!=0;
+ if((newlyCreated||(state.visible&&!wasVisible))&&state.visible)
+ {
+  [self.wineWindowOrder removeObject:key];
+  [self.wineWindowOrder addObject:key];
+ }
+ if(!state.visible&&self.inputHwnd==state.hwnd)
+ {
+  self.inputHwnd=0;
+  self.inputClient=-1;
+ }
+ if(self.experimentalMultiWindow)[self compositeWineDesktop];
+}
+-(void)destroyWindowHwnd:(uint64_t)hwnd
+{
+ NSNumber *key=@(hwnd);
+ [self.wineWindows removeObjectForKey:key];
+ [self.wineWindowOrder removeObject:key];
+ if(self.inputHwnd==hwnd){self.inputHwnd=0;self.inputClient=-1;}
+ if(self.canvas.hwnd==hwnd)self.canvas.hwnd=0;
+ if(self.experimentalMultiWindow)[self compositeWineDesktop];
+}
+-(void)removeWindowsForClient:(int)fd
+{
+ NSMutableArray<NSNumber *> *remove=[NSMutableArray array];
+ for(NSNumber *key in self.wineWindows)
+  if(self.wineWindows[key].clientFD==fd)[remove addObject:key];
+ for(NSNumber *key in remove)[self.wineWindows removeObjectForKey:key];
+ [self.wineWindowOrder removeObjectsInArray:remove];
+ if(self.inputClient==fd){self.inputClient=-1;self.inputHwnd=0;}
+ if(self.experimentalMultiWindow&&remove.count)[self compositeWineDesktop];
+}
+-(void)compositeWineDesktop
+{
+ CGSize size=self.wineDesktopSize;
+ if(size.width<1||size.height<1)size=CGSizeMake(1024,768);
+ UIGraphicsBeginImageContextWithOptions(size,YES,1.0);
+ [[UIColor blackColor] setFill];
+ UIRectFill(CGRectMake(0,0,size.width,size.height));
+ for(NSNumber *key in self.wineWindowOrder)
+ {
+  WineWindowState *state=self.wineWindows[key];
+  if(!state.visible||!state.image)continue;
+  CGRect rect=state.frame;
+  if(rect.size.width<=0||rect.size.height<=0)
+   rect=CGRectMake(0,0,state.image.size.width,state.image.size.height);
+  [state.image drawInRect:rect];
+ }
+ UIImage *result=UIGraphicsGetImageFromCurrentImageContext();
+ UIGraphicsEndImageContext();
+ if(result)self.canvas.image=result;
+}
+-(WineWindowState *)topWindowAtPoint:(CGPoint)point
+{
+ for(NSNumber *key in self.wineWindowOrder.reverseObjectEnumerator)
+ {
+  WineWindowState *state=self.wineWindows[key];
+  if(!state.visible||!state.image)continue;
+  CGRect rect=state.frame;
+  if(rect.size.width<=0||rect.size.height<=0)
+   rect=CGRectMake(0,0,state.image.size.width,state.image.size.height);
+  if(CGRectContainsPoint(rect,point))return state;
+ }
+ return nil;
+}
+-(BOOL)sendMessage:(JuiceMsg *)message payload:(NSData *)payload toFD:(int)fd
 {
  message->size=(uint32_t)payload.length;
- int fd=self.activeClient;
  if(fd<0)return NO;
  @synchronized(self.clients)
  {
@@ -279,6 +452,36 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   if(payload.length&&!WriteAll(fd,payload.bytes,payload.length))return NO;
  }
  return YES;
+}
+-(void)handleCanvasInput:(JuiceMsg)message
+{
+ if(!self.experimentalMultiWindow)
+ {
+  [self broadcast:&message size:sizeof(message)];
+  return;
+ }
+ BOOL down=(message.flags&(INPUT_LEFT_DOWN|INPUT_RIGHT_DOWN))!=0;
+ BOOL up=(message.flags&(INPUT_LEFT_UP|INPUT_RIGHT_UP))!=0;
+ WineWindowState *target=nil;
+ if(!down&&self.inputClient>=0&&self.inputHwnd)
+  target=[self windowStateForHwnd:self.inputHwnd create:NO client:-1];
+ if(!target)target=[self topWindowAtPoint:CGPointMake(message.x,message.y)];
+ if(!target)return;
+ if(down){self.inputHwnd=target.hwnd;self.inputClient=target.clientFD;}
+ CGRect rect=target.frame;
+ message.hwnd=target.hwnd;
+ message.x=(int32_t)MAX(0,message.x-(int32_t)rect.origin.x);
+ message.y=(int32_t)MAX(0,message.y-(int32_t)rect.origin.y);
+ if(rect.size.width>0)message.x=MIN(message.x,(int32_t)rect.size.width-1);
+ if(rect.size.height>0)message.y=MIN(message.y,(int32_t)rect.size.height-1);
+ self.canvas.hwnd=target.hwnd;
+ self.activeClient=target.clientFD;
+ [self sendMessage:&message payload:nil toFD:target.clientFD];
+ if(up){self.inputHwnd=0;self.inputClient=-1;}
+}
+-(BOOL)broadcastMessage:(JuiceMsg *)message payload:(NSData *)payload
+{
+ return [self sendMessage:message payload:payload toFD:self.activeClient];
 }
 -(void)sendGuiTextTapped
 {
@@ -469,6 +672,16 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  NSString *path=[self unixPathForWindowsPath:windowsPath];
  if(action==JUICE_CONTROL_ACTION_LAUNCH_PATH)
  {
+  if(!self.experimentalX64)
+  {
+   [self append:@"EXPERIMENTAL_X86_64_LAUNCH_REJECTED reason=disabled\n"];
+   UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"Experimental x86-64 is disabled"
+    message:@"Open Experimental and enable x86-64 / FEX translation to launch this application."
+    preferredStyle:UIAlertControllerStyleAlert];
+   [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+   [self presentViewController:alert animated:YES completion:nil];
+   return;
+  }
   self.x64Switch.on=YES;
   self.exeField.text=path;
   self.argsField.text=@"";
@@ -477,7 +690,102 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  else if(action==JUICE_CONTROL_ACTION_IMPORT_ZIP)
   [self importPortableZipFromLocalPath:path];
 }
--(void)readClient:(int)fd{JuiceMsg m;pid_t peerPID=0;NSUInteger frameCount=0;while(ReadAll(fd,&m,sizeof(m))&&m.magic==JUICE_MAGIC){NSMutableData *d=nil;if(m.size){d=[NSMutableData dataWithLength:m.size];if(!ReadAll(fd,d.mutableBytes,m.size))break;}if(m.type==MSG_HELLO){peerPID=(pid_t)m.flags;[self append:[NSString stringWithFormat:@"DISPLAY_EVENT HELLO fd=%d pid=%d desktop=%dx%d dpi=%u\n",fd,peerPID,m.width,m.height,m.stride]];}else if(m.type==MSG_WINDOW){[self append:[NSString stringWithFormat:@"DISPLAY_EVENT WINDOW pid=%d hwnd=0x%llx rect=%d,%d %dx%d visible=%u\n",peerPID,(unsigned long long)m.hwnd,m.x,m.y,m.width,m.height,m.flags]];}else if(m.type==MSG_FRAME&&d){size_t expected=(size_t)m.stride*(size_t)m.height;if(expected<=d.length&&m.width>0&&m.height>0){NSData *copy=[d copy];BOOL first=(frameCount++==0);if(frameCount<=3)[self append:[NSString stringWithFormat:@"DISPLAY_EVENT FRAME pid=%d hwnd=0x%llx size=%dx%d stride=%u bytes=%u count=%lu\n",peerPID,(unsigned long long)m.hwnd,m.width,m.height,m.stride,m.size,(unsigned long)frameCount]];dispatch_async(dispatch_get_main_queue(),^{CGDataProviderRef p=CGDataProviderCreateWithCFData((__bridge CFDataRef)copy);CGColorSpaceRef c=CGColorSpaceCreateDeviceRGB();CGImageRef im=CGImageCreate(m.width,m.height,8,32,m.stride,c,kCGBitmapByteOrder32Little|kCGImageAlphaPremultipliedFirst,p,NULL,false,kCGRenderingIntentDefault);UIImage *image=[UIImage imageWithCGImage:im scale:1 orientation:UIImageOrientationUp];self.canvas.image=image;self.canvas.hwnd=m.hwnd;self.activeClient=fd;if(first){NSString *path=[NSString stringWithFormat:@"/var/mobile/Documents/Juice-frame-%d.png",peerPID];[UIImagePNGRepresentation(image) writeToFile:path atomically:YES];[self append:[NSString stringWithFormat:@"JUICE_GUI_FRAME_RECEIVED pid=%d hwnd=0x%llx frame=%dx%d path=%@\n",peerPID,(unsigned long long)m.hwnd,m.width,m.height,path]];}CGImageRelease(im);CGColorSpaceRelease(c);CGDataProviderRelease(p);});}}}[self append:[NSString stringWithFormat:@"DISPLAY_CLIENT_CLOSED fd=%d pid=%d\n",fd,peerPID]];close(fd);@synchronized(self.clients){[self.clients removeObject:@(fd)];if(self.activeClient==fd)self.activeClient=-1;}}
+-(UIImage *)imageFromBGRA:(NSData *)data width:(int)width height:(int)height stride:(uint32_t)stride
+{
+ CGDataProviderRef provider=CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
+ CGColorSpaceRef colorSpace=CGColorSpaceCreateDeviceRGB();
+ CGImageRef cgImage=CGImageCreate(width,height,8,32,stride,colorSpace,
+  kCGBitmapByteOrder32Little|kCGImageAlphaPremultipliedFirst,provider,NULL,false,
+  kCGRenderingIntentDefault);
+ UIImage *image=cgImage?[UIImage imageWithCGImage:cgImage scale:1 orientation:UIImageOrientationUp]:nil;
+ if(cgImage)CGImageRelease(cgImage);
+ CGColorSpaceRelease(colorSpace);
+ CGDataProviderRelease(provider);
+ return image;
+}
+-(void)presentFrameMessage:(JuiceMsg)message data:(NSData *)data client:(int)fd peerPID:(pid_t)peerPID first:(BOOL)first
+{
+ UIImage *image=[self imageFromBGRA:data width:message.width height:message.height stride:message.stride];
+ if(!image)return;
+ WineWindowState *state=[self windowStateForHwnd:message.hwnd create:YES client:fd];
+ if(state.frame.size.width<=0||state.frame.size.height<=0)
+  state.frame=CGRectMake(0,0,message.width,message.height);
+ state.image=image;
+ state.visible=YES;
+ self.lastLegacyImage=image;
+ self.lastLegacyHwnd=message.hwnd;
+ self.lastLegacyClient=fd;
+ if(self.experimentalMultiWindow)[self compositeWineDesktop];
+ else
+ {
+  self.canvas.image=image;
+  self.canvas.hwnd=message.hwnd;
+  self.activeClient=fd;
+ }
+ if(first)
+ {
+  NSString *path=[NSString stringWithFormat:@"/var/mobile/Documents/Juice-frame-%d.png",peerPID];
+  [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
+  [self append:[NSString stringWithFormat:@"JUICE_GUI_FRAME_RECEIVED pid=%d hwnd=0x%llx frame=%dx%d path=%@\n",
+   peerPID,(unsigned long long)message.hwnd,message.width,message.height,path]];
+ }
+}
+-(void)readClient:(int)fd
+{
+ JuiceMsg message;
+ pid_t peerPID=0;
+ NSUInteger frameCount=0;
+ while(ReadAll(fd,&message,sizeof(message))&&message.magic==JUICE_MAGIC)
+ {
+  NSMutableData *data=nil;
+  if(message.size)
+  {
+   data=[NSMutableData dataWithLength:message.size];
+   if(!ReadAll(fd,data.mutableBytes,message.size))break;
+  }
+  if(message.type==MSG_HELLO)
+  {
+   peerPID=(pid_t)message.flags;
+   [self append:[NSString stringWithFormat:@"DISPLAY_EVENT HELLO fd=%d pid=%d desktop=%dx%d dpi=%u\n",
+    fd,peerPID,message.width,message.height,message.stride]];
+   if(message.width>0&&message.height>0)
+    dispatch_async(dispatch_get_main_queue(),^{self.wineDesktopSize=CGSizeMake(message.width,message.height);});
+  }
+  else if(message.type==MSG_WINDOW)
+  {
+   [self append:[NSString stringWithFormat:@"DISPLAY_EVENT WINDOW pid=%d hwnd=0x%llx rect=%d,%d %dx%d visible=%u\n",
+    peerPID,(unsigned long long)message.hwnd,message.x,message.y,message.width,message.height,message.flags]];
+   dispatch_async(dispatch_get_main_queue(),^{[self updateWindowMessage:message client:fd];});
+  }
+  else if(message.type==MSG_DESTROY)
+  {
+   [self append:[NSString stringWithFormat:@"DISPLAY_EVENT DESTROY pid=%d hwnd=0x%llx\n",
+    peerPID,(unsigned long long)message.hwnd]];
+   dispatch_async(dispatch_get_main_queue(),^{[self destroyWindowHwnd:message.hwnd];});
+  }
+  else if(message.type==MSG_FRAME&&data)
+  {
+   size_t expected=(size_t)message.stride*(size_t)message.height;
+   if(expected<=data.length&&message.width>0&&message.height>0)
+   {
+    NSData *copy=[data copy];
+    BOOL first=(frameCount++==0);
+    if(frameCount<=3)
+     [self append:[NSString stringWithFormat:@"DISPLAY_EVENT FRAME pid=%d hwnd=0x%llx size=%dx%d stride=%u bytes=%u count=%lu\n",
+      peerPID,(unsigned long long)message.hwnd,message.width,message.height,message.stride,message.size,(unsigned long)frameCount]];
+    dispatch_async(dispatch_get_main_queue(),^{[self presentFrameMessage:message data:copy client:fd peerPID:peerPID first:first];});
+   }
+  }
+ }
+ [self append:[NSString stringWithFormat:@"DISPLAY_CLIENT_CLOSED fd=%d pid=%d\n",fd,peerPID]];
+ close(fd);
+ @synchronized(self.clients)
+ {
+  [self.clients removeObject:@(fd)];
+  if(self.activeClient==fd)self.activeClient=-1;
+ }
+ dispatch_async(dispatch_get_main_queue(),^{[self removeWindowsForClient:fd];});
+}
 -(void)broadcast:(const void *)p size:(size_t)n{int fd=self.activeClient;if(fd<0)return;@synchronized(self.clients){if([self.clients containsObject:@(fd)])WriteAll(fd,p,n);}}
 -(NSString *)candidateExePath
 {
@@ -551,9 +859,9 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   [self rejectLaunch:[NSString stringWithFormat:@"Unsupported PE machine 0x%04x.",machine]];
   return;
  }
- if(experimental&&!self.x64Switch.on)
+ if(experimental&&!self.experimentalX64)
  {
-  [self rejectLaunch:@"This is an x86_64/ARM64EC app. Enable Experimental x86_64; Juice will then select its isolated runtime automatically."];
+  [self rejectLaunch:@"This is an x86_64/ARM64EC app. Open Experimental and enable x86-64 / FEX translation."];
   return;
  }
  NSString *runtimeName=experimental?@"Grape-X64":@"Grape";
@@ -776,9 +1084,6 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   if([f destinationOfSymbolicLinkAtPath:destination error:nil])
    [f removeItemAtPath:destination error:nil];
   if(self.prefixNeedsInitialization)continue;
-  /* Prefixes persist across app upgrades. Refresh Juice-owned programs so an
-   * old template copy cannot shadow the current, signed app-bundle version.
-   * Never replace ordinary files belonging to installed applications. */
   if(juiceManaged&&[f fileExistsAtPath:destination])
    [f removeItemAtPath:destination error:nil];
   if(![f fileExistsAtPath:destination]&&
