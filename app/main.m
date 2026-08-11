@@ -33,7 +33,7 @@ typedef NS_ENUM(uint16_t, JuicePEMachine) {
 };
 
 static BOOL ReadAll(int fd,void *p,size_t n){char *b=p;while(n){ssize_t r=read(fd,b,n);if(r<=0)return NO;b+=r;n-=r;}return YES;}
-static BOOL WriteAll(int fd,const void *p,size_t n){const char *b=p;while(n){ssize_t r=write(fd,b,n);if(r<=0)return NO;b+=r;n-=r;}return YES;}
+static BOOL WriteAll(int fd,const void *p,size_t n){const char *b=p;while(n){ssize_t r=write(fd,p,n);if(r<=0)return NO;p=(const char *)p+r;n-=r;}return YES;}
 static char **CopyStrings(NSArray<NSString *> *a){char **v=calloc(a.count+1,sizeof(char *));for(NSUInteger i=0;i<a.count;i++)v[i]=strdup(a[i].UTF8String);return v;}
 static void FreeStrings(char **v){if(!v)return;for(size_t i=0;v[i];i++)free(v[i]);free(v);}
 static void CopyControlString(char *destination,size_t capacity,NSString *value){if(!capacity)return;destination[0]=0;if(value.length) [value getCString:destination maxLength:capacity encoding:NSUTF8StringEncoding];}
@@ -103,7 +103,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  id multi=[defaults objectForKey:@"JuiceExperimentalMultiWindow"];
  id x64=[defaults objectForKey:@"JuiceExperimentalX64"];
  self.experimentalMultiWindow=multi?[multi boolValue]:NO;
- self.experimentalX64=x64?[x64 boolValue]:YES;
+ self.experimentalX64=x64?[x64 boolValue]:NO;
  self.listenFD=self.activeClient=self.controlListenFD=self.controlPickerFD=-1;
  self.child=self.server=-1;
  self.childInput=-1;
@@ -342,14 +342,14 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
 {
  if(!self.experimentalButton)return;
  __weak typeof(self) weakSelf=self;
- UIAction *multi=[UIAction actionWithTitle:@"Multi-window compositing"
-  image:nil identifier:nil discoverabilityTitle:@"Render menus, dialogs and popups over their application"
-  attributes:0 state:self.experimentalMultiWindow?UIMenuElementStateOn:UIMenuElementStateOff
+ UIAction *multi=[UIAction actionWithTitle:@"Multi-window compositing" image:nil identifier:nil
   handler:^(__unused UIAction *action){[weakSelf applyExperimentalMultiWindowEnabled:!weakSelf.experimentalMultiWindow];}];
- UIAction *x64=[UIAction actionWithTitle:@"x86-64 / FEX translation"
-  image:nil identifier:nil discoverabilityTitle:@"Allow the experimental x86-64 runtime"
-  attributes:0 state:self.experimentalX64?UIMenuElementStateOn:UIMenuElementStateOff
+ multi.discoverabilityTitle=@"Render menus, dialogs and popups over their application";
+ multi.state=self.experimentalMultiWindow?UIMenuElementStateOn:UIMenuElementStateOff;
+ UIAction *x64=[UIAction actionWithTitle:@"x86-64 / FEX translation" image:nil identifier:nil
   handler:^(__unused UIAction *action){[weakSelf applyExperimentalX64Enabled:!weakSelf.experimentalX64];}];
+ x64.discoverabilityTitle=@"Allow the experimental x86-64 runtime";
+ x64.state=self.experimentalX64?UIMenuElementStateOn:UIMenuElementStateOff;
  self.experimentalButton.menu=[UIMenu menuWithTitle:@"Experimental features" children:@[multi,x64]];
 }
 -(WineWindowState *)windowStateForHwnd:(uint64_t)hwnd create:(BOOL)create client:(int)fd
@@ -711,7 +711,6 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  if(state.frame.size.width<=0||state.frame.size.height<=0)
   state.frame=CGRectMake(0,0,message.width,message.height);
  state.image=image;
- state.visible=YES;
  self.lastLegacyImage=image;
  self.lastLegacyHwnd=message.hwnd;
  self.lastLegacyClient=fd;
