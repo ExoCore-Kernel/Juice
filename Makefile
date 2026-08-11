@@ -1,7 +1,8 @@
 ROOT := $(CURDIR)
 BASH := $(if $(wildcard /var/jb/usr/bin/bash),/var/jb/usr/bin/bash,/bin/bash)
+REUSE_X64 ?= auto
 
-.PHONY: verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa verify-fex
+.PHONY: verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa reuse reuse-install verify-fex
 
 verify: ; $(BASH) scripts/verify-source.sh
 preflight: ; $(BASH) scripts/preflight-device.sh
@@ -25,4 +26,12 @@ x64-tipa: ; JUICE_X64_RUNTIME_STAGE="$(ROOT)/build/x86_64-runtime-stage" $(BASH)
 win32-components: ; $(BASH) scripts/build-experimental-win32-linux.sh
 win32-runtime: ; JUICE_REQUIRE_WIN32=1 $(BASH) scripts/assemble-x86_64-runtime.sh
 win32-tipa: ; JUICE_X64_RUNTIME_STAGE="$(ROOT)/build/x86_64-runtime-stage" $(BASH) scripts/package-tipa.sh
+reuse:
+	@test -n "$(BINARIES)" || { echo "Usage: make reuse BINARIES=/path/to/prebuilt [REUSE_X64=auto|0|1]" >&2; exit 2; }
+	@BINARIES="$(BINARIES)" JUICE_REUSE_X64="$(REUSE_X64)" $(BASH) scripts/package-reuse-tipa.sh
+reuse-install:
+	@test -n "$(BINARIES)" || { echo "Usage: make reuse-install BINARIES=/path/to/prebuilt [REUSE_X64=auto|0|1]" >&2; exit 2; }
+	@out="$(ROOT)/dist/Juice-Reuse-$$(date +%Y%m%d-%H%M%S).tipa"; \
+	 BINARIES="$(BINARIES)" JUICE_REUSE_X64="$(REUSE_X64)" $(BASH) scripts/package-reuse-tipa.sh "$$out" && \
+	 $(BASH) scripts/install-tipa-device.sh "$$out"
 verify-fex: ; $(BASH) scripts/fetch-fex-linux.sh && $(BASH) scripts/verify-fex-patch.sh
