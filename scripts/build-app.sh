@@ -24,7 +24,7 @@ mkdir -p "$OUT"
 
 "$CC" -target "arm64-apple-ios$MIN_IOS" -arch arm64 -isysroot "$SDK" \
   "-miphoneos-version-min=$MIN_IOS" -fobjc-arc -fblocks -O2 \
-  "$ROOT/app/main.m" "$ROOT/app/JuiceZip.m" \
+  "$ROOT/app/main.m" "$ROOT/app/JuiceZip.m" "$ROOT/app/JuiceLegacyWin32.m" \
   -framework UIKit -framework Foundation -framework QuartzCore \
   -framework CoreGraphics -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
