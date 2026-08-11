@@ -9,7 +9,7 @@ BUILD="${JUICE_WOW64_PE_BUILD:-$ROOT/build/wine-wow64-pe}"
 MODULES="${JUICE_X64_RUNTIME_MODULES:-$ROOT/config/runtime-modules.txt}"
 JOBS="${JUICE_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
 
-"$ROOT/scripts/configure-wine-wow64-linux.sh"
+bash "$ROOT/scripts/configure-wine-wow64-linux.sh"
 export PATH="$TOOLCHAIN/bin:/usr/local/bin:/usr/bin:/bin"
 
 mapfile -t base_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
