@@ -14,6 +14,3 @@ The ZIP importer defends against traversal, unsupported encryption, malformed
 directory records, CRC mismatch, and decompression-size abuse, but this does
 not make the Windows program itself safe.
 
-For now, report security issues privately to the repository owner rather than
-opening a public proof-of-concept issue. Add a dedicated security contact
-before public release.
