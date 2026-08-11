@@ -1538,8 +1538,17 @@ static WCHAR *build_command_line( WCHAR **wargv )
  */
 static void run_wineboot( WCHAR *env, SIZE_T size )
 {
-    fprintf( stderr, "[JuiceStage] skipping wineboot for packaged prefix\n" );
-    return;
+    const char *skip = getenv( "JUICE_SKIP_WINEBOOT" );
+    const char *prefix;
+    char *ready_path = NULL;
+    NTSTATUS wait_status;
+
+    if (skip && *skip && strcmp( skip, "0" ))
+    {
+        fprintf( stderr, "[JuiceStage] wineboot disabled by JUICE_SKIP_WINEBOOT=%s\n", skip );
+        return;
+    }
+    fprintf( stderr, "[JuiceStage] running controlled wineboot initialization\n" );
     static const WCHAR eventW[] = {'\\','K','e','r','n','e','l','O','b','j','e','c','t','s',
         '\\','_','_','w','i','n','e','b','o','o','t','_','e','v','e','n','t',0};
     static const WCHAR appnameW[] = {'\\','?','?','\\','C',':','\\','w','i','n','d','o','w','s',
@@ -1603,8 +1612,26 @@ static void run_wineboot( WCHAR *env, SIZE_T size )
 
 wait:
     timeout.QuadPart = (ULONGLONG)5 * 60 * 1000 * -10000;
-    if (NtWaitForMultipleObjects( count, handles, WaitAny, FALSE, &timeout ) == WAIT_TIMEOUT)
+    wait_status = NtWaitForMultipleObjects( count, handles, WaitAny, FALSE, &timeout );
+    if (wait_status == WAIT_TIMEOUT)
         ERR( "boot event wait timed out\n" );
+    else if (wait_status != WAIT_OBJECT_0)
+        ERR( "wineboot exited without signaling readiness, status %x\n", wait_status );
+    else if ((prefix = getenv( "WINEPREFIX" )) &&
+             asprintf( &ready_path, "%s/.juice-prefix-ready", prefix ) != -1)
+    {
+        static const char ready[] = "JUICE_PREFIX_READY\n";
+        int fd = open( ready_path, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
+
+        if (fd == -1 || write( fd, ready, sizeof(ready) - 1 ) != sizeof(ready) - 1)
+            ERR( "failed to write prefix readiness marker %s: %s\n",
+                 ready_path, strerror(errno) );
+        else
+            fprintf( stderr, "[JuiceStage] prefix initialization complete marker=%s\n",
+                     ready_path );
+        if (fd != -1) close( fd );
+        free( ready_path );
+    }
     while (count) NtClose( handles[--count] );
 }
 

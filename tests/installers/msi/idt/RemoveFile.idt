@@ -1,0 +1,4 @@
+FileKey	Component_	FileName	DirProperty	InstallMode
+s72	s72	S255	s72	I2
+RemoveFile	FileKey
+RemoveSmokeProgram	SmokeComponent	JuiceMSISmoke.exe	INSTALLDIR	2

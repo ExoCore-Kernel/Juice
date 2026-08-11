@@ -2,10 +2,12 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+NAME="$(basename "$ROOT")"
 OUT="${1:-$ROOT/dist/Juice-source-$(date +%Y%m%d-%H%M%S).tar.gz}"
 mkdir -p "$(dirname "$OUT")"
-tar -C "$(dirname "$ROOT")" --exclude='Juice/.git' --exclude='Juice/build' \
-  --exclude='Juice/dist' --exclude='__pycache__' -czf "$OUT" "$(basename "$ROOT")"
+tar -C "$(dirname "$ROOT")" --exclude="$NAME/.git" --exclude="$NAME/build" \
+  --exclude="$NAME/dist" --exclude="$NAME/wine/.git" \
+  --exclude='__pycache__' -czf "$OUT" "$NAME"
 gzip -t "$OUT"
 if command -v sha256sum >/dev/null 2>&1; then
   digest="$(sha256sum "$OUT" | awk '{print $1}')"

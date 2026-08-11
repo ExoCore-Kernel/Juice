@@ -32,7 +32,8 @@ fi
 
 lld_link="$("$JBROOT/usr/bin/clang" --print-prog-name=lld-link)"
 test -x "$lld_link" || {
-  echo "Clang could not locate its bundled lld-link: $lld_link" >&2
+  echo "Clang could not locate lld-link: $lld_link" >&2
+  echo "Install the matching linker with: sudo $JBROOT/usr/bin/apt-get install lld-16" >&2
   exit 3
 }
 

@@ -2172,6 +2172,21 @@ static void update_load_config( void *module )
 #endif
 }
 
+#ifdef __arm64ec__
+static void *juice_kernel32_module;
+
+static void juice_trace_arm64ec_dispatch( const char *stage, void *module )
+{
+    const IMAGE_ARM64EC_METADATA *metadata = arm64ec_get_module_metadata( module );
+
+    if (!metadata || !metadata->__os_arm64x_dispatch_call_no_redirect) return;
+    ERR( "[JuiceHybrid] %s module=%p slot=%p value=%p expected=%p\n", stage, module,
+         get_rva( module, metadata->__os_arm64x_dispatch_call_no_redirect ),
+         *(void **)get_rva( module, metadata->__os_arm64x_dispatch_call_no_redirect ),
+         __os_arm64x_dispatch_call_no_redirect );
+}
+#endif
+
 
 static NTSTATUS perform_relocations( void *module, IMAGE_NT_HEADERS *nt, SIZE_T len )
 {
@@ -2324,6 +2339,10 @@ static NTSTATUS build_module( LPCWSTR load_path, const UNICODE_STRING *nt_name, 
             return status;
         }
     }
+
+#ifdef __arm64ec__
+    juice_trace_arm64ec_dispatch( "after import fixup", *module );
+#endif
 
     TRACE( "loaded %s %p %p\n", debugstr_us(nt_name), wm, *module );
 
@@ -4270,17 +4289,50 @@ static void open_known_dll_ntdir(void)
 
 #ifdef __arm64ec__
 
+static DWORD loaderGetEnvironmentVariableW( LPCWSTR name, LPWSTR val, DWORD size )
+{
+    UNICODE_STRING us_name, us_value;
+    NTSTATUS status;
+    DWORD len;
+
+    RtlInitUnicodeString( &us_name, name );
+    us_value.Length = 0;
+    us_value.MaximumLength = (size ? size - 1 : 0) * sizeof(WCHAR);
+    us_value.Buffer = val;
+
+    status = RtlQueryEnvironmentVariable_U( NULL, &us_name, &us_value );
+    len = us_value.Length / sizeof(WCHAR);
+    if (status == STATUS_BUFFER_TOO_SMALL) return len + 1;
+    if (status) return 0;
+    if (!size) return len + 1;
+    val[len] = 0;
+    return len;
+}
+
 static void load_arm64ec_module(void)
 {
-    ULONG buffer[16];
+    ULONG buffer[32];
     KEY_VALUE_PARTIAL_INFORMATION *info = (KEY_VALUE_PARTIAL_INFORMATION *)buffer;
     UNICODE_STRING nameW = RTL_CONSTANT_STRING( L"\\Registry\\Machine\\Software\\Microsoft\\Wow64\\amd64" );
-    WCHAR module[64] = L"C:\\windows\\system32\\xtajit64.dll";
+    WCHAR *cpu_dll = (WCHAR*)buffer;
+    WCHAR module[64] = L"C:\\windows\\system32\\libarm64ecfex.dll";
     OBJECT_ATTRIBUTES attr;
     WINE_MODREF *wm;
     NTSTATUS status;
     HANDLE key;
+    DWORD res;
 
+    if ((res = loaderGetEnvironmentVariableW( L"HODLL64", cpu_dll, ARRAY_SIZE(buffer))) &&
+        res < ARRAY_SIZE(buffer))
+    {
+        ULONG dirlen = wcslen( L"C:\\windows\\system32\\" );
+        ULONG size = sizeof(module) - (dirlen + 1) * sizeof(WCHAR);
+        memset( module + dirlen, 0, size );
+        memcpy( module + dirlen, cpu_dll, min( res * sizeof(WCHAR), size ));
+    }
+
+if (0)
+{
     InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
     if (!NtOpenKey( &key, KEY_READ | KEY_WOW64_64KEY, &attr ))
     {
@@ -4295,6 +4347,7 @@ static void load_arm64ec_module(void)
         }
         NtClose( key );
     }
+}
 
     if ((status = load_dll( NULL, module, 0, &wm, FALSE )) ||
         (status = arm64ec_process_init( wm->ldr.DllBase )))
@@ -4325,6 +4378,7 @@ static void build_wow64_main_module(void)
 static void (WINAPI *pWow64LdrpInitialize)( CONTEXT *ctx );
 
 void (WINAPI *pWow64PrepareForException)( EXCEPTION_RECORD *rec, CONTEXT *context ) = NULL;
+NTSTATUS (WINAPI *pWow64SuspendLocalThread)( HANDLE thread, ULONG *count ) = NULL;
 
 static void init_wow64( CONTEXT *context )
 {
@@ -4349,6 +4403,7 @@ static void init_wow64( CONTEXT *context )
 
         GET_PTR( Wow64LdrpInitialize );
         GET_PTR( Wow64PrepareForException );
+        GET_PTR( Wow64SuspendLocalThread );
 #undef GET_PTR
         imports_fixup_done = TRUE;
     }
@@ -4435,7 +4490,11 @@ static void release_address_space(void)
  * Attach to all the loaded dlls.
  * If this is the first time, perform the full process initialization.
  */
+#ifdef __arm64ec__
+void loader_init( CONTEXT *context, void **entry )
+#else
 void loader_init_impl( CONTEXT *context, void **entry )
+#endif
 {
     static int attach_done;
     NTSTATUS status;
@@ -4499,6 +4558,10 @@ void loader_init_impl( CONTEXT *context, void **entry )
             NtTerminateProcess( GetCurrentProcess(), status );
         }
         node_kernel32 = kernel32->ldr.DdagNode;
+#ifdef __arm64ec__
+        juice_kernel32_module = kernel32->ldr.DllBase;
+        juice_trace_arm64ec_dispatch( "kernel32 load_dll returned", juice_kernel32_module );
+#endif
         pBaseThreadInitThunk = RtlFindExportedRoutineByName( kernel32->ldr.DllBase, "BaseThreadInitThunk" );
         LdrGetProcedureAddress( kernel32->ldr.DllBase, &ctrl_routine, 0, (void **)&pCtrlRoutine );
 
@@ -4518,6 +4581,9 @@ void loader_init_impl( CONTEXT *context, void **entry )
                  debugstr_w(NtCurrentTeb()->Peb->ProcessParameters->ImagePathName.Buffer), status );
             NtTerminateProcess( GetCurrentProcess(), status );
         }
+#ifdef __arm64ec__
+        juice_trace_arm64ec_dispatch( "after main import fixup", juice_kernel32_module );
+#endif
         imports_fixup_done = TRUE;
     }
     else
@@ -4560,6 +4626,9 @@ void loader_init_impl( CONTEXT *context, void **entry )
                  debugstr_w(NtCurrentTeb()->Peb->ProcessParameters->ImagePathName.Buffer), status );
             NtTerminateProcess( GetCurrentProcess(), status );
         }
+#ifdef __arm64ec__
+        juice_trace_arm64ec_dispatch( "after kernel32 process attach", juice_kernel32_module );
+#endif
 
         if ((status = walk_node_dependencies( wm->ldr.DdagNode, context, process_attach )))
         {
@@ -4570,6 +4639,9 @@ void loader_init_impl( CONTEXT *context, void **entry )
                  debugstr_w(NtCurrentTeb()->Peb->ProcessParameters->ImagePathName.Buffer), status );
             NtTerminateProcess( GetCurrentProcess(), status );
         }
+#ifdef __arm64ec__
+        juice_trace_arm64ec_dispatch( "after dependency process attach", juice_kernel32_module );
+#endif
         release_address_space();
         if (wm->ldr.TlsIndex == -1) call_tls_callbacks( wm->ldr.DllBase, DLL_PROCESS_ATTACH );
         if (wm->ldr.ActivationContext) RtlDeactivateActivationContext( 0, cookie );
@@ -4585,15 +4657,23 @@ void loader_init_impl( CONTEXT *context, void **entry )
         if (wm->ldr.TlsIndex == -1) call_tls_callbacks( wm->ldr.DllBase, DLL_THREAD_ATTACH );
     }
 
+#ifdef __arm64ec__
+    juice_trace_arm64ec_dispatch( "loader_init exit", juice_kernel32_module );
+#endif
     RtlLeaveCriticalSection( &loader_section );
 }
 
-#if defined(__aarch64__) && defined(__WINE_PE_BUILD)
-/* JuiceWine direct loader x18 restore */
+#if defined(__aarch64__) && defined(__WINE_PE_BUILD) && !defined(__arm64ec__)
+/*
+ * JuiceWine direct loader x18 restore.
+ *
+ * Darwin reserves x18, so restore it at the PE boundary from the startup
+ * CONTEXT supplied to loader_init().  This must be per-thread: using the
+ * initial process TEB here corrupts loader locking as soon as a Windows
+ * process creates another thread (services.exe is an early example).
+ */
 __ASM_GLOBAL_FUNC( loader_init,
-                   "movz x18, #0x8000\n\t"
-                   "movk x18, #0xd7ff, lsl #16\n\t"
-                   "movk x18, #0x2, lsl #32\n\t"
+                   "ldr x18, [x0, #0x98]\n\t" /* context->X18 */
                    "b " __ASM_NAME("loader_init_impl") )
 #endif
 

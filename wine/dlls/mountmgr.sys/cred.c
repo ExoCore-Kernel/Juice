@@ -28,6 +28,10 @@
 #include <stdlib.h>
 
 #ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+
+#if defined(__APPLE__) && !TARGET_OS_IPHONE
 #include <CoreFoundation/CFString.h>
 #define LoadResource mac_LoadResource
 #define GetCurrentThread mac_GetCurrentThread
@@ -42,7 +46,7 @@
 
 WINE_DEFAULT_DEBUG_CHANNEL(mountmgr);
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !TARGET_OS_IPHONE
 
 #define TICKSPERSEC        10000000
 #define SECSPERDAY         86400
@@ -581,7 +585,7 @@ NTSTATUS enumerate_credentials( void *args )
     return status;
 }
 
-#else /* __APPLE__ */
+#else /* macOS credential APIs */
 
 NTSTATUS query_symbol_file( void *args )
 {
@@ -613,4 +617,4 @@ NTSTATUS enumerate_credentials( void *args )
     return STATUS_NOT_SUPPORTED;
 }
 
-#endif /* __APPLE__ */
+#endif /* macOS credential APIs */

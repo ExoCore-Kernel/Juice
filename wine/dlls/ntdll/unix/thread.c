@@ -1662,6 +1662,41 @@ NTSTATUS WINAPI NtRaiseException( EXCEPTION_RECORD *rec, CONTEXT *context, BOOL 
 }
 
 
+#ifdef __APPLE__
+/*
+ * Darwin reserves x18 for the platform.  ARM64EC code cannot therefore use
+ * the Windows inline NtCurrentTeb sequence reliably after a native call.
+ * Keep this accessor on the Unix side, where Wine's pthread TLS is the
+ * authoritative per-thread source, and preserve the ARM64EC register set for
+ * direct calls from FEX-generated code.
+ */
+static TEB * __attribute__((preserve_all)) juice_ios_current_teb(void)
+{
+    struct thread_data *data = get_thread_data();
+    TEB *teb = data ? data->teb : NULL;
+
+    __asm__ volatile( "mov x18, %0" : : "r"(teb) : "x18" );
+    return teb;
+}
+#endif
+
+
+/***********************************************************************
+ *              NtWineGetCurrentTebAccessor  (NTDLL.@)
+ */
+NTSTATUS WINAPI NtWineGetCurrentTebAccessor( void **accessor )
+{
+    if (!accessor) return STATUS_INVALID_PARAMETER;
+#ifdef __APPLE__
+    *accessor = juice_ios_current_teb;
+    return STATUS_SUCCESS;
+#else
+    *accessor = NULL;
+    return STATUS_NOT_SUPPORTED;
+#endif
+}
+
+
 /**********************************************************************
  *           NtCurrentTeb   (NTDLL.@)
  */

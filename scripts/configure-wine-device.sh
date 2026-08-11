@@ -35,6 +35,7 @@ export PKG_CONFIG="$JBROOT/usr/bin/pkg-config"
 export PKG_CONFIG_PATH="$JBROOT/usr/lib/pkgconfig:$JBROOT/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 export CFLAGS="${CFLAGS:--O2}" CXXFLAGS="${CXXFLAGS:--O2}"
 export wine_cv_recent_bison=yes ac_cv_func_pthread_create=yes
+export JUICE_IOS_DEVICE=1
 
 freetype_args=()
 if test "${JUICE_WITHOUT_FREETYPE:-0}" = 1; then

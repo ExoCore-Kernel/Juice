@@ -1,0 +1,4 @@
+JUICE_CONTROL_TEST_LISTENING socket=/tmp/jsetup-v20.sock
+JUICE_CONTROL_TEST_REQUEST type=1 request=1668087809 status=1 flags=7 path=
+JUICE_CONTROL_TEST_IMPORT_RESPONSE request=1668087809 path=Z:\var\mobile\Documents\JuiceLab-20260811\source\build\tests\installers-v15\JuiceSetupSmoke.exe
+JUICE_CONTROL_TEST_RESULT success=1 marker=/var/mobile/Documents/JuiceLab-20260811/source/build/tests/final-v20/setup-install/control-import.ok completion=not-required

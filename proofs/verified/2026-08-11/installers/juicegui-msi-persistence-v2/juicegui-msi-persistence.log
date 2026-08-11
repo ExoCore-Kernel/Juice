@@ -1,0 +1,789 @@
+JUICE_TEXT_HOST_LISTENING socket=/var/mobile/Documents/JuiceLab-20260811/source/build/tests/juicegui-msi-persistence-v2/display.sock
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=81786
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=81787
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=81787 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=81787 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceStage] wineboot disabled by JUICE_SKIP_WINEBOOT=1
+[JuiceWine] anonymous PE executable section .text at 0x1027a0000 size=65536
+[JuiceStage] loading Windows ntdll; transfer=0x1027a25e8 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceWine] anonymous PE executable section .text at 0x2d7c30000 size=524288
+[JuiceStage] load_ntdll returned; transfer=0x1027a25e8
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x103610000 stack_limit=0x103518000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x2d7ff8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x10350fcd0 stack_base=0x103610000 stack_limit=0x103518000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=0 transfer=0x1027a25e8 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x1027a25e8 arg=0x2d7ffc000 teb=0x2d7ff8000 data=0x103400000 frame=0x10350fcd0 stack_base=0x103610000 stack_limit=0x103518000
+[JuiceStage] calling signal_set_full_context; ctx=0x10360fc70 target_pc=0x2d7c86bb0 target_sp=0x103610000 target_x18=0x2d7ff8000 LdrInitializeThunk=0x2d7c86bd0 RtlUserThreadStart=0x2d7c86bb0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7c86bb0 frame_sp=0x103610000 frame_x18=0x2d7ff8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7c86bd0 user_sp=0x10360fc70 x16=0x2d7c86bd0 x17=0x10360fc70 x18=0x2d7ff8000 restore=00400007
+[JuiceX18] broad #1 pc=0x2d7c641c8 fault=0x17ee instr=796fde48 x8=0x0 x16=0x2d7c86bd0 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #2 pc=0x2d7c8d6b8 fault=0x60 instr=f940324b x8=0x10360fa40 x16=0x2d7c641c8 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #3 pc=0x1026f5464 fault=0x378 instr=f941be4a x8=0x18 x16=0x1026f5460 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #4 pc=0x2d7c8e148 fault=0x60 instr=f9403248 x8=0x102680090 x16=0xffff x17=0x10360fa30 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #5 pc=0x2d7c642e0 fault=0x180c instr=b9580e48 x8=0x0 x16=0x2d7c84ab4 x17=0x10360fa60 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #6 pc=0x2d7c57574 fault=0x60 instr=f9403248 x8=0x200 x16=0x2d7c642e0 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #7 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xfffffffffffffffe x16=0x2d7c84b74 x17=0x10360f830 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #8 pc=0x2d7c5632c fault=0x60 instr=f9403248 x8=0x102683300 x16=0x2d7cbc6c8 x17=0x2d7cbc89f x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #9 pc=0x2d7c578d0 fault=0x60 instr=f9403248 x8=0x2d7cb4ba8 x16=0x2d7c850d4 x17=0x10360f7a0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #10 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xa x16=0x2d7c578d0 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #11 pc=0x2d7c8d624 fault=0x3000 instr=b9700248 x8=0x9 x16=0x2d7cbc634 x17=0x10360f68b x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #12 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0xffffffe3 x16=0x2d7cbc634 x17=0x10360f69c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #13 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0x1c x16=0x2d7c56a50 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #14 pc=0x2d7c56abc fault=0x60 instr=f9403248 x8=0x0 x16=0x2d7c56a50 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #15 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0x2f x16=0x2d7c56abc x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #16 pc=0x2d7c9701c fault=0x60 instr=f9403248 x8=0x102740330 x16=0x2d7c84994 x17=0x10360fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #17 pc=0x1026f5464 fault=0x378 instr=f941be4a x8=0x21 x16=0x1026f5460 x17=0x10360f740 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #18 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c84ad4 x17=0x10360fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #19 pc=0x1026f5464 fault=0x378 instr=f941be4a x8=0x50 x16=0x1026f5460 x17=0x10360fa20 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #20 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x10360fa20 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #21 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0x18 x16=0x2d7c84c14 x17=0x10360fa70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #22 pc=0x2d7c48070 fault=0x2c8 instr=f9416648 x8=0x2d7cba860 x16=0x2d7cbc634 x17=0x10360f6a2 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7a50000 size=196608
+[JuiceX18] broad #23 pc=0x2d7c61850 fault=0x60 instr=f9403248 x8=0x2d7ce2000 x16=0x2d7c84cb4 x17=0x10360f960 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #24 pc=0x1026f5464 fault=0x378 instr=f941be4a x8=0x50 x16=0x1026f5460 x17=0x10360f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #25 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x10360f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #26 pc=0x2d7c793cc fault=0x0 instr=f9000249 x8=0x0 x16=0x2d7c79318 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #27 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7a8f3e8 x16=0x2d7c793cc x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7660000 size=524288
+[JuiceX18] broad #28 pc=0x1026f5464 fault=0x378 instr=f941be4a x8=0x50 x16=0x1026f5460 x17=0x10360f360 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #29 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x10360f360 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #30 pc=0x2d7c793cc fault=0x0 instr=f9000249 x8=0x0 x16=0x2d7c79318 x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #31 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7707dd0 x16=0x2d7c793cc x17=0x10360fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #32 pc=0x1026f5464 fault=0x378 instr=f941be4a x8=0x50 x16=0x1026f5460 x17=0x10360f030 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d6a40000 size=524288
+[JuiceWine] anonymous PE executable section .text at 0x2d6900000 size=131072
+[JuiceWine] anonymous PE executable section .text at 0x2d6840000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d66c0000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d65e0000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d6290000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d5fa0000 size=458752
+[JuiceWine] anonymous PE executable section .text at 0x2d5ab0000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d5830000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d5740000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d5650000 size=65536
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=81790
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=81790 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=81790 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] anonymous PE executable section .text at 0x140010000 size=65536
+[JuiceStage] loading Windows ntdll; transfer=0x14001d140 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceWine] anonymous PE executable section .text at 0x2d7c30000 size=524288
+[JuiceStage] load_ntdll returned; transfer=0x14001d140
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x104210000 stack_limit=0x104118000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x2d7ff8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x10410fcd0 stack_base=0x104210000 stack_limit=0x104118000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=1 transfer=0x14001d140 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x14001d140 arg=0x2d7ffc000 teb=0x2d7ff8000 data=0x104000000 frame=0x10410fcd0 stack_base=0x104210000 stack_limit=0x104118000
+[JuiceStage] calling signal_set_full_context; ctx=0x10420fc70 target_pc=0x2d7c86bb0 target_sp=0x104210000 target_x18=0x2d7ff8000 LdrInitializeThunk=0x2d7c86bd0 RtlUserThreadStart=0x2d7c86bb0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7c86bb0 frame_sp=0x104210000 frame_x18=0x2d7ff8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7c86bd0 user_sp=0x10420fc70 x16=0x2d7c86bd0 x17=0x10420fc70 x18=0x2d7ff8000 restore=00400007
+[JuiceX18] broad #1 pc=0x2d7c641c8 fault=0x17ee instr=796fde48 x8=0x0 x16=0x2d7c86bd0 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #2 pc=0x2d7c8d6b8 fault=0x60 instr=f940324b x8=0x10420fa40 x16=0x2d7c641c8 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #3 pc=0x100909464 fault=0x378 instr=f941be4a x8=0x18 x16=0x100909460 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #4 pc=0x2d7c8e148 fault=0x60 instr=f9403248 x8=0x100850090 x16=0xffff x17=0x10420fa30 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #5 pc=0x2d7c642e0 fault=0x180c instr=b9580e48 x8=0x0 x16=0x2d7c84ab4 x17=0x10420fa60 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #6 pc=0x2d7c57574 fault=0x60 instr=f9403248 x8=0x200 x16=0x2d7c642e0 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #7 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xfffffffffffffffe x16=0x2d7c84b74 x17=0x10420f830 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #8 pc=0x2d7c5632c fault=0x60 instr=f9403248 x8=0x1008533a0 x16=0x2d7cbc6c8 x17=0x2d7cbc89f x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #9 pc=0x100909464 fault=0x378 instr=f941be4a x8=0x33 x16=0x100909460 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #10 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xa x16=0x2d7c850d4 x17=0x10420f7a0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #11 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0xffffffe3 x16=0x2d7cbc634 x17=0x10420f69c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #12 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0xffffffe2 x16=0x2d7c56a50 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #13 pc=0x2d7c9701c fault=0x60 instr=f9403248 x8=0x100954330 x16=0x2d7c84994 x17=0x10420fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #14 pc=0x100909464 fault=0x378 instr=f941be4a x8=0x21 x16=0x100909460 x17=0x10420f740 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #15 pc=0x2d7c56560 fault=0x60 instr=f9403248 x8=0x0 x16=0x2d7c852b4 x17=0x10420fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #16 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c84ad4 x17=0x10420fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #17 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0x48 x16=0x2d7c64124 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #18 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xfffffffffffffffe x16=0x2d7cbc634 x17=0x10420f8ff x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #19 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0x18 x16=0x2d7c84c14 x17=0x10420fa70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #20 pc=0x2d7c48070 fault=0x2c8 instr=f9416648 x8=0x2d7cba860 x16=0x2d7cbc634 x17=0x10420f6a2 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7a50000 size=196608
+[JuiceX18] broad #21 pc=0x100909464 fault=0x378 instr=f941be4a x8=0x50 x16=0x100909460 x17=0x10420f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #22 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x10420f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #23 pc=0x2d7c793cc fault=0x0 instr=f9000249 x8=0x0 x16=0x2d7c79318 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #24 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7a8f3e8 x16=0x2d7c793cc x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #25 pc=0x2d7c5632c fault=0x60 instr=f9403248 x8=0x100853eb0 x16=0x2d7c66c3c x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7660000 size=524288
+[JuiceX18] broad #26 pc=0x100909464 fault=0x378 instr=f941be4a x8=0x50 x16=0x100909460 x17=0x10420f360 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #27 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x10420f360 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #28 pc=0x2d7c793cc fault=0x0 instr=f9000249 x8=0x0 x16=0x2d7c79318 x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #29 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7707dd0 x16=0x2d7c793cc x17=0x10420fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #30 pc=0x100909464 fault=0x378 instr=f941be4a x8=0x50 x16=0x100909460 x17=0x10420f030 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #31 pc=0x100909464 fault=0x378 instr=f941be4a x8=0x50 x16=0x100909460 x17=0x10420f410 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #32 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7707533 x16=0x2d7c851b4 x17=0x10420f580 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d73f0000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d7270000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d7190000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d6e40000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d6b50000 size=458752
+[JuiceWine] anonymous PE executable section .text at 0x2d6a90000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d65a0000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d6320000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d6230000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d6140000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d6070000 size=65536
+[JuiceInput] queue fd registered fd=11 tid=0x2c
+[JuiceDriver] ios init set driver create=0x1047e246c size=1216
+[JuiceDriver] install prev=0x1053c9308 lazy=0x1053c9308 null=0x1053f1d30 new=0x102808a00 create=0x1047e246c
+JUICE_TEXT_HOST_HELLO pid=81790 desktop=1024x768 dpi=96
+[JuiceCreate] ex=00000000 class=0x10420eef0 version=0x0 name=0x10420eed0 style=86000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x10420f230 flags=00000000 inst=0x0 classptr=0x8001 ansi=0
+[JuiceWine] anonymous PE executable section .text at 0x2d5f40000 size=131072
+[JuiceRect] input hwnd=0x10020 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10020 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10020 flags=3c ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x10020 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10020 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10020 flags=18 ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceCreate] ex=00000000 class=0x10420eef0 version=0x0 name=0x10420eed0 style=86000000 x=0 y=0 cx=100 cy=100 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140020ca0 ansi=0
+[JuiceRect] input hwnd=0x10028 dpi=96/1 raw=96/1 win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceRect] mapped hwnd=0x10028 win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceGeom] changed hwnd=0x10028 flags=3c ptr=0x10410f620 window=0,0,100,100 client=0,0,100,100 visible=0,0,100,100 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x10028 dpi=96/1 raw=96/1 win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceRect] mapped hwnd=0x10028 win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceGeom] changed hwnd=0x10028 flags=18 ptr=0x10410f620 window=0,0,100,100 client=0,0,100,100 visible=0,0,100,100 surface=0x1053d44f0
+[JuiceGeom] surface hwnd=0x10020 rect=0,0,1024,768 size=1024x768 previous=0x1053d44f0
+[JuiceRect] input hwnd=0x10020 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10020 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10020 flags=8000116a ptr=0x10410f820 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x100e19a10
+JUICE_TEXT_HOST_WINDOW pid=81790 hwnd=0x10020 rect=0,0 1024x768 visible=1
+[JuiceStage] init_syscall_frame entered; entry=0x14001263c arg=0x0 teb=0x2d7ff4000 data=0x107b20000 frame=0x107c2fb00 stack_base=0x107d30000 stack_limit=0x107c38000
+[JuiceStage] calling signal_set_full_context; ctx=0x107d2fc70 target_pc=0x2d7c86bb0 target_sp=0x107d30000 target_x18=0x2d7ff4000 LdrInitializeThunk=0x2d7c86bd0 RtlUserThreadStart=0x2d7c86bb0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7c86bb0 frame_sp=0x107d30000 frame_x18=0x2d7ff4000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7c86bd0 user_sp=0x107d2fc70 x16=0x2d7c86bd0 x17=0x107d2fc70 x18=0x2d7ff4000 restore=00400007
+[JuiceCreate] ex=00000000 class=0x107d2fa70 version=0x0 name=0x107d2fa50 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140020500 ansi=0
+[JuiceMonitor] callee hwnd=0x1002e hmon=0x1 info=0x107c2f550 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x1002e min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceGeom] surface hwnd=0x10020 rect=0,0,1024,768 size=1024x768 previous=0x100e19a10
+[JuiceRect] input hwnd=0x10020 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10020 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] input hwnd=0x1002e dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10020 flags=8000381f ptr=0x10410e530 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x100e19a10
+[JuiceRect] mapped hwnd=0x1002e win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+JUICE_TEXT_HOST_WINDOW pid=81790 hwnd=0x10020 rect=0,0 1024x768 visible=1
+[JuiceGeom] changed hwnd=0x1002e flags=14 ptr=0x107c2f450 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceStage] init_syscall_frame entered; entry=0x140012bd8 arg=0x0 teb=0x2d7ff0000 data=0x107df0000 frame=0x107effb00 stack_base=0x108000000 stack_limit=0x107f08000
+[JuiceStage] calling signal_set_full_context; ctx=0x107fffc70 target_pc=0x2d7c86bb0 target_sp=0x108000000 target_x18=0x2d7ff0000 LdrInitializeThunk=0x2d7c86bd0 RtlUserThreadStart=0x2d7c86bb0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7c86bb0 frame_sp=0x108000000 frame_x18=0x2d7ff0000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7c86bd0 user_sp=0x107fffc70 x16=0x2d7c86bd0 x17=0x107fffc70 x18=0x2d7ff0000 restore=00400007
+[JuiceCreate] ex=00000000 class=0x10420ee70 version=0x0 name=0x10420ee50 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140020140 ansi=0
+[JuiceCreate] ex=00000000 class=0x107fffc10 version=0x0 name=0x107fffbf0 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140021320 ansi=0
+[JuiceMonitor] callee hwnd=0x20030 hmon=0x1 info=0x10410f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x20030 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x20030 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x20030 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x20030 flags=14 ptr=0x10410f620 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceMonitor] callee hwnd=0x2002e hmon=0x1 info=0x107eff550 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x2002e min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x20030 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] input hwnd=0x2002e dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x20030 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x2002e win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x20030 flags=10 ptr=0x10410f620 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0
+[JuiceGeom] changed hwnd=0x2002e flags=14 ptr=0x107eff450 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceRect] input hwnd=0x2002e dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x2002e win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x2002e flags=10 ptr=0x107eff450 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0
+[JuiceCreate] ex=00000000 class=0x10420ee60 version=0x0 name=0x10420ee40 style=00c80000 x=-2147483648 y=-2147483648 cx=166 cy=45 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140026408 ansi=0
+[JuiceMonitor] callee hwnd=0x0 hmon=0x1 info=0x10410fa00 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMonitor] caller hwnd=0x0 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceInput] queue fd registered fd=11 tid=0x34
+[JuiceMonitor] callee hwnd=0x10038 hmon=0x1 info=0x10410f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10038 min=112,27 maxtrack=1036,780 max=1030,774 pos=-3,-3
+[JuiceRect] input hwnd=0x10038 dpi=96/1 raw=96/1 win=0,0,166,45 client=0,0,166,45 visible=0,0,166,45
+[JuiceRect] mapped hwnd=0x10038 win=0,0,166,45 client=0,0,166,45 visible=0,0,166,45
+[JuiceGeom] changed hwnd=0x10038 flags=3c ptr=0x10410f620 window=0,0,166,45 client=0,0,166,45 visible=0,0,166,45 surface=0x1053d44f0
+[JuiceCreate] ex=00000000 class=0x10410f590 version=0x0 name=0x10410f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+[JuiceRect] input hwnd=0x1003e dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1003e win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1003e flags=3c ptr=0x10410eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x1003e dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1003e win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1003e flags=18 ptr=0x10410eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x10038 dpi=96/1 raw=96/1 win=0,0,166,45 client=3,22,163,42 visible=0,0,166,45
+[JuiceRect] mapped hwnd=0x10038 win=0,0,166,45 client=3,22,163,42 visible=0,0,166,45
+[JuiceGeom] changed hwnd=0x10038 flags=18 ptr=0x10410f620 window=0,0,166,45 client=3,22,163,42 visible=0,0,166,45 surface=0x1053d44f0
+[JuiceWine] anonymous PE executable section .text at 0x2d5330000 size=524288
+[JuiceWine] anonymous PE executable section .text at 0x2d51f0000 size=131072
+[JuiceWine] anonymous PE executable section .text at 0x2d5fb0000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d4eb0000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d4d00000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d4c20000 size=65536
+[JuiceCreate] ex=00000000 class=0x10420ee60 version=0x0 name=0x10420ee40 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x2d4cf0000 params=0x0 flags=00000000 inst=0x2d4cf0000 classptr=0x2d4d31718 ansi=0
+[JuiceMonitor] callee hwnd=0x10040 hmon=0x1 info=0x10410f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10040 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x10040 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10040 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10040 flags=14 ptr=0x10410f620 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceRect] input hwnd=0x10040 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10040 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10040 flags=10 ptr=0x10410f620 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0
+[JuiceStage] init_syscall_frame entered; entry=0x1400130cc arg=0x10020 teb=0x2d7fec000 data=0x108020000 frame=0x10812fb00 stack_base=0x108230000 stack_limit=0x108138000
+[JuiceStage] calling signal_set_full_context; ctx=0x10822fc70 target_pc=0x2d7c86bb0 target_sp=0x108230000 target_x18=0x2d7fec000 LdrInitializeThunk=0x2d7c86bd0 RtlUserThreadStart=0x2d7c86bb0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7c86bb0 frame_sp=0x108230000 frame_x18=0x2d7fec000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7c86bd0 user_sp=0x10822fc70 x16=0x2d7c86bd0 x17=0x10822fc70 x18=0x2d7fec000 restore=00400007
+[JuiceCreate] ex=00000000 class=0x10420ee10 version=0x0 name=0x10420edf0 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d6635528 ansi=0
+[JuiceRect] input hwnd=0x20040 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceCreate] ex=00000000 class=0x10822fbc0 version=0x0 name=0x10822fba0 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x2d4cf0000 params=0x0 flags=00000000 inst=0x2d4cf0000 classptr=0x2d4d31718 ansi=0
+[JuiceRect] mapped hwnd=0x20040 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x20040 flags=3c ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceMonitor] callee hwnd=0x10042 hmon=0x1 info=0x10812f550 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10042 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x10042 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] input hwnd=0x20040 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10042 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10042 flags=14 ptr=0x10812f450 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceRect] mapped hwnd=0x20040 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x20040 flags=18 ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x10042 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10042 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10042 flags=10 ptr=0x10812f450 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0
+[JuiceCreate] ex=00000000 class=0x10420ee10 version=0x0 name=0x10420edf0 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d66362a0 ansi=0
+[JuiceInput] queue fd registered fd=11 tid=0x38
+[JuiceRect] input hwnd=0x10046 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10046 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10046 flags=3c ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x10046 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10046 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10046 flags=18 ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceCreate] ex=00000000 class=0x10420ee10 version=0x0 name=0x10420edf0 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d66362a0 ansi=0
+[JuiceRect] input hwnd=0x10048 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10048 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10048 flags=3c ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x10048 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10048 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10048 flags=18 ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceCreate] ex=00000000 class=0x10420ee40 version=0x0 name=0x10420ee20 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d66362a0 ansi=0
+[JuiceRect] input hwnd=0x1004a dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1004a win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1004a flags=3c ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceRect] input hwnd=0x1004a dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1004a win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1004a flags=18 ptr=0x10410f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x1053d44f0
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=81793
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=81793 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=81793 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] anonymous PE executable section .text at 0x140010000 size=65536
+[JuiceStage] loading Windows ntdll; transfer=0x14001285c teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceWine] anonymous PE executable section .text at 0x2d7c30000 size=524288
+[JuiceStage] load_ntdll returned; transfer=0x14001285c
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x101010000 stack_limit=0x100f18000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x2d7ff8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x100f0fcd0 stack_base=0x101010000 stack_limit=0x100f18000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=1 transfer=0x14001285c teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x14001285c arg=0x2d7ffc000 teb=0x2d7ff8000 data=0x100e00000 frame=0x100f0fcd0 stack_base=0x101010000 stack_limit=0x100f18000
+[JuiceStage] calling signal_set_full_context; ctx=0x10100fc70 target_pc=0x2d7c86bb0 target_sp=0x101010000 target_x18=0x2d7ff8000 LdrInitializeThunk=0x2d7c86bd0 RtlUserThreadStart=0x2d7c86bb0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7c86bb0 frame_sp=0x101010000 frame_x18=0x2d7ff8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7c86bd0 user_sp=0x10100fc70 x16=0x2d7c86bd0 x17=0x10100fc70 x18=0x2d7ff8000 restore=00400007
+[JuiceX18] broad #1 pc=0x2d7c641c8 fault=0x17ee instr=796fde48 x8=0x0 x16=0x2d7c86bd0 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #2 pc=0x2d7c8d6b8 fault=0x60 instr=f940324b x8=0x10100fa40 x16=0x2d7c641c8 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #3 pc=0x10020d464 fault=0x378 instr=f941be4a x8=0x18 x16=0x10020d460 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #4 pc=0x2d7c8e148 fault=0x60 instr=f9403248 x8=0x100190090 x16=0xffff x17=0x10100fa30 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #5 pc=0x2d7c642e0 fault=0x180c instr=b9580e48 x8=0x0 x16=0x2d7c84ab4 x17=0x10100fa60 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #6 pc=0x2d7c57574 fault=0x60 instr=f9403248 x8=0x200 x16=0x2d7c642e0 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #7 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xfffffffffffffffe x16=0x2d7c84b74 x17=0x10100f830 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #8 pc=0x2d7c5632c fault=0x60 instr=f9403248 x8=0x1001933a0 x16=0x2d7cbc6c8 x17=0x2d7cbc89f x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #9 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xa x16=0x2d7c850d4 x17=0x10100f7a0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #10 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0xffffffe3 x16=0x2d7cbc634 x17=0x10100f69c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #11 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0xffffffe2 x16=0x2d7c56a50 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #12 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0xffffffcf x16=0x2d7c56a50 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #13 pc=0x2d7c9701c fault=0x60 instr=f9403248 x8=0x100258330 x16=0x2d7c84994 x17=0x10100fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #14 pc=0x10020d464 fault=0x378 instr=f941be4a x8=0x21 x16=0x10020d460 x17=0x10100f740 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #15 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c84ad4 x17=0x10100fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #16 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0x48 x16=0x2d7c64124 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceCreate] ex=00000000 class=0x10420e9c0 version=0x0 name=0x10420e9a0 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x2d4cf0000 params=0x0 flags=00000000 inst=0x2d4cf0000 classptr=0x2d4d31718 ansi=0
+[JuiceX18] broad #17 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xfffffffffffffffe x16=0x2d7cbc634 x17=0x10100f8ff x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #18 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0x18 x16=0x2d7c84c14 x17=0x10100fa70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #19 pc=0x2d7c48070 fault=0x2c8 instr=f9416648 x8=0x2d7cba860 x16=0x2d7cbc634 x17=0x10100f6a2 x18=0x0 teb=0x2d7ff8000
+[JuiceMonitor] callee hwnd=0x1004c hmon=0x1 info=0x10410f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x1004c min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x1004c dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x1004c win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1004c flags=14 ptr=0x10410f620 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceRect] input hwnd=0x1004c dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x1004c win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1004c flags=10 ptr=0x10410f620 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0
+JUICE_TEXT_HOST_FRAME hwnd=0x10020 size=1024x768 path=/var/mobile/Documents/JuiceLab-20260811/source/build/tests/juicegui-msi-persistence-v2/frame-before-input.png
+[JuiceWine] anonymous PE executable section .text at 0x2d7a50000 size=196608
+[JuiceX18] broad #20 pc=0x10020d464 fault=0x378 instr=f941be4a x8=0x50 x16=0x10020d460 x17=0x10100f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #21 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x10100f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #22 pc=0x2d7c793cc fault=0x0 instr=f9000249 x8=0x0 x16=0x2d7c79318 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #23 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7a8f3e8 x16=0x2d7c793cc x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #24 pc=0x2d7c67500 fault=0x60 instr=f9403248 x8=0x0 x16=0x2d7c66c3c x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7660000 size=524288
+[JuiceX18] broad #25 pc=0x10020d464 fault=0x378 instr=f941be4a x8=0x50 x16=0x10020d460 x17=0x10100f360 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #26 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x10100f360 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #27 pc=0x2d7c793cc fault=0x0 instr=f9000249 x8=0x0 x16=0x2d7c79318 x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #28 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7707dd0 x16=0x2d7c793cc x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #29 pc=0x10020d464 fault=0x378 instr=f941be4a x8=0x50 x16=0x10020d460 x17=0x10100f030 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #30 pc=0x10020d464 fault=0x378 instr=f941be4a x8=0x50 x16=0x10020d460 x17=0x10100f410 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #31 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7707533 x16=0x2d7c851b4 x17=0x10100f580 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #32 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7707761 x16=0x2d7c66c3c x17=0x10100fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d74e0000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d7400000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d70b0000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d6dc0000 size=458752
+[JuiceWine] anonymous PE executable section .text at 0x2d6b40000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d6650000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d6560000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d5940000 size=524288
+[JuiceWine] anonymous PE executable section .text at 0x2d5800000 size=131072
+[JuiceWine] anonymous PE executable section .text at 0x2d5740000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d5650000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d5580000 size=65536
+[JuiceInput] queue fd registered fd=8 tid=0x40
+[JuiceDriver] ios init set driver create=0x103a3646c size=1216
+[JuiceDriver] install prev=0x101915308 lazy=0x101915308 null=0x10193dd30 new=0x138808600 create=0x103a3646c
+JUICE_TEXT_HOST_HELLO pid=81793 desktop=1024x768 dpi=96
+[JuiceWine] anonymous PE executable section .text at 0x2d5450000 size=131072
+[JuiceCreate] ex=00000000 class=0x10100fb80 version=0x0 name=0x10100fb60 style=82000000 x=0 y=0 cx=1024 cy=768 parent=0x0 menu=0x0 classinst=0x140000000 params=0x0 flags=00000000 inst=0x140000000 classptr=0x1400201e0 ansi=0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000003c ptr=0x100f0f620 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceCreate] ex=00000000 class=0x100f0f590 version=0x0 name=0x100f0f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+[JuiceRect] input hwnd=0x1005a dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1005a win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1005a flags=3c ptr=0x100f0eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1019204f0
+[JuiceRect] input hwnd=0x1005a dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1005a win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1005a flags=18 ptr=0x100f0eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1019204f0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=80000018 ptr=0x100f0f620 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400206f8 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x1005c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005c flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1005c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005c flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1005c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005c flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400206f8 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x1005e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005e flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1005e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005e flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1005e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005e flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3ea classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207a0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x10060 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10060 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10060 flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10060 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10060 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10060 flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10060 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10060 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10060 flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3f0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207a0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x10062 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10062 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10062 flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10062 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10062 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10062 flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10062 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10062 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10062 flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000200 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50200101 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3e9 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207b8 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10064 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10064 flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10064 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10064 flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10064 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10064 flags=183f ptr=0x100f0d750 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10064 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10064 flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3f1 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400206f8 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x10066 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10066 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10066 flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10066 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10066 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10066 flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10066 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10066 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10066 flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3eb classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207a0 ansi=0
+[JuiceRect] input hwnd=0x10068 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10068 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10068 flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10068 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10068 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10068 flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10068 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10068 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10068 flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3ec classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207a0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x1006a dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006a win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006a flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1006a dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006a win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006a flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1006a dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006a win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006a flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3ed classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207a0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x1006c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006c flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1006c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006c flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1006c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006c flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3ee classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207a0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x1006e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006e flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1006e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006e flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1006e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1006e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1006e flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+[JuiceCreate] ex=00000000 class=0x10100dfd0 version=0x0 name=0x10100dfb0 style=50000000 x=0 y=0 cx=0 cy=0 parent=0x10056 menu=0x3ef classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1400207a0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x10070 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10070 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10070 flags=14 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10070 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10070 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10070 flags=10 ptr=0x100f0e630 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10070 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10070 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10070 flags=181f ptr=0x100f0e3f0 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=8000181f ptr=0x100f0e5a0 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x1019204f0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10064 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10064 flags=183f ptr=0x100f0e740 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x0
+[JuiceRect] input hwnd=0x1005c dpi=96/1 raw=96/1 win=20,8,170,44 client=20,8,170,44 visible=20,8,170,44
+[JuiceRect] mapped hwnd=0x1005c win=20,8,170,44 client=20,8,170,44 visible=20,8,170,44
+[JuiceGeom] changed hwnd=0x1005c flags=1c ptr=0x100f0e830 window=20,8,170,44 client=20,8,170,44 visible=20,8,170,44 surface=0x0
+[JuiceRect] input hwnd=0x1005e dpi=96/1 raw=96/1 win=190,12,954,44 client=190,12,954,44 visible=190,12,954,44
+[JuiceRect] mapped hwnd=0x1005e win=190,12,954,44 client=190,12,954,44 visible=190,12,954,44
+[JuiceGeom] changed hwnd=0x1005e flags=1c ptr=0x100f0e830 window=190,12,954,44 client=190,12,954,44 visible=190,12,954,44 surface=0x0
+[JuiceRect] input hwnd=0x10060 dpi=96/1 raw=96/1 win=20,46,170,82 client=20,46,170,82 visible=20,46,170,82
+[JuiceRect] mapped hwnd=0x10060 win=20,46,170,82 client=20,46,170,82 visible=20,46,170,82
+[JuiceGeom] changed hwnd=0x10060 flags=1c ptr=0x100f0e830 window=20,46,170,82 client=20,46,170,82 visible=20,46,170,82 surface=0x0
+[JuiceRect] input hwnd=0x10062 dpi=96/1 raw=96/1 win=970,12,1008,44 client=970,12,1008,44 visible=970,12,1008,44
+[JuiceRect] mapped hwnd=0x10062 win=970,12,1008,44 client=970,12,1008,44 visible=970,12,1008,44
+[JuiceGeom] changed hwnd=0x10062 flags=1c ptr=0x100f0e830 window=970,12,1008,44 client=970,12,1008,44 visible=970,12,1008,44 surface=0x0
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=20,92,410,700 client=22,94,392,698 visible=20,92,410,700
+[JuiceRect] mapped hwnd=0x10064 win=20,92,410,700 client=22,94,392,698 visible=20,92,410,700
+[JuiceGeom] changed hwnd=0x10064 flags=1c ptr=0x100f0e830 window=20,92,410,700 client=22,94,392,698 visible=20,92,410,700 surface=0x0
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=20,92,410,700 client=22,94,408,698 visible=20,92,410,700
+[JuiceRect] mapped hwnd=0x10064 win=20,92,410,700 client=22,94,408,698 visible=20,92,410,700
+[JuiceGeom] changed hwnd=0x10064 flags=103f ptr=0x100f0cca0 window=20,92,410,700 client=22,94,408,698 visible=20,92,410,700 surface=0x0
+[JuiceRect] input hwnd=0x10066 dpi=96/1 raw=96/1 win=430,92,1000,156 client=430,92,1000,156 visible=430,92,1000,156
+[JuiceRect] mapped hwnd=0x10066 win=430,92,1000,156 client=430,92,1000,156 visible=430,92,1000,156
+[JuiceGeom] changed hwnd=0x10066 flags=1c ptr=0x100f0e830 window=430,92,1000,156 client=430,92,1000,156 visible=430,92,1000,156 surface=0x0
+[JuiceRect] input hwnd=0x10068 dpi=96/1 raw=96/1 win=8,724,206,760 client=8,724,206,760 visible=8,724,206,760
+[JuiceRect] mapped hwnd=0x10068 win=8,724,206,760 client=8,724,206,760 visible=8,724,206,760
+[JuiceGeom] changed hwnd=0x10068 flags=1c ptr=0x100f0e830 window=8,724,206,760 client=8,724,206,760 visible=8,724,206,760 surface=0x0
+[JuiceRect] input hwnd=0x1006a dpi=96/1 raw=96/1 win=210,724,408,760 client=210,724,408,760 visible=210,724,408,760
+[JuiceRect] mapped hwnd=0x1006a win=210,724,408,760 client=210,724,408,760 visible=210,724,408,760
+[JuiceGeom] changed hwnd=0x1006a flags=1c ptr=0x100f0e830 window=210,724,408,760 client=210,724,408,760 visible=210,724,408,760 surface=0x0
+[JuiceRect] input hwnd=0x1006c dpi=96/1 raw=96/1 win=412,724,610,760 client=412,724,610,760 visible=412,724,610,760
+[JuiceRect] mapped hwnd=0x1006c win=412,724,610,760 client=412,724,610,760 visible=412,724,610,760
+[JuiceGeom] changed hwnd=0x1006c flags=1c ptr=0x100f0e830 window=412,724,610,760 client=412,724,610,760 visible=412,724,610,760 surface=0x0
+[JuiceRect] input hwnd=0x1006e dpi=96/1 raw=96/1 win=614,724,812,760 client=614,724,812,760 visible=614,724,812,760
+[JuiceRect] mapped hwnd=0x1006e win=614,724,812,760 client=614,724,812,760 visible=614,724,812,760
+[JuiceGeom] changed hwnd=0x1006e flags=1c ptr=0x100f0e830 window=614,724,812,760 client=614,724,812,760 visible=614,724,812,760 surface=0x0
+[JuiceRect] input hwnd=0x10070 dpi=96/1 raw=96/1 win=816,724,1014,760 client=816,724,1014,760 visible=816,724,1014,760
+[JuiceRect] mapped hwnd=0x10070 win=816,724,1014,760 client=816,724,1014,760 visible=816,724,1014,760
+[JuiceGeom] changed hwnd=0x10070 flags=1c ptr=0x100f0e830 window=816,724,1014,760 client=816,724,1014,760 visible=816,724,1014,760 surface=0x0
+[JuiceMonitor] callee hwnd=0x10056 hmon=0x1 info=0x100f0fac0 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10056 min=0,0 maxtrack=1036,780 max=1024,768 pos=0,0
+[JuiceGeom] show hwnd=0x10056 cmd=3 rect=0x100f0fc28 0,0,1024,768 swp=8060
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceGeom] surface hwnd=0x10056 rect=0,0,1024,768 size=1024x768 previous=0x1019204f0
+[JuiceRect] input hwnd=0x10056 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10056 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10056 flags=80009967 ptr=0x100f0f760 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x137e1e9b0
+JUICE_TEXT_HOST_WINDOW pid=81793 hwnd=0x10056 rect=0,0 1024x768 visible=1
+[JuiceWine] anonymous PE executable section .text at 0x2d5120000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d4f70000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d4d00000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d54c0000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d4c20000 size=65536
+[JuiceCreate] ex=00000000 class=0x10100f7d0 version=0x0 name=0x10100f7b0 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x2d4f60000 params=0x0 flags=00000000 inst=0x2d4f60000 classptr=0x2d4fa1718 ansi=0
+[JuiceMonitor] callee hwnd=0x10072 hmon=0x1 info=0x100f0d810 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10072 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x10072 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10072 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10072 flags=14 ptr=0x100f0d710 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceRect] input hwnd=0x10072 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10072 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10072 flags=10 ptr=0x100f0d710 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0
+[JuiceCreate] ex=00000080 class=0x10100f560 version=0x0 name=0x10100f540 style=80000000 x=0 y=0 cx=1 cy=1 parent=0x1005a menu=0x0 classinst=0x2d5640000 params=0x0 flags=00000000 inst=0x2d5640000 classptr=0x10019f894 ansi=0
+[JuiceRect] input hwnd=0x10076 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10076 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10076 flags=3c ptr=0x100f0c9d0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1019204f0
+[JuiceRect] input hwnd=0x10076 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10076 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10076 flags=18 ptr=0x100f0c9d0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1019204f0
+[JuiceRect] input hwnd=0x10076 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10076 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10076 flags=181b ptr=0x100f0cbd0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1019204f0
+[JuiceMonitor] callee hwnd=0x10056 hmon=0x1 info=0x100f0f570 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceRect] input hwnd=0x1005c dpi=96/1 raw=96/1 win=20,8,170,44 client=20,8,170,44 visible=20,8,170,44
+[JuiceRect] mapped hwnd=0x1005c win=20,8,170,44 client=20,8,170,44 visible=20,8,170,44
+[JuiceGeom] changed hwnd=0x1005c flags=1817 ptr=0x100f0dcc0 window=20,8,170,44 client=20,8,170,44 visible=20,8,170,44 surface=0x0
+[JuiceRect] input hwnd=0x1005e dpi=96/1 raw=96/1 win=190,12,954,44 client=190,12,954,44 visible=190,12,954,44
+[JuiceRect] mapped hwnd=0x1005e win=190,12,954,44 client=190,12,954,44 visible=190,12,954,44
+[JuiceGeom] changed hwnd=0x1005e flags=1817 ptr=0x100f0dcc0 window=190,12,954,44 client=190,12,954,44 visible=190,12,954,44 surface=0x0
+[JuiceRect] input hwnd=0x10060 dpi=96/1 raw=96/1 win=20,46,170,82 client=20,46,170,82 visible=20,46,170,82
+[JuiceRect] mapped hwnd=0x10060 win=20,46,170,82 client=20,46,170,82 visible=20,46,170,82
+[JuiceGeom] changed hwnd=0x10060 flags=1817 ptr=0x100f0dcc0 window=20,46,170,82 client=20,46,170,82 visible=20,46,170,82 surface=0x0
+[JuiceRect] input hwnd=0x10062 dpi=96/1 raw=96/1 win=970,12,1008,44 client=970,12,1008,44 visible=970,12,1008,44
+JUICE_TEXT_HOST_CLICK_SENT index=1 hwnd=0x10056 point=90,742
+JUICE_TEXT_HOST_INPUT_SENT hwnd=0x10056 clicks=1 utf16_units=0
+[JuiceRect] mapped hwnd=0x10062 win=970,12,1008,44 client=970,12,1008,44 visible=970,12,1008,44
+[JuiceGeom] changed hwnd=0x10062 flags=1817 ptr=0x100f0dcc0 window=970,12,1008,44 client=970,12,1008,44 visible=970,12,1008,44 surface=0x0
+[JuiceRect] input hwnd=0x10064 dpi=96/1 raw=96/1 win=20,92,410,700 client=22,94,408,698 visible=20,92,410,700
+[JuiceRect] mapped hwnd=0x10064 win=20,92,410,700 client=22,94,408,698 visible=20,92,410,700
+[JuiceGeom] changed hwnd=0x10064 flags=1817 ptr=0x100f0dcc0 window=20,92,410,700 client=22,94,408,698 visible=20,92,410,700 surface=0x0
+[JuiceRect] input hwnd=0x10066 dpi=96/1 raw=96/1 win=430,92,1000,156 client=430,92,1000,156 visible=430,92,1000,156
+[JuiceRect] mapped hwnd=0x10066 win=430,92,1000,156 client=430,92,1000,156 visible=430,92,1000,156
+[JuiceGeom] changed hwnd=0x10066 flags=1817 ptr=0x100f0dcc0 window=430,92,1000,156 client=430,92,1000,156 visible=430,92,1000,156 surface=0x0
+[JuiceRect] input hwnd=0x10068 dpi=96/1 raw=96/1 win=8,724,206,760 client=8,724,206,760 visible=8,724,206,760
+[JuiceRect] mapped hwnd=0x10068 win=8,724,206,760 client=8,724,206,760 visible=8,724,206,760
+[JuiceGeom] changed hwnd=0x10068 flags=1817 ptr=0x100f0dcc0 window=8,724,206,760 client=8,724,206,760 visible=8,724,206,760 surface=0x0
+[JuiceRect] input hwnd=0x1006a dpi=96/1 raw=96/1 win=210,724,408,760 client=210,724,408,760 visible=210,724,408,760
+[JuiceRect] mapped hwnd=0x1006a win=210,724,408,760 client=210,724,408,760 visible=210,724,408,760
+[JuiceGeom] changed hwnd=0x1006a flags=1817 ptr=0x100f0dcc0 window=210,724,408,760 client=210,724,408,760 visible=210,724,408,760 surface=0x0
+[JuiceRect] input hwnd=0x1006c dpi=96/1 raw=96/1 win=412,724,610,760 client=412,724,610,760 visible=412,724,610,760
+[JuiceRect] mapped hwnd=0x1006c win=412,724,610,760 client=412,724,610,760 visible=412,724,610,760
+[JuiceGeom] changed hwnd=0x1006c flags=1817 ptr=0x100f0dcc0 window=412,724,610,760 client=412,724,610,760 visible=412,724,610,760 surface=0x0
+[JuiceRect] input hwnd=0x1006e dpi=96/1 raw=96/1 win=614,724,812,760 client=614,724,812,760 visible=614,724,812,760
+[JuiceRect] mapped hwnd=0x1006e win=614,724,812,760 client=614,724,812,760 visible=614,724,812,760
+[JuiceGeom] changed hwnd=0x1006e flags=1817 ptr=0x100f0dcc0 window=614,724,812,760 client=614,724,812,760 visible=614,724,812,760 surface=0x0
+[JuiceRect] input hwnd=0x10070 dpi=96/1 raw=96/1 win=816,724,1014,760 client=816,724,1014,760 visible=816,724,1014,760
+[JuiceRect] mapped hwnd=0x10070 win=816,724,1014,760 client=816,724,1014,760 visible=816,724,1014,760
+[JuiceGeom] changed hwnd=0x10070 flags=1817 ptr=0x100f0dcc0 window=816,724,1014,760 client=816,724,1014,760 visible=816,724,1014,760 surface=0x0
+[JuiceMonitor] callee hwnd=0x10056 hmon=0x1 info=0x100f0f670 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceInput] dispatched surface=0x10056 target=0x10068 local=90,742 desktop=90,742 flags=a003 sent=0
+[JuiceInput] dispatched surface=0x10056 target=0x10068 local=90,742 desktop=90,742 flags=a005 sent=0
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=81796
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=81796 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=81796 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] anonymous PE executable section .text at 0x140010000 size=65536
+[JuiceStage] loading Windows ntdll; transfer=0x140013bd0 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceWine] anonymous PE executable section .text at 0x2d7c30000 size=524288
+[JuiceStage] load_ntdll returned; transfer=0x140013bd0
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x101b10000 stack_limit=0x101a18000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x2d7ff8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x101a0fcd0 stack_base=0x101b10000 stack_limit=0x101a18000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=1 transfer=0x140013bd0 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x140013bd0 arg=0x2d7ffc000 teb=0x2d7ff8000 data=0x101900000 frame=0x101a0fcd0 stack_base=0x101b10000 stack_limit=0x101a18000
+[JuiceStage] calling signal_set_full_context; ctx=0x101b0fc70 target_pc=0x2d7c86bb0 target_sp=0x101b10000 target_x18=0x2d7ff8000 LdrInitializeThunk=0x2d7c86bd0 RtlUserThreadStart=0x2d7c86bb0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7c86bb0 frame_sp=0x101b10000 frame_x18=0x2d7ff8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7c86bd0 user_sp=0x101b0fc70 x16=0x2d7c86bd0 x17=0x101b0fc70 x18=0x2d7ff8000 restore=00400007
+[JuiceX18] broad #1 pc=0x2d7c641c8 fault=0x17ee instr=796fde48 x8=0x0 x16=0x2d7c86bd0 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #2 pc=0x2d7c8d6b8 fault=0x60 instr=f940324b x8=0x101b0fa40 x16=0x2d7c641c8 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #3 pc=0x100e4d464 fault=0x378 instr=f941be4a x8=0x18 x16=0x100e4d460 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #4 pc=0x2d7c8e148 fault=0x60 instr=f9403248 x8=0x100ca0090 x16=0xffff x17=0x101b0fa30 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #5 pc=0x2d7c642e0 fault=0x180c instr=b9580e48 x8=0x0 x16=0x2d7c84ab4 x17=0x101b0fa60 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #6 pc=0x2d7c57574 fault=0x60 instr=f9403248 x8=0x200 x16=0x2d7c642e0 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #7 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xfffffffffffffffe x16=0x2d7c84b74 x17=0x101b0f830 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #8 pc=0x2d7c5632c fault=0x60 instr=f9403248 x8=0x100ca33a0 x16=0x2d7cbc6c8 x17=0x2d7cbc89f x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #9 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xa x16=0x2d7c850d4 x17=0x101b0f7a0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #10 pc=0x2d7c56a50 fault=0x60 instr=f9403248 x8=0xffffffe3 x16=0x2d7cbc634 x17=0x101b0f69c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #11 pc=0x2d7c9701c fault=0x60 instr=f9403248 x8=0x100e98330 x16=0x2d7c84994 x17=0x101b0fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #12 pc=0x100e4d464 fault=0x378 instr=f941be4a x8=0x21 x16=0x100e4d460 x17=0x101b0f740 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #13 pc=0x2d7c56640 fault=0x60 instr=f9403248 x8=0x0 x16=0x2d7c852b4 x17=0x101b0fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #14 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c84ad4 x17=0x101b0fad0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #15 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0x84 x16=0x2d7c64124 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #16 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0xfffffffffffffffe x16=0x2d7cbc634 x17=0x101b0f921 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #17 pc=0x2d7c58de8 fault=0x0 instr=f940024a x8=0x18 x16=0x2d7c84c14 x17=0x101b0fa70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #18 pc=0x2d7c48070 fault=0x2c8 instr=f9416648 x8=0x2d7cba860 x16=0x2d7cbc634 x17=0x101b0f6a2 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7a50000 size=196608
+[JuiceX18] broad #19 pc=0x100e4d464 fault=0x378 instr=f941be4a x8=0x50 x16=0x100e4d460 x17=0x101b0f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #20 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x101b0f8b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #21 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c64124 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #22 pc=0x2d7c793cc fault=0x0 instr=f9000249 x8=0x0 x16=0x2d7c79318 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #23 pc=0x2d7c66c3c fault=0x60 instr=f9403248 x8=0x2d7a8f3e8 x16=0x2d7c793cc x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #24 pc=0x2d7c671d4 fault=0x60 instr=f9403249 x8=0xc2 x16=0x2d7c66c3c x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #25 pc=0x2d7c5632c fault=0x60 instr=f9403248 x8=0x100ca3f50 x16=0x2d7c671d4 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #26 pc=0x2d7c56338 fault=0x60 instr=f9403248 x8=0x76 x16=0x2d7c5632c x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #27 pc=0x100e4d53c fault=0x380 instr=b943824b x8=0x39 x16=0x100e94df0 x17=0x101b0efd0 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7660000 size=524288
+[JuiceX18] broad #28 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c84cb4 x17=0x101b0f410 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #29 pc=0x2d7c61850 fault=0x60 instr=f9403248 x8=0x2d7ce2000 x16=0x2d7c64124 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #30 pc=0x2d7c64124 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c61850 x17=0x101b0fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #31 pc=0x100e4d464 fault=0x378 instr=f941be4a x8=0x50 x16=0x100e4d460 x17=0x101b0f360 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #32 pc=0x2d7c79318 fault=0x0 instr=f9400249 x8=0x2d7c9f1ec x16=0x2d7c851b4 x17=0x101b0f360 x18=0x0 teb=0x2d7ff8000
+[JuiceWine] anonymous PE executable section .text at 0x2d7170000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d6ef0000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d6d70000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d6c90000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d6940000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x2d6650000 size=458752
+[JuiceWine] anonymous PE executable section .text at 0x2d6560000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d6200000 size=524288
+[JuiceWine] anonymous PE executable section .text at 0x2d6110000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d6040000 size=65536
+[JuiceInput] queue fd registered fd=10 tid=0x48
+[JuiceDriver] ios init set driver create=0x10453646c size=1216
+[JuiceDriver] install prev=0x102419308 lazy=0x102419308 null=0x102441d30 new=0x154008200 create=0x10453646c
+JUICE_TEXT_HOST_HELLO pid=81796 desktop=1024x768 dpi=96
+[JuiceWine] anonymous PE executable section .text at 0x2d5f10000 size=131072
+[JuiceCreate] ex=00000000 class=0x101b0fb40 version=0x0 name=0x101b0fb20 style=00ca0000 x=-2147483648 y=-2147483648 cx=-2147483648 cy=-2147483648 parent=0x0 menu=0x10080 classinst=0x140000000 params=0x0 flags=00000000 inst=0x140000000 classptr=0x101b0fe38 ansi=0
+[JuiceMonitor] callee hwnd=0x0 hmon=0x1 info=0x101a0fa00 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMonitor] caller hwnd=0x0 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMonitor] callee hwnd=0x10086 hmon=0x1 info=0x101a0f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10086 min=112,27 maxtrack=1036,780 max=1030,774 pos=-3,-3
+[JuiceRect] input hwnd=0x10086 dpi=96/1 raw=96/1 win=0,0,768,576 client=0,0,768,576 visible=0,0,768,576
+[JuiceRect] mapped hwnd=0x10086 win=0,0,768,576 client=0,0,768,576 visible=0,0,768,576
+[JuiceGeom] changed hwnd=0x10086 flags=3c ptr=0x101a0f620 window=0,0,768,576 client=0,0,768,576 visible=0,0,768,576 surface=0x1024244f0
+[JuiceCreate] ex=00000000 class=0x101a0f590 version=0x0 name=0x101a0f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=81796 hwnd=0x10086 rect=0,0 768x576 visible=1
+[JuiceRect] input hwnd=0x1008e dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1008e win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1008e flags=3c ptr=0x101a0eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1024244f0
+[JuiceRect] input hwnd=0x1008e dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1008e win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1008e flags=18 ptr=0x101a0eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1024244f0
+[JuiceRect] input hwnd=0x10086 dpi=96/1 raw=96/1 win=0,0,768,576 client=3,41,765,573 visible=0,0,768,576
+[JuiceRect] mapped hwnd=0x10086 win=0,0,768,576 client=3,41,765,573 visible=0,0,768,576
+[JuiceGeom] changed hwnd=0x10086 flags=18 ptr=0x101a0f620 window=0,0,768,576 client=3,41,765,573 visible=0,0,768,576 surface=0x1024244f0
+JUICE_TEXT_HOST_WINDOW pid=81796 hwnd=0x10086 rect=0,0 768x576 visible=1
+[JuiceMonitor] callee hwnd=0x10086 hmon=0x1 info=0x101a0dc50 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10086 min=112,27 maxtrack=1036,780 max=1030,774 pos=-3,-3
+[JuiceRect] input hwnd=0x10086 dpi=96/1 raw=96/1 win=0,0,160,226 client=3,41,157,223 visible=0,0,160,226
+[JuiceRect] mapped hwnd=0x10086 win=0,0,160,226 client=3,41,157,223 visible=0,0,160,226
+[JuiceGeom] changed hwnd=0x10086 flags=101e ptr=0x101a0e830 window=0,0,160,226 client=3,41,157,223 visible=0,0,160,226 surface=0x1024244f0
+JUICE_GUI_HOST_EXPECTED_WINDOW pid=81796 hwnd=0x10086 size=160x226
+[JuiceGeom] surface hwnd=0x10086 rect=0,0,256,256 size=256x256 previous=0x1024244f0
+[JuiceRect] input hwnd=0x10086 dpi=96/1 raw=96/1 win=0,0,160,226 client=3,41,157,223 visible=0,0,160,226
+[JuiceRect] mapped hwnd=0x10086 win=0,0,160,226 client=3,41,157,223 visible=0,0,160,226
+[JuiceGeom] changed hwnd=0x10086 flags=1967 ptr=0x101a0f760 window=0,0,160,226 client=3,41,157,223 visible=0,0,160,226 surface=0x151f3df00
+JUICE_GUI_HOST_EXPECTED_WINDOW pid=81796 hwnd=0x10086 size=160x226
+[JuiceWine] anonymous PE executable section .text at 0x2d5be0000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d5a30000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x2d57c0000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x2d5f80000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x2d56e0000 size=65536
+[JuiceCreate] ex=00000000 class=0x101b0f790 version=0x0 name=0x101b0f770 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x2d5a20000 params=0x0 flags=00000000 inst=0x2d5a20000 classptr=0x2d5a61718 ansi=0
+[JuiceMonitor] callee hwnd=0x10090 hmon=0x1 info=0x101a0d810 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10090 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x10090 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10090 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10090 flags=14 ptr=0x101a0d710 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0
+[JuiceRect] input hwnd=0x10090 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10090 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10090 flags=10 ptr=0x101a0d710 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0
+[JuiceX18] derived #1 pc=0x2d7c7e0f0 fault=0x1258 instr=79000268 base=x19 value=0x1258 fixed=0x2d7ff9258 teb=0x2d7ff8000
+[JuiceX18] derived #2 pc=0x2d767d710 fault=0x1260 instr=f9400660 base=x19 value=0x1258 fixed=0x2d7ff9258 teb=0x2d7ff8000
+[JuiceCreate] ex=00000080 class=0x101b0f520 version=0x0 name=0x101b0f500 style=80000000 x=0 y=0 cx=1 cy=1 parent=0x1008e menu=0x0 classinst=0x2d6100000 params=0x0 flags=00000000 inst=0x2d6100000 classptr=0x100cae5d4 ansi=0
+[JuiceRect] input hwnd=0x10096 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10096 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10096 flags=3c ptr=0x101a0c9d0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1024244f0
+[JuiceRect] input hwnd=0x10096 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10096 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10096 flags=18 ptr=0x101a0c9d0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1024244f0
+[JuiceRect] input hwnd=0x10096 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10096 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10096 flags=181b ptr=0x101a0cbd0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1024244f0
+[JuiceMonitor] callee hwnd=0x10086 hmon=0x1 info=0x101a0f570 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+JUICE_TEXT_HOST_RESULT success=1 marker=/var/mobile/Documents/Juice-JuiceGUI-smoke.ok frame=/var/mobile/Documents/JuiceLab-20260811/source/build/tests/juicegui-msi-persistence-v2/frame-after-input.png expected_frame=/var/mobile/Documents/JuiceLab-20260811/source/build/tests/juicegui-msi-persistence-v2/expected-window-frame.png child_rc=None
+Terminated: 15

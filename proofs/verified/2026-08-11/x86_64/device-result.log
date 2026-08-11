@@ -1,0 +1,9 @@
+Tue Aug 11 01:32:53 UTC 2026
+Darwin Jacks-iPad-toot 22.6.0 Darwin Kernel Version 22.6.0: Wed Jun 28 20:51:23 PDT 2023; root:xnu-8796.142.1~1/RELEASE_ARM64_T8030 iPad12,1 arm Darwin
+DEVICE_MODEL=LOCKSTATE=9e3181f546f6c798ba9b2e2855065e86ed74214ba0669a65db3d5da7a16157a1  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape-X64/tests/x86_64-smoke.exe
+941c936efd649c1281a2f9a1be5dfd6cea043abe42a00abda244c7fcec368c29  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll
+9e3181f546f6c798ba9b2e2855065e86ed74214ba0669a65db3d5da7a16157a1  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape-X64/tests/x86_64-smoke.exe
+941c936efd649c1281a2f9a1be5dfd6cea043abe42a00abda244c7fcec368c29  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll
+0f72a409d06adc2531fa67421f416e2d918086e42f95e5f6027ca32ed1d61cde  /var/mobile/Documents/Juice-x86_64-smoke.ok
+JUICE_X86_64_DEVICE_SMOKE_OK status=100 marker=/var/mobile/Documents/Juice-x86_64-smoke.ok log=/var/mobile/Documents/Juice-x86_64-verified-20260811.execution.log
+JUICE_CANONICAL_RESULT=0

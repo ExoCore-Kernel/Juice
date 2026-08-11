@@ -6,6 +6,8 @@ UNIX_LIBS = -lwin32u -framework CoreGraphics -framework Foundation -framework Qu
 VER_FILEDESCRIPTION_STR = "Wine iOS driver"
 
 SOURCES = \
+	control.c \
 	dllmain.c \
 	ipc.c \
-	iosdrv.c
+	iosdrv.c \
+	wineios.drv.spec

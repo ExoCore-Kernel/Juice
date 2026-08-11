@@ -1,0 +1,422 @@
+diff --git a/FEXCore/Source/Interface/Core/CPUBackend.cpp b/FEXCore/Source/Interface/Core/CPUBackend.cpp
+index 1b1fc105d..96c822f9d 100644
+--- a/FEXCore/Source/Interface/Core/CPUBackend.cpp
++++ b/FEXCore/Source/Interface/Core/CPUBackend.cpp
+@@ -350,7 +350,13 @@ namespace CPU {
+ 
+   CodeBuffer::CodeBuffer(size_t Size)
+     : AllocatedSize(Size) {
++#ifdef FEX_JUICE_IOS
++    /* iOS leaves anonymous mappings created RWX hardware-NX.  JIT.cpp
++     * publishes generated blocks with an explicit RW -> RX transition. */
++    Ptr = static_cast<uint8_t*>(FEXCore::Allocator::VirtualAlloc(Size, false));
++#else
+     Ptr = static_cast<uint8_t*>(FEXCore::Allocator::VirtualAlloc(Size, true));
++#endif
+     LOGMAN_THROW_A_FMT(!!Ptr, "Couldn't allocate code buffer");
+ 
+     // Protect the last page of the allocated buffer to trigger SIGSEGV on write access
+diff --git a/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp b/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp
+index 005d75230..c0c862182 100644
+--- a/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp
++++ b/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp
+@@ -36,11 +36,25 @@ static void SleepThread(FEXCore::Context::ContextImpl* CTX, FEXCore::Core::CpuSt
+ 
+ constexpr size_t MAX_DISPATCHER_CODE_SIZE = FEXCore::Utils::FEX_PAGE_SIZE * 4;
+ 
++static void* AllocateDispatcherCode() {
++#ifdef FEX_JUICE_IOS
++  /* iOS accepts the RW -> RX transition but leaves a mapping created RWX
++   * hardware-NX, even though mmap itself succeeds. */
++  return FEXCore::Allocator::VirtualAlloc(MAX_DISPATCHER_CODE_SIZE, false);
++#else
++  return FEXCore::Allocator::VirtualAlloc(MAX_DISPATCHER_CODE_SIZE, true);
++#endif
++}
++
+ Dispatcher::Dispatcher(FEXCore::Context::ContextImpl* ctx)
+-  : Arm64Emitter(ctx, FEXCore::Allocator::VirtualAlloc(MAX_DISPATCHER_CODE_SIZE, true), MAX_DISPATCHER_CODE_SIZE)
++  : Arm64Emitter(ctx, AllocateDispatcherCode(), MAX_DISPATCHER_CODE_SIZE)
+   , CTX {ctx} {
+   EmitDispatcher();
+ 
++#ifdef FEX_JUICE_IOS
++  FEXCore::Allocator::VirtualProtect(reinterpret_cast<void*>(GetBufferBase()), MAX_DISPATCHER_CODE_SIZE,
++                                     FEXCore::Allocator::ProtectOptions::Read | FEXCore::Allocator::ProtectOptions::Exec);
++#endif
+   FEXCore::Allocator::VirtualName("FEXMem_Misc", reinterpret_cast<void*>(GetBufferBase()), MAX_DISPATCHER_CODE_SIZE);
+ }
+ 
+diff --git a/FEXCore/Source/Interface/Core/JIT/JIT.cpp b/FEXCore/Source/Interface/Core/JIT/JIT.cpp
+index dd9c27e29..65f704307 100644
+--- a/FEXCore/Source/Interface/Core/JIT/JIT.cpp
++++ b/FEXCore/Source/Interface/Core/JIT/JIT.cpp
+@@ -1077,6 +1077,10 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+ 
+     // Query size of generated code
+     const auto TempSize = GetCursorOffset();
++#ifdef FEX_JUICE_IOS
++    uintptr_t ProtectStart {};
++    uintptr_t ProtectEnd {};
++#endif
+ 
+     // Bring CodeBuffer up to date
+     {
+@@ -1088,14 +1092,35 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+         ThreadState->LookupCache->ChangeGuestToHostMapping(*Prev, *CurrentCodeBuffer->LookupCache, lk);
+       }
+ 
+-      // NOTE: 16-byte alignment of the new cursor offset must be preserved for block linking records
++      // Ensure a replacement buffer is selected before Align16B writes padding.
+       SetBuffer(CurrentCodeBuffer->Ptr, CurrentCodeBuffer->AllocatedSize);
+-      SetCursorOffset(CodeBuffers.LatestOffset);
+-      Align16B();
+-      if ((GetCursorOffset() + TempSize) > CurrentCodeBuffer->UsableSize()) {
++      const auto AlignedOffset = AlignUp(CodeBuffers.LatestOffset, static_cast<uint64_t>(16));
++      if ((AlignedOffset + TempSize) > CurrentCodeBuffer->UsableSize()) {
+         CTX->ClearCodeCache(ThreadState);
+       }
+ 
++#ifdef FEX_JUICE_IOS
++      /*
++       * Align16B emits padding directly into the destination buffer.  Include
++       * that padding in the W^X write interval; protecting only the memcpy
++       * destination is too late when the preceding block left this page RX.
++       */
++      constexpr uintptr_t JuiceHostPageSize = 0x4000;
++      constexpr uintptr_t JuiceHostPageMask = JuiceHostPageSize - 1;
++      const uintptr_t BufferBase = reinterpret_cast<uintptr_t>(CurrentCodeBuffer->Ptr);
++      const uintptr_t CopyOffset = AlignUp(CodeBuffers.LatestOffset, static_cast<uint64_t>(16));
++      ProtectStart = (BufferBase + CodeBuffers.LatestOffset) & ~JuiceHostPageMask;
++      ProtectEnd = (BufferBase + CopyOffset + TempSize + JuiceHostPageMask) & ~JuiceHostPageMask;
++      LOGMAN_THROW_A_FMT(
++        FEXCore::Allocator::VirtualProtect(reinterpret_cast<void*>(ProtectStart), ProtectEnd - ProtectStart,
++                                           FEXCore::Allocator::ProtectOptions::Read | FEXCore::Allocator::ProtectOptions::Write),
++        "Couldn't make iOS JIT code buffer writable");
++#endif
++
++      // NOTE: 16-byte alignment of the new cursor offset must be preserved for block linking records
++      SetBuffer(CurrentCodeBuffer->Ptr, CurrentCodeBuffer->AllocatedSize);
++      SetCursorOffset(CodeBuffers.LatestOffset);
++      Align16B();
+       CodeBuffers.LatestOffset = GetCursorOffset();
+     }
+ 
+@@ -1112,7 +1137,26 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+     }
+ 
+     // Copy over CodeBuffer contents
+-    memcpy(GetCursorAddress<uint8_t*>(), TempCodeBuffer, TempSize);
++    auto CopyStart = GetCursorAddress<uint8_t*>();
++#ifdef FEX_JUICE_IOS
++    /*
++     * The iOS host page is 16 KiB.  A mapping created RWX remains
++     * hardware-NX on the supported device, while a RW -> RX transition is
++     * executable.  Temporarily make only the pages receiving this block
++     * writable, then publish them RX before returning to the dispatcher.
++     */
++    LOGMAN_THROW_A_FMT(reinterpret_cast<uintptr_t>(CopyStart) >= ProtectStart &&
++                        reinterpret_cast<uintptr_t>(CopyStart) + TempSize <= ProtectEnd,
++                      "iOS JIT write interval doesn't cover generated block");
++#endif
++    memcpy(CopyStart, TempCodeBuffer, TempSize);
++#ifdef FEX_JUICE_IOS
++    ClearICache(CopyStart, TempSize);
++    LOGMAN_THROW_A_FMT(
++      FEXCore::Allocator::VirtualProtect(reinterpret_cast<void*>(ProtectStart), ProtectEnd - ProtectStart,
++                                         FEXCore::Allocator::ProtectOptions::Read | FEXCore::Allocator::ProtectOptions::Exec),
++      "Couldn't make iOS JIT code buffer executable");
++#endif
+     SetCursorOffset(CodeBuffers.LatestOffset + TempSize);
+ 
+     CodeBuffers.LatestOffset = GetCursorOffset();
+diff --git a/FEXCore/Source/Interface/Core/LookupCache.cpp b/FEXCore/Source/Interface/Core/LookupCache.cpp
+index aaa0c2424..d334aaf63 100644
+--- a/FEXCore/Source/Interface/Core/LookupCache.cpp
++++ b/FEXCore/Source/Interface/Core/LookupCache.cpp
+@@ -38,7 +38,18 @@ LookupCache::LookupCache(FEXCore::Context::ContextImpl* CTX)
+   // Allocate a region of memory that we can use to back our block pointers
+   // We need one pointer per page of virtual memory
+   // At 64GB of virtual memory this will allocate 128MB of virtual memory space
++#ifdef FEX_JUICE_IOS
++  /*
++   * The Windows allocator normally reserves this sparse range and relies on
++   * the host overcommit fault path to make pages accessible on demand.  Wine's
++   * ARM64EC path on iOS cannot safely service that native ARM64 fault while an
++   * x86-64 block is entering the lookup cache, so commit the virtual range up
++   * front.  Physical pages are still supplied lazily by Darwin when touched.
++   */
++  PagePointer = reinterpret_cast<uintptr_t>(FEXCore::Allocator::VirtualAlloc(TotalCacheSize, false, true));
++#else
+   PagePointer = reinterpret_cast<uintptr_t>(FEXCore::Allocator::VirtualAlloc(TotalCacheSize, false, false));
++#endif
+   LOGMAN_THROW_A_FMT(PagePointer != -1ULL, "Failed to allocate PagePointer");
+ 
+   // Disable THP on the Lookup cache.
+@@ -81,14 +92,26 @@ LookupCache::~LookupCache() {
+ void LookupCache::ClearL2Cache(const FEXCore::LookupCacheBaseLockToken& lk) {
+   // Clear out the page memory
+   // PagePointer and PageMemory are sequential with each other. Clear both at once.
+-  FEXCore::Allocator::VirtualDontNeed(reinterpret_cast<void*>(PagePointer),
+-                                      ctx->Config.VirtualMemSize / FEXCore::Utils::FEX_PAGE_SIZE * 8 + CODE_SIZE, false);
++  FEXCore::Allocator::VirtualDontNeed(
++    reinterpret_cast<void*>(PagePointer), ctx->Config.VirtualMemSize / FEXCore::Utils::FEX_PAGE_SIZE * 8 + CODE_SIZE,
++#ifdef FEX_JUICE_IOS
++    true
++#else
++    false
++#endif
++  );
+   AllocateOffset = 0;
+ }
+ 
+ void LookupCache::ClearThreadLocalCaches(const LookupCacheWriteLockToken&) {
+   // Clear L1 and L2 by clearing the full cache.
+-  FEXCore::Allocator::VirtualDontNeed(reinterpret_cast<void*>(PagePointer), TotalCacheSize, false);
++  FEXCore::Allocator::VirtualDontNeed(reinterpret_cast<void*>(PagePointer), TotalCacheSize,
++#ifdef FEX_JUICE_IOS
++                                      true
++#else
++                                      false
++#endif
++  );
+   CachedCodePages.clear();
+ }
+ 
+diff --git a/FEXCore/include/FEXCore/Utils/AllocatorHooks.h b/FEXCore/include/FEXCore/Utils/AllocatorHooks.h
+index 48bbe5e3e..9944bf4d5 100644
+--- a/FEXCore/include/FEXCore/Utils/AllocatorHooks.h
++++ b/FEXCore/include/FEXCore/Utils/AllocatorHooks.h
+@@ -97,7 +97,8 @@ inline bool VirtualProtect(void* Ptr, size_t Size, ProtectOptions options) {
+     LOGMAN_MSG_A_FMT("Unknown VirtualProtect options combination");
+   }
+ 
+-  return ::VirtualProtect(Ptr, Size, prot, nullptr) == 0;
++  DWORD old_prot {};
++  return ::VirtualProtect(Ptr, Size, prot, &old_prot) != 0;
+ }
+ 
+ FEX_DEFAULT_VISIBILITY extern VirtualNamePtr VirtualName;
+diff --git a/Source/Windows/ARM64EC/Module.cpp b/Source/Windows/ARM64EC/Module.cpp
+index 8e5416709..6e484af9a 100644
+--- a/Source/Windows/ARM64EC/Module.cpp
++++ b/Source/Windows/ARM64EC/Module.cpp
+@@ -29,6 +29,7 @@ $end_info$
+ 
+ #include "Windows/Common/Allocator.h"
+ #include "Windows/Common/EnvironmentVariablesHandling.h"
++#include "Windows/Common/Priv.h"
+ #include "Common/CallRetStack.h"
+ #include "Common/JITGuardPage.h"
+ #include "Common/Config.h"
+@@ -154,7 +155,7 @@ std::pair<NTSTATUS, ThreadCPUArea> GetThreadCPUArea(HANDLE Thread) {
+ }
+ 
+ ThreadCPUArea GetCPUArea() {
+-  return ThreadCPUArea(NtCurrentTeb());
++  return ThreadCPUArea(reinterpret_cast<_TEB*>(GetCurrentTEB()));
+ }
+ 
+ FrontendThreadData* GetFrontendThreadData(FEXCore::Core::InternalThreadState* Thread) {
+@@ -351,7 +352,7 @@ static void LoadStateFromECContext(FEXCore::Core::InternalThreadState* Thread, C
+     State.gs_idx = Context.SegGs & 0xffff;
+ 
+     // The TEB is the only populated GDT entry by default
+-    const auto TEB = reinterpret_cast<uint64_t>(NtCurrentTeb());
++    const auto TEB = reinterpret_cast<uint64_t>(GetCurrentTEB());
+     auto GDT = State.GetSegmentFromIndex(State, (Context.SegGs & 0xffff));
+     State.SetGDTBase(GDT, TEB);
+     State.SetGDTLimit(GDT, 0xF'FFFFU);
+@@ -590,9 +591,11 @@ NTSTATUS ProcessInit() {
+   __wine_dbg_output("starting FEX based libarm64ecfex.dll\n");
+ 
+   FEXCore::Profiler::Init("", "");
++  __wine_dbg_output("[JuiceFEX] profiler ready\n");
+ 
+   SignalDelegator = fextl::make_unique<FEX::DummyHandlers::DummySignalDelegator>();
+   SyscallHandler = fextl::make_unique<Exception::ECSyscallHandler>();
++  __wine_dbg_output("[JuiceFEX] handlers ready\n");
+ 
+   const auto NtDll = GetModuleHandle("ntdll.dll");
+   const bool IsWine = !!GetProcAddress(NtDll, "wine_get_version");
+@@ -601,30 +604,37 @@ NTSTATUS ProcessInit() {
+   FEX::Windows::SetupEnvironmentVariableValues(NtDll);
+ 
+   FEX::Windows::Allocator::SetupHooks(NtDll);
++  __wine_dbg_output("[JuiceFEX] allocator hooks ready\n");
+ 
+   {
+     auto HostFeatures = FEX::Windows::CPUFeatures::FetchHostFeatures(IsWine);
++    __wine_dbg_output("[JuiceFEX] host features ready\n");
+     CTX = FEXCore::Context::Context::CreateNewContext(HostFeatures);
+   }
++  __wine_dbg_output("[JuiceFEX] context created\n");
+ 
+   CTX->SetSignalDelegator(SignalDelegator.get());
+   CTX->SetSyscallHandler(SyscallHandler.get());
+   CTX->InitCore();
++  __wine_dbg_output("[JuiceFEX] core initialized\n");
+   Exception::HandlerConfig.emplace(*CTX);
+   InvalidationTracker.emplace(*CTX, Threads);
+   ImageTracker.emplace(*CTX, false);
++  __wine_dbg_output("[JuiceFEX] trackers ready\n");
+ 
+-  auto MainModule = reinterpret_cast<__TEB*>(NtCurrentTeb())->Peb->ImageBaseAddress;
++  auto MainModule = GetCurrentTEB()->Peb->ImageBaseAddress;
+   HandleImageMap(reinterpret_cast<uint64_t>(MainModule), true);
+ 
+   HandleImageMap(NtDllBase);
+ 
+   CPUFeatures.emplace(*CTX);
++  __wine_dbg_output("[JuiceFEX] images and CPU features ready\n");
+ 
+   X64ReturnInstr = ::VirtualAlloc(nullptr, FEXCore::Utils::FEX_PAGE_SIZE, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+   InvalidationTracker->HandleMemoryProtectionNotification(reinterpret_cast<uint64_t>(X64ReturnInstr), FEXCore::Utils::FEX_PAGE_SIZE,
+                                                           PAGE_EXECUTE_READ);
+   *reinterpret_cast<uint8_t*>(X64ReturnInstr) = 0xc3;
++  __wine_dbg_output("[JuiceFEX] x64 return thunk ready\n");
+ 
+   const uintptr_t KiUserExceptionDispatcherFFS = reinterpret_cast<uintptr_t>(GetProcAddress(NtDll, "KiUserExceptionDispatcher"));
+   Exception::KiUserExceptionDispatcher = NtDllRedirectionLUT[KiUserExceptionDispatcherFFS - NtDllBase] + NtDllBase;
+@@ -638,19 +648,24 @@ NTSTATUS ProcessInit() {
+     }
+   }
+ 
++#ifndef FEX_JUICE_IOS
+   FEX_CONFIG_OPT(ProfileStats, PROFILESTATS);
++#endif
+   FEX_CONFIG_OPT(StartupSleep, STARTUPSLEEP);
+   FEX_CONFIG_OPT(StartupSleepProcName, STARTUPSLEEPPROCNAME);
+ 
++#ifndef FEX_JUICE_IOS
+   if (IsWine && ProfileStats()) {
+     StatAllocHandler = fextl::make_unique<FEX::Windows::StatAlloc>(FEXCore::SHMStats::AppType::WIN_ARM64EC);
+   }
++#endif
+ 
+   if (StartupSleep() && (StartupSleepProcName().empty() || ExecutableName == StartupSleepProcName())) {
+     LogMan::Msg::IFmt("[{}][{}] Sleeping for {} seconds", GetCurrentProcessId(), ExecutableName, StartupSleep());
+     std::this_thread::sleep_for(std::chrono::seconds(StartupSleep()));
+   }
+ 
++  __wine_dbg_output("[JuiceFEX] process init complete\n");
+   return STATUS_SUCCESS;
+ }
+ 
+diff --git a/Source/Windows/Common/Allocator.cpp b/Source/Windows/Common/Allocator.cpp
+index 0643e062f..c0dac1cc2 100644
+--- a/Source/Windows/Common/Allocator.cpp
++++ b/Source/Windows/Common/Allocator.cpp
+@@ -175,7 +175,24 @@ namespace Illegal {
+   }
+ } // namespace Illegal
+ 
++#ifdef FEX_JUICE_IOS
++namespace JuiceIOS {
++void VirtualName(const char*, const void*, size_t) {}
++void VirtualTHPControl(const void*, size_t, FEXCore::Allocator::THPControl) {}
++} // namespace JuiceIOS
++#endif
++
+ void SetupHooks(HMODULE ntdll) {
++#ifdef FEX_JUICE_IOS
++  FEXCore::Allocator::HookPtrs Ptrs {
++    .VirtualName = JuiceIOS::VirtualName,
++    .VirtualTHPControl = JuiceIOS::VirtualTHPControl,
++  };
++  SYSTEM_INFO system_info {};
++  GetSystemInfo(&system_info);
++  FEXCore::Allocator::SetupHooks(system_info.dwPageSize, Ptrs);
++  return;
++#else
+   // If this symbol doesn't exist, then we aren't running under WINE.
+   const auto Sym = GetProcAddress(ntdll, "__wine_unix_call_dispatcher");
+ 
+@@ -239,5 +256,6 @@ void SetupHooks(HMODULE ntdll) {
+   SYSTEM_INFO system_info {};
+   GetSystemInfo(&system_info);
+   FEXCore::Allocator::SetupHooks(system_info.dwPageSize, Ptrs);
++#endif
+ }
+ } // namespace FEX::Windows::Allocator
+diff --git a/Source/Windows/Common/Priv.h b/Source/Windows/Common/Priv.h
+index ea702b400..eb813c4ca 100644
+--- a/Source/Windows/Common/Priv.h
++++ b/Source/Windows/Common/Priv.h
+@@ -4,8 +4,40 @@
+ #include <exception>
+ #include <winternl.h>
+ 
++#ifdef FEX_JUICE_IOS
++extern "C" NTSYSAPI NTSTATUS NTAPI NtWineGetCurrentTebAccessor(void** Accessor);
++using JuiceTebAccessor = __TEB* (*)();
++inline JuiceTebAccessor JuiceTebAccessorFunction {};
++#endif
++
+ static inline __TEB* GetCurrentTEB() {
++#ifdef FEX_JUICE_IOS
++  auto Accessor = JuiceTebAccessorFunction;
++  if (!Accessor) {
++    void* Address {};
++    const NTSTATUS Status = NtWineGetCurrentTebAccessor(&Address);
++    if (Status || !Address) {
++      NtTerminateProcess(NtCurrentProcess(),
++                         Status ? Status :
++                                  static_cast<NTSTATUS>(0xC00000BBu));
++      __fastfail(0);
++    }
++    Accessor = reinterpret_cast<JuiceTebAccessor>(Address);
++    JuiceTebAccessorFunction = Accessor;
++  }
++  auto* Teb = Accessor();
++  if (!Teb) {
++    NtTerminateProcess(NtCurrentProcess(),
++                       static_cast<NTSTATUS>(0xC0000001u));
++    __fastfail(0);
++  }
++#if defined(__aarch64__)
++  asm volatile("mov x18, %0" : : "r"(Teb) : "x18");
++#endif
++  return Teb;
++#else
+   return reinterpret_cast<__TEB*>(NtCurrentTeb());
++#endif
+ }
+ 
+ static inline __PEB* GetCurrentPEB() {
+diff --git a/Source/Windows/Common/SHMStats.cpp b/Source/Windows/Common/SHMStats.cpp
+index 9d844b3a3..5e4d7f297 100644
+--- a/Source/Windows/Common/SHMStats.cpp
++++ b/Source/Windows/Common/SHMStats.cpp
+@@ -12,6 +12,11 @@
+ #include <wine/debug.h>
+ 
+ namespace FEX::Windows {
++#ifdef FEX_JUICE_IOS
++uint64_t linux_getpid() {
++  return GetCurrentProcessId();
++}
++#else
+ __attribute__((naked)) uint64_t linux_getpid() {
+   asm volatile(R"(
+   mov x8, 172;
+@@ -20,6 +25,7 @@ __attribute__((naked)) uint64_t linux_getpid() {
+   )" ::
+                  : "r0", "r8");
+ }
++#endif
+ 
+ uint32_t StatAlloc::FrontendAllocateSlots(uint32_t NewSize) {
+   if (CurrentSize == MAX_STATS_SIZE || !UsingNTQueryPath) {
+diff --git a/Source/Windows/Defs/ntdll.def b/Source/Windows/Defs/ntdll.def
+index 807d6a842..9e4cf363f 100644
+--- a/Source/Windows/Defs/ntdll.def
++++ b/Source/Windows/Defs/ntdll.def
+@@ -345,6 +345,7 @@ EXPORTS
+   NtWriteFileGather
+   NtWriteVirtualMemory
+   NtYieldExecution
++  NtWineGetCurrentTebAccessor
+   PfxFindPrefix PRIVATE
+   PfxInitialize PRIVATE
+   PfxInsertPrefix PRIVATE

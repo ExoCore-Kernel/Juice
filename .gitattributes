@@ -11,3 +11,4 @@
 *.exe binary
 *.nls binary
 *.png binary
+*.patch text eol=lf whitespace=-blank-at-eol,-space-before-tab

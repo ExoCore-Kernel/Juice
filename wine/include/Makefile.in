@@ -419,6 +419,7 @@ SOURCES = \
 	iptypes.h \
 	isguids.h \
 	ivectorchangedeventargs.idl \
+	juiceios.h \
 	kbd.h \
 	knownfolders.h \
 	ks.h \

@@ -1,0 +1,4 @@
+Component	ComponentId	Directory_	Attributes	Condition	KeyPath
+s72	S38	s72	i2	S255	S72
+Component	Component
+SmokeComponent	{3627FB20-8B95-44B7-930D-3A766D52AA64}	INSTALLDIR	4		CatalogName

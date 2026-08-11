@@ -1,0 +1,1 @@
+/private/var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/runtime/lib/wine/aarch64-windows/JuiceGUI.exe

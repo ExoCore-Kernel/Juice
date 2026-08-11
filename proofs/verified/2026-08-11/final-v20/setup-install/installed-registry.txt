@@ -1,0 +1,17 @@
+159-#time=1dd29487fa5c862
+160-
+161:[Software\\Juice\\Applications\\SetupSmoke] 1786431083
+162-#time=1dd295dd2c02442
+163-"Arguments"="/installed"
+164-"Machine"=dword:0000aa64
+165-"Name"="Juice Setup Smoke"
+166:"Path"="C:\\users\\mobile\\AppData\\Local\\Juice\\SetupSmoke\\JuiceSetupSmoke.exe"
+167:"Uninstall"="\"C:\\users\\mobile\\AppData\\Local\\Juice\\SetupSmoke\\JuiceSetupSmoke.exe\" /uninstall"
+168-
+169-[Software\\Juice\\Applications\\WineMine] 1786425138
+170-#time=1dd294ffb462ee2
+171-"Machine"=dword:0000aa64
+172-"Name"="WineMine"
+173-"Path"="winemine.exe"
+174-
+175-[Software\\Juice\\Applications\\X8664Smoke] 1786425138

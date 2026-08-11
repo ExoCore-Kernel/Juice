@@ -1,0 +1,28 @@
+159-#time=1dd29487fa5c862
+160-
+161:[Software\\Juice\\Applications\\MSISmoke] 1786430796
+162-#time=1dd295d27d9b5ac
+163-"Arguments"=""
+164-"Machine"=dword:0000aa64
+165-"Name"="Juice MSI Smoke"
+166:"Path"="C:\\users\\mobile\\AppData\\Local\\Juice\\MSISmoke\\JuiceMSISmoke.exe"
+167-"Uninstall"="msiexec.exe /x {4BA101DC-EB22-4C4B-B40E-C5FCDB00A641}"
+168-
+169-[Software\\Juice\\Applications\\WineMine] 1786425138
+170-#time=1dd294ffb462ee2
+171-"Machine"=dword:0000aa64
+172-"Name"="WineMine"
+173-"Path"="winemine.exe"
+174-
+--
+197-[Software\\Microsoft\\Installer\\Products\\CD101AB422BEB4C44BE05CCFBD006A14\\SourceList] 1786430796
+198-#time=1dd295d27da6dee
+199:"PackageName"="JuiceMSISmoke.msi"
+200-
+201-[Software\\Microsoft\\Installer\\Products\\CD101AB422BEB4C44BE05CCFBD006A14\\SourceList\\Media] 1786430796
+202-#time=1dd295d27da741a
+203-"DiskPrompt"=""
+204-"MediaPackage"=""
+205-
+206-[Software\\Microsoft\\Installer\\UpgradeCodes\\2C28E06C5CD99B94F87B1B46F52AD8A5] 1786430796
+207-#time=1dd295d27da51b0

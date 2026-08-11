@@ -1,0 +1,4 @@
+FileKey	Component_	SourceName	DestName	SourceFolder	DestFolder	Options
+s72	s72	S255	S255	S72	s72	i2
+MoveFile	FileKey
+InstallSmokeProgram	SmokeComponent	winemine.exe	JuiceMSISmoke.exe	System64Folder	INSTALLDIR	0

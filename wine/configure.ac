@@ -990,6 +990,15 @@ case $host_os in
     AC_SUBST(APPKIT_LIBS,"-framework AppKit")
     AC_SUBST(SECURITY_LIBS,"-framework Security -framework CoreFoundation")
     AC_SUBST(SYSTEMCONFIGURATION_LIBS,"-framework SystemConfiguration")
+    if test "x$JUICE_IOS_DEVICE" = x1
+    then
+        dnl Disk Arbitration, CoreServices metadata, and macOS Keychain APIs
+        dnl are unavailable in the iOS SDK. mountmgr uses guarded stubs there.
+        DISKARBITRATION_LIBS="-framework CoreFoundation"
+        CORESERVICES_LIBS=""
+        SECURITY_LIBS=""
+        SYSTEMCONFIGURATION_LIBS=""
+    fi
 
     WINELOADER_LDFLAGS="-Wl,-segalign,0x1000,-pagezero_size,0x1000,-sectcreate,__TEXT,__info_plist,loader/wine_info.plist"
 
@@ -3612,6 +3621,9 @@ WINE_CONFIG_MAKEFILE(programs/icacls)
 WINE_CONFIG_MAKEFILE(programs/icinfo)
 WINE_CONFIG_MAKEFILE(programs/iexplore)
 WINE_CONFIG_MAKEFILE(programs/ipconfig)
+WINE_CONFIG_MAKEFILE(programs/juicegui)
+WINE_CONFIG_MAKEFILE(programs/juicesetupsmoke)
+WINE_CONFIG_MAKEFILE(programs/juicetextsmoke)
 WINE_CONFIG_MAKEFILE(programs/klist)
 WINE_CONFIG_MAKEFILE(programs/lodctr)
 WINE_CONFIG_MAKEFILE(programs/makecab)
@@ -3762,7 +3774,10 @@ _WINE_EOF
 
 dnl Main makefile
 
-AC_SUBST(SHELL,[/bin/sh])
+dnl Rootless iOS environments do not provide /bin/sh.  Keep Autoconf's
+dnl CONFIG_SHELL-selected interpreter so config.status can safely re-run
+dnl configure when an edited source file makes the Makefile stale.
+AC_SUBST(SHELL,[${CONFIG_SHELL-/bin/sh}])
 
 dnl Rules for re-running configure
 

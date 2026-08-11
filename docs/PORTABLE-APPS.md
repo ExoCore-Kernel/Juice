@@ -1,7 +1,7 @@
 # Portable applications
 
-Juice accepts a single Windows ARM64 `.exe` or a portable `.zip` from Files.
-ZIP contents are imported into a unique directory beneath
+Juice accepts a Windows `.exe` or portable `.zip` from Files or the JuiceGUI
+Install App command. ZIP contents are imported into a unique directory beneath
 `/var/mobile/Documents/JuiceData/Imported`. The hierarchy is preserved, Juice
 recursively finds `.exe` files, and a chooser is shown when more than one is
 present. The selected executable's directory becomes the process working
@@ -26,10 +26,17 @@ mistaken for the real record.
 
 ## Compatibility expectations
 
-The application itself and all native Windows dependencies must be ARM64.
-Pure data files can be any format. x86/x64 emulation is not included. Programs
-depending on unimplemented Wine APIs, graphics stacks other than the current
-iOS driver, installers, services, or kernel drivers may still fail.
+Windows ARM64 applications and dependencies use the stable Grape runtime.
+AMD64 applications are detected from the PE header and can use the separate,
+experimental Grape-X64/FEX translator when it is packaged and enabled. Adjacent
+AMD64 DLLs remain beside the executable and follow the same preserved working
+directory. 32-bit x86 is not supported. Mixed-architecture plugins, kernel
+drivers, and programs depending on unimplemented Wine APIs may still fail.
+
+MSI and setup EXE installers are supported separately from portable ZIPs. MSI
+uses Wine's msiexec; a setup EXE is routed according to its detected machine.
+Installed programs and imported payloads live outside the app bundle and
+persist across Juice restarts and updates.
 
 The 2026-07-20 on-device milestone used the Notepad4 ARM64 portable archive:
 eight files were preserved, `Notepad4.exe` and `matepath.exe` were discovered,

@@ -37,10 +37,11 @@ Fullscreen, selectable left/right mouse input, UTF-16 text transport, and
 Backspace, Tab, and Enter controls were added. The pointer path and app-to-driver
 text protocol produced their expected on-device markers.
 
-The latest v12 driver moved socket handling onto the Wine GUI queue, changed
-text delivery to synchronous NtUserMessageCall, queried control length,
-invalidated parent and child, and forced an immediate surface presentation.
-Despite those successful logs, the tested binary still showed no glyphs.
+The v12 driver moved socket handling onto the Wine GUI queue, changed text
+delivery to synchronous NtUserMessageCall, queried control length, invalidated
+parent and child, and forced an immediate surface presentation. The later v20
+FreeType-enabled build visibly rendered its GDI text suite and the exact phrase
+delivered to a Win32 EDIT control.
 
 ## FreeType and repository recovery
 
@@ -58,5 +59,38 @@ The same audit reconciled the scattered iPad tree with the local source:
   6eb2e4c32cc9e271856146df11ed3a5c2cf29234;
 - the standalone patch was regenerated and reverse-verified against wine.
 
-This is a source and reproducibility milestone. Visible text from a newly built
-FreeType-enabled TIPA remains the next visual acceptance test.
+This was the source and reproducibility milestone that enabled the verified v20
+device build below.
+
+## Core v20: desktop, installers, text, and x86-64
+
+On 2026-08-11, `Juice-Core-v20-20260811.tipa` passed ZIP integrity with
+SHA-256:
+
+    48f3a1e0dd845e130c629dcdb1e697d3a556e8143802a2ea7aa9af6c38201e41
+
+The same installed app bundle produced these independent device results:
+
+- ARM64 `cmd.exe` smoke: pass, exit status 0.
+- AMD64 marker executable: pass through FEX, expected translated status 100.
+- JuiceGUI desktop: 1024 by 768 full-screen frame from the current app-bundle
+  binary, not a stale prefix copy.
+- ARM64 desktop launch: WineMine reached its expected 160 by 226 window.
+- x86-64 desktop launch: automatic AMD64 selection generated a version-1 host
+  action, initialized FEX, and wrote `JUICE_X86_64_SMOKE_OK`.
+- GDI/text/input: `TextOutW`, `DrawTextW`, Unicode, and edit-control text were
+  visible; render, create, and exact-input markers all passed.
+- controlled Wineboot: a fresh prefix ran Wineboot, wrote
+  `.juice-prefix-ready`, then executed an ARM64 marker command.
+- MSI: versioned import request, msiexec install, application discovery after a
+  restart, launch, and uninstall all passed.
+- setup EXE: versioned import request, persistent install, registration, and
+  installed-program launch all passed.
+- custom wallpaper: a user BMP loaded and centre-cropped; the temporary test
+  wallpaper was removed after capture.
+
+The canonical evidence is in `proofs/verified/2026-08-11/final-v20/`, with
+curated screenshots and their hashes under `screenshots/`. Direct UIKit picker
+presentation remains an attended release check; the headless MSI/setup tests
+used a deterministic peer for the exact same control protocol so they did not
+depend on private UI automation.

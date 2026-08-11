@@ -233,6 +233,9 @@ static struct list teb_list = LIST_INIT( teb_list );
 #define MAP_NORESERVE 0
 #endif
 
+/* Internal-only bit carried through map_view() for ARM64EC code allocations. */
+#define JUICE_EC_CODE_ALLOCATION 0x80000000u
+
 #if defined(__APPLE__) && defined(__aarch64__)
 /* JUICE_IOS_PT_TRACE_ME_DECLARATIONS */
 #ifndef PT_TRACE_ME
@@ -307,12 +310,16 @@ void *anon_mmap_fixed( void *start, size_t size, int prot, int flags )
     return mmap( start, size, prot, MAP_PRIVATE | MAP_ANON | MAP_FIXED | flags, -1, 0 );
 }
 
+static void *anon_mmap_alloc_flags( size_t size, int prot, int flags )
+{
+    assert( !(size & host_page_mask) );
+    return mmap( NULL, size, prot, MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
+}
+
 /* allocate anonymous mmap() memory at any address */
 void *anon_mmap_alloc( size_t size, int prot )
 {
-    assert( !(size & host_page_mask) );
-
-    return mmap( NULL, size, prot, MAP_PRIVATE | MAP_ANON, -1, 0 );
+    return anon_mmap_alloc_flags( size, prot, 0 );
 }
 
 #ifdef USE_UFFD_WRITEWATCH
@@ -1580,11 +1587,11 @@ static struct wine_rb_entry *find_view_inside_range( void **base_ptr, void **end
  * retrying inside it, and return where it actually succeeded, or NULL.
  */
 static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
-                                void *start, size_t size, int unix_prot )
+                                void *start, size_t size, int unix_prot, int mmap_flags )
 {
     while (start && base <= start && (char*)start + size <= (char*)end)
     {
-        if (anon_mmap_tryfixed( start, size, unix_prot, 0 ) != MAP_FAILED) return start;
+        if (anon_mmap_tryfixed( start, size, unix_prot, mmap_flags ) != MAP_FAILED) return start;
         TRACE( "Found free area is already mapped, start %p.\n", start );
         if (errno != EEXIST)
         {
@@ -1609,7 +1616,8 @@ static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
  * Find a free area between views inside the specified range and map it.
  * virtual_mutex must be held by caller.
  */
-static void *map_free_area( void *base, void *end, size_t size, int top_down, int unix_prot, size_t align_mask )
+static void *map_free_area( void *base, void *end, size_t size, int top_down, int unix_prot,
+                            size_t align_mask, int mmap_flags )
 {
     struct wine_rb_entry *first = find_view_inside_range( &base, &end, top_down );
     ptrdiff_t step = top_down ? -(align_mask + 1) : (align_mask + 1);
@@ -1624,7 +1632,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
         {
             struct file_view *view = WINE_RB_ENTRY_VALUE( first, struct file_view, entry );
             if ((start = try_map_free_area( (char *)view->base + view->size, (char *)start + size, step,
-                                            start, size, unix_prot ))) break;
+                                            start, size, unix_prot, mmap_flags ))) break;
             start = ROUND_ADDR( (char *)view->base - size, align_mask );
             /* stop if remaining space is not large enough */
             if (!start || start >= end || start < base) return NULL;
@@ -1640,7 +1648,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
         {
             struct file_view *view = WINE_RB_ENTRY_VALUE( first, struct file_view, entry );
             if ((start = try_map_free_area( start, view->base, step,
-                                            start, size, unix_prot ))) break;
+                                            start, size, unix_prot, mmap_flags ))) break;
             start = ROUND_ADDR( (char *)view->base + view->size + align_mask, align_mask );
             /* stop if remaining space is not large enough */
             if (!start || start >= end || (char *)end - (char *)start < size) return NULL;
@@ -1649,7 +1657,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
     }
 
     if (!first)
-        start = try_map_free_area( base, end, step, start, size, unix_prot );
+        start = try_map_free_area( base, end, step, start, size, unix_prot, mmap_flags );
 
     if (!start)
         ERR( "couldn't map free area in range %p-%p, size %p\n", base, end, (void *)size );
@@ -2178,7 +2186,7 @@ static void *find_reserved_free_area_outside_preloader( void *start, void *end, 
  * virtual_mutex must be held by caller.
  */
 static void *map_reserved_area( void *limit_low, void *limit_high, size_t size, int top_down,
-                                int unix_prot, size_t align_mask )
+                                int unix_prot, size_t align_mask, int mmap_flags )
 {
     void *ptr = NULL;
     struct reserved_area *area;
@@ -2213,7 +2221,7 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size, 
             if (ptr) break;
         }
     }
-    if (ptr && anon_mmap_fixed( ptr, size, unix_prot, 0 ) != ptr) ptr = NULL;
+    if (ptr && anon_mmap_fixed( ptr, size, unix_prot, mmap_flags ) != ptr) ptr = NULL;
     return ptr;
 }
 
@@ -2223,7 +2231,7 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size, 
  * Map a memory area at a fixed address.
  * virtual_mutex must be held by caller.
  */
-static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot )
+static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot, int mmap_flags )
 {
     struct reserved_area *area;
     NTSTATUS status;
@@ -2241,19 +2249,19 @@ static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot )
         if (area_end <= start) continue;
         if (area_start > start)
         {
-            if (anon_mmap_tryfixed( start, area_start - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
+            if (anon_mmap_tryfixed( start, area_start - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
             start = area_start;
         }
         if (area_end >= end)
         {
-            if (anon_mmap_fixed( start, end - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
+            if (anon_mmap_fixed( start, end - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
             return STATUS_SUCCESS;
         }
-        if (anon_mmap_fixed( start, area_end - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
+        if (anon_mmap_fixed( start, area_end - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
         start = area_end;
     }
 
-    if (anon_mmap_tryfixed( start, end - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
+    if (anon_mmap_tryfixed( start, end - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
     return STATUS_SUCCESS;
 
 failed:
@@ -2284,12 +2292,27 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
                           ULONG_PTR limit_low, ULONG_PTR limit_high, size_t align_mask )
 {
     int top_down = alloc_type & MEM_TOP_DOWN;
+    int mmap_flags = 0;
+    int ec_code_allocation = 0;
     void *ptr;
     int unix_prot = get_unix_prot( vprot );
     NTSTATUS status;
 
     if (!align_mask) align_mask = granularity_mask;
     assert( align_mask >= host_page_mask );
+
+#if defined(__APPLE__) && defined(__aarch64__)
+    /*
+     * The TrollStore/CoreTrust execution path used by Grape is deliberately
+     * placed in CS_DEBUGGED state by grape-trace-parent.  On the supported
+     * iOS 16 devices that permits an anonymous RWX mmap, whereas passing
+     * Darwin's MAP_JIT flag returns EINVAL even when allow-jit is present.
+     * Keep the allocation tagged so Wine avoids its fixed-address paths, but
+     * do not forward MAP_JIT to the kernel.
+     */
+    ec_code_allocation = !!(alloc_type & JUICE_EC_CODE_ALLOCATION);
+#endif
+    alloc_type &= ~JUICE_EC_CODE_ALLOCATION;
 
     if (alloc_type & MEM_REPLACE_PLACEHOLDER)
     {
@@ -2317,7 +2340,22 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
     if (use_kernel_writewatch && vprot & VPROT_WRITEWATCH)
         unix_prot = get_unix_prot( vprot & ~VPROT_WRITEWATCH );
 
+    /*
+     * Darwin may reject adding execute permission to an existing writable
+     * anonymous mapping even when the process is debugged.  ARM64EC JIT
+     * clients (notably FEX) request PAGE_EXECUTE_READWRITE up front, so keep
+     * PROT_EXEC on the initial mmap on iOS instead of creating RW memory and
+     * trying to upgrade it afterwards.
+     *
+     * Keep Wine's established two-stage behaviour on every other host.
+     */
+#if !defined(__APPLE__) || !defined(__aarch64__)
     unix_prot &= ~PROT_EXEC;
+#else
+    /* iOS 16 rejects MAP_JIT mappings for this non-App-Store runtime.  The
+     * allow-jit entitlement instead permits the requested RWX protection on
+     * the initial anonymous mmap. */
+#endif
 
     if (base)
     {
@@ -2325,7 +2363,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
         if (limit_low && base < (void *)limit_low) return STATUS_CONFLICTING_ADDRESSES;
         if (limit_high && is_beyond_limit( base, size, (void *)limit_high )) return STATUS_CONFLICTING_ADDRESSES;
         if (is_beyond_limit( base, size, host_addr_space_limit )) return STATUS_CONFLICTING_ADDRESSES;
-        if ((status = map_fixed_area( base, size, unix_prot ))) return status;
+        if ((status = map_fixed_area( base, size, unix_prot, mmap_flags ))) return status;
         if (is_beyond_limit( base, size, working_set_limit )) working_set_limit = address_space_limit;
         ptr = base;
     }
@@ -2339,15 +2377,21 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
         if (limit_low && (void *)limit_low > start) start = (void *)limit_low;
         if (limit_high && (void *)limit_high < end) end = (char *)limit_high + 1;
 
-        if ((ptr = map_reserved_area( start, end, host_size, top_down, unix_prot, align_mask )))
+        /* MAP_JIT rejects fixed-address mappings on iOS.  Let Darwin choose
+         * the address, then trim the over-allocation to Wine's alignment. */
+        if (!ec_code_allocation &&
+            (ptr = map_reserved_area( start, end, host_size, top_down, unix_prot,
+                                      align_mask, mmap_flags )))
         {
             TRACE( "got mem in reserved area %p-%p\n", ptr, (char *)ptr + size );
             goto done;
         }
 
-        if (start > address_space_start || end < host_addr_space_limit || top_down)
+        if (!ec_code_allocation &&
+            (start > address_space_start || end < host_addr_space_limit || top_down))
         {
-            if (!(ptr = map_free_area( start, end, host_size, top_down, unix_prot, align_mask )))
+            if (!(ptr = map_free_area( start, end, host_size, top_down, unix_prot,
+                                       align_mask, mmap_flags )))
                 return STATUS_NO_MEMORY;
             TRACE( "got mem with map_free_area %p-%p\n", ptr, (char *)ptr + size );
             goto done;
@@ -2355,7 +2399,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
 
         for (;;)
         {
-            if ((ptr = anon_mmap_alloc( view_size, unix_prot )) == MAP_FAILED)
+            if ((ptr = anon_mmap_alloc_flags( view_size, unix_prot, mmap_flags )) == MAP_FAILED)
             {
                 status = (errno == ENOMEM) ? STATUS_NO_MEMORY : STATUS_INVALID_PARAMETER;
                 ERR( "anon mmap error %s, size %p, unix_prot %#x\n",
@@ -2835,7 +2879,8 @@ static void *get_host_addr_space_limit(void)
 static void alloc_arm64ec_map(void)
 {
     unsigned int status;
-    SIZE_T size = ((ULONG_PTR)address_space_limit + page_size) >> (page_shift + 3);  /* one bit per page */
+    ULONG_PTR bitmap_limit = min( (ULONG_PTR)address_space_limit, (ULONG_PTR)host_addr_space_limit );
+    SIZE_T size = (bitmap_limit + page_size) >> (page_shift + 3);  /* one bit per page */
 
     size = ROUND_SIZE( 0, size, host_page_mask );
     status = map_view( &arm64ec_view, NULL, size, MEM_TOP_DOWN, VPROT_READ | VPROT_COMMITTED, 0, 0, 0 );
@@ -5423,6 +5468,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
     sigset_t sigset;
     SIZE_T size = *size_ptr;
     NTSTATUS status = STATUS_SUCCESS;
+    ULONG map_type = type;
 
     /* Round parameters to a page boundary */
 
@@ -5450,6 +5496,9 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
     {
         base = NULL;
         size = ROUND_SIZE( 0, size, page_mask );
+#ifdef _WIN64
+        if (is_wow64() && (!limit_high || limit_high > limit_4g)) limit_low = limit_4g;
+#endif
     }
 
     /* Compute the alloc type flags */
@@ -5463,6 +5512,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
 
     if (type & MEM_RESERVE_PLACEHOLDER && (protect != PAGE_NOACCESS)) return STATUS_INVALID_PARAMETER;
     if (!arm64ec_view && (attributes & MEM_EXTENDED_PARAMETER_EC_CODE)) return STATUS_INVALID_PARAMETER;
+    if (attributes & MEM_EXTENDED_PARAMETER_EC_CODE) map_type |= JUICE_EC_CODE_ALLOCATION;
 
     /* Reserve the memory */
 
@@ -5479,7 +5529,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
 
             if (vprot & VPROT_WRITECOPY) status = STATUS_INVALID_PAGE_PROTECTION;
             else if (is_dos_memory) status = allocate_dos_memory( &view, vprot );
-            else status = map_view( &view, base, size, type, vprot, limit_low, limit_high,
+            else status = map_view( &view, base, size, map_type, vprot, limit_low, limit_high,
                                     align ? align - 1 : granularity_mask );
 
             if (status == STATUS_SUCCESS)

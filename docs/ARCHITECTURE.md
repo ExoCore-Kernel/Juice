@@ -1,20 +1,25 @@
 # Architecture
 
-Juice has four runtime layers.
+Juice has five runtime layers.
 
 1. The UIKit app owns an aspect-fit UIImageView canvas, launcher controls,
-   Files import, text controls, fullscreen state, a per-user Wine prefix, the
-   display socket, and the persistent log.
+   Files import, text controls, fullscreen state, persistent per-architecture
+   Wine prefixes, the display and control sockets, and the persistent log.
 2. wineios.drv implements a software Wine display driver. It owns window
    surfaces, sends window and premultiplied BGRA frame records over the Unix
    socket named by JUICE_IOS_SOCKET, and decodes pointer/text messages coming
    back from the app.
-3. Patched native Wine modules adapt process startup, Darwin signals, 16 KiB
+3. `JuiceGUI.exe` is a small native ARM64 Win32/GDI desktop shell preinstalled
+   in Grape. Wine owns its application windows and composites them into the
+   single full-screen desktop surface.
+4. Patched native Wine modules adapt process startup, Darwin signals, 16 KiB
    host pages, x18/TEB recovery, low shared-data references, iOS window
    geometry, and graphics-driver selection.
-4. ARM64 Windows PE modules and applications execute through the native Wine
-   loader. A trace parent completes the iOS PT_TRACE_ME/CS_DEBUGGED handshake;
-   the nested wrapper repeats it for Wine-created children.
+5. ARM64 Windows PE modules and applications execute through native Grape. The
+   optional Grape-X64 runtime contains ARM64X/ARM64EC Wine modules and FEX's
+   `libarm64ecfex.dll` to translate x86-64 code without a virtual machine. A
+   trace parent completes the iOS PT_TRACE_ME/CS_DEBUGGED handshake; the nested
+   wrapper repeats it for Wine-created children.
 
 ## Display flow
 
@@ -53,21 +58,44 @@ path. It then queries WM_GETTEXTLENGTH, invalidates the child and parent, and
 forces a surface presentation. Logs report delivered code units, resulting
 control length, redraw status, and whether a surface was presented.
 
-The transport has been observed delivering text messages, but the historical
-binary was built without FreeType and displayed no glyphs. The current build
-configuration corrects that dependency; visual glyph output remains a required
-manual release test.
+The v20 device proof visibly rendered `TextOutW`, wrapped `DrawTextW`, Unicode
+glyphs, edit-control text, and the resulting PASS status. Its log records 20
+UTF-16 units delivered and a resulting control length of 20; the paired PNG and
+markers are under `proofs/verified/2026-08-11/final-v20/text/`.
+
+## Native control channel
+
+File-picker and host-launch requests do not share the blocking framebuffer
+stream. `wineios.drv` uses the Unix socket named by
+`JUICE_IOS_CONTROL_SOCKET` and fixed-size version-1 request/response records.
+JuiceGUI starts an import asynchronously, polls without blocking its Wine GUI
+thread, and receives a Windows `Z:` path or a cancellation/error result.
+
+UIKit accepts the request on a background socket queue and dispatches only the
+presentation of `UIDocumentPickerViewController` to the main thread. A selected
+MSI, EXE, or ZIP is copied into
+`/var/mobile/Documents/JuiceData/Imported`, then returned as a valid Windows
+path. Host actions use the same channel for safe ZIP import and detected
+x86-64 launches. Request IDs, protocol versions, bounds, busy state, and
+cancellation are validated independently of display traffic.
 
 ## Native and PE split
 
 The native build produces Mach-O loader, wineserver, ntdll, win32u, ws2_32, and
 wineios.drv components. The PE build uses Clang/LLD to produce ARM64 Windows
-DLLs, EXEs, and the PE half of wineios.drv. config/runtime-modules.txt names the
-default PE outputs that are both built and staged.
+DLLs, EXEs, and the PE half of wineios.drv. `config/runtime-modules.txt` names
+the deterministic 81-module set that is both built and staged, including MSI,
+Cabinet, RPC, OLE, services, registry, and shell components.
 
 Wine can resolve native wineios.so beside either build-tree native modules or
 the PE runtime directory. Runtime assembly places the identical signed file in
 both locations to prevent a stale driver from silently handling input.
+
+The experimental Grape-X64 stage begins as a copy of the known-good ARM64
+Grape stage, then replaces the PE set with validated ARM64X/ARM64EC modules and
+adds the pinned FEX translator. The two runtime roots and Wine prefixes remain
+separate. Juice reads the PE machine field before launch and never sends a
+known ARM64 application through FEX.
 
 ## iOS compatibility changes
 

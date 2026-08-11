@@ -470,6 +470,7 @@
 @ stdcall -syscall=0x0057 NtWriteRequestData(long ptr long ptr long ptr)
 @ stdcall -syscall=0x003a NtWriteVirtualMemory(long ptr ptr long ptr)
 @ stdcall -syscall=0x0046 NtYieldExecution()
+@ stdcall -private -syscall NtWineGetCurrentTebAccessor(ptr)
 @ stdcall NtdllDefWindowProc_A(long long long long)
 @ stdcall NtdllDefWindowProc_W(long long long long)
 @ stdcall NtdllDialogWndProc_A(long long long long)
@@ -1150,6 +1151,7 @@
 @ stdcall -arch=win64 RtlWow64PushCrossProcessWorkOntoWorkList(ptr ptr ptr)
 @ stdcall -arch=win64 RtlWow64RequestCrossProcessHeavyFlush(ptr)
 @ stdcall -arch=win64 RtlWow64SetThreadContext(long ptr)
+@ stdcall -arch=win64 RtlWow64SuspendThread(long ptr)
 @ stub RtlWriteMemoryStream
 @ stdcall RtlWriteRegistryValue(long ptr wstr long ptr long)
 @ stub RtlZeroHeap

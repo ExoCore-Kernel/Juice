@@ -42,13 +42,37 @@ native_targets=(
   tools/makedep
   tools/winebuild/winebuild
   loader/wine
+  loader/wine.inf
   server/wineserver
   dlls/ntdll/ntdll.so
+  dlls/crypt32/crypt32.so
   dlls/win32u/win32u.so
   dlls/wineios.drv/wineios.so
   dlls/ws2_32/ws2_32.so
 )
-"$MAKE" -C "$NATIVE" -j"$JOBS" SHELL="$SHELL_BIN" PWD="$NATIVE" "${native_targets[@]}"
+native_data_targets=(
+  include/windows.applicationmodel.winmd
+  include/windows.globalization.winmd
+  include/windows.graphics.winmd
+  include/windows.media.winmd
+  include/windows.networking.winmd
+  include/windows.perception.winmd
+  include/windows.storage.winmd
+  include/windows.system.winmd
+  include/windows.ui.winmd
+  include/windows.ui.xaml.winmd
+)
+"$MAKE" -C "$NATIVE" -j"$JOBS" SHELL="$SHELL_BIN" PWD="$NATIVE" \
+  "${native_targets[@]}" "${native_data_targets[@]}"
+
+# Wine's configure detects macOS-only storage/keychain frameworks when the
+# build host is Darwin, but those frameworks do not exist in the iOS SDK.
+# The iOS guards in mountmgr compile portable stubs for those integrations;
+# retain CoreFoundation for filesystem capacity queries.
+native_ios_targets=(dlls/mountmgr.sys/mountmgr.so)
+"$MAKE" -C "$NATIVE" -j"$JOBS" SHELL="$SHELL_BIN" PWD="$NATIVE" \
+  DISKARBITRATION_LIBS= SYSTEMCONFIGURATION_LIBS= CORESERVICES_LIBS= SECURITY_LIBS= \
+  "${native_ios_targets[@]}"
 
 if test -z "${JUICE_PE_CLANG+x}"; then
   "$JBROOT/usr/bin/bash" "$ROOT/scripts/build-pe-compiler-wrapper-device.sh"
@@ -98,6 +122,7 @@ mkdir -p "$ROOT/build/manifests"
 ) > "$ROOT/build/manifests/pe-runtime.sha256"
 (
   cd "$NATIVE"
-  sha256sum "${native_targets[@]}"
+  sha256sum "${native_targets[@]}" "${native_ios_targets[@]}" \
+    "${native_data_targets[@]}"
 ) > "$ROOT/build/manifests/native-runtime.sha256"
 echo "JUICE_WINE_BUILD_OK native=$NATIVE pe=$PEBUILD"

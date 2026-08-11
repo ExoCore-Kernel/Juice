@@ -1,0 +1,8 @@
+Registry	Root	Key	Name	Value	Component_
+s72	i2	l255	L255	L0	s72
+Registry	Registry
+CatalogName	1	Software\Juice\Applications\MSISmoke	Name	Juice MSI Smoke	SmokeComponent
+CatalogPath	1	Software\Juice\Applications\MSISmoke	Path	[INSTALLDIR]JuiceMSISmoke.exe	SmokeComponent
+CatalogArgs	1	Software\Juice\Applications\MSISmoke	Arguments		SmokeComponent
+CatalogMachine	1	Software\Juice\Applications\MSISmoke	Machine	#43620	SmokeComponent
+CatalogUninstall	1	Software\Juice\Applications\MSISmoke	Uninstall	msiexec.exe /x {4BA101DC-EB22-4C4B-B40E-C5FCDB00A641}	SmokeComponent

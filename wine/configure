@@ -1747,6 +1747,9 @@ enable_icacls
 enable_icinfo
 enable_iexplore
 enable_ipconfig
+enable_juicegui
+enable_juicesetupsmoke
+enable_juicetextsmoke
 enable_klist
 enable_lodctr
 enable_makecab
@@ -12370,6 +12373,13 @@ case $host_os in
 
     SYSTEMCONFIGURATION_LIBS="-framework SystemConfiguration"
 
+    if test "x$JUICE_IOS_DEVICE" = x1
+    then
+        DISKARBITRATION_LIBS="-framework CoreFoundation"
+        CORESERVICES_LIBS=""
+        SECURITY_LIBS=""
+        SYSTEMCONFIGURATION_LIBS=""
+    fi
 
     WINELOADER_LDFLAGS="-Wl,-segalign,0x1000,-pagezero_size,0x1000,-sectcreate,__TEXT,__info_plist,loader/wine_info.plist"
 
@@ -23319,6 +23329,9 @@ wine_fn_config_makefile programs/icacls enable_icacls
 wine_fn_config_makefile programs/icinfo enable_icinfo
 wine_fn_config_makefile programs/iexplore enable_iexplore
 wine_fn_config_makefile programs/ipconfig enable_ipconfig
+wine_fn_config_makefile programs/juicegui enable_juicegui
+wine_fn_config_makefile programs/juicesetupsmoke enable_juicesetupsmoke
+wine_fn_config_makefile programs/juicetextsmoke enable_juicetextsmoke
 wine_fn_config_makefile programs/klist enable_klist
 wine_fn_config_makefile programs/lodctr enable_lodctr
 wine_fn_config_makefile programs/makecab enable_makecab
@@ -23440,7 +23453,9 @@ ac_config_commands="$ac_config_commands Makefile"
 
 
 
-SHELL=/bin/sh
+# Rootless iOS does not provide /bin/sh; preserve the interpreter selected by
+# CONFIG_SHELL.  Keep this generated configure change paired with configure.ac.
+SHELL=${CONFIG_SHELL-/bin/sh}
 
 
 
@@ -24884,5 +24899,3 @@ IFS="$ac_save_IFS"
 printf '%s\n' "
 $as_me: Finished.  Do '${MAKE-make}' to compile Wine.
 " >&6
-
-

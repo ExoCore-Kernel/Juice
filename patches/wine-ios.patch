@@ -1,5 +1,5 @@
 diff --git a/.gitattributes b/.gitattributes
-index 1051bd3..a38905c 100644
+index 1051bd31a7d..a38905c27b6 100644
 --- a/.gitattributes
 +++ b/.gitattributes
 @@ -1,60 +1,58 @@
@@ -110,7 +110,7 @@ index 1051bd3..a38905c 100644
 +nls/*.nls gitlab-generated linguist-generated=true
 diff --git a/UPSTREAM-JUICE.txt b/UPSTREAM-JUICE.txt
 new file mode 100644
-index 0000000..c6389d0
+index 00000000000..c6389d07ab5
 --- /dev/null
 +++ b/UPSTREAM-JUICE.txt
 @@ -0,0 +1,8 @@
@@ -123,10 +123,34 @@ index 0000000..c6389d0
 +audit patch is ../patches/wine-ios.patch. Wine's own COPYING.LIB and LICENSE
 +files govern this directory.
 diff --git a/configure b/configure
-index 73a4d6a..b58136b 100755
+index 73a4d6a4b6b..1c6571c7c9a 100755
 --- a/configure
 +++ b/configure
-@@ -23103,6 +23103,7 @@ wine_fn_config_makefile dlls/winedmo enable_winedmo
+@@ -1747,6 +1747,9 @@ enable_icacls
+ enable_icinfo
+ enable_iexplore
+ enable_ipconfig
++enable_juicegui
++enable_juicesetupsmoke
++enable_juicetextsmoke
+ enable_klist
+ enable_lodctr
+ enable_makecab
+@@ -12370,6 +12373,13 @@ case $host_os in
+ 
+     SYSTEMCONFIGURATION_LIBS="-framework SystemConfiguration"
+ 
++    if test "x$JUICE_IOS_DEVICE" = x1
++    then
++        DISKARBITRATION_LIBS="-framework CoreFoundation"
++        CORESERVICES_LIBS=""
++        SECURITY_LIBS=""
++        SYSTEMCONFIGURATION_LIBS=""
++    fi
+ 
+     WINELOADER_LDFLAGS="-Wl,-segalign,0x1000,-pagezero_size,0x1000,-sectcreate,__TEXT,__info_plist,loader/wine_info.plist"
+ 
+@@ -23103,6 +23113,7 @@ wine_fn_config_makefile dlls/winedmo enable_winedmo
  wine_fn_config_makefile dlls/winegstreamer enable_winegstreamer
  wine_fn_config_makefile dlls/winehid.sys enable_winehid_sys
  wine_fn_config_makefile dlls/winemac.drv enable_winemac_drv
@@ -134,11 +158,54 @@ index 73a4d6a..b58136b 100755
  wine_fn_config_makefile dlls/winemapi enable_winemapi
  wine_fn_config_makefile dlls/wineoss.drv enable_wineoss_drv
  wine_fn_config_makefile dlls/wineps.drv enable_wineps_drv
+@@ -23318,6 +23329,9 @@ wine_fn_config_makefile programs/icacls enable_icacls
+ wine_fn_config_makefile programs/icinfo enable_icinfo
+ wine_fn_config_makefile programs/iexplore enable_iexplore
+ wine_fn_config_makefile programs/ipconfig enable_ipconfig
++wine_fn_config_makefile programs/juicegui enable_juicegui
++wine_fn_config_makefile programs/juicesetupsmoke enable_juicesetupsmoke
++wine_fn_config_makefile programs/juicetextsmoke enable_juicetextsmoke
+ wine_fn_config_makefile programs/klist enable_klist
+ wine_fn_config_makefile programs/lodctr enable_lodctr
+ wine_fn_config_makefile programs/makecab enable_makecab
+@@ -23439,7 +23453,9 @@ ac_config_commands="$ac_config_commands Makefile"
+ 
+ 
+ 
+-SHELL=/bin/sh
++# Rootless iOS does not provide /bin/sh; preserve the interpreter selected by
++# CONFIG_SHELL.  Keep this generated configure change paired with configure.ac.
++SHELL=${CONFIG_SHELL-/bin/sh}
+ 
+ 
+ 
+@@ -24883,5 +24899,3 @@ IFS="$ac_save_IFS"
+ printf '%s\n' "
+ $as_me: Finished.  Do '${MAKE-make}' to compile Wine.
+ " >&6
+-
+-
 diff --git a/configure.ac b/configure.ac
-index ee0b1c4..d25aaac 100644
+index ee0b1c483d4..b25b178b6ac 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3396,6 +3396,7 @@ WINE_CONFIG_MAKEFILE(dlls/winedmo)
+@@ -990,6 +990,15 @@ case $host_os in
+     AC_SUBST(APPKIT_LIBS,"-framework AppKit")
+     AC_SUBST(SECURITY_LIBS,"-framework Security -framework CoreFoundation")
+     AC_SUBST(SYSTEMCONFIGURATION_LIBS,"-framework SystemConfiguration")
++    if test "x$JUICE_IOS_DEVICE" = x1
++    then
++        dnl Disk Arbitration, CoreServices metadata, and macOS Keychain APIs
++        dnl are unavailable in the iOS SDK. mountmgr uses guarded stubs there.
++        DISKARBITRATION_LIBS="-framework CoreFoundation"
++        CORESERVICES_LIBS=""
++        SECURITY_LIBS=""
++        SYSTEMCONFIGURATION_LIBS=""
++    fi
+ 
+     WINELOADER_LDFLAGS="-Wl,-segalign,0x1000,-pagezero_size,0x1000,-sectcreate,__TEXT,__info_plist,loader/wine_info.plist"
+ 
+@@ -3396,6 +3405,7 @@ WINE_CONFIG_MAKEFILE(dlls/winedmo)
  WINE_CONFIG_MAKEFILE(dlls/winegstreamer)
  WINE_CONFIG_MAKEFILE(dlls/winehid.sys)
  WINE_CONFIG_MAKEFILE(dlls/winemac.drv)
@@ -146,8 +213,60 @@ index ee0b1c4..d25aaac 100644
  WINE_CONFIG_MAKEFILE(dlls/winemapi)
  WINE_CONFIG_MAKEFILE(dlls/wineoss.drv)
  WINE_CONFIG_MAKEFILE(dlls/wineps.drv)
+@@ -3611,6 +3621,9 @@ WINE_CONFIG_MAKEFILE(programs/icacls)
+ WINE_CONFIG_MAKEFILE(programs/icinfo)
+ WINE_CONFIG_MAKEFILE(programs/iexplore)
+ WINE_CONFIG_MAKEFILE(programs/ipconfig)
++WINE_CONFIG_MAKEFILE(programs/juicegui)
++WINE_CONFIG_MAKEFILE(programs/juicesetupsmoke)
++WINE_CONFIG_MAKEFILE(programs/juicetextsmoke)
+ WINE_CONFIG_MAKEFILE(programs/klist)
+ WINE_CONFIG_MAKEFILE(programs/lodctr)
+ WINE_CONFIG_MAKEFILE(programs/makecab)
+@@ -3761,7 +3774,10 @@ _WINE_EOF
+ 
+ dnl Main makefile
+ 
+-AC_SUBST(SHELL,[/bin/sh])
++dnl Rootless iOS environments do not provide /bin/sh.  Keep Autoconf's
++dnl CONFIG_SHELL-selected interpreter so config.status can safely re-run
++dnl configure when an edited source file makes the Makefile stale.
++AC_SUBST(SHELL,[${CONFIG_SHELL-/bin/sh}])
+ 
+ dnl Rules for re-running configure
+ 
+diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
+index 8a3755f4bde..64ec01e4851 100644
+--- a/dlls/crypt32/unixlib.c
++++ b/dlls/crypt32/unixlib.c
+@@ -30,6 +30,7 @@
+ #include <dlfcn.h>
+ #include <sys/stat.h>
+ #ifdef __APPLE__
++#include <TargetConditionals.h>
+ #include <Security/Security.h>
+ #endif
+ #ifdef SONAME_LIBGNUTLS
+@@ -914,6 +915,8 @@ static void import_certs_from_path(LPCSTR path, BOOL allow_dir)
+ }
+ 
+ static const char * const CRYPT_knownLocations[] = {
++ "/var/jb/etc/ssl/certs/ca-certificates.crt", /* rootless iOS */
++ "/var/jb/etc/ssl/certs",                    /* rootless iOS */
+  "/etc/ssl/certs/ca-certificates.crt",
+  "/etc/ssl/certs",
+  "/etc/pki/tls/certs/ca-bundle.crt",
+@@ -927,7 +930,7 @@ static void load_root_certs(void)
+ {
+     unsigned int i;
+ 
+-#ifdef __APPLE__
++#if defined(__APPLE__) && !TARGET_OS_IPHONE
+     const SecTrustSettingsDomain domains[] = {
+         kSecTrustSettingsDomainSystem,
+         kSecTrustSettingsDomainAdmin,
 diff --git a/dlls/kernel32/process.c b/dlls/kernel32/process.c
-index 98313f4..4496f09 100644
+index 98313f4634c..4496f090009 100644
 --- a/dlls/kernel32/process.c
 +++ b/dlls/kernel32/process.c
 @@ -39,7 +39,7 @@
@@ -160,7 +279,7 @@ index 98313f4..4496f09 100644
  typedef struct
  {
 diff --git a/dlls/kernel32/sync.c b/dlls/kernel32/sync.c
-index 5b2a848..0939959 100644
+index 5b2a8489a01..0939959e979 100644
 --- a/dlls/kernel32/sync.c
 +++ b/dlls/kernel32/sync.c
 @@ -42,7 +42,7 @@
@@ -173,7 +292,7 @@ index 5b2a848..0939959 100644
  
  static void get_create_object_attributes( OBJECT_ATTRIBUTES *attr, UNICODE_STRING *nameW,
 diff --git a/dlls/kernelbase/sync.c b/dlls/kernelbase/sync.c
-index 94036ac..d588594 100644
+index 94036acfad4..d588594a1eb 100644
 --- a/dlls/kernelbase/sync.c
 +++ b/dlls/kernelbase/sync.c
 @@ -39,7 +39,7 @@
@@ -185,29 +304,276 @@ index 94036ac..d588594 100644
  
  /* check if current version is NT or Win95 */
  static inline BOOL is_version_nt(void)
+diff --git a/dlls/mountmgr.sys/cred.c b/dlls/mountmgr.sys/cred.c
+index 791e9704f3c..b488319b9af 100644
+--- a/dlls/mountmgr.sys/cred.c
++++ b/dlls/mountmgr.sys/cred.c
+@@ -28,6 +28,10 @@
+ #include <stdlib.h>
+ 
+ #ifdef __APPLE__
++#include <TargetConditionals.h>
++#endif
++
++#if defined(__APPLE__) && !TARGET_OS_IPHONE
+ #include <CoreFoundation/CFString.h>
+ #define LoadResource mac_LoadResource
+ #define GetCurrentThread mac_GetCurrentThread
+@@ -42,7 +46,7 @@
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(mountmgr);
+ 
+-#ifdef __APPLE__
++#if defined(__APPLE__) && !TARGET_OS_IPHONE
+ 
+ #define TICKSPERSEC        10000000
+ #define SECSPERDAY         86400
+@@ -581,7 +585,7 @@ NTSTATUS enumerate_credentials( void *args )
+     return status;
+ }
+ 
+-#else /* __APPLE__ */
++#else /* macOS credential APIs */
+ 
+ NTSTATUS query_symbol_file( void *args )
+ {
+@@ -613,4 +617,4 @@ NTSTATUS enumerate_credentials( void *args )
+     return STATUS_NOT_SUPPORTED;
+ }
+ 
+-#endif /* __APPLE__ */
++#endif /* macOS credential APIs */
+diff --git a/dlls/mountmgr.sys/diskarb.c b/dlls/mountmgr.sys/diskarb.c
+index 8c81d679b84..9a6bc3900bf 100644
+--- a/dlls/mountmgr.sys/diskarb.c
++++ b/dlls/mountmgr.sys/diskarb.c
+@@ -32,6 +32,9 @@
+ #include <unistd.h>
+ #include <sys/ioctl.h>
+ #ifdef __APPLE__
++#include <TargetConditionals.h>
++#endif
++#if defined(__APPLE__) && !TARGET_OS_IPHONE
+ #include <DiskArbitration/DiskArbitration.h>
+ #include <SystemConfiguration/SCDynamicStoreCopyDHCPInfo.h>
+ #include <SystemConfiguration/SCNetworkConfiguration.h>
+@@ -48,7 +51,7 @@
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(mountmgr);
+ 
+-#ifdef __APPLE__
++#if defined(__APPLE__) && !TARGET_OS_IPHONE
+ 
+ typedef struct
+ {
+@@ -232,16 +235,16 @@ void run_diskarbitration_loop(void)
+     CFRelease( session );
+ }
+ 
+-#else  /* __APPLE__ */
++#else  /* macOS Disk Arbitration */
+ 
+ void run_diskarbitration_loop(void)
+ {
+     TRACE( "Skipping, Disk Arbitration support not compiled in\n" );
+ }
+ 
+-#endif  /* __APPLE__ */
++#endif  /* macOS Disk Arbitration */
+ 
+-#if defined(__APPLE__)
++#if defined(__APPLE__) && !TARGET_OS_IPHONE
+ 
+ static UInt8 map_option( unsigned int option )
+ {
 diff --git a/dlls/ntdll/loader.c b/dlls/ntdll/loader.c
-index 443b984..0801691 100644
+index 443b9841170..e85bcc58d34 100644
 --- a/dlls/ntdll/loader.c
 +++ b/dlls/ntdll/loader.c
-@@ -4435,7 +4435,7 @@ static void release_address_space(void)
+@@ -2172,6 +2172,21 @@ static void update_load_config( void *module )
+ #endif
+ }
+ 
++#ifdef __arm64ec__
++static void *juice_kernel32_module;
++
++static void juice_trace_arm64ec_dispatch( const char *stage, void *module )
++{
++    const IMAGE_ARM64EC_METADATA *metadata = arm64ec_get_module_metadata( module );
++
++    if (!metadata || !metadata->__os_arm64x_dispatch_call_no_redirect) return;
++    ERR( "[JuiceHybrid] %s module=%p slot=%p value=%p expected=%p\n", stage, module,
++         get_rva( module, metadata->__os_arm64x_dispatch_call_no_redirect ),
++         *(void **)get_rva( module, metadata->__os_arm64x_dispatch_call_no_redirect ),
++         __os_arm64x_dispatch_call_no_redirect );
++}
++#endif
++
+ 
+ static NTSTATUS perform_relocations( void *module, IMAGE_NT_HEADERS *nt, SIZE_T len )
+ {
+@@ -2325,6 +2340,10 @@ static NTSTATUS build_module( LPCWSTR load_path, const UNICODE_STRING *nt_name,
+         }
+     }
+ 
++#ifdef __arm64ec__
++    juice_trace_arm64ec_dispatch( "after import fixup", *module );
++#endif
++
+     TRACE( "loaded %s %p %p\n", debugstr_us(nt_name), wm, *module );
+ 
+     if (is_builtin)
+@@ -4270,17 +4289,50 @@ static void open_known_dll_ntdir(void)
+ 
+ #ifdef __arm64ec__
+ 
++static DWORD loaderGetEnvironmentVariableW( LPCWSTR name, LPWSTR val, DWORD size )
++{
++    UNICODE_STRING us_name, us_value;
++    NTSTATUS status;
++    DWORD len;
++
++    RtlInitUnicodeString( &us_name, name );
++    us_value.Length = 0;
++    us_value.MaximumLength = (size ? size - 1 : 0) * sizeof(WCHAR);
++    us_value.Buffer = val;
++
++    status = RtlQueryEnvironmentVariable_U( NULL, &us_name, &us_value );
++    len = us_value.Length / sizeof(WCHAR);
++    if (status == STATUS_BUFFER_TOO_SMALL) return len + 1;
++    if (status) return 0;
++    if (!size) return len + 1;
++    val[len] = 0;
++    return len;
++}
++
+ static void load_arm64ec_module(void)
+ {
+-    ULONG buffer[16];
++    ULONG buffer[32];
+     KEY_VALUE_PARTIAL_INFORMATION *info = (KEY_VALUE_PARTIAL_INFORMATION *)buffer;
+     UNICODE_STRING nameW = RTL_CONSTANT_STRING( L"\\Registry\\Machine\\Software\\Microsoft\\Wow64\\amd64" );
+-    WCHAR module[64] = L"C:\\windows\\system32\\xtajit64.dll";
++    WCHAR *cpu_dll = (WCHAR*)buffer;
++    WCHAR module[64] = L"C:\\windows\\system32\\libarm64ecfex.dll";
+     OBJECT_ATTRIBUTES attr;
+     WINE_MODREF *wm;
+     NTSTATUS status;
+     HANDLE key;
++    DWORD res;
++
++    if ((res = loaderGetEnvironmentVariableW( L"HODLL64", cpu_dll, ARRAY_SIZE(buffer))) &&
++        res < ARRAY_SIZE(buffer))
++    {
++        ULONG dirlen = wcslen( L"C:\\windows\\system32\\" );
++        ULONG size = sizeof(module) - (dirlen + 1) * sizeof(WCHAR);
++        memset( module + dirlen, 0, size );
++        memcpy( module + dirlen, cpu_dll, min( res * sizeof(WCHAR), size ));
++    }
+ 
++if (0)
++{
+     InitializeObjectAttributes( &attr, &nameW, OBJ_CASE_INSENSITIVE, 0, NULL );
+     if (!NtOpenKey( &key, KEY_READ | KEY_WOW64_64KEY, &attr ))
+     {
+@@ -4295,6 +4347,7 @@ static void load_arm64ec_module(void)
+         }
+         NtClose( key );
+     }
++}
+ 
+     if ((status = load_dll( NULL, module, 0, &wm, FALSE )) ||
+         (status = arm64ec_process_init( wm->ldr.DllBase )))
+@@ -4325,6 +4378,7 @@ static void build_wow64_main_module(void)
+ static void (WINAPI *pWow64LdrpInitialize)( CONTEXT *ctx );
+ 
+ void (WINAPI *pWow64PrepareForException)( EXCEPTION_RECORD *rec, CONTEXT *context ) = NULL;
++NTSTATUS (WINAPI *pWow64SuspendLocalThread)( HANDLE thread, ULONG *count ) = NULL;
+ 
+ static void init_wow64( CONTEXT *context )
+ {
+@@ -4349,6 +4403,7 @@ static void init_wow64( CONTEXT *context )
+ 
+         GET_PTR( Wow64LdrpInitialize );
+         GET_PTR( Wow64PrepareForException );
++        GET_PTR( Wow64SuspendLocalThread );
+ #undef GET_PTR
+         imports_fixup_done = TRUE;
+     }
+@@ -4435,7 +4490,11 @@ static void release_address_space(void)
   * Attach to all the loaded dlls.
   * If this is the first time, perform the full process initialization.
   */
--void loader_init( CONTEXT *context, void **entry )
++#ifdef __arm64ec__
+ void loader_init( CONTEXT *context, void **entry )
++#else
 +void loader_init_impl( CONTEXT *context, void **entry )
++#endif
  {
      static int attach_done;
      NTSTATUS status;
-@@ -4588,6 +4588,16 @@ void loader_init( CONTEXT *context, void **entry )
+@@ -4499,6 +4558,10 @@ void loader_init( CONTEXT *context, void **entry )
+             NtTerminateProcess( GetCurrentProcess(), status );
+         }
+         node_kernel32 = kernel32->ldr.DdagNode;
++#ifdef __arm64ec__
++        juice_kernel32_module = kernel32->ldr.DllBase;
++        juice_trace_arm64ec_dispatch( "kernel32 load_dll returned", juice_kernel32_module );
++#endif
+         pBaseThreadInitThunk = RtlFindExportedRoutineByName( kernel32->ldr.DllBase, "BaseThreadInitThunk" );
+         LdrGetProcedureAddress( kernel32->ldr.DllBase, &ctrl_routine, 0, (void **)&pCtrlRoutine );
+ 
+@@ -4518,6 +4581,9 @@ void loader_init( CONTEXT *context, void **entry )
+                  debugstr_w(NtCurrentTeb()->Peb->ProcessParameters->ImagePathName.Buffer), status );
+             NtTerminateProcess( GetCurrentProcess(), status );
+         }
++#ifdef __arm64ec__
++        juice_trace_arm64ec_dispatch( "after main import fixup", juice_kernel32_module );
++#endif
+         imports_fixup_done = TRUE;
+     }
+     else
+@@ -4560,6 +4626,9 @@ void loader_init( CONTEXT *context, void **entry )
+                  debugstr_w(NtCurrentTeb()->Peb->ProcessParameters->ImagePathName.Buffer), status );
+             NtTerminateProcess( GetCurrentProcess(), status );
+         }
++#ifdef __arm64ec__
++        juice_trace_arm64ec_dispatch( "after kernel32 process attach", juice_kernel32_module );
++#endif
+ 
+         if ((status = walk_node_dependencies( wm->ldr.DdagNode, context, process_attach )))
+         {
+@@ -4570,6 +4639,9 @@ void loader_init( CONTEXT *context, void **entry )
+                  debugstr_w(NtCurrentTeb()->Peb->ProcessParameters->ImagePathName.Buffer), status );
+             NtTerminateProcess( GetCurrentProcess(), status );
+         }
++#ifdef __arm64ec__
++        juice_trace_arm64ec_dispatch( "after dependency process attach", juice_kernel32_module );
++#endif
+         release_address_space();
+         if (wm->ldr.TlsIndex == -1) call_tls_callbacks( wm->ldr.DllBase, DLL_PROCESS_ATTACH );
+         if (wm->ldr.ActivationContext) RtlDeactivateActivationContext( 0, cookie );
+@@ -4585,9 +4657,27 @@ void loader_init( CONTEXT *context, void **entry )
+         if (wm->ldr.TlsIndex == -1) call_tls_callbacks( wm->ldr.DllBase, DLL_THREAD_ATTACH );
+     }
+ 
++#ifdef __arm64ec__
++    juice_trace_arm64ec_dispatch( "loader_init exit", juice_kernel32_module );
++#endif
      RtlLeaveCriticalSection( &loader_section );
  }
  
-+#if defined(__aarch64__) && defined(__WINE_PE_BUILD)
-+/* JuiceWine direct loader x18 restore */
++#if defined(__aarch64__) && defined(__WINE_PE_BUILD) && !defined(__arm64ec__)
++/*
++ * JuiceWine direct loader x18 restore.
++ *
++ * Darwin reserves x18, so restore it at the PE boundary from the startup
++ * CONTEXT supplied to loader_init().  This must be per-thread: using the
++ * initial process TEB here corrupts loader locking as soon as a Windows
++ * process creates another thread (services.exe is an early example).
++ */
 +__ASM_GLOBAL_FUNC( loader_init,
-+                   "movz x18, #0x8000\n\t"
-+                   "movk x18, #0xd7ff, lsl #16\n\t"
-+                   "movk x18, #0x2, lsl #32\n\t"
++                   "ldr x18, [x0, #0x98]\n\t" /* context->X18 */
 +                   "b " __ASM_NAME("loader_init_impl") )
 +#endif
 +
@@ -215,11 +581,151 @@ index 443b984..0801691 100644
  
  /***********************************************************************
   *           RtlImageDirectoryEntryToData   (NTDLL.@)
+diff --git a/dlls/ntdll/ntdll.spec b/dlls/ntdll/ntdll.spec
+index 0b6d9b2cbf4..d8810b66f03 100644
+--- a/dlls/ntdll/ntdll.spec
++++ b/dlls/ntdll/ntdll.spec
+@@ -470,6 +470,7 @@
+ @ stdcall -syscall=0x0057 NtWriteRequestData(long ptr long ptr long ptr)
+ @ stdcall -syscall=0x003a NtWriteVirtualMemory(long ptr ptr long ptr)
+ @ stdcall -syscall=0x0046 NtYieldExecution()
++@ stdcall -private -syscall NtWineGetCurrentTebAccessor(ptr)
+ @ stdcall NtdllDefWindowProc_A(long long long long)
+ @ stdcall NtdllDefWindowProc_W(long long long long)
+ @ stdcall NtdllDialogWndProc_A(long long long long)
+@@ -1150,6 +1151,7 @@
+ @ stdcall -arch=win64 RtlWow64PushCrossProcessWorkOntoWorkList(ptr ptr ptr)
+ @ stdcall -arch=win64 RtlWow64RequestCrossProcessHeavyFlush(ptr)
+ @ stdcall -arch=win64 RtlWow64SetThreadContext(long ptr)
++@ stdcall -arch=win64 RtlWow64SuspendThread(long ptr)
+ @ stub RtlWriteMemoryStream
+ @ stdcall RtlWriteRegistryValue(long ptr wstr long ptr long)
+ @ stub RtlZeroHeap
+diff --git a/dlls/ntdll/ntdll_misc.h b/dlls/ntdll/ntdll_misc.h
+index 1ac221bf156..88fbe13cd30 100644
+--- a/dlls/ntdll/ntdll_misc.h
++++ b/dlls/ntdll/ntdll_misc.h
+@@ -74,6 +74,7 @@ extern void WINAPI KiUserApcDispatcher(CONTEXT*,ULONG_PTR,ULONG_PTR,ULONG_PTR,PN
+ extern void WINAPI KiUserCallbackDispatcher(ULONG,void*,ULONG);
+ extern void WINAPI KiUserCallbackDispatcherReturn(void);
+ extern void (WINAPI *pWow64PrepareForException)( EXCEPTION_RECORD *rec, CONTEXT *context );
++extern NTSTATUS (WINAPI *pWow64SuspendLocalThread)( HANDLE thread, ULONG *count );
+ 
+ /* debug helpers */
+ extern LPCSTR debugstr_us( const UNICODE_STRING *str );
+diff --git a/dlls/ntdll/ntsyscalls.h b/dlls/ntdll/ntsyscalls.h
+index 05b121f2580..611fe4c663a 100644
+--- a/dlls/ntdll/ntsyscalls.h
++++ b/dlls/ntdll/ntsyscalls.h
+@@ -265,12 +265,13 @@
+     SYSCALL_ENTRY( 0x0105, NtWaitForAlertByThreadId, 8 ) \
+     SYSCALL_ENTRY( 0x0106, NtWaitForDebugEvent, 16 ) \
+     SYSCALL_ENTRY( 0x0107, NtWaitForKeyedEvent, 16 ) \
+-    SYSCALL_ENTRY( 0x0108, NtWow64AllocateVirtualMemory64, 28 ) \
+-    SYSCALL_ENTRY( 0x0109, NtWow64GetNativeSystemInformation, 16 ) \
+-    SYSCALL_ENTRY( 0x010a, NtWow64IsProcessorFeaturePresent, 4 ) \
+-    SYSCALL_ENTRY( 0x010b, NtWow64QueryInformationProcess64, 20 ) \
+-    SYSCALL_ENTRY( 0x010c, NtWow64ReadVirtualMemory64, 28 ) \
+-    SYSCALL_ENTRY( 0x010d, NtWow64WriteVirtualMemory64, 28 )
++    SYSCALL_ENTRY( 0x0108, NtWineGetCurrentTebAccessor, 4 ) \
++    SYSCALL_ENTRY( 0x0109, NtWow64AllocateVirtualMemory64, 28 ) \
++    SYSCALL_ENTRY( 0x010a, NtWow64GetNativeSystemInformation, 16 ) \
++    SYSCALL_ENTRY( 0x010b, NtWow64IsProcessorFeaturePresent, 4 ) \
++    SYSCALL_ENTRY( 0x010c, NtWow64QueryInformationProcess64, 20 ) \
++    SYSCALL_ENTRY( 0x010d, NtWow64ReadVirtualMemory64, 28 ) \
++    SYSCALL_ENTRY( 0x010e, NtWow64WriteVirtualMemory64, 28 )
+ #ifdef _WIN64
+ #define ALL_SYSCALLS \
+     SYSCALL_ENTRY( 0x0000, NtAccessCheck, 64 ) \
+@@ -536,7 +537,8 @@
+     SYSCALL_ENTRY( 0x0104, NtUnmapViewOfSectionEx, 24 ) \
+     SYSCALL_ENTRY( 0x0105, NtWaitForAlertByThreadId, 16 ) \
+     SYSCALL_ENTRY( 0x0106, NtWaitForDebugEvent, 32 ) \
+-    SYSCALL_ENTRY( 0x0107, NtWaitForKeyedEvent, 32 )
++    SYSCALL_ENTRY( 0x0107, NtWaitForKeyedEvent, 32 ) \
++    SYSCALL_ENTRY( 0x0108, NtWineGetCurrentTebAccessor, 8 )
+ #else
+ #define ALL_SYSCALLS ALL_SYSCALLS32
+ #endif
 diff --git a/dlls/ntdll/signal_arm64.c b/dlls/ntdll/signal_arm64.c
-index e560718..688b014 100644
+index e560718c770..0403c5e2e68 100644
 --- a/dlls/ntdll/signal_arm64.c
 +++ b/dlls/ntdll/signal_arm64.c
-@@ -837,13 +837,26 @@ __ASM_GLOBAL_FUNC( RtlUserThreadStart,
+@@ -673,6 +673,73 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
+     return !!(cpu_features_bitmap[feature / 64] & (1ull << (feature % 64)));
+ }
+ 
++static void suspend_remote_breakin( HANDLE thread )
++{
++    ULONG count;
++    NTSTATUS status = pWow64SuspendLocalThread( thread, &count );
++    if (status >= 0) status = count;
++    NtTerminateThread( GetCurrentThread(),  status );
++}
++
++/***********************************************************************
++ *              RtlWow64SuspendThread (NTDLL.@)
++ */
++NTSTATUS WINAPI RtlWow64SuspendThread( HANDLE thread, ULONG *count )
++{
++    HANDLE thread_dup;
++    THREAD_BASIC_INFORMATION tbi;
++    NTSTATUS status = NtDuplicateObject( NtCurrentProcess(), thread, NtCurrentProcess(), &thread_dup,
++                                         THREAD_QUERY_INFORMATION | THREAD_SUSPEND_RESUME, 0, 0 );
++    if (status) return status;
++    status = NtQueryInformationThread( thread_dup, ThreadBasicInformation, &tbi, sizeof(tbi), NULL);
++    NtClose( thread_dup );
++    if (status) return status;
++
++    if (tbi.ClientId.UniqueProcess != NtCurrentTeb()->ClientId.UniqueProcess)
++    {
++        HANDLE process;
++        HANDLE suspender_thread;
++        HANDLE remote_suspendee_thread;
++        OBJECT_ATTRIBUTES attr = { .Length = sizeof(attr) };
++
++        status = NtOpenProcess( &process, PROCESS_CREATE_THREAD | PROCESS_DUP_HANDLE, &attr, &tbi.ClientId );
++        if (status) return status;
++
++        status = NtDuplicateObject( NtCurrentProcess(), thread, process, &remote_suspendee_thread, 0, 0,
++                                    DUPLICATE_SAME_ACCESS );
++        if (status) goto err_close_proc;
++
++        status = NtCreateThreadEx( &suspender_thread, SYNCHRONIZE | THREAD_QUERY_INFORMATION, NULL, process,
++                                   suspend_remote_breakin, remote_suspendee_thread,
++                                   THREAD_CREATE_FLAGS_SKIP_THREAD_ATTACH | THREAD_CREATE_FLAGS_SKIP_LOADER_INIT |
++                                   THREAD_CREATE_FLAGS_HIDE_FROM_DEBUGGER | THREAD_CREATE_FLAGS_BYPASS_PROCESS_FREEZE,
++                                   0, 0, 0, NULL );
++        if (status) goto err_close_remote_hnd;
++
++        NtWaitForSingleObject( suspender_thread, FALSE, NULL );
++        status = NtQueryInformationThread( suspender_thread, ThreadBasicInformation, &tbi, sizeof(tbi), NULL );
++        if (!status)
++        {
++            if (tbi.ExitStatus < 0)
++            {
++                status = tbi.ExitStatus;
++            }
++            else if (count)
++            {
++                *count = (ULONG)tbi.ExitStatus;
++            }
++        }
++
++        NtClose( suspender_thread );
++err_close_remote_hnd:
++        NtDuplicateObject( process, remote_suspendee_thread, NULL, NULL, 0, 0, DUPLICATE_CLOSE_SOURCE );
++err_close_proc:
++        NtClose( process );
++        return status;
++    }
++
++    return pWow64SuspendLocalThread( thread, count );
++}
+ 
+ /*************************************************************************
+  *		RtlWalkFrameChain (NTDLL.@)
+@@ -837,13 +904,26 @@ __ASM_GLOBAL_FUNC( RtlUserThreadStart,
  /******************************************************************
   *		LdrInitializeThunk (NTDLL.@)
   */
@@ -248,8 +754,84 @@ index e560718..688b014 100644
  
  /***********************************************************************
   *           process_breakpoint
+diff --git a/dlls/ntdll/signal_arm64ec.c b/dlls/ntdll/signal_arm64ec.c
+index 140775d1a72..34309bbaf49 100644
+--- a/dlls/ntdll/signal_arm64ec.c
++++ b/dlls/ntdll/signal_arm64ec.c
+@@ -194,6 +194,9 @@ NTSTATUS arm64ec_process_init( HMODULE module )
+     __os_arm64x_dispatch_call_no_redirect = RtlFindExportedRoutineByName( module, "ExitToX64" );
+     __os_arm64x_dispatch_fptr = RtlFindExportedRoutineByName( module, "DispatchJump" );
+     __os_arm64x_dispatch_ret = RtlFindExportedRoutineByName( module, "RetToEntryThunk" );
++    ERR( "[JuiceHybrid] process dispatch module=%p exit=%p jump=%p ret=%p\n", module,
++         __os_arm64x_dispatch_call_no_redirect, __os_arm64x_dispatch_fptr,
++         __os_arm64x_dispatch_ret );
+ 
+ #define GET_PTR(name) p ## name = arm64ec_redirect_ptr( module, \
+                                       RtlFindExportedRoutineByName( module, #name ), metadata )
+@@ -302,6 +305,9 @@ void arm64ec_update_hybrid_metadata( void *module, IMAGE_NT_HEADERS *nt,
+ 
+             NtProtectVirtualMemory( NtCurrentProcess(), &base, &size, PAGE_READWRITE, &protect_old );
+ 
++            ERR( "[JuiceHybrid] metadata module=%p slot=%x exit=%p\n", module,
++                 (unsigned int)metadata->__os_arm64x_dispatch_call_no_redirect,
++                 __os_arm64x_dispatch_call_no_redirect );
+ #define SET_FUNC(func,val) update_hybrid_pointer( module, sec, metadata->func, val )
+             SET_FUNC( __os_arm64x_dispatch_call, arm64x_check_call );
+             SET_FUNC( __os_arm64x_dispatch_call_no_redirect, __os_arm64x_dispatch_call_no_redirect );
+@@ -318,6 +324,11 @@ void arm64ec_update_hybrid_metadata( void *module, IMAGE_NT_HEADERS *nt,
+             SET_FUNC( GetX64InformationFunctionPointer, __os_arm64x_get_x64_information );
+             SET_FUNC( SetX64InformationFunctionPointer, __os_arm64x_set_x64_information );
+ #undef SET_FUNC
++            if (__os_arm64x_dispatch_call_no_redirect)
++                ERR( "[JuiceHybrid] metadata stored address=%p value=%p\n",
++                     get_rva( module, metadata->__os_arm64x_dispatch_call_no_redirect ),
++                     *(void **)get_rva( module,
++                                        metadata->__os_arm64x_dispatch_call_no_redirect ) );
+ 
+             NtProtectVirtualMemory( NtCurrentProcess(), &base, &size, protect_old, &protect_old );
+             return;
+@@ -611,6 +622,7 @@ DEFINE_SYSCALL(NtWriteFile, (HANDLE handle, HANDLE event, PIO_APC_ROUTINE apc, v
+ DEFINE_SYSCALL(NtWriteFileGather, (HANDLE file, HANDLE event, PIO_APC_ROUTINE apc, void *apc_user, IO_STATUS_BLOCK *io, FILE_SEGMENT_ELEMENT *segments, ULONG length, LARGE_INTEGER *offset, ULONG *key))
+ DEFINE_SYSCALL(NtWriteRequestData, (HANDLE handle, LPC_MESSAGE *request, ULONG id, void *buffer, ULONG len, ULONG *retlen))
+ DEFINE_SYSCALL(NtWriteVirtualMemory, (HANDLE process, void *addr, const void *buffer, SIZE_T size, SIZE_T *bytes_written))
++DEFINE_SYSCALL(NtWineGetCurrentTebAccessor, (void **accessor))
+ DEFINE_SYSCALL(NtYieldExecution, (void))
+ 
+ NTSTATUS SYSCALL_API NtAllocateVirtualMemory( HANDLE process, PVOID *ret, ULONG_PTR zero_bits,
+@@ -1827,6 +1839,13 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
+     return emulated_processor_features[feature];
+ }
+ 
++/***********************************************************************
++ *              RtlWow64SuspendThread (NTDLL.@)
++ */
++NTSTATUS WINAPI RtlWow64SuspendThread( HANDLE thread, ULONG *count )
++{
++    return NtSuspendThread( thread, count );
++}
+ 
+ /*************************************************************************
+  *		RtlWalkFrameChain (NTDLL.@)
+diff --git a/dlls/ntdll/signal_x86_64.c b/dlls/ntdll/signal_x86_64.c
+index b94e4a23a99..5bb14b3ac24 100644
+--- a/dlls/ntdll/signal_x86_64.c
++++ b/dlls/ntdll/signal_x86_64.c
+@@ -866,6 +866,13 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
+     return feature < PROCESSOR_FEATURE_MAX && user_shared_data->ProcessorFeatures[feature];
+ }
+ 
++/***********************************************************************
++ *              RtlWow64SuspendThread (NTDLL.@)
++ */
++NTSTATUS WINAPI RtlWow64SuspendThread( HANDLE thread, ULONG *count )
++{
++    return NtSuspendThread( thread, count );
++}
+ 
+ /*************************************************************************
+  *		RtlWalkFrameChain (NTDLL.@)
 diff --git a/dlls/ntdll/thread.c b/dlls/ntdll/thread.c
-index fe083be..4785565 100644
+index fe083befbca..4785565c055 100644
 --- a/dlls/ntdll/thread.c
 +++ b/dlls/ntdll/thread.c
 @@ -35,7 +35,7 @@ WINE_DECLARE_DEBUG_CHANNEL(relay);
@@ -262,7 +844,7 @@ index fe083be..4785565 100644
  struct debug_info
  {
 diff --git a/dlls/ntdll/unix/cdrom.c b/dlls/ntdll/unix/cdrom.c
-index 2ed5b5d..c5fab6d 100644
+index 2ed5b5dc680..c5fab6d6870 100644
 --- a/dlls/ntdll/unix/cdrom.c
 +++ b/dlls/ntdll/unix/cdrom.c
 @@ -27,6 +27,17 @@
@@ -482,20 +1064,57 @@ index 2ed5b5d..c5fab6d 100644
          char name[100];
  
 diff --git a/dlls/ntdll/unix/env.c b/dlls/ntdll/unix/env.c
-index 460888b..1ba6f7a 100644
+index 460888b95df..39e51375106 100644
 --- a/dlls/ntdll/unix/env.c
 +++ b/dlls/ntdll/unix/env.c
-@@ -1538,6 +1538,8 @@ static WCHAR *build_command_line( WCHAR **wargv )
+@@ -1538,6 +1538,17 @@ static WCHAR *build_command_line( WCHAR **wargv )
   */
  static void run_wineboot( WCHAR *env, SIZE_T size )
  {
-+    fprintf( stderr, "[JuiceStage] skipping wineboot for packaged prefix\n" );
-+    return;
++    const char *skip = getenv( "JUICE_SKIP_WINEBOOT" );
++    const char *prefix;
++    char *ready_path = NULL;
++    NTSTATUS wait_status;
++
++    if (skip && *skip && strcmp( skip, "0" ))
++    {
++        fprintf( stderr, "[JuiceStage] wineboot disabled by JUICE_SKIP_WINEBOOT=%s\n", skip );
++        return;
++    }
++    fprintf( stderr, "[JuiceStage] running controlled wineboot initialization\n" );
      static const WCHAR eventW[] = {'\\','K','e','r','n','e','l','O','b','j','e','c','t','s',
          '\\','_','_','w','i','n','e','b','o','o','t','_','e','v','e','n','t',0};
      static const WCHAR appnameW[] = {'\\','?','?','\\','C',':','\\','w','i','n','d','o','w','s',
+@@ -1601,8 +1612,26 @@ static void run_wineboot( WCHAR *env, SIZE_T size )
+ 
+ wait:
+     timeout.QuadPart = (ULONGLONG)5 * 60 * 1000 * -10000;
+-    if (NtWaitForMultipleObjects( count, handles, WaitAny, FALSE, &timeout ) == WAIT_TIMEOUT)
++    wait_status = NtWaitForMultipleObjects( count, handles, WaitAny, FALSE, &timeout );
++    if (wait_status == WAIT_TIMEOUT)
+         ERR( "boot event wait timed out\n" );
++    else if (wait_status != WAIT_OBJECT_0)
++        ERR( "wineboot exited without signaling readiness, status %x\n", wait_status );
++    else if ((prefix = getenv( "WINEPREFIX" )) &&
++             asprintf( &ready_path, "%s/.juice-prefix-ready", prefix ) != -1)
++    {
++        static const char ready[] = "JUICE_PREFIX_READY\n";
++        int fd = open( ready_path, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
++
++        if (fd == -1 || write( fd, ready, sizeof(ready) - 1 ) != sizeof(ready) - 1)
++            ERR( "failed to write prefix readiness marker %s: %s\n",
++                 ready_path, strerror(errno) );
++        else
++            fprintf( stderr, "[JuiceStage] prefix initialization complete marker=%s\n",
++                     ready_path );
++        if (fd != -1) close( fd );
++        free( ready_path );
++    }
+     while (count) NtClose( handles[--count] );
+ }
+ 
 diff --git a/dlls/ntdll/unix/file.c b/dlls/ntdll/unix/file.c
-index b641e4c..a81f04f 100644
+index b641e4ca336..a81f04fc672 100644
 --- a/dlls/ntdll/unix/file.c
 +++ b/dlls/ntdll/unix/file.c
 @@ -26,6 +26,16 @@
@@ -560,7 +1179,7 @@ index b641e4c..a81f04f 100644
  #endif
                      break;
 diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
-index c1321ce..9a95568 100644
+index c1321ce679d..ebaf4007eb5 100644
 --- a/dlls/ntdll/unix/loader.c
 +++ b/dlls/ntdll/unix/loader.c
 @@ -382,6 +382,7 @@ static void set_config_dir(void)
@@ -686,7 +1305,34 @@ index c1321ce..9a95568 100644
          status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
          if (status == 2) return;  /* server lock held by someone else, will retry later */
          if (status) exit(status);  /* server failed */
-@@ -1865,10 +1958,69 @@ static void start_main_thread(void)
+@@ -1102,13 +1195,26 @@ static NTSTATUS open_builtin_pe_file( const char *name, OBJECT_ATTRIBUTES *attr,
+ {
+     NTSTATUS status;
+     HANDLE mapping;
++    BOOL juice_trace = getenv( "JUICE_EXPERIMENTAL_X64" ) != NULL;
+ 
+     *module = NULL;
+     status = open_dll_file( name, attr, &mapping );
++    if (juice_trace)
++    {
++        fprintf( stderr, "[JuiceHybrid] open name=%s machine=%04x status=%08x\n",
++                 name, machine, status );
++        fflush( stderr );
++    }
+     if (!status)
+     {
+         status = virtual_map_builtin_module( mapping, module, size, image_info,
+                                              limit_low, limit_high, machine, prefer_native, offset );
++        if (juice_trace)
++        {
++            fprintf( stderr, "[JuiceHybrid] map name=%s status=%08x module=%p size=%zx\n",
++                     name, status, *module, *size );
++            fflush( stderr );
++        }
+         NtClose( mapping );
+     }
+     return status;
+@@ -1865,10 +1971,69 @@ static void start_main_thread(void)
      set_load_order_app_name( main_wargv[0] );
      init_thread_stack( teb, 0, 0, 0 );
      NtCreateKeyedEvent( &keyed_event, GENERIC_READ | GENERIC_WRITE, NULL, 0 );
@@ -757,7 +1403,7 @@ index c1321ce..9a95568 100644
  }
  
  
-@@ -1919,13 +2071,25 @@ static void apple_main_thread(void)
+@@ -1919,13 +2084,25 @@ static void apple_main_thread(void)
      /* Multi-processing Services can get confused about the main thread if the
       * first time it's used is on a secondary thread.  Use it here to make sure
       * that doesn't happen. */
@@ -784,7 +1430,7 @@ index c1321ce..9a95568 100644
      /* We use this run loop source for two purposes.  First, a run loop exits
       * if it has no more sources scheduled.  So, we need at least one source
 diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
-index 730a0cd..a18dfe6 100644
+index 730a0cd9a94..a18dfe68154 100644
 --- a/dlls/ntdll/unix/server.c
 +++ b/dlls/ntdll/unix/server.c
 @@ -24,6 +24,17 @@
@@ -937,7 +1583,7 @@ index 730a0cd..a18dfe6 100644
  
  
 diff --git a/dlls/ntdll/unix/signal_arm64.c b/dlls/ntdll/unix/signal_arm64.c
-index 522ade3..5ffdaeb 100644
+index 522ade368f0..3ef31727986 100644
 --- a/dlls/ntdll/unix/signal_arm64.c
 +++ b/dlls/ntdll/unix/signal_arm64.c
 @@ -367,6 +367,19 @@ NTSTATUS signal_set_full_context( CONTEXT *context )
@@ -960,13 +1606,17 @@ index 522ade3..5ffdaeb 100644
      if (is_arm64ec() && !is_ec_code( frame->pc ))
      {
          CONTEXT *user_context = (CONTEXT *)((frame->sp - sizeof(CONTEXT)) & ~15);
-@@ -1100,6 +1113,19 @@ static BOOL handle_syscall_fault( struct thread_data *data, ucontext_t *context,
+@@ -1100,6 +1113,23 @@ static BOOL handle_syscall_fault( struct thread_data *data, ucontext_t *context,
  }
  
  
 +#ifdef __APPLE__
 +/* Juice iOS x18 SIGSEGV recovery bridge */
 +extern void juice_ios_restore_x18_and_retry(void);
++static volatile sig_atomic_t juice_x18_recovery_count;
++static volatile sig_atomic_t juice_tls_recovery_count;
++static volatile sig_atomic_t juice_trampoline_recovery_count;
++static volatile sig_atomic_t juice_derived_teb_recovery_count;
 +
 +__ASM_GLOBAL_FUNC( juice_ios_restore_x18_and_retry,
 +                   "mov x18, x17\n\t"
@@ -980,11 +1630,42 @@ index 522ade3..5ffdaeb 100644
  /**********************************************************************
   *		segv_handler
   *
-@@ -1113,6 +1139,155 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
+@@ -1113,6 +1143,347 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
      EXCEPTION_RECORD rec = { .ExceptionAddress = (void *)PC_sig(sigcontext) };
      DWORD64 esr = get_fault_esr( sigcontext );
  
 +#ifdef __APPLE__
++    /*
++     * A nested fault can occur at the trampoline's TEB load if Darwin
++     * clears the x17 carrier while returning from the first signal.  The
++     * generic recovery must not overwrite x16 in that case: x16 still holds
++     * the original PE retry address, and replacing it with trampoline+4
++     * creates a tight branch-to-self loop.  Emulate this one load and resume
++     * at the following CBZ while preserving x16.
++     */
++    if (data->teb &&
++        PC_sig(sigcontext) == (ULONG_PTR)juice_ios_restore_x18_and_retry + 4 &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR))
++    {
++        sig_atomic_t number = ++juice_trampoline_recovery_count;
++
++        REGn_sig(17, sigcontext) =
++            *(const ULONG_PTR *)((const char *)data->teb + 0x378);
++        REGn_sig(18, sigcontext) = (ULONG_PTR)data->teb;
++        PC_sig(sigcontext) += 4;
++        if (number <= 16)
++        {
++            fprintf( stderr,
++                     "[JuiceX18] trampoline #%d retry=%p restored_x17=%p "
++                     "teb=%p\n",
++                     (int)number, (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(17, sigcontext), data->teb );
++            fflush( stderr );
++        }
++        return;
++    }
++
 +    /*
 +     * iOS reserves the first 4 GiB for Mach-O __PAGEZERO, so the normal
 +     * Windows KUSER_SHARED_DATA address (0x7ffe0000) cannot be mapped.
@@ -1055,13 +1736,172 @@ index 522ade3..5ffdaeb 100644
 +        (ULONG_PTR)siginfo->si_addr < 0x10000 &&
 +        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW || ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR))
 +    {
++        sig_atomic_t number = ++juice_x18_recovery_count;
 +        ULONG_PTR retry = PC_sig(sigcontext);
++
++        if (number <= 32)
++        {
++            fprintf( stderr,
++                     "[JuiceX18] broad #%d pc=%p fault=%p instr=%08x "
++                     "x8=%p x16=%p x17=%p x18=%p teb=%p\n",
++                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
++                     siginfo->si_addr, *(const ULONG *)PC_sig(sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(8, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(17, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(18, sigcontext), data->teb );
++            fflush( stderr );
++        }
 +        if ((ULONG_PTR)siginfo->si_addr == 0x1488 &&
 +            REGn_sig(16, sigcontext) == retry - 0x1c) retry -= 8;
 +        REGn_sig(16, sigcontext) = retry;
 +        REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
 +        PC_sig(sigcontext) = (ULONG_PTR)juice_ios_restore_x18_and_retry;
 +        return;
++    }
++
++    /*
++     * Darwin may expose a reconstructed x18 in the signal context even
++     * though the faulting PE instruction executed with x18 cleared.  A
++     * low-address data abort through an instruction whose base register is
++     * literally x18 is therefore safe to retry with the Wine TEB restored.
++     */
++    if (data->teb &&
++        (ULONG_PTR)siginfo->si_addr < 0x10000 &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
++        !(PC_sig(sigcontext) & 3) &&
++        ((*(const ULONG *)PC_sig(sigcontext) >> 5) & 0x1f) == 18)
++    {
++        sig_atomic_t number = ++juice_x18_recovery_count;
++
++        if (number <= 32)
++        {
++            fprintf( stderr,
++                     "[JuiceX18] direct #%d pc=%p fault=%p instr=%08x "
++                     "x16=%p x17=%p x18=%p teb=%p\n",
++                     (int)number,
++                     (void *)(ULONG_PTR)PC_sig(sigcontext), siginfo->si_addr,
++                     *(const ULONG *)PC_sig(sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(17, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(18, sigcontext), data->teb );
++            fflush( stderr );
++        }
++
++        REGn_sig(16, sigcontext) = PC_sig(sigcontext);
++        REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
++        PC_sig(sigcontext) = (ULONG_PTR)juice_ios_restore_x18_and_retry;
++        return;
++    }
++
++    /*
++     * Darwin can clear the physical x18 while reporting Wine's reconstructed
++     * x18 in the signal context.  If PE code computed &TEB->field while x18
++     * was physically clear, a later load/store faults through a small offset
++     * held in another base register (for example x19 == 0x1258).  Repair that
++     * derived base and retry.  Limit this to non-null offsets inside the TEB
++     * range and to AArch64 load/store encodings; this deliberately does not
++     * turn ordinary null dereferences into TEB accesses.
++     */
++    if (data->teb &&
++        (ULONG_PTR)siginfo->si_addr >= 0x20 &&
++        (ULONG_PTR)siginfo->si_addr < 0x4000 &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
++        !(PC_sig(sigcontext) & 3))
++    {
++        ULONG instruction = *(const ULONG *)PC_sig(sigcontext);
++        unsigned int base_register = (instruction >> 5) & 0x1f;
++
++        if ((instruction & 0x0a000000) == 0x08000000 &&
++            base_register <= 28 && REGn_sig(base_register, sigcontext) >= 0x20 &&
++            REGn_sig(base_register, sigcontext) < 0x4000)
++        {
++            ULONG_PTR base = REGn_sig(base_register, sigcontext);
++            ULONG_PTR fault = (ULONG_PTR)siginfo->si_addr;
++
++            if (fault >= base && fault - base < 0x1000)
++            {
++                sig_atomic_t number = ++juice_derived_teb_recovery_count;
++
++                REGn_sig(base_register, sigcontext) =
++                    base + (ULONG_PTR)data->teb;
++                if (number <= 32)
++                {
++                    fprintf( stderr,
++                             "[JuiceX18] derived #%d pc=%p fault=%p "
++                             "instr=%08x base=x%u value=%p fixed=%p teb=%p\n",
++                             (int)number,
++                             (void *)(ULONG_PTR)PC_sig(sigcontext),
++                             siginfo->si_addr, instruction, base_register,
++                             (void *)base,
++                             (void *)(ULONG_PTR)REGn_sig(base_register, sigcontext),
++                             data->teb );
++                    fflush( stderr );
++                }
++                return;
++            }
++        }
++    }
++
++    /*
++     * FEX's Windows TLS helpers derive x8 from x18 immediately before
++     * accessing TEB::TlsSlots.  Match only those exact instruction
++     * sequences and the fixed TLS-slot address range.
++     */
++    if (data->teb &&
++        (ULONG_PTR)siginfo->si_addr >= 0x1480 &&
++        (ULONG_PTR)siginfo->si_addr < 0x1680 &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
++        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8)
++    {
++        BOOL recover = FALSE;
++        ULONG instruction = *(const ULONG *)PC_sig(sigcontext);
++
++        if (*(const ULONG *)(PC_sig(sigcontext) - 4) == 0x8b204e48 &&
++            (instruction == 0xf94a4100 ||
++             (instruction & 0xffffffe0) == 0xf90a4100))
++            recover = TRUE;
++        else if (*(const ULONG *)(PC_sig(sigcontext) - 8) == 0x8b204e48 &&
++                 *(const ULONG *)(PC_sig(sigcontext) - 4) == 0x52800020 &&
++                 (instruction & 0xffffffe0) == 0xf90a4100)
++            recover = TRUE;
++        else if (*(const ULONG *)(PC_sig(sigcontext) - 8) == 0x8b204e48 &&
++                 (*(const ULONG *)(PC_sig(sigcontext) - 4) & 0xffffffe0) == 0x2a0003e0 &&
++                 (instruction & 0xffffffe0) == 0xf90a4100)
++            recover = TRUE;
++
++        if (recover)
++        {
++            sig_atomic_t number = ++juice_tls_recovery_count;
++
++            if (number <= 32)
++            {
++                fprintf( stderr,
++                         "[JuiceX18] tls #%d pc=%p fault=%p "
++                         "instr=%08x x8=%p fixed_x8=%p x18=%p teb=%p\n",
++                         (int)number,
++                         (void *)(ULONG_PTR)PC_sig(sigcontext),
++                         siginfo->si_addr, instruction,
++                         (void *)(ULONG_PTR)REGn_sig(8, sigcontext),
++                         (void *)(ULONG_PTR)(REGn_sig(8, sigcontext) +
++                                             (ULONG_PTR)data->teb),
++                         (void *)(ULONG_PTR)REGn_sig(18, sigcontext), data->teb );
++                fflush( stderr );
++            }
++
++            /*
++             * x8 already contains the slot offset produced while Darwin had
++             * x18 cleared.  Repair that effective address directly.  This
++             * lets the faulting load/store retry without another signal
++             * return through the x18 trampoline (which could repeat forever
++             * for TlsAlloc's STR XZR compiler variant).
++             */
++            REGn_sig(8, sigcontext) += (ULONG_PTR)data->teb;
++            return;
++        }
 +    }
 +
 +    /*
@@ -1108,7 +1948,7 @@ index 522ade3..5ffdaeb 100644
 +            stderr,
 +            "[JuiceStage] native segv #%d; "
 +            "signal=%d code=%d pc=%p lr=%p "
-+            "sp=%p x16=%p x17=%p x18=%p "
++            "sp=%p x8=%p x16=%p x17=%p x18=%p "
 +            "addr=%p esr=%016llx ec=%02llx "
 +            "teb=%p frame=%p\n",
 +            (int)juice_number,
@@ -1117,6 +1957,8 @@ index 522ade3..5ffdaeb 100644
 +            (void *)(ULONG_PTR)PC_sig(sigcontext),
 +            (void *)(ULONG_PTR)LR_sig(sigcontext),
 +            (void *)(ULONG_PTR)SP_sig(sigcontext),
++            (void *)(ULONG_PTR)
++                REGn_sig(8, sigcontext),
 +            (void *)(ULONG_PTR)
 +                REGn_sig(16, sigcontext),
 +            (void *)(ULONG_PTR)
@@ -1136,7 +1978,29 @@ index 522ade3..5ffdaeb 100644
      switch (ESR_ELx_EC(esr))
      {
      case ESR_ELx_EC_IABT_LOW:
-@@ -1526,6 +1701,22 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
+@@ -1163,6 +1534,21 @@ static void ill_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
+     EXCEPTION_RECORD rec = { .ExceptionCode = EXCEPTION_ILLEGAL_INSTRUCTION,
+                              .ExceptionAddress = (void *)PC_sig(sigcontext) };
+ 
++    fprintf( stderr,
++             "[JuiceStage] native ill; signal=%d code=%d pc=%p lr=%p "
++             "sp=%p x0=%p x1=%p x16=%p x17=%p x18=%p teb=%p\\n",
++             signal, siginfo->si_code,
++             (void *)(ULONG_PTR)PC_sig(sigcontext),
++             (void *)(ULONG_PTR)LR_sig(sigcontext),
++             (void *)(ULONG_PTR)SP_sig(sigcontext),
++             (void *)(ULONG_PTR)REGn_sig(0, sigcontext),
++             (void *)(ULONG_PTR)REGn_sig(1, sigcontext),
++             (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
++             (void *)(ULONG_PTR)REGn_sig(17, sigcontext),
++             (void *)(ULONG_PTR)REGn_sig(18, sigcontext),
++             data->teb );
++    fflush( stderr );
++
+     if (!(PSTATE_sig( sigcontext ) & 0x10) && /* AArch64 (not WoW) */
+         !(PC_sig( sigcontext ) & 3))
+     {
+@@ -1526,6 +1912,22 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
      struct thread_data *data = get_thread_data();
      struct syscall_frame *frame = get_syscall_frame( data );
      CONTEXT *ctx, context = { CONTEXT_ALL };
@@ -1159,7 +2023,7 @@ index 522ade3..5ffdaeb 100644
      I386_CONTEXT *i386_context;
      ARM_CONTEXT *arm_context;
  
-@@ -1570,18 +1761,82 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
+@@ -1570,18 +1972,82 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
          wait_suspend( &context );
      }
  
@@ -1249,7 +2113,7 @@ index 522ade3..5ffdaeb 100644
  
  
 diff --git a/dlls/ntdll/unix/system.c b/dlls/ntdll/unix/system.c
-index 2d6e318..5fd54b9 100644
+index 2d6e3184ac9..5fd54b9cc04 100644
 --- a/dlls/ntdll/unix/system.c
 +++ b/dlls/ntdll/unix/system.c
 @@ -24,6 +24,16 @@
@@ -1315,8 +2179,66 @@ index 2d6e318..5fd54b9 100644
  #elif defined(__FreeBSD__)
  
  #include <dev/acpica/acpiio.h>
+diff --git a/dlls/ntdll/unix/thread.c b/dlls/ntdll/unix/thread.c
+index 546963a4241..7a201287313 100644
+--- a/dlls/ntdll/unix/thread.c
++++ b/dlls/ntdll/unix/thread.c
+@@ -1662,6 +1662,41 @@ NTSTATUS WINAPI NtRaiseException( EXCEPTION_RECORD *rec, CONTEXT *context, BOOL
+ }
+ 
+ 
++#ifdef __APPLE__
++/*
++ * Darwin reserves x18 for the platform.  ARM64EC code cannot therefore use
++ * the Windows inline NtCurrentTeb sequence reliably after a native call.
++ * Keep this accessor on the Unix side, where Wine's pthread TLS is the
++ * authoritative per-thread source, and preserve the ARM64EC register set for
++ * direct calls from FEX-generated code.
++ */
++static TEB * __attribute__((preserve_all)) juice_ios_current_teb(void)
++{
++    struct thread_data *data = get_thread_data();
++    TEB *teb = data ? data->teb : NULL;
++
++    __asm__ volatile( "mov x18, %0" : : "r"(teb) : "x18" );
++    return teb;
++}
++#endif
++
++
++/***********************************************************************
++ *              NtWineGetCurrentTebAccessor  (NTDLL.@)
++ */
++NTSTATUS WINAPI NtWineGetCurrentTebAccessor( void **accessor )
++{
++    if (!accessor) return STATUS_INVALID_PARAMETER;
++#ifdef __APPLE__
++    *accessor = juice_ios_current_teb;
++    return STATUS_SUCCESS;
++#else
++    *accessor = NULL;
++    return STATUS_NOT_SUPPORTED;
++#endif
++}
++
++
+ /**********************************************************************
+  *           NtCurrentTeb   (NTDLL.@)
+  */
+diff --git a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
+index c8ca97d21a0..425e04ca031 100644
+--- a/dlls/ntdll/unix/unix_private.h
++++ b/dlls/ntdll/unix/unix_private.h
+@@ -280,6 +280,7 @@ extern void set_process_instrumentation_callback( void *callback );
+ 
+ extern void *get_cpu_area( struct thread_data *data, USHORT machine );
+ extern void set_thread_id( struct thread_data *data );
++extern NTSTATUS WINAPI NtWineGetCurrentTebAccessor( void **accessor );
+ extern NTSTATUS init_thread_stack( TEB *teb, ULONG_PTR limit, SIZE_T reserve_size, SIZE_T commit_size );
+ extern void DECLSPEC_NORETURN abort_thread( int status );
+ extern void DECLSPEC_NORETURN abort_process( int status );
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index eda3fee..7d4886a 100644
+index eda3fee3d8b..abecc931880 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
 @@ -24,6 +24,17 @@
@@ -1357,10 +2279,13 @@ index eda3fee..7d4886a 100644
  
  /* TEB allocation blocks */
  static void *teb_block;
-@@ -220,6 +233,30 @@ static struct list teb_list = LIST_INIT( teb_list );
+@@ -220,6 +233,33 @@ static struct list teb_list = LIST_INIT( teb_list );
  #define MAP_NORESERVE 0
  #endif
  
++/* Internal-only bit carried through map_view() for ARM64EC code allocations. */
++#define JUICE_EC_CODE_ALLOCATION 0x80000000u
++
 +#if defined(__APPLE__) && defined(__aarch64__)
 +/* JUICE_IOS_PT_TRACE_ME_DECLARATIONS */
 +#ifndef PT_TRACE_ME
@@ -1388,7 +2313,27 @@ index eda3fee..7d4886a 100644
  #ifdef _WIN64  /* on 64-bit the page protection bytes use a 2-level table */
  static const size_t pages_vprot_shift = 20;
  static const size_t pages_vprot_mask = (1 << 20) - 1;
-@@ -598,7 +635,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
+@@ -270,12 +310,16 @@ void *anon_mmap_fixed( void *start, size_t size, int prot, int flags )
+     return mmap( start, size, prot, MAP_PRIVATE | MAP_ANON | MAP_FIXED | flags, -1, 0 );
+ }
+ 
+-/* allocate anonymous mmap() memory at any address */
+-void *anon_mmap_alloc( size_t size, int prot )
++static void *anon_mmap_alloc_flags( size_t size, int prot, int flags )
+ {
+     assert( !(size & host_page_mask) );
++    return mmap( NULL, size, prot, MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
++}
+ 
+-    return mmap( NULL, size, prot, MAP_PRIVATE | MAP_ANON, -1, 0 );
++/* allocate anonymous mmap() memory at any address */
++void *anon_mmap_alloc( size_t size, int prot )
++{
++    return anon_mmap_alloc_flags( size, prot, 0 );
+ }
+ 
+ #ifdef USE_UFFD_WRITEWATCH
+@@ -598,7 +642,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
  #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
      ptr = mmap( start, size, prot, MAP_FIXED | MAP_EXCL | MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
      if (ptr == MAP_FAILED && errno == EINVAL) errno = EEXIST;
@@ -1397,7 +2342,7 @@ index eda3fee..7d4886a 100644
      mach_vm_address_t result = (mach_vm_address_t)start;
      kern_return_t ret = mach_vm_map( mach_task_self(), &result, size, 0, VM_FLAGS_FIXED,
                                       MEMORY_OBJECT_NULL, 0, 0, prot, VM_PROT_ALL, VM_INHERIT_COPY );
-@@ -628,7 +665,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
+@@ -628,7 +672,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
  
  static void reserve_area( void *addr, void *end )
  {
@@ -1406,7 +2351,7 @@ index eda3fee..7d4886a 100644
  
  #ifdef __i386__
      static const mach_vm_address_t max_address = VM_MAX_ADDRESS;
-@@ -696,7 +733,7 @@ static void reserve_area( void *addr, void *end )
+@@ -696,7 +740,7 @@ static void reserve_area( void *addr, void *end )
          reserve_area( addr, (char *)addr + size );
          reserve_area( (char *)addr + size, end );
      }
@@ -1415,7 +2360,7 @@ index eda3fee..7d4886a 100644
  }
  
  
-@@ -865,7 +902,7 @@ static NTSTATUS load_builtin_unixlib( void *module, BOOL wow, const void **funcs
+@@ -865,7 +909,7 @@ static NTSTATUS load_builtin_unixlib( void *module, BOOL wow, const void **funcs
          {
              builtin->unix_handle = dlopen( builtin->unix_path, RTLD_NOW );
              if (!builtin->unix_handle)
@@ -1424,7 +2369,214 @@ index eda3fee..7d4886a 100644
          }
          if (builtin->unix_handle) status = get_unixlib_funcs( builtin->unix_handle, wow, funcs, &entry );
      }
-@@ -3234,6 +3271,127 @@ static NTSTATUS map_image_into_view( struct file_view *view, const UNICODE_STRIN
+@@ -1543,11 +1587,11 @@ static struct wine_rb_entry *find_view_inside_range( void **base_ptr, void **end
+  * retrying inside it, and return where it actually succeeded, or NULL.
+  */
+ static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
+-                                void *start, size_t size, int unix_prot )
++                                void *start, size_t size, int unix_prot, int mmap_flags )
+ {
+     while (start && base <= start && (char*)start + size <= (char*)end)
+     {
+-        if (anon_mmap_tryfixed( start, size, unix_prot, 0 ) != MAP_FAILED) return start;
++        if (anon_mmap_tryfixed( start, size, unix_prot, mmap_flags ) != MAP_FAILED) return start;
+         TRACE( "Found free area is already mapped, start %p.\n", start );
+         if (errno != EEXIST)
+         {
+@@ -1572,7 +1616,8 @@ static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
+  * Find a free area between views inside the specified range and map it.
+  * virtual_mutex must be held by caller.
+  */
+-static void *map_free_area( void *base, void *end, size_t size, int top_down, int unix_prot, size_t align_mask )
++static void *map_free_area( void *base, void *end, size_t size, int top_down, int unix_prot,
++                            size_t align_mask, int mmap_flags )
+ {
+     struct wine_rb_entry *first = find_view_inside_range( &base, &end, top_down );
+     ptrdiff_t step = top_down ? -(align_mask + 1) : (align_mask + 1);
+@@ -1587,7 +1632,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
+         {
+             struct file_view *view = WINE_RB_ENTRY_VALUE( first, struct file_view, entry );
+             if ((start = try_map_free_area( (char *)view->base + view->size, (char *)start + size, step,
+-                                            start, size, unix_prot ))) break;
++                                            start, size, unix_prot, mmap_flags ))) break;
+             start = ROUND_ADDR( (char *)view->base - size, align_mask );
+             /* stop if remaining space is not large enough */
+             if (!start || start >= end || start < base) return NULL;
+@@ -1603,7 +1648,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
+         {
+             struct file_view *view = WINE_RB_ENTRY_VALUE( first, struct file_view, entry );
+             if ((start = try_map_free_area( start, view->base, step,
+-                                            start, size, unix_prot ))) break;
++                                            start, size, unix_prot, mmap_flags ))) break;
+             start = ROUND_ADDR( (char *)view->base + view->size + align_mask, align_mask );
+             /* stop if remaining space is not large enough */
+             if (!start || start >= end || (char *)end - (char *)start < size) return NULL;
+@@ -1612,7 +1657,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
+     }
+ 
+     if (!first)
+-        start = try_map_free_area( base, end, step, start, size, unix_prot );
++        start = try_map_free_area( base, end, step, start, size, unix_prot, mmap_flags );
+ 
+     if (!start)
+         ERR( "couldn't map free area in range %p-%p, size %p\n", base, end, (void *)size );
+@@ -2141,7 +2186,7 @@ static void *find_reserved_free_area_outside_preloader( void *start, void *end,
+  * virtual_mutex must be held by caller.
+  */
+ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size, int top_down,
+-                                int unix_prot, size_t align_mask )
++                                int unix_prot, size_t align_mask, int mmap_flags )
+ {
+     void *ptr = NULL;
+     struct reserved_area *area;
+@@ -2176,7 +2221,7 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size,
+             if (ptr) break;
+         }
+     }
+-    if (ptr && anon_mmap_fixed( ptr, size, unix_prot, 0 ) != ptr) ptr = NULL;
++    if (ptr && anon_mmap_fixed( ptr, size, unix_prot, mmap_flags ) != ptr) ptr = NULL;
+     return ptr;
+ }
+ 
+@@ -2186,7 +2231,7 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size,
+  * Map a memory area at a fixed address.
+  * virtual_mutex must be held by caller.
+  */
+-static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot )
++static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot, int mmap_flags )
+ {
+     struct reserved_area *area;
+     NTSTATUS status;
+@@ -2204,19 +2249,19 @@ static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot )
+         if (area_end <= start) continue;
+         if (area_start > start)
+         {
+-            if (anon_mmap_tryfixed( start, area_start - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
++            if (anon_mmap_tryfixed( start, area_start - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
+             start = area_start;
+         }
+         if (area_end >= end)
+         {
+-            if (anon_mmap_fixed( start, end - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
++            if (anon_mmap_fixed( start, end - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
+             return STATUS_SUCCESS;
+         }
+-        if (anon_mmap_fixed( start, area_end - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
++        if (anon_mmap_fixed( start, area_end - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
+         start = area_end;
+     }
+ 
+-    if (anon_mmap_tryfixed( start, end - start, unix_prot, 0 ) == MAP_FAILED) goto failed;
++    if (anon_mmap_tryfixed( start, end - start, unix_prot, mmap_flags ) == MAP_FAILED) goto failed;
+     return STATUS_SUCCESS;
+ 
+ failed:
+@@ -2247,6 +2292,8 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+                           ULONG_PTR limit_low, ULONG_PTR limit_high, size_t align_mask )
+ {
+     int top_down = alloc_type & MEM_TOP_DOWN;
++    int mmap_flags = 0;
++    int ec_code_allocation = 0;
+     void *ptr;
+     int unix_prot = get_unix_prot( vprot );
+     NTSTATUS status;
+@@ -2254,6 +2301,19 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+     if (!align_mask) align_mask = granularity_mask;
+     assert( align_mask >= host_page_mask );
+ 
++#if defined(__APPLE__) && defined(__aarch64__)
++    /*
++     * The TrollStore/CoreTrust execution path used by Grape is deliberately
++     * placed in CS_DEBUGGED state by grape-trace-parent.  On the supported
++     * iOS 16 devices that permits an anonymous RWX mmap, whereas passing
++     * Darwin's MAP_JIT flag returns EINVAL even when allow-jit is present.
++     * Keep the allocation tagged so Wine avoids its fixed-address paths, but
++     * do not forward MAP_JIT to the kernel.
++     */
++    ec_code_allocation = !!(alloc_type & JUICE_EC_CODE_ALLOCATION);
++#endif
++    alloc_type &= ~JUICE_EC_CODE_ALLOCATION;
++
+     if (alloc_type & MEM_REPLACE_PLACEHOLDER)
+     {
+         struct file_view *view;
+@@ -2280,7 +2340,22 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+     if (use_kernel_writewatch && vprot & VPROT_WRITEWATCH)
+         unix_prot = get_unix_prot( vprot & ~VPROT_WRITEWATCH );
+ 
++    /*
++     * Darwin may reject adding execute permission to an existing writable
++     * anonymous mapping even when the process is debugged.  ARM64EC JIT
++     * clients (notably FEX) request PAGE_EXECUTE_READWRITE up front, so keep
++     * PROT_EXEC on the initial mmap on iOS instead of creating RW memory and
++     * trying to upgrade it afterwards.
++     *
++     * Keep Wine's established two-stage behaviour on every other host.
++     */
++#if !defined(__APPLE__) || !defined(__aarch64__)
+     unix_prot &= ~PROT_EXEC;
++#else
++    /* iOS 16 rejects MAP_JIT mappings for this non-App-Store runtime.  The
++     * allow-jit entitlement instead permits the requested RWX protection on
++     * the initial anonymous mmap. */
++#endif
+ 
+     if (base)
+     {
+@@ -2288,7 +2363,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+         if (limit_low && base < (void *)limit_low) return STATUS_CONFLICTING_ADDRESSES;
+         if (limit_high && is_beyond_limit( base, size, (void *)limit_high )) return STATUS_CONFLICTING_ADDRESSES;
+         if (is_beyond_limit( base, size, host_addr_space_limit )) return STATUS_CONFLICTING_ADDRESSES;
+-        if ((status = map_fixed_area( base, size, unix_prot ))) return status;
++        if ((status = map_fixed_area( base, size, unix_prot, mmap_flags ))) return status;
+         if (is_beyond_limit( base, size, working_set_limit )) working_set_limit = address_space_limit;
+         ptr = base;
+     }
+@@ -2302,15 +2377,21 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+         if (limit_low && (void *)limit_low > start) start = (void *)limit_low;
+         if (limit_high && (void *)limit_high < end) end = (char *)limit_high + 1;
+ 
+-        if ((ptr = map_reserved_area( start, end, host_size, top_down, unix_prot, align_mask )))
++        /* MAP_JIT rejects fixed-address mappings on iOS.  Let Darwin choose
++         * the address, then trim the over-allocation to Wine's alignment. */
++        if (!ec_code_allocation &&
++            (ptr = map_reserved_area( start, end, host_size, top_down, unix_prot,
++                                      align_mask, mmap_flags )))
+         {
+             TRACE( "got mem in reserved area %p-%p\n", ptr, (char *)ptr + size );
+             goto done;
+         }
+ 
+-        if (start > address_space_start || end < host_addr_space_limit || top_down)
++        if (!ec_code_allocation &&
++            (start > address_space_start || end < host_addr_space_limit || top_down))
+         {
+-            if (!(ptr = map_free_area( start, end, host_size, top_down, unix_prot, align_mask )))
++            if (!(ptr = map_free_area( start, end, host_size, top_down, unix_prot,
++                                       align_mask, mmap_flags )))
+                 return STATUS_NO_MEMORY;
+             TRACE( "got mem with map_free_area %p-%p\n", ptr, (char *)ptr + size );
+             goto done;
+@@ -2318,7 +2399,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+ 
+         for (;;)
+         {
+-            if ((ptr = anon_mmap_alloc( view_size, unix_prot )) == MAP_FAILED)
++            if ((ptr = anon_mmap_alloc_flags( view_size, unix_prot, mmap_flags )) == MAP_FAILED)
+             {
+                 status = (errno == ENOMEM) ? STATUS_NO_MEMORY : STATUS_INVALID_PARAMETER;
+                 ERR( "anon mmap error %s, size %p, unix_prot %#x\n",
+@@ -2798,7 +2879,8 @@ static void *get_host_addr_space_limit(void)
+ static void alloc_arm64ec_map(void)
+ {
+     unsigned int status;
+-    SIZE_T size = ((ULONG_PTR)address_space_limit + page_size) >> (page_shift + 3);  /* one bit per page */
++    ULONG_PTR bitmap_limit = min( (ULONG_PTR)address_space_limit, (ULONG_PTR)host_addr_space_limit );
++    SIZE_T size = (bitmap_limit + page_size) >> (page_shift + 3);  /* one bit per page */
+ 
+     size = ROUND_SIZE( 0, size, host_page_mask );
+     status = map_view( &arm64ec_view, NULL, size, MEM_TOP_DOWN, VPROT_READ | VPROT_COMMITTED, 0, 0, 0 );
+@@ -3234,6 +3316,127 @@ static NTSTATUS map_image_into_view( struct file_view *view, const UNICODE_STRIN
          }
      }
  
@@ -1552,7 +2704,7 @@ index eda3fee..7d4886a 100644
      /* set the image protections */
  
      set_vprot( view, ptr, ROUND_SIZE( 0, header_size, align_mask ), VPROT_COMMITTED | VPROT_READ );
-@@ -4057,6 +4215,132 @@ TEB *virtual_alloc_first_teb(void)
+@@ -4057,6 +4260,132 @@ TEB *virtual_alloc_first_teb(void)
      SIZE_T total = 32 * block_size;
      struct thread_data *thread_data;
  
@@ -1685,7 +2837,7 @@ index eda3fee..7d4886a 100644
      /* reserve space for shared user data */
      status = NtAllocateVirtualMemory( NtCurrentProcess(), (void **)&user_shared_data, 0, &data_size,
                                        MEM_RESERVE | MEM_COMMIT, PAGE_READONLY );
-@@ -4066,8 +4350,24 @@ TEB *virtual_alloc_first_teb(void)
+@@ -4066,8 +4395,24 @@ TEB *virtual_alloc_first_teb(void)
          exit(1);
      }
  
@@ -1712,8 +2864,43 @@ index eda3fee..7d4886a 100644
      teb_block_pos = 30;
      ptr = (char *)teb_block + 30 * block_size;
      data_size = 2 * block_size;
+@@ -5123,6 +5468,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+     sigset_t sigset;
+     SIZE_T size = *size_ptr;
+     NTSTATUS status = STATUS_SUCCESS;
++    ULONG map_type = type;
+ 
+     /* Round parameters to a page boundary */
+ 
+@@ -5150,6 +5496,9 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+     {
+         base = NULL;
+         size = ROUND_SIZE( 0, size, page_mask );
++#ifdef _WIN64
++        if (is_wow64() && (!limit_high || limit_high > limit_4g)) limit_low = limit_4g;
++#endif
+     }
+ 
+     /* Compute the alloc type flags */
+@@ -5163,6 +5512,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+ 
+     if (type & MEM_RESERVE_PLACEHOLDER && (protect != PAGE_NOACCESS)) return STATUS_INVALID_PARAMETER;
+     if (!arm64ec_view && (attributes & MEM_EXTENDED_PARAMETER_EC_CODE)) return STATUS_INVALID_PARAMETER;
++    if (attributes & MEM_EXTENDED_PARAMETER_EC_CODE) map_type |= JUICE_EC_CODE_ALLOCATION;
+ 
+     /* Reserve the memory */
+ 
+@@ -5179,7 +5529,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+ 
+             if (vprot & VPROT_WRITECOPY) status = STATUS_INVALID_PAGE_PROTECTION;
+             else if (is_dos_memory) status = allocate_dos_memory( &view, vprot );
+-            else status = map_view( &view, base, size, type, vprot, limit_low, limit_high,
++            else status = map_view( &view, base, size, map_type, vprot, limit_low, limit_high,
+                                     align ? align - 1 : granularity_mask );
+ 
+             if (status == STATUS_SUCCESS)
 diff --git a/dlls/ntoskrnl.exe/instr.c b/dlls/ntoskrnl.exe/instr.c
-index 31e1e6e..a68e46f 100644
+index 31e1e6e28a4..a68e46fb0fa 100644
 --- a/dlls/ntoskrnl.exe/instr.c
 +++ b/dlls/ntoskrnl.exe/instr.c
 @@ -490,7 +490,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(int);
@@ -1726,7 +2913,7 @@ index 31e1e6e..a68e46f 100644
  
  static inline DWORD64 *get_int_reg( CONTEXT *context, int index )
 diff --git a/dlls/win32u/Makefile.in b/dlls/win32u/Makefile.in
-index 454fb25..bb83d60 100644
+index 454fb2555bc..bb83d60b0a4 100644
 --- a/dlls/win32u/Makefile.in
 +++ b/dlls/win32u/Makefile.in
 @@ -4,7 +4,7 @@ UNIXLIB   = win32u.so
@@ -1739,7 +2926,7 @@ index 454fb25..bb83d60 100644
  EXTRADLLFLAGS = -nodefaultlibs
  
 diff --git a/dlls/win32u/defwnd.c b/dlls/win32u/defwnd.c
-index d6852b3..f69f955 100644
+index d6852b33ce2..f69f95547fc 100644
 --- a/dlls/win32u/defwnd.c
 +++ b/dlls/win32u/defwnd.c
 @@ -489,7 +489,8 @@ static LONG handle_window_pos_changing( HWND hwnd, WINDOWPOS *winpos )
@@ -1762,7 +2949,7 @@ index d6852b3..f69f955 100644
      get_window_rect_rel( hwnd, COORDS_PARENT, &sizing_rect, dpi );
      orig_rect = sizing_rect;
 diff --git a/dlls/win32u/driver.c b/dlls/win32u/driver.c
-index 6270d9b..740e130 100644
+index 6270d9bbe10..740e1301f97 100644
 --- a/dlls/win32u/driver.c
 +++ b/dlls/win32u/driver.c
 @@ -1367,7 +1367,7 @@ void __wine_set_user_driver( const struct user_driver_funcs *funcs, UINT version
@@ -1787,7 +2974,7 @@ index 6270d9b..740e130 100644
          /* another thread beat us to it */
          free( driver );
 diff --git a/dlls/win32u/menu.c b/dlls/win32u/menu.c
-index a700f44..5c1483b 100644
+index a700f44af78..5c1483b7fab 100644
 --- a/dlls/win32u/menu.c
 +++ b/dlls/win32u/menu.c
 @@ -2226,6 +2226,7 @@ UINT get_menu_bar_height( HWND hwnd, UINT width, INT org_x, INT org_y )
@@ -1821,7 +3008,7 @@ index a700f44..5c1483b 100644
  
  static void draw_popup_arrow( HDC hdc, RECT rect, UINT arrow_width, UINT arrow_height )
 diff --git a/dlls/win32u/message.c b/dlls/win32u/message.c
-index d432eb3..1789b3e 100644
+index d432eb3c1af..1789b3eeda3 100644
 --- a/dlls/win32u/message.c
 +++ b/dlls/win32u/message.c
 @@ -45,7 +45,7 @@ WINE_DECLARE_DEBUG_CHANNEL(relay);
@@ -1834,7 +3021,7 @@ index d432eb3..1789b3e 100644
  static const struct ratio no_dpi;
  
 diff --git a/dlls/win32u/sysparams.c b/dlls/win32u/sysparams.c
-index fdcdfc0..06e9a11 100644
+index fdcdfc0a946..06e9a11e06a 100644
 --- a/dlls/win32u/sysparams.c
 +++ b/dlls/win32u/sysparams.c
 @@ -4782,6 +4782,7 @@ MONITORINFO monitor_info_from_window( HWND hwnd, UINT flags )
@@ -1884,7 +3071,7 @@ index fdcdfc0..06e9a11 100644
  
  /* load a font (binary) parameter from the registry */
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 4e2b928..a7a7069 100644
+index 4e2b9283ba1..a7a7069e4ec 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -284,7 +284,7 @@ extern HWND get_full_window_handle( HWND hwnd );
@@ -1897,7 +3084,7 @@ index 4e2b928..a7a7069 100644
  extern DWORD get_window_thread( HWND hwnd, DWORD *process );
  extern HWND is_current_process_window( HWND hwnd );
 diff --git a/dlls/win32u/window.c b/dlls/win32u/window.c
-index 924990e..c1125d7 100644
+index 924990e8d4f..c1125d7188f 100644
 --- a/dlls/win32u/window.c
 +++ b/dlls/win32u/window.c
 @@ -2249,6 +2249,7 @@ static BOOL apply_window_pos( HWND hwnd, HWND insert_after, UINT swp_flags, stru
@@ -2020,10 +3207,10 @@ index 924990e..c1125d7 100644
      if (cs.x > 0x7fffffff - cx) new_rects.window.right = 0x7fffffff;
 diff --git a/dlls/wineios.drv/Makefile.in b/dlls/wineios.drv/Makefile.in
 new file mode 100644
-index 0000000..208cd95
+index 00000000000..f4494e42563
 --- /dev/null
 +++ b/dlls/wineios.drv/Makefile.in
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,13 @@
 +MODULE    = wineios.drv
 +UNIXLIB   = wineios.so
 +IMPORTS   = user32 gdi32 win32u
@@ -2032,30 +3219,450 @@ index 0000000..208cd95
 +VER_FILEDESCRIPTION_STR = "Wine iOS driver"
 +
 +SOURCES = \
++	control.c \
 +	dllmain.c \
 +	ipc.c \
-+	iosdrv.c
++	iosdrv.c \
++	wineios.drv.spec
+diff --git a/dlls/wineios.drv/control.c b/dlls/wineios.drv/control.c
+new file mode 100644
+index 00000000000..4eeb48e33f7
+--- /dev/null
++++ b/dlls/wineios.drv/control.c
+@@ -0,0 +1,260 @@
++/* Asynchronous Win32-to-UIKit control bridge. LGPL-2.1-or-later. */
++#if 0
++#pragma makedep unix
++#endif
++
++#include "config.h"
++#include <errno.h>
++#include <fcntl.h>
++#include <pthread.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <unistd.h>
++
++#include "ntstatus.h"
++#define WIN32_NO_STATUS
++#include "windef.h"
++#include "winternl.h"
++#include "wine/debug.h"
++#include "wine/unixlib.h"
++#include "control.h"
++#include "control_protocol.h"
++
++WINE_DEFAULT_DEBUG_CHANNEL(iosdrv);
++
++static pthread_mutex_t control_lock = PTHREAD_MUTEX_INITIALIZER;
++static int import_fd = -1;
++static DWORD import_request_id;
++static size_t response_used;
++static struct juice_control_message response;
++static DWORD request_sequence;
++
++static BOOL write_all( int fd, const void *data, size_t size )
++{
++    const char *ptr = data;
++    while (size)
++    {
++        ssize_t count = write( fd, ptr, size );
++        if (count < 0 && errno == EINTR) continue;
++        if (count <= 0) return FALSE;
++        ptr += count;
++        size -= count;
++    }
++    return TRUE;
++}
++
++static void close_import(void)
++{
++    if (import_fd >= 0) close( import_fd );
++    import_fd = -1;
++    import_request_id = 0;
++    response_used = 0;
++    memset( &response, 0, sizeof(response) );
++}
++
++static int connect_control_socket(void)
++{
++    const char *path = getenv( "JUICE_IOS_CONTROL_SOCKET" );
++    struct sockaddr_un addr;
++    int fd;
++
++    if (!path || !*path || strlen(path) >= sizeof(addr.sun_path)) return -1;
++    memset( &addr, 0, sizeof(addr) );
++    addr.sun_family = AF_UNIX;
++    strcpy( addr.sun_path, path );
++    if ((fd = socket( AF_UNIX, SOCK_STREAM, 0 )) < 0) return -1;
++    if (connect( fd, (struct sockaddr *)&addr, sizeof(addr) ) < 0)
++    {
++        close( fd );
++        return -1;
++    }
++    return fd;
++}
++
++static void copy_utf8_to_wide( WCHAR *destination, size_t capacity, const char *source )
++{
++    int count;
++
++    if (!capacity) return;
++    destination[0] = 0;
++    if (!source || !*source) return;
++    count = ntdll_umbstowcs( source, strlen(source), destination, capacity - 1 );
++    if (count < 0) count = 0;
++    destination[count] = 0;
++}
++
++static void copy_wide_to_utf8( char *destination, size_t capacity, const WCHAR *source )
++{
++    int count;
++
++    if (!capacity) return;
++    destination[0] = 0;
++    if (!source || !*source) return;
++    count = ntdll_wcstoumbs( source, wcslen(source), destination, capacity - 1, FALSE );
++    if (count < 0) count = 0;
++    destination[count] = 0;
++}
++
++static BOOL valid_message( const struct juice_control_message *message, UINT type )
++{
++    return message->magic == JUICE_CONTROL_MAGIC &&
++           message->version == JUICE_CONTROL_VERSION &&
++           message->size == sizeof(*message) && message->type == type;
++}
++
++static NTSTATUS begin_file_import( void *args )
++{
++    struct wineios_begin_params *params = args;
++    struct juice_control_message message;
++    int flags;
++
++    params->status = JUICE_IOS_STATUS_ERROR;
++    params->request_id = 0;
++    if (params->version != JUICE_IOS_API_VERSION) return STATUS_REVISION_MISMATCH;
++
++    pthread_mutex_lock( &control_lock );
++    if (import_fd >= 0)
++    {
++        pthread_mutex_unlock( &control_lock );
++        return STATUS_DEVICE_BUSY;
++    }
++    if ((import_fd = connect_control_socket()) < 0)
++    {
++        pthread_mutex_unlock( &control_lock );
++        return STATUS_DEVICE_NOT_CONNECTED;
++    }
++
++    memset( &message, 0, sizeof(message) );
++    message.magic = JUICE_CONTROL_MAGIC;
++    message.version = JUICE_CONTROL_VERSION;
++    message.type = JUICE_CONTROL_IMPORT_REQUEST;
++    message.size = sizeof(message);
++    message.request_id = ((DWORD)getpid() << 16) ^ ++request_sequence;
++    message.status = JUICE_CONTROL_STATUS_PENDING;
++    message.flags = params->filters;
++    if (!write_all( import_fd, &message, sizeof(message) ))
++    {
++        close_import();
++        pthread_mutex_unlock( &control_lock );
++        return STATUS_DEVICE_NOT_CONNECTED;
++    }
++
++    flags = fcntl( import_fd, F_GETFL, 0 );
++    if (flags >= 0) fcntl( import_fd, F_SETFL, flags | O_NONBLOCK );
++    import_request_id = message.request_id;
++    params->request_id = message.request_id;
++    params->status = JUICE_IOS_STATUS_PENDING;
++    TRACE( "file import request %u filters %#x\n", params->request_id, params->filters );
++    pthread_mutex_unlock( &control_lock );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS poll_file_import( void *args )
++{
++    struct wineios_poll_params *params = args;
++
++    params->status = JUICE_IOS_STATUS_ERROR;
++    params->path[0] = params->detail[0] = 0;
++    if (params->version != JUICE_IOS_API_VERSION) return STATUS_REVISION_MISMATCH;
++
++    pthread_mutex_lock( &control_lock );
++    if (import_fd < 0 || params->request_id != import_request_id)
++    {
++        copy_utf8_to_wide( params->detail, ARRAY_SIZE(params->detail), "No matching import request." );
++        pthread_mutex_unlock( &control_lock );
++        return STATUS_SUCCESS;
++    }
++
++    while (response_used < sizeof(response))
++    {
++        ssize_t count = recv( import_fd, (char *)&response + response_used,
++                              sizeof(response) - response_used, 0 );
++        if (count > 0)
++        {
++            response_used += count;
++            continue;
++        }
++        if (count < 0 && errno == EINTR) continue;
++        if (count < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
++        {
++            params->status = JUICE_IOS_STATUS_PENDING;
++            pthread_mutex_unlock( &control_lock );
++            return STATUS_SUCCESS;
++        }
++        copy_utf8_to_wide( params->detail, ARRAY_SIZE(params->detail),
++                           "The Juice host closed the control channel." );
++        close_import();
++        pthread_mutex_unlock( &control_lock );
++        return STATUS_SUCCESS;
++    }
++
++    if (!valid_message( &response, JUICE_CONTROL_IMPORT_RESPONSE ) ||
++        response.request_id != params->request_id)
++    {
++        copy_utf8_to_wide( params->detail, ARRAY_SIZE(params->detail),
++                           "Invalid response from the Juice host." );
++        close_import();
++        pthread_mutex_unlock( &control_lock );
++        return STATUS_SUCCESS;
++    }
++
++    params->status = response.status;
++    copy_utf8_to_wide( params->path, ARRAY_SIZE(params->path), response.path );
++    copy_utf8_to_wide( params->detail, ARRAY_SIZE(params->detail), response.detail );
++    close_import();
++    pthread_mutex_unlock( &control_lock );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS host_action( void *args )
++{
++    struct wineios_action_params *params = args;
++    struct juice_control_message message;
++    int fd;
++
++    params->status = JUICE_IOS_STATUS_ERROR;
++    if (params->version != JUICE_IOS_API_VERSION) return STATUS_REVISION_MISMATCH;
++    if ((fd = connect_control_socket()) < 0) return STATUS_DEVICE_NOT_CONNECTED;
++
++    memset( &message, 0, sizeof(message) );
++    message.magic = JUICE_CONTROL_MAGIC;
++    message.version = JUICE_CONTROL_VERSION;
++    message.type = JUICE_CONTROL_HOST_ACTION;
++    message.size = sizeof(message);
++    message.request_id = ((DWORD)getpid() << 16) ^ ++request_sequence;
++    message.status = JUICE_CONTROL_STATUS_PENDING;
++    message.flags = params->action;
++    copy_wide_to_utf8( message.path, ARRAY_SIZE(message.path), params->path );
++    if (!write_all( fd, &message, sizeof(message) ))
++    {
++        close( fd );
++        return STATUS_DEVICE_NOT_CONNECTED;
++    }
++    close( fd );
++    params->status = JUICE_IOS_STATUS_COMPLETE;
++    return STATUS_SUCCESS;
++}
++
++const unixlib_entry_t __wine_unix_call_funcs[] =
++{
++    iosdrv_unix_init,
++    begin_file_import,
++    poll_file_import,
++    host_action
++};
++
++C_ASSERT( ARRAY_SIZE(__wine_unix_call_funcs) == unix_funcs_count );
++
++#ifdef _WIN64
++const unixlib_entry_t __wine_unix_call_wow64_funcs[] =
++{
++    iosdrv_unix_init,
++    begin_file_import,
++    poll_file_import,
++    host_action
++};
++
++C_ASSERT( ARRAY_SIZE(__wine_unix_call_wow64_funcs) == unix_funcs_count );
++#endif
+diff --git a/dlls/wineios.drv/control.h b/dlls/wineios.drv/control.h
+new file mode 100644
+index 00000000000..abad28e67a7
+--- /dev/null
++++ b/dlls/wineios.drv/control.h
+@@ -0,0 +1,44 @@
++#ifndef __WINE_IOS_CONTROL_H
++#define __WINE_IOS_CONTROL_H
++
++#include "juiceios.h"
++
++enum wineios_unix_funcs
++{
++    unix_init,
++    unix_begin_file_import,
++    unix_poll_file_import,
++    unix_host_action,
++    unix_funcs_count
++};
++
++struct wineios_begin_params
++{
++    DWORD version;
++    DWORD filters;
++    DWORD request_id;
++    DWORD status;
++};
++
++struct wineios_poll_params
++{
++    DWORD version;
++    DWORD request_id;
++    DWORD status;
++    DWORD reserved;
++    WCHAR path[JUICE_IOS_PATH_CHARS];
++    WCHAR detail[JUICE_IOS_DETAIL_CHARS];
++};
++
++struct wineios_action_params
++{
++    DWORD version;
++    DWORD action;
++    DWORD status;
++    DWORD reserved;
++    WCHAR path[JUICE_IOS_PATH_CHARS];
++};
++
++NTSTATUS iosdrv_unix_init( void *args );
++
++#endif
+diff --git a/dlls/wineios.drv/control_protocol.h b/dlls/wineios.drv/control_protocol.h
+new file mode 100644
+index 00000000000..7a3d0dbf1fe
+--- /dev/null
++++ b/dlls/wineios.drv/control_protocol.h
+@@ -0,0 +1,54 @@
++/* Dedicated Juice/UIKit control protocol. LGPL-2.1-or-later. */
++#ifndef __JUICE_IOS_CONTROL_PROTOCOL_H
++#define __JUICE_IOS_CONTROL_PROTOCOL_H
++
++#include <stdint.h>
++
++#define JUICE_CONTROL_MAGIC 0x4a554354u /* JUCT */
++#define JUICE_CONTROL_VERSION 1u
++#define JUICE_CONTROL_PATH_MAX 2048u
++#define JUICE_CONTROL_DETAIL_MAX 512u
++
++enum juice_control_type
++{
++    JUICE_CONTROL_IMPORT_REQUEST = 1,
++    JUICE_CONTROL_IMPORT_RESPONSE = 2,
++    JUICE_CONTROL_HOST_ACTION = 3
++};
++
++enum juice_control_status
++{
++    JUICE_CONTROL_STATUS_PENDING = 1,
++    JUICE_CONTROL_STATUS_COMPLETE = 2,
++    JUICE_CONTROL_STATUS_CANCELLED = 3,
++    JUICE_CONTROL_STATUS_ERROR = 4
++};
++
++enum juice_control_filter
++{
++    JUICE_CONTROL_FILTER_MSI = 0x01,
++    JUICE_CONTROL_FILTER_EXE = 0x02,
++    JUICE_CONTROL_FILTER_ZIP = 0x04
++};
++
++enum juice_control_action
++{
++    JUICE_CONTROL_ACTION_SHOW_HOST_CONTROLS = 1,
++    JUICE_CONTROL_ACTION_LAUNCH_PATH = 2,
++    JUICE_CONTROL_ACTION_IMPORT_ZIP = 3
++};
++
++struct juice_control_message
++{
++    uint32_t magic;
++    uint16_t version;
++    uint16_t type;
++    uint32_t size;
++    uint32_t request_id;
++    int32_t status;
++    uint32_t flags;
++    char path[JUICE_CONTROL_PATH_MAX];
++    char detail[JUICE_CONTROL_DETAIL_MAX];
++};
++
++#endif
 diff --git a/dlls/wineios.drv/dllmain.c b/dlls/wineios.drv/dllmain.c
 new file mode 100644
-index 0000000..af7acf7
+index 00000000000..c929ebb38cd
 --- /dev/null
 +++ b/dlls/wineios.drv/dllmain.c
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,54 @@
 +/* Wine iOS driver entry point. LGPL-2.1-or-later. */
 +#include <stdarg.h>
 +#include "windef.h"
 +#include "winbase.h"
 +#include "wine/unixlib.h"
++#include "control.h"
++
++DWORD WINAPI JuiceIOSBeginFileImport( DWORD filters, DWORD *request_id )
++{
++    struct wineios_begin_params params = {JUICE_IOS_API_VERSION, filters, 0, JUICE_IOS_STATUS_ERROR};
++    NTSTATUS status;
++
++    if (!request_id) return JUICE_IOS_STATUS_ERROR;
++    status = WINE_UNIX_CALL( unix_begin_file_import, &params );
++    if (status) return JUICE_IOS_STATUS_ERROR;
++    *request_id = params.request_id;
++    return params.status;
++}
++
++DWORD WINAPI JuiceIOSPollFileImport( DWORD request_id, struct juice_ios_import_result *result )
++{
++    struct wineios_poll_params params = {JUICE_IOS_API_VERSION, request_id,
++                                         JUICE_IOS_STATUS_ERROR, 0};
++    NTSTATUS status;
++
++    if (!result || result->size < sizeof(*result)) return JUICE_IOS_STATUS_ERROR;
++    status = WINE_UNIX_CALL( unix_poll_file_import, &params );
++    if (status) return JUICE_IOS_STATUS_ERROR;
++    result->version = JUICE_IOS_API_VERSION;
++    result->request_id = request_id;
++    result->status = params.status;
++    lstrcpynW( result->path, params.path, ARRAY_SIZE(result->path) );
++    lstrcpynW( result->detail, params.detail, ARRAY_SIZE(result->detail) );
++    return params.status;
++}
++
++DWORD WINAPI JuiceIOSHostAction( DWORD action, const WCHAR *path )
++{
++    struct wineios_action_params params = {JUICE_IOS_API_VERSION, action,
++                                           JUICE_IOS_STATUS_ERROR, 0};
++    NTSTATUS status;
++
++    if (path) lstrcpynW( params.path, path, ARRAY_SIZE(params.path) );
++    status = WINE_UNIX_CALL( unix_host_action, &params );
++    return status ? JUICE_IOS_STATUS_ERROR : params.status;
++}
 +
 +BOOL WINAPI DllMain( HINSTANCE instance, DWORD reason, void *reserved )
 +{
 +    if (reason != DLL_PROCESS_ATTACH) return TRUE;
 +    DisableThreadLibraryCalls( instance );
-+    return !__wine_init_unix_call();
++    if (__wine_init_unix_call()) return FALSE;
++    return !WINE_UNIX_CALL( unix_init, NULL );
 +}
 diff --git a/dlls/wineios.drv/iosdrv.c b/dlls/wineios.drv/iosdrv.c
 new file mode 100644
-index 0000000..01e761c
+index 00000000000..961501e5bba
 --- /dev/null
 +++ b/dlls/wineios.drv/iosdrv.c
 @@ -0,0 +1,161 @@
@@ -2216,13 +3823,13 @@ index 0000000..01e761c
 +    .pSetCapture=ios_SetCapture,.pSetParent=ios_SetParent,.pShowWindow=ios_ShowWindow,.pWindowMessage=ios_WindowMessage,
 +    .pWindowPosChanging=ios_WindowPosChanging,.pCreateWindowSurface=ios_CreateWindowSurface,
 +    .pWindowPosChanged=ios_WindowPosChanged,.pOpenGLInit=ios_OpenGLInit,.pVulkanInit=ios_VulkanInit};
-+NTSTATUS __wine_unix_lib_init(void)
-+{host_desktop_changed=dlsym(RTLD_DEFAULT,"wineios_host_desktop_changed");host_window_changed=dlsym(RTLD_DEFAULT,"wineios_host_window_changed");host_window_destroyed=dlsym(RTLD_DEFAULT,"wineios_host_window_destroyed");host_present_bgra=dlsym(RTLD_DEFAULT,"wineios_host_present_bgra");
++NTSTATUS iosdrv_unix_init(void *args)
++{(void)args;host_desktop_changed=dlsym(RTLD_DEFAULT,"wineios_host_desktop_changed");host_window_changed=dlsym(RTLD_DEFAULT,"wineios_host_window_changed");host_window_destroyed=dlsym(RTLD_DEFAULT,"wineios_host_window_destroyed");host_present_bgra=dlsym(RTLD_DEFAULT,"wineios_host_present_bgra");
 +init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p size=%zu\n",iosdrv_funcs.pCreateWindow,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;
 +}
 diff --git a/dlls/wineios.drv/iosdrv.h b/dlls/wineios.drv/iosdrv.h
 new file mode 100644
-index 0000000..773f776
+index 00000000000..773f7761207
 --- /dev/null
 +++ b/dlls/wineios.drv/iosdrv.h
 @@ -0,0 +1,15 @@
@@ -2243,10 +3850,10 @@ index 0000000..773f776
 +#endif
 diff --git a/dlls/wineios.drv/ipc.c b/dlls/wineios.drv/ipc.c
 new file mode 100644
-index 0000000..0227695
+index 00000000000..ee9c5fdb289
 --- /dev/null
 +++ b/dlls/wineios.drv/ipc.c
-@@ -0,0 +1,207 @@
+@@ -0,0 +1,209 @@
 +/* Juice cross-process display transport. LGPL-2.1-or-later. */
 +#if 0
 +#pragma makedep unix
@@ -2328,12 +3935,14 @@ index 0000000..0227695
 +   input.type=INPUT_MOUSE;
 +   input.mi.dx=msg.x;
 +   input.mi.dy=msg.y;
++   target=NtUserChildWindowFromPointEx(hwnd,msg.x,msg.y,
++                                       CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
 +   if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
 +   {
 +    input.mi.dx+=window.left;
 +    input.mi.dy+=window.top;
 +   }
-+   target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
++   if(!target||target==hwnd) target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
 +   if(!target) target=hwnd;
 +   if(msg.flags&(JUICE_IOS_LEFT_DOWN|JUICE_IOS_RIGHT_DOWN))
 +   {
@@ -2456,7 +4065,7 @@ index 0000000..0227695
 +}
 diff --git a/dlls/wineios.drv/ipc.h b/dlls/wineios.drv/ipc.h
 new file mode 100644
-index 0000000..13cb145
+index 00000000000..13cb1453ace
 --- /dev/null
 +++ b/dlls/wineios.drv/ipc.h
 @@ -0,0 +1,24 @@
@@ -2484,8 +4093,1723 @@ index 0000000..13cb145
 +void ios_ipc_present(HWND hwnd,const void *bits,unsigned int width,unsigned int height,unsigned int stride,const RECT *dirty);
 +BOOL ios_ipc_process_input(void);
 +#endif
+diff --git a/dlls/wineios.drv/wineios.drv.spec b/dlls/wineios.drv/wineios.drv.spec
+new file mode 100644
+index 00000000000..3fc6eceac37
+--- /dev/null
++++ b/dlls/wineios.drv/wineios.drv.spec
+@@ -0,0 +1,3 @@
++@ stdcall JuiceIOSBeginFileImport(long ptr)
++@ stdcall JuiceIOSPollFileImport(long ptr)
++@ stdcall JuiceIOSHostAction(long wstr)
+diff --git a/dlls/wow64/process.c b/dlls/wow64/process.c
+index 98d1c600dd9..72d011a9ff1 100644
+--- a/dlls/wow64/process.c
++++ b/dlls/wow64/process.c
+@@ -1120,10 +1120,9 @@ NTSTATUS WINAPI wow64_NtSuspendThread( UINT *args )
+     HANDLE handle = get_handle( &args );
+     ULONG *count = get_ptr( &args );
+ 
+-    return NtSuspendThread( handle, count );
++    return RtlWow64SuspendThread( handle, count );
+ }
+ 
+-
+ /**********************************************************************
+  *           wow64_NtTerminateProcess
+  */
+diff --git a/dlls/wow64/syscall.c b/dlls/wow64/syscall.c
+index cfeb8f4ae6b..e8c15150f73 100644
+--- a/dlls/wow64/syscall.c
++++ b/dlls/wow64/syscall.c
+@@ -102,6 +102,7 @@ static void     (WINAPI *pBTCpuProcessInit)(void);
+ static NTSTATUS (WINAPI *pBTCpuSetContext)(HANDLE,HANDLE,void *,void *);
+ static void     (WINAPI *pBTCpuThreadInit)(void);
+ static void     (WINAPI *pBTCpuSimulate)(void) __attribute__((used));
++static NTSTATUS (WINAPI *pBTCpuSuspendLocalThread)(HANDLE,ULONG *);
+ static void *   (WINAPI *p__wine_get_unix_opcode)(void);
+ static void *   (WINAPI *pKiRaiseUserExceptionDispatcher)(void);
+ void     (WINAPI *pBTCpuFlushInstructionCache2)( const void *, SIZE_T ) = NULL;
+@@ -1015,6 +1016,7 @@ static DWORD WINAPI process_init( RTL_RUN_ONCE *once, void *param, void **contex
+     GET_PTR( BTCpuProcessInit );
+     GET_PTR( BTCpuThreadInit );
+     GET_PTR( BTCpuResetToConsistentState );
++    GET_PTR( BTCpuSuspendLocalThread );
+     GET_PTR( BTCpuSetContext );
+     GET_PTR( BTCpuSimulate );
+     GET_PTR( BTCpuFlushInstructionCache2 );
+@@ -1713,3 +1715,11 @@ NTSTATUS WINAPI Wow64RaiseException( int code, EXCEPTION_RECORD *rec )
+ 
+     return STATUS_SUCCESS;
+ }
++
++/**********************************************************************
++ *            Wow64SuspendLocalThread (wow64.@)
++ */
++NTSTATUS WINAPI Wow64SuspendLocalThread( HANDLE thread, ULONG *count )
++{
++    return pBTCpuSuspendLocalThread( thread, count );
++}
+diff --git a/dlls/wow64/wow64.spec b/dlls/wow64/wow64.spec
+index 5b4e565e593..8f95dfcdbe5 100644
+--- a/dlls/wow64/wow64.spec
++++ b/dlls/wow64/wow64.spec
+@@ -22,7 +22,7 @@
+ @ stub Wow64ShallowThunkAllocSecurityQualityOfService32TO64_FNC
+ @ stub Wow64ShallowThunkSIZE_T32TO64
+ @ stub Wow64ShallowThunkSIZE_T64TO32
+-@ stub Wow64SuspendLocalThread
++@ stdcall Wow64SuspendLocalThread(long ptr)
+ @ stdcall -norelay Wow64SystemServiceEx(long ptr)
+ @ stub Wow64ValidateUserCallTarget
+ @ stub Wow64ValidateUserCallTargetFilter
+diff --git a/include/Makefile.in b/include/Makefile.in
+index 72a8d43988c..cb2fbd64a60 100644
+--- a/include/Makefile.in
++++ b/include/Makefile.in
+@@ -419,6 +419,7 @@ SOURCES = \
+ 	iptypes.h \
+ 	isguids.h \
+ 	ivectorchangedeventargs.idl \
++	juiceios.h \
+ 	kbd.h \
+ 	knownfolders.h \
+ 	ks.h \
+diff --git a/include/juiceios.h b/include/juiceios.h
+new file mode 100644
+index 00000000000..3313a1c6e8a
+--- /dev/null
++++ b/include/juiceios.h
+@@ -0,0 +1,40 @@
++/* Public Juice Win32-to-iOS integration ABI. LGPL-2.1-or-later. */
++#ifndef __JUICE_IOS_H
++#define __JUICE_IOS_H
++
++#include <windef.h>
++#include <winbase.h>
++
++#define JUICE_IOS_API_VERSION 1u
++#define JUICE_IOS_PATH_CHARS 1024u
++#define JUICE_IOS_DETAIL_CHARS 256u
++
++#define JUICE_IOS_FILTER_MSI 0x01u
++#define JUICE_IOS_FILTER_EXE 0x02u
++#define JUICE_IOS_FILTER_ZIP 0x04u
++
++#define JUICE_IOS_STATUS_PENDING 1u
++#define JUICE_IOS_STATUS_COMPLETE 2u
++#define JUICE_IOS_STATUS_CANCELLED 3u
++#define JUICE_IOS_STATUS_ERROR 4u
++
++#define JUICE_IOS_ACTION_SHOW_HOST_CONTROLS 1u
++#define JUICE_IOS_ACTION_LAUNCH_PATH 2u
++#define JUICE_IOS_ACTION_IMPORT_ZIP 3u
++
++struct juice_ios_import_result
++{
++    DWORD size;
++    DWORD version;
++    DWORD request_id;
++    DWORD status;
++    WCHAR path[JUICE_IOS_PATH_CHARS];
++    WCHAR detail[JUICE_IOS_DETAIL_CHARS];
++};
++
++typedef DWORD (WINAPI *juice_ios_begin_file_import_fn)(DWORD filters, DWORD *request_id);
++typedef DWORD (WINAPI *juice_ios_poll_file_import_fn)(DWORD request_id,
++                                                       struct juice_ios_import_result *result);
++typedef DWORD (WINAPI *juice_ios_host_action_fn)(DWORD action, const WCHAR *path);
++
++#endif
+diff --git a/include/winternl.h b/include/winternl.h
+index 81dc3db2b74..33d32b6de5c 100644
+--- a/include/winternl.h
++++ b/include/winternl.h
+@@ -5420,6 +5420,7 @@ NTSYSAPI USHORT    WINAPI RtlWow64GetCurrentMachine(void);
+ NTSYSAPI NTSTATUS  WINAPI RtlWow64GetProcessMachines(HANDLE,USHORT*,USHORT*);
+ NTSYSAPI NTSTATUS  WINAPI RtlWow64GetSharedInfoProcess(HANDLE,BOOLEAN*,WOW64INFO*);
+ NTSYSAPI NTSTATUS  WINAPI RtlWow64IsWowGuestMachineSupported(USHORT,BOOLEAN*);
++NTSYSAPI NTSTATUS  WINAPI RtlWow64SuspendThread(HANDLE,ULONG*);
+ NTSYSAPI NTSTATUS  WINAPI RtlWriteRegistryValue(ULONG,PCWSTR,PCWSTR,ULONG,PVOID,ULONG);
+ NTSYSAPI NTSTATUS  WINAPI RtlZombifyActivationContext(struct _ACTIVATION_CONTEXT *);
+ NTSYSAPI NTSTATUS  WINAPI RtlpNtCreateKey(PHANDLE,ACCESS_MASK,const OBJECT_ATTRIBUTES*,ULONG,const UNICODE_STRING*,ULONG,PULONG);
+diff --git a/programs/juicegui/Makefile.in b/programs/juicegui/Makefile.in
+new file mode 100644
+index 00000000000..e906f64c174
+--- /dev/null
++++ b/programs/juicegui/Makefile.in
+@@ -0,0 +1,6 @@
++MODULE = JuiceGUI.exe
++IMPORTS = advapi32 gdi32 shell32 user32
++EXTRADLLFLAGS = -mwindows -municode
++
++SOURCES = \
++	juicegui.c
+diff --git a/programs/juicegui/juicegui.c b/programs/juicegui/juicegui.c
+new file mode 100644
+index 00000000000..ae4c30747e2
+--- /dev/null
++++ b/programs/juicegui/juicegui.c
+@@ -0,0 +1,1097 @@
++/*
++ * Juice desktop shell for Grape.
++ *
++ * This program is Juice-original code and intentionally uses only Win32/GDI
++ * APIs so the ARM64 binary stays small and exercises the same Wine window path
++ * as installed applications.
++ */
++
++#define UNICODE
++#define _UNICODE
++#include <windows.h>
++#include <shellapi.h>
++#include <string.h>
++#include <wchar.h>
++#include "juiceios.h"
++
++#define ARRAY_LEN(a) (sizeof(a) / sizeof((a)[0]))
++#define MAX_APPS 256
++
++#define IDC_APP_LIST 1001
++#define IDC_MENU 1002
++#define IDC_LAUNCH 1003
++#define IDC_INSTALL 1004
++#define IDC_FILES 1005
++#define IDC_REFRESH 1006
++#define IDC_UNINSTALL 1007
++#define IDC_HOST 1008
++#define IDT_IMPORT 2001
++#define IDT_REFRESH 2002
++#define IDT_REPAINT 2003
++
++#define IDM_WINE_MINE 3001
++#define IDM_INSTALL 3002
++#define IDM_FILES 3003
++#define IDM_REFRESH 3004
++#define IDM_EXPERIMENTAL_INFO 3005
++#define IDM_RELOAD_WALLPAPER 3006
++#define IDM_WALLPAPER_INFO 3007
++
++#ifndef IMAGE_FILE_MACHINE_ARM64
++#define IMAGE_FILE_MACHINE_ARM64 0xaa64
++#endif
++#ifndef IMAGE_FILE_MACHINE_ARM64EC
++#define IMAGE_FILE_MACHINE_ARM64EC 0xa641
++#endif
++
++struct app_entry
++{
++    WCHAR name[160];
++    WCHAR path[1024];
++    WCHAR arguments[512];
++    WCHAR uninstall[1024];
++    WORD machine;
++    BOOL experimental;
++};
++
++static HWND main_window;
++static HWND app_list;
++static HWND menu_button;
++static HWND launch_button;
++static HWND install_button;
++static HWND files_button;
++static HWND refresh_button;
++static HWND uninstall_button;
++static HWND host_button;
++static HFONT title_font;
++static HFONT body_font;
++static HFONT icon_font;
++static HBRUSH desktop_brush;
++static HBRUSH app_list_brush;
++static HBITMAP wallpaper_bitmap;
++static int wallpaper_width;
++static int wallpaper_height;
++static WCHAR wallpaper_path[1024];
++static HMODULE bridge_module;
++static juice_ios_begin_file_import_fn begin_file_import;
++static juice_ios_poll_file_import_fn poll_file_import;
++static juice_ios_host_action_fn host_action;
++static DWORD import_request_id;
++static struct app_entry apps[MAX_APPS];
++static unsigned int app_count;
++static WCHAR status_text[512] =
++    L"Wine ARM64 is ready. x86-64 execution is experimental.";
++
++static const WCHAR default_wallpaper_path[] =
++    L"Z:\\var\\mobile\\Documents\\JuiceData\\Wallpaper.bmp";
++
++static BOOL query_string( HKEY key, const WCHAR *name, WCHAR *value, DWORD capacity );
++
++static void copy_string( WCHAR *destination, size_t capacity, const WCHAR *source )
++{
++    if (!capacity) return;
++    if (!source) source = L"";
++    lstrcpynW( destination, source, capacity );
++}
++
++static void set_status( const WCHAR *text )
++{
++    copy_string( status_text, ARRAY_LEN(status_text), text );
++    if (main_window) InvalidateRect( main_window, NULL, FALSE );
++}
++
++static void show_error( const WCHAR *title, const WCHAR *message )
++{
++    set_status( message );
++    MessageBoxW( main_window, message, title, MB_OK | MB_ICONERROR );
++}
++
++static void unload_wallpaper(void)
++{
++    if (wallpaper_bitmap) DeleteObject( wallpaper_bitmap );
++    wallpaper_bitmap = NULL;
++    wallpaper_width = wallpaper_height = 0;
++}
++
++static BOOL try_load_wallpaper( const WCHAR *path )
++{
++    BITMAP bitmap;
++
++    if (!path || !*path) return FALSE;
++    wallpaper_bitmap = LoadImageW( NULL, path, IMAGE_BITMAP, 0, 0,
++                                   LR_LOADFROMFILE | LR_CREATEDIBSECTION );
++    if (!wallpaper_bitmap) return FALSE;
++    if (!GetObjectW( wallpaper_bitmap, sizeof(bitmap), &bitmap ) ||
++        bitmap.bmWidth <= 0 || bitmap.bmHeight <= 0)
++    {
++        unload_wallpaper();
++        return FALSE;
++    }
++    wallpaper_width = bitmap.bmWidth;
++    wallpaper_height = bitmap.bmHeight;
++    copy_string( wallpaper_path, ARRAY_LEN(wallpaper_path), path );
++    return TRUE;
++}
++
++static BOOL load_wallpaper(void)
++{
++    HKEY key;
++    WCHAR configured[1024];
++
++    unload_wallpaper();
++    wallpaper_path[0] = 0;
++    configured[0] = 0;
++    if (RegOpenKeyExW( HKEY_CURRENT_USER, L"Software\\Juice\\Desktop", 0,
++                       KEY_READ, &key ) == ERROR_SUCCESS)
++    {
++        query_string( key, L"Wallpaper", configured, ARRAY_LEN(configured) );
++        RegCloseKey( key );
++    }
++    if (configured[0] && try_load_wallpaper( configured )) return TRUE;
++    return try_load_wallpaper( default_wallpaper_path );
++}
++
++static void paint_builtin_wallpaper( HDC dc, const RECT *client )
++{
++    RECT band = *client;
++    HBRUSH grape_brush;
++    HPEN pen;
++    HGDIOBJ old_dc_brush;
++    HGDIOBJ old_pen;
++    HGDIOBJ old_brush;
++    int index;
++    int bands = 12;
++
++    /* A deterministic GDI-only fallback keeps the desktop attractive even
++     * before the user supplies Wallpaper.bmp. */
++    old_dc_brush = SelectObject( dc, GetStockObject( DC_BRUSH ) );
++    for (index = 0; index < bands; index++)
++    {
++        int red = 12 + index / 2;
++        int green = 34 + index * 4;
++        int blue = 65 + index * 6;
++        band.top = client->top + (client->bottom - client->top) * index / bands;
++        band.bottom = client->top + (client->bottom - client->top) * (index + 1) / bands;
++        SetDCBrushColor( dc, RGB(red, green, blue) );
++        FillRect( dc, &band, GetStockObject( DC_BRUSH ) );
++    }
++    SelectObject( dc, old_dc_brush );
++
++    pen = CreatePen( PS_SOLID, 5, RGB(208, 225, 245) );
++    grape_brush = CreateSolidBrush( RGB(91, 55, 139) );
++    old_pen = SelectObject( dc, pen );
++    old_brush = SelectObject( dc, grape_brush );
++    Ellipse( dc, client->right - 238, 75, client->right - 90, 223 );
++    Ellipse( dc, client->right - 330, 175, client->right - 182, 323 );
++    Ellipse( dc, client->right - 178, 234, client->right - 30, 382 );
++    Ellipse( dc, client->right - 280, 330, client->right - 132, 478 );
++    SelectObject( dc, old_brush );
++    SelectObject( dc, old_pen );
++    DeleteObject( grape_brush );
++    DeleteObject( pen );
++}
++
++static void paint_wallpaper( HDC dc, const RECT *client )
++{
++    HDC memory_dc;
++    HGDIOBJ previous;
++    int source_x = 0, source_y = 0;
++    int source_width = wallpaper_width, source_height = wallpaper_height;
++    int target_width = client->right - client->left;
++    int target_height = client->bottom - client->top;
++
++    if (!wallpaper_bitmap || !wallpaper_width || !wallpaper_height)
++    {
++        paint_builtin_wallpaper( dc, client );
++        return;
++    }
++
++    if ((LONGLONG)wallpaper_width * target_height >
++        (LONGLONG)wallpaper_height * target_width)
++    {
++        source_width = MulDiv( wallpaper_height, target_width, target_height );
++        source_x = (wallpaper_width - source_width) / 2;
++    }
++    else
++    {
++        source_height = MulDiv( wallpaper_width, target_height, target_width );
++        source_y = (wallpaper_height - source_height) / 2;
++    }
++    memory_dc = CreateCompatibleDC( dc );
++    previous = SelectObject( memory_dc, wallpaper_bitmap );
++    SetStretchBltMode( dc, HALFTONE );
++    StretchBlt( dc, client->left, client->top, target_width, target_height,
++                memory_dc, source_x, source_y, source_width, source_height, SRCCOPY );
++    SelectObject( memory_dc, previous );
++    DeleteDC( memory_dc );
++}
++
++static BOOL query_string( HKEY key, const WCHAR *name, WCHAR *value, DWORD capacity )
++{
++    DWORD type = 0;
++    DWORD size = capacity * sizeof(WCHAR);
++    LONG status;
++
++    value[0] = 0;
++    status = RegQueryValueExW( key, name, NULL, &type, (BYTE *)value, &size );
++    if (status != ERROR_SUCCESS || (type != REG_SZ && type != REG_EXPAND_SZ)) return FALSE;
++    value[capacity - 1] = 0;
++    if (type == REG_EXPAND_SZ)
++    {
++        WCHAR expanded[1024];
++        if (ExpandEnvironmentStringsW( value, expanded, ARRAY_LEN(expanded) ))
++            copy_string( value, capacity, expanded );
++    }
++    return TRUE;
++}
++
++static DWORD query_dword( HKEY key, const WCHAR *name, DWORD fallback )
++{
++    DWORD value = fallback;
++    DWORD type = 0;
++    DWORD size = sizeof(value);
++    if (RegQueryValueExW( key, name, NULL, &type, (BYTE *)&value, &size ) != ERROR_SUCCESS ||
++        type != REG_DWORD) return fallback;
++    return value;
++}
++
++static void executable_from_command( const WCHAR *command, WCHAR *path, size_t capacity )
++{
++    const WCHAR *start = command;
++    const WCHAR *end;
++    WCHAR expanded[1024];
++
++    path[0] = 0;
++    if (!command || !*command) return;
++    while (*start == L' ' || *start == L'\t') start++;
++    if (*start == L'"')
++    {
++        start++;
++        end = wcschr( start, L'"' );
++    }
++    else
++    {
++        end = wcsstr( start, L".exe" );
++        if (end) end += 4;
++        else
++        {
++            end = start;
++            while (*end && *end != L' ' && *end != L'\t' && *end != L',') end++;
++        }
++    }
++    if (!end) end = start + lstrlenW(start);
++    if ((size_t)(end - start) >= capacity) end = start + capacity - 1;
++    memcpy( path, start, (end - start) * sizeof(WCHAR) );
++    path[end - start] = 0;
++    if (ExpandEnvironmentStringsW( path, expanded, ARRAY_LEN(expanded) ))
++        copy_string( path, capacity, expanded );
++    end = wcsrchr( path, L',' );
++    if (end) path[end - path] = 0;
++}
++
++static WORD pe_machine( const WCHAR *candidate )
++{
++    WCHAR path[1024];
++    WCHAR resolved[1024];
++    HANDLE file;
++    IMAGE_DOS_HEADER dos;
++    IMAGE_NT_HEADERS64 nt;
++    DWORD count;
++    LARGE_INTEGER offset;
++
++    executable_from_command( candidate, path, ARRAY_LEN(path) );
++    if (!path[0]) return 0;
++    if (SearchPathW( NULL, path, NULL, ARRAY_LEN(resolved), resolved, NULL ))
++        copy_string( path, ARRAY_LEN(path), resolved );
++
++    file = CreateFileW( path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
++                        NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
++    if (file == INVALID_HANDLE_VALUE) return 0;
++    if (!ReadFile( file, &dos, sizeof(dos), &count, NULL ) || count != sizeof(dos) ||
++        dos.e_magic != IMAGE_DOS_SIGNATURE)
++    {
++        CloseHandle( file );
++        return 0;
++    }
++    offset.QuadPart = dos.e_lfanew;
++    if (offset.QuadPart < 0 || offset.QuadPart > 16 * 1024 * 1024 ||
++        !SetFilePointerEx( file, offset, NULL, FILE_BEGIN ) ||
++        !ReadFile( file, &nt, sizeof(nt), &count, NULL ) ||
++        count < sizeof(DWORD) + sizeof(IMAGE_FILE_HEADER) || nt.Signature != IMAGE_NT_SIGNATURE)
++    {
++        CloseHandle( file );
++        return 0;
++    }
++    CloseHandle( file );
++    return nt.FileHeader.Machine;
++}
++
++static BOOL same_entry( const WCHAR *name, const WCHAR *path )
++{
++    unsigned int index;
++    for (index = 0; index < app_count; index++)
++    {
++        if (path && *path && apps[index].path[0] && !lstrcmpiW( apps[index].path, path )) return TRUE;
++        if ((!path || !*path) && !lstrcmpiW( apps[index].name, name )) return TRUE;
++    }
++    return FALSE;
++}
++
++static void add_entry( const WCHAR *name, const WCHAR *path, const WCHAR *arguments,
++                       const WCHAR *uninstall, WORD machine )
++{
++    struct app_entry *entry;
++
++    if (!name || !*name || app_count >= MAX_APPS || same_entry( name, path )) return;
++    entry = &apps[app_count++];
++    memset( entry, 0, sizeof(*entry) );
++    copy_string( entry->name, ARRAY_LEN(entry->name), name );
++    copy_string( entry->path, ARRAY_LEN(entry->path), path );
++    copy_string( entry->arguments, ARRAY_LEN(entry->arguments), arguments );
++    copy_string( entry->uninstall, ARRAY_LEN(entry->uninstall), uninstall );
++    entry->machine = machine ? machine : pe_machine(path);
++    entry->experimental = entry->machine == IMAGE_FILE_MACHINE_AMD64 ||
++                          entry->machine == IMAGE_FILE_MACHINE_ARM64EC;
++}
++
++static void enumerate_key( HKEY root, const WCHAR *base, BOOL juice_catalog )
++{
++    HKEY key;
++    DWORD index = 0;
++
++    if (RegOpenKeyExW( root, base, 0, KEY_READ, &key ) != ERROR_SUCCESS) return;
++    for (;;)
++    {
++        WCHAR subkey_name[256];
++        DWORD subkey_length = ARRAY_LEN(subkey_name);
++        HKEY subkey;
++        WCHAR name[160], path[1024], arguments[512], uninstall[1024];
++        WORD machine = 0;
++        LONG status;
++
++        status = RegEnumKeyExW( key, index++, subkey_name, &subkey_length, NULL, NULL, NULL, NULL );
++        if (status == ERROR_NO_MORE_ITEMS) break;
++        if (status != ERROR_SUCCESS) continue;
++        if (RegOpenKeyExW( key, subkey_name, 0, KEY_READ, &subkey ) != ERROR_SUCCESS) continue;
++
++        name[0] = path[0] = arguments[0] = uninstall[0] = 0;
++        if (juice_catalog)
++        {
++            query_string( subkey, L"Name", name, ARRAY_LEN(name) );
++            query_string( subkey, L"Path", path, ARRAY_LEN(path) );
++            query_string( subkey, L"Arguments", arguments, ARRAY_LEN(arguments) );
++            query_string( subkey, L"Uninstall", uninstall, ARRAY_LEN(uninstall) );
++            machine = (WORD)query_dword( subkey, L"Machine", 0 );
++        }
++        else
++        {
++            query_string( subkey, L"DisplayName", name, ARRAY_LEN(name) );
++            if (!query_string( subkey, L"JuiceLaunchPath", path, ARRAY_LEN(path) ))
++                query_string( subkey, L"DisplayIcon", path, ARRAY_LEN(path) );
++            query_string( subkey, L"UninstallString", uninstall, ARRAY_LEN(uninstall) );
++        }
++        RegCloseKey( subkey );
++        add_entry( name, path, arguments, uninstall, machine );
++    }
++    RegCloseKey( key );
++}
++
++static void seed_catalog(void)
++{
++    HKEY key;
++    DWORD disposition;
++    DWORD machine = IMAGE_FILE_MACHINE_ARM64;
++    const WCHAR name[] = L"WineMine";
++    const WCHAR path[] = L"winemine.exe";
++
++    if (RegCreateKeyExW( HKEY_CURRENT_USER, L"Software\\Juice\\Applications\\WineMine", 0,
++                         NULL, 0, KEY_WRITE, NULL, &key, &disposition ) != ERROR_SUCCESS) return;
++    RegSetValueExW( key, L"Name", 0, REG_SZ, (const BYTE *)name, sizeof(name) );
++    RegSetValueExW( key, L"Path", 0, REG_SZ, (const BYTE *)path, sizeof(path) );
++    RegSetValueExW( key, L"Machine", 0, REG_DWORD, (const BYTE *)&machine, sizeof(machine) );
++    RegCloseKey( key );
++
++    machine = IMAGE_FILE_MACHINE_AMD64;
++    if (RegCreateKeyExW( HKEY_CURRENT_USER,
++                         L"Software\\Juice\\Applications\\X8664Smoke", 0,
++                         NULL, 0, KEY_WRITE, NULL, &key, &disposition ) == ERROR_SUCCESS)
++    {
++        static const WCHAR x64_name[] = L"Juice x86-64 Smoke Test";
++        static const WCHAR x64_path[] = L"x86_64-smoke.exe";
++        RegSetValueExW( key, L"Name", 0, REG_SZ, (const BYTE *)x64_name,
++                        sizeof(x64_name) );
++        RegSetValueExW( key, L"Path", 0, REG_SZ, (const BYTE *)x64_path,
++                        sizeof(x64_path) );
++        RegSetValueExW( key, L"Machine", 0, REG_DWORD, (const BYTE *)&machine,
++                        sizeof(machine) );
++        RegCloseKey( key );
++    }
++}
++
++static void refresh_apps(void)
++{
++    unsigned int index;
++    WCHAR label[256];
++
++    app_count = 0;
++    SendMessageW( app_list, LB_RESETCONTENT, 0, 0 );
++    enumerate_key( HKEY_CURRENT_USER, L"Software\\Juice\\Applications", TRUE );
++    enumerate_key( HKEY_CURRENT_USER,
++                   L"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall", FALSE );
++    enumerate_key( HKEY_LOCAL_MACHINE,
++                   L"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall", FALSE );
++
++    for (index = 0; index < app_count; index++)
++    {
++        if (apps[index].experimental)
++            wsprintfW( label, L"[Experimental x86-64] %s", apps[index].name );
++        else
++            copy_string( label, ARRAY_LEN(label), apps[index].name );
++        SendMessageW( app_list, LB_ADDSTRING, 0, (LPARAM)label );
++    }
++    if (app_count) SendMessageW( app_list, LB_SETCURSEL, 0, 0 );
++    wsprintfW( label, L"%u installed application%s", app_count, app_count == 1 ? L"" : L"s" );
++    set_status( label );
++}
++
++static BOOL launch_command( const WCHAR *path, const WCHAR *arguments )
++{
++    WCHAR command[4096];
++    STARTUPINFOW startup = {sizeof(startup)};
++    PROCESS_INFORMATION process;
++    BOOL result;
++
++    if (!path || !*path) return FALSE;
++    if (arguments && *arguments)
++        wsprintfW( command, L"\"%s\" %s", path, arguments );
++    else
++        wsprintfW( command, L"\"%s\"", path );
++    result = CreateProcessW( NULL, command, NULL, NULL, FALSE, 0, NULL, NULL, &startup, &process );
++    if (result)
++    {
++        CloseHandle( process.hThread );
++        CloseHandle( process.hProcess );
++    }
++    return result;
++}
++
++static BOOL launch_raw_command( const WCHAR *command )
++{
++    WCHAR mutable_command[4096];
++    STARTUPINFOW startup = {sizeof(startup)};
++    PROCESS_INFORMATION process;
++    BOOL result;
++
++    copy_string( mutable_command, ARRAY_LEN(mutable_command), command );
++    result = CreateProcessW( NULL, mutable_command, NULL, NULL, FALSE, 0,
++                             NULL, NULL, &startup, &process );
++    if (result)
++    {
++        CloseHandle( process.hThread );
++        CloseHandle( process.hProcess );
++    }
++    return result;
++}
++
++static void launch_path( const WCHAR *path, const WCHAR *arguments, WORD known_machine )
++{
++    WORD machine = known_machine ? known_machine : pe_machine(path);
++    WCHAR message[512];
++
++    if (machine == IMAGE_FILE_MACHINE_AMD64 || machine == IMAGE_FILE_MACHINE_ARM64EC)
++    {
++        if (!host_action ||
++            host_action( JUICE_IOS_ACTION_LAUNCH_PATH, path ) != JUICE_IOS_STATUS_COMPLETE)
++        {
++            show_error( L"Experimental x86-64",
++                        L"The x86-64 host route is unavailable. Enable the experimental runtime in Juice." );
++            return;
++        }
++        wsprintfW( message, L"Experimental x86-64 launch requested: %s", path );
++        set_status( message );
++        return;
++    }
++    if (machine && machine != IMAGE_FILE_MACHINE_ARM64)
++    {
++        show_error( L"Unsupported application",
++                    L"Juice currently supports Windows ARM64 and experimental x86-64 executables." );
++        return;
++    }
++    if (!launch_command( path, arguments ))
++    {
++        wsprintfW( message, L"Could not launch %s (error %lu).", path, GetLastError() );
++        show_error( L"Launch failed", message );
++        return;
++    }
++    wsprintfW( message, L"Launched %s", path );
++    set_status( message );
++}
++
++static struct app_entry *selected_app(void)
++{
++    LRESULT selection = SendMessageW( app_list, LB_GETCURSEL, 0, 0 );
++    if (selection == LB_ERR || (unsigned int)selection >= app_count) return NULL;
++    return &apps[selection];
++}
++
++static void launch_selected(void)
++{
++    struct app_entry *entry = selected_app();
++    if (!entry) return;
++    if (!entry->path[0])
++    {
++        show_error( L"No launch command",
++                    L"This installed application did not register a launch executable." );
++        return;
++    }
++    launch_path( entry->path, entry->arguments, entry->machine );
++}
++
++static void uninstall_selected(void)
++{
++    struct app_entry *entry = selected_app();
++    if (!entry) return;
++    if (!entry->uninstall[0])
++    {
++        show_error( L"No uninstaller", L"This application did not register an uninstall command." );
++        return;
++    }
++    if (MessageBoxW( main_window, L"Uninstall the selected application?", L"Juice",
++                     MB_YESNO | MB_ICONQUESTION ) != IDYES) return;
++    if (!launch_raw_command( entry->uninstall ))
++        show_error( L"Uninstall failed", L"Wine could not start the registered uninstaller." );
++    else
++    {
++        set_status( L"Uninstaller started." );
++        SetTimer( main_window, IDT_REFRESH, 3000, NULL );
++    }
++}
++
++static void open_imported_files(void)
++{
++    if ((INT_PTR)ShellExecuteW( main_window, L"open", L"explorer.exe",
++                                L"Z:\\var\\mobile\\Documents\\JuiceData\\Imported",
++                                NULL, SW_SHOWNORMAL ) <= 32)
++        show_error( L"Files", L"Could not open the imported-files directory." );
++}
++
++static void handle_imported_path( const WCHAR *path )
++{
++    const WCHAR *extension = wcsrchr( path, L'.' );
++    WCHAR arguments[1400];
++
++    if (extension && !lstrcmpiW( extension, L".msi" ))
++    {
++        wsprintfW( arguments, L"/i \"%s\"", path );
++        if (!launch_command( L"msiexec.exe", arguments ))
++            show_error( L"MSI installer", L"Wine could not start msiexec." );
++        else
++        {
++            set_status( L"MSI installation started." );
++            SetTimer( main_window, IDT_REFRESH, 4000, NULL );
++        }
++        return;
++    }
++    if (extension && !lstrcmpiW( extension, L".exe" ))
++    {
++        launch_path( path, NULL, 0 );
++        SetTimer( main_window, IDT_REFRESH, 4000, NULL );
++        return;
++    }
++    if (extension && !lstrcmpiW( extension, L".zip" ))
++    {
++        if (!host_action ||
++            host_action( JUICE_IOS_ACTION_IMPORT_ZIP, path ) != JUICE_IOS_STATUS_COMPLETE)
++            show_error( L"Portable ZIP", L"The safe ZIP importer is unavailable." );
++        else
++            set_status( L"Portable ZIP handed to the safe Juice importer." );
++        return;
++    }
++    show_error( L"Unsupported installer", L"Choose an .msi, .exe, or .zip file." );
++}
++
++static void begin_install(void)
++{
++    DWORD status;
++
++    if (!begin_file_import || !poll_file_import)
++    {
++        show_error( L"Install Application",
++                    L"The versioned iOS file-picker bridge is unavailable." );
++        return;
++    }
++    if (import_request_id)
++    {
++        set_status( L"An import request is already active." );
++        return;
++    }
++    status = begin_file_import( JUICE_IOS_FILTER_MSI | JUICE_IOS_FILTER_EXE |
++                                JUICE_IOS_FILTER_ZIP, &import_request_id );
++    if (status != JUICE_IOS_STATUS_PENDING || !import_request_id)
++    {
++        import_request_id = 0;
++        show_error( L"Install Application", L"Juice could not open the iOS file picker." );
++        return;
++    }
++    set_status( L"Choose an MSI, setup executable, or portable ZIP in the iOS picker." );
++    SetTimer( main_window, IDT_IMPORT, 150, NULL );
++}
++
++static void poll_import(void)
++{
++    struct juice_ios_import_result result;
++    DWORD status;
++
++    if (!import_request_id) return;
++    memset( &result, 0, sizeof(result) );
++    result.size = sizeof(result);
++    status = poll_file_import( import_request_id, &result );
++    if (status == JUICE_IOS_STATUS_PENDING) return;
++
++    KillTimer( main_window, IDT_IMPORT );
++    import_request_id = 0;
++    if (status == JUICE_IOS_STATUS_COMPLETE && result.path[0])
++    {
++        set_status( L"File imported into the persistent Juice directory." );
++        handle_imported_path( result.path );
++    }
++    else if (status == JUICE_IOS_STATUS_CANCELLED)
++        set_status( L"Import cancelled." );
++    else
++        show_error( L"Import failed", result.detail[0] ? result.detail :
++                    L"The iOS file picker did not return a usable Windows path." );
++}
++
++static void load_bridge(void)
++{
++    bridge_module = LoadLibraryW( L"wineios.drv" );
++    if (!bridge_module) return;
++    begin_file_import = (juice_ios_begin_file_import_fn)GetProcAddress(
++        bridge_module, "JuiceIOSBeginFileImport" );
++    poll_file_import = (juice_ios_poll_file_import_fn)GetProcAddress(
++        bridge_module, "JuiceIOSPollFileImport" );
++    host_action = (juice_ios_host_action_fn)GetProcAddress(
++        bridge_module, "JuiceIOSHostAction" );
++}
++
++static void write_smoke_marker(void)
++{
++    HANDLE file = CreateFileW( L"Z:\\var\\mobile\\Documents\\Juice-JuiceGUI-smoke.ok",
++                               GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS,
++                               FILE_ATTRIBUTE_NORMAL, NULL );
++    static const char marker[] = "JUICE_GUI_ARM64_OK\n";
++    DWORD written;
++    if (file == INVALID_HANDLE_VALUE) return;
++    WriteFile( file, marker, sizeof(marker) - 1, &written, NULL );
++    CloseHandle( file );
++}
++
++static void show_applications_menu(void)
++{
++    POINT point;
++    RECT button_rect;
++    HMENU menu = CreatePopupMenu();
++
++    AppendMenuW( menu, MF_STRING, IDM_WINE_MINE, L"Launch WineMine" );
++    AppendMenuW( menu, MF_STRING, IDM_INSTALL, L"Install Application..." );
++    AppendMenuW( menu, MF_STRING, IDM_FILES, L"Files" );
++    AppendMenuW( menu, MF_SEPARATOR, 0, NULL );
++    AppendMenuW( menu, MF_STRING, IDM_REFRESH, L"Refresh applications" );
++    AppendMenuW( menu, MF_STRING, IDM_RELOAD_WALLPAPER, L"Reload wallpaper" );
++    AppendMenuW( menu, MF_STRING, IDM_WALLPAPER_INFO, L"Custom wallpaper help" );
++    AppendMenuW( menu, MF_SEPARATOR, 0, NULL );
++    AppendMenuW( menu, MF_STRING, IDM_EXPERIMENTAL_INFO,
++                 L"x86-64 translation (experimental)" );
++    GetWindowRect( menu_button, &button_rect );
++    point.x = button_rect.left;
++    point.y = button_rect.top;
++    TrackPopupMenu( menu, TPM_LEFTALIGN | TPM_BOTTOMALIGN, point.x, point.y, 0,
++                    main_window, NULL );
++    DestroyMenu( menu );
++}
++
++static void layout_controls( int width, int height )
++{
++    int taskbar_y = height - 58;
++    int content_top = 92;
++    int list_width = width > 800 ? 330 : width / 3;
++    int gap = 6;
++    int button_width = (width - 7 * gap) / 6;
++
++    MoveWindow( host_button, width - 54, 12, 38, 32, TRUE );
++    MoveWindow( app_list, 20, content_top, list_width, taskbar_y - content_top - 20, TRUE );
++    MoveWindow( menu_button, gap, taskbar_y + 8, button_width, 40, TRUE );
++    MoveWindow( launch_button, gap * 2 + button_width, taskbar_y + 8,
++                button_width, 40, TRUE );
++    MoveWindow( install_button, gap * 3 + button_width * 2, taskbar_y + 8,
++                button_width, 40, TRUE );
++    MoveWindow( files_button, gap * 4 + button_width * 3, taskbar_y + 8,
++                button_width, 40, TRUE );
++    MoveWindow( refresh_button, gap * 5 + button_width * 4, taskbar_y + 8,
++                button_width, 40, TRUE );
++    MoveWindow( uninstall_button, gap * 6 + button_width * 5, taskbar_y + 8,
++                button_width, 40, TRUE );
++}
++
++static void create_controls( HWND window )
++{
++    body_font = CreateFontW( -18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
++                             DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
++                             CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI" );
++    title_font = CreateFontW( -29, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
++                              DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
++                              CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI" );
++    icon_font = CreateFontW( -28, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
++                             DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
++                             CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI" );
++
++    menu_button = CreateWindowW( L"BUTTON", L"Juice", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
++                                 0, 0, 0, 0, window, (HMENU)IDC_MENU, NULL, NULL );
++    host_button = CreateWindowW( L"BUTTON", L"...", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
++                                 0, 0, 0, 0, window, (HMENU)IDC_HOST, NULL, NULL );
++    app_list = CreateWindowExW( 0, L"LISTBOX", NULL,
++                                WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_NOTIFY |
++                                LBS_NOINTEGRALHEIGHT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS,
++                                0, 0, 0, 0, window,
++                                (HMENU)IDC_APP_LIST, NULL, NULL );
++    launch_button = CreateWindowW( L"BUTTON", L"Launch", WS_CHILD | WS_VISIBLE,
++                                   0, 0, 0, 0, window, (HMENU)IDC_LAUNCH, NULL, NULL );
++    install_button = CreateWindowW( L"BUTTON", L"Install App", WS_CHILD | WS_VISIBLE,
++                                    0, 0, 0, 0, window, (HMENU)IDC_INSTALL, NULL, NULL );
++    files_button = CreateWindowW( L"BUTTON", L"Files", WS_CHILD | WS_VISIBLE,
++                                  0, 0, 0, 0, window, (HMENU)IDC_FILES, NULL, NULL );
++    refresh_button = CreateWindowW( L"BUTTON", L"Refresh", WS_CHILD | WS_VISIBLE,
++                                    0, 0, 0, 0, window, (HMENU)IDC_REFRESH, NULL, NULL );
++    uninstall_button = CreateWindowW( L"BUTTON", L"Uninstall", WS_CHILD | WS_VISIBLE,
++                                      0, 0, 0, 0, window, (HMENU)IDC_UNINSTALL, NULL, NULL );
++
++    SendMessageW( menu_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( host_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( app_list, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( launch_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( install_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( files_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( refresh_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( uninstall_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( app_list, LB_SETITEMHEIGHT, 0, 72 );
++}
++
++static LRESULT WINAPI window_proc( HWND window, UINT message, WPARAM wparam, LPARAM lparam )
++{
++    switch (message)
++    {
++    case WM_CREATE:
++        load_wallpaper();
++        create_controls( window );
++        seed_catalog();
++        load_bridge();
++        refresh_apps();
++        write_smoke_marker();
++        SetTimer( window, IDT_REPAINT, 350, NULL );
++        return 0;
++
++    case WM_SIZE:
++        layout_controls( LOWORD(lparam), HIWORD(lparam) );
++        InvalidateRect( window, NULL, TRUE );
++        return 0;
++
++    case WM_ERASEBKGND:
++        return 1;
++
++    case WM_PAINT:
++    {
++        PAINTSTRUCT paint;
++        RECT client;
++        RECT header;
++        RECT taskbar;
++        RECT panel;
++        RECT heading;
++        int content_left;
++        HDC dc = BeginPaint( window, &paint );
++        HBRUSH header_brush = CreateSolidBrush( RGB(13, 29, 49) );
++        HBRUSH taskbar_brush = CreateSolidBrush( RGB(10, 20, 34) );
++        HBRUSH panel_brush = CreateSolidBrush( RGB(15, 37, 63) );
++        HFONT previous;
++        SetBkMode( dc, TRANSPARENT );
++        GetClientRect( window, &client );
++        paint_wallpaper( dc, &client );
++        header = client;
++        header.bottom = 58;
++        FillRect( dc, &header, header_brush );
++        taskbar = client;
++        taskbar.top = taskbar.bottom - 58;
++        FillRect( dc, &taskbar, taskbar_brush );
++
++        heading.left = 20;
++        heading.top = 8;
++        heading.right = 126;
++        heading.bottom = 50;
++        previous = SelectObject( dc, title_font );
++        SetTextColor( dc, RGB(255, 255, 255) );
++        DrawTextW( dc, L"Juice", -1, &heading, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
++        heading.left = 138;
++        heading.top = 14;
++        heading.right = client.right - 72;
++        heading.bottom = 48;
++        SelectObject( dc, body_font );
++        SetTextColor( dc, RGB(166, 205, 255) );
++        DrawTextW( dc, L"Grape ARM64 desktop  \x2022  x86-64 via FEX is experimental",
++                   -1, &heading, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS );
++
++        heading.left = 20;
++        heading.top = 64;
++        heading.right = client.right > 800 ? 350 : client.right / 3 + 20;
++        heading.bottom = 88;
++        SetTextColor( dc, RGB(235, 244, 255) );
++        DrawTextW( dc, L"Desktop applications", -1, &heading, DT_LEFT | DT_TOP );
++
++        content_left = client.right > 800 ? 374 : client.right / 3 + 44;
++        panel.left = content_left;
++        panel.top = 92;
++        panel.right = client.right - 24;
++        panel.bottom = 338;
++        FillRect( dc, &panel, panel_brush );
++        heading = panel;
++        InflateRect( &heading, -24, -18 );
++        heading.bottom = heading.top + 44;
++        SelectObject( dc, title_font );
++        SetTextColor( dc, RGB(255, 255, 255) );
++        DrawTextW( dc, L"Welcome to Juice", -1, &heading, DT_LEFT | DT_TOP );
++        heading.left = panel.left + 24;
++        heading.top = panel.top + 74;
++        heading.right = panel.right - 24;
++        heading.bottom = heading.top + 54;
++        SelectObject( dc, body_font );
++        SetTextColor( dc, RGB(113, 196, 255) );
++        DrawTextW( dc, status_text, -1, &heading, DT_LEFT | DT_TOP | DT_WORDBREAK );
++        heading = panel;
++        InflateRect( &heading, -24, -18 );
++        heading.top += 124;
++        heading.bottom = panel.bottom - 18;
++        SetTextColor( dc, RGB(202, 220, 242) );
++        DrawTextW( dc,
++                   L"Double-click a shortcut or select it and choose Launch.\n\n"
++                   L"Install accepts MSI, setup EXE, and portable ZIP packages. "
++                   L"ARM64 apps run directly; x86-64 apps use the isolated "
++                   L"experimental FEX translator.",
++                   -1, &heading, DT_LEFT | DT_TOP | DT_WORDBREAK );
++
++        heading.left = content_left;
++        heading.top = 360;
++        heading.right = client.right - 24;
++        heading.bottom = heading.top + 80;
++        SetTextColor( dc, RGB(225, 237, 250) );
++        DrawTextW( dc, wallpaper_bitmap ?
++                   L"Custom wallpaper active. Use Juice > Reload wallpaper after replacing it." :
++                   L"Customise this desktop by adding Wallpaper.bmp to JuiceData, then use "
++                   L"Juice > Reload wallpaper.",
++                   -1, &heading, DT_LEFT | DT_TOP | DT_WORDBREAK );
++        SelectObject( dc, previous );
++        DeleteObject( panel_brush );
++        DeleteObject( taskbar_brush );
++        DeleteObject( header_brush );
++        EndPaint( window, &paint );
++        return 0;
++    }
++
++    case WM_CTLCOLORLISTBOX:
++        SetBkColor( (HDC)wparam, RGB(12, 30, 54) );
++        SetTextColor( (HDC)wparam, RGB(240, 247, 255) );
++        return (LRESULT)app_list_brush;
++
++    case WM_DRAWITEM:
++        if (wparam == IDC_APP_LIST)
++        {
++            DRAWITEMSTRUCT *draw = (DRAWITEMSTRUCT *)lparam;
++            RECT item = draw->rcItem;
++            RECT icon;
++            RECT text_rect;
++            WCHAR initial[2] = {L'J', 0};
++            HGDIOBJ old_brush;
++            HGDIOBJ old_pen;
++            HFONT old_font;
++            COLORREF background;
++            COLORREF accent;
++
++            if (draw->itemID == (UINT)-1 || draw->itemID >= app_count) return TRUE;
++            background = draw->itemState & ODS_SELECTED ? RGB(45, 103, 166) : RGB(12, 30, 54);
++            accent = apps[draw->itemID].experimental ? RGB(150, 91, 205) : RGB(44, 150, 142);
++            SetDCBrushColor( draw->hDC, background );
++            FillRect( draw->hDC, &item, GetStockObject( DC_BRUSH ) );
++
++            icon = item;
++            InflateRect( &icon, -10, -10 );
++            icon.right = icon.left + 52;
++            SetDCPenColor( draw->hDC, RGB(215, 231, 249) );
++            SetDCBrushColor( draw->hDC, accent );
++            old_pen = SelectObject( draw->hDC, GetStockObject( DC_PEN ) );
++            old_brush = SelectObject( draw->hDC, GetStockObject( DC_BRUSH ) );
++            RoundRect( draw->hDC, icon.left, icon.top, icon.right, icon.bottom, 12, 12 );
++            if (apps[draw->itemID].name[0]) initial[0] = apps[draw->itemID].name[0];
++            SetBkMode( draw->hDC, TRANSPARENT );
++            SetTextColor( draw->hDC, RGB(255, 255, 255) );
++            old_font = SelectObject( draw->hDC, icon_font );
++            DrawTextW( draw->hDC, initial, -1, &icon,
++                       DT_CENTER | DT_VCENTER | DT_SINGLELINE );
++
++            text_rect = item;
++            text_rect.left = icon.right + 12;
++            text_rect.right -= 8;
++            text_rect.top += 13;
++            SelectObject( draw->hDC, body_font );
++            DrawTextW( draw->hDC, apps[draw->itemID].name, -1, &text_rect,
++                       DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS );
++            if (apps[draw->itemID].experimental)
++            {
++                text_rect.top += 28;
++                SetTextColor( draw->hDC, RGB(222, 190, 255) );
++                DrawTextW( draw->hDC, L"x86-64 experimental", -1, &text_rect,
++                           DT_LEFT | DT_TOP | DT_SINGLELINE );
++            }
++            SelectObject( draw->hDC, old_font );
++            SelectObject( draw->hDC, old_brush );
++            SelectObject( draw->hDC, old_pen );
++            if (draw->itemState & ODS_FOCUS) DrawFocusRect( draw->hDC, &item );
++            return TRUE;
++        }
++        break;
++
++    case WM_TIMER:
++        if (wparam == IDT_IMPORT) poll_import();
++        else if (wparam == IDT_REFRESH)
++        {
++            KillTimer( window, IDT_REFRESH );
++            refresh_apps();
++        }
++        else if (wparam == IDT_REPAINT)
++        {
++            KillTimer( window, IDT_REPAINT );
++            RedrawWindow( window, NULL, NULL,
++                          RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW );
++        }
++        return 0;
++
++    case WM_COMMAND:
++        switch (LOWORD(wparam))
++        {
++        case IDC_MENU:
++            show_applications_menu();
++            break;
++        case IDC_LAUNCH:
++            launch_selected();
++            break;
++        case IDC_INSTALL:
++            begin_install();
++            break;
++        case IDC_FILES:
++            open_imported_files();
++            break;
++        case IDC_REFRESH:
++            refresh_apps();
++            load_wallpaper();
++            InvalidateRect( window, NULL, TRUE );
++            break;
++        case IDC_UNINSTALL:
++            uninstall_selected();
++            break;
++        case IDC_HOST:
++            if (!host_action ||
++                host_action( JUICE_IOS_ACTION_SHOW_HOST_CONTROLS, NULL ) !=
++                JUICE_IOS_STATUS_COMPLETE)
++                show_error( L"Juice controls", L"The native Juice controls are unavailable." );
++            break;
++        case IDC_APP_LIST:
++            if (HIWORD(wparam) == LBN_DBLCLK) launch_selected();
++            break;
++        case IDM_WINE_MINE:
++            launch_path( L"winemine.exe", NULL, IMAGE_FILE_MACHINE_ARM64 );
++            break;
++        case IDM_INSTALL:
++            begin_install();
++            break;
++        case IDM_FILES:
++            open_imported_files();
++            break;
++        case IDM_REFRESH:
++            refresh_apps();
++            break;
++        case IDM_RELOAD_WALLPAPER:
++            if (load_wallpaper())
++                set_status( L"Custom wallpaper loaded." );
++            else
++                set_status( L"Wallpaper.bmp was not found; using the built-in Juice background." );
++            InvalidateRect( window, NULL, TRUE );
++            break;
++        case IDM_WALLPAPER_INFO:
++            MessageBoxW( window,
++                         L"Copy a Windows BMP image to:\n\n"
++                         L"Z:\\var\\mobile\\Documents\\JuiceData\\Wallpaper.bmp\n\n"
++                         L"Then choose Juice > Reload wallpaper. Advanced users can set "
++                         L"HKCU\\Software\\Juice\\Desktop\\Wallpaper to another Windows path. "
++                         L"The image is centre-cropped to fill the desktop.",
++                         L"Custom Juice wallpaper", MB_OK | MB_ICONINFORMATION );
++            break;
++        case IDM_EXPERIMENTAL_INFO:
++            MessageBoxW( window,
++                         L"x86-64 applications are translated through Hangover/FEX without "
++                         L"a virtual machine. This path is experimental and isolated from "
++                         L"the verified ARM64 prefix.",
++                         L"Experimental x86-64", MB_OK | MB_ICONINFORMATION );
++            break;
++        }
++        return 0;
++
++    case WM_CLOSE:
++        if (MessageBoxW( window, L"Close the Juice desktop?", L"Juice",
++                         MB_YESNO | MB_ICONQUESTION ) == IDYES)
++            DestroyWindow( window );
++        return 0;
++
++    case WM_DESTROY:
++        PostQuitMessage( 0 );
++        return 0;
++    }
++    return DefWindowProcW( window, message, wparam, lparam );
++}
++
++int WINAPI wWinMain( HINSTANCE instance, HINSTANCE previous, WCHAR *command_line, int show )
++{
++    WNDCLASSEXW window_class;
++    MSG message;
++    int width = GetSystemMetrics( SM_CXSCREEN );
++    int height = GetSystemMetrics( SM_CYSCREEN );
++
++    desktop_brush = CreateSolidBrush( RGB(20, 51, 86) );
++    app_list_brush = CreateSolidBrush( RGB(12, 30, 54) );
++    memset( &window_class, 0, sizeof(window_class) );
++    window_class.cbSize = sizeof(window_class);
++    window_class.hInstance = instance;
++    window_class.lpfnWndProc = window_proc;
++    window_class.hCursor = LoadCursorW( NULL, (const WCHAR *)IDC_ARROW );
++    window_class.hIcon = LoadIconW( NULL, (const WCHAR *)IDI_APPLICATION );
++    window_class.hbrBackground = desktop_brush;
++    window_class.lpszClassName = L"JuiceDesktopWindow";
++    if (!RegisterClassExW( &window_class )) return 2;
++
++    main_window = CreateWindowExW( 0, window_class.lpszClassName, L"Juice Desktop",
++                                   WS_POPUP | WS_CLIPCHILDREN, 0, 0, width, height,
++                                   NULL, NULL, instance, NULL );
++    if (!main_window) return 3;
++    ShowWindow( main_window, SW_SHOWMAXIMIZED );
++    UpdateWindow( main_window );
++
++    while (GetMessageW( &message, NULL, 0, 0 ) > 0)
++    {
++        TranslateMessage( &message );
++        DispatchMessageW( &message );
++    }
++
++    if (bridge_module) FreeLibrary( bridge_module );
++    unload_wallpaper();
++    if (title_font) DeleteObject( title_font );
++    if (body_font) DeleteObject( body_font );
++    if (icon_font) DeleteObject( icon_font );
++    if (app_list_brush) DeleteObject( app_list_brush );
++    if (desktop_brush) DeleteObject( desktop_brush );
++    return (int)message.wParam;
++}
+diff --git a/programs/juicesetupsmoke/Makefile.in b/programs/juicesetupsmoke/Makefile.in
+new file mode 100644
+index 00000000000..86593b73768
+--- /dev/null
++++ b/programs/juicesetupsmoke/Makefile.in
+@@ -0,0 +1,6 @@
++MODULE = JuiceSetupSmoke.exe
++IMPORTS = advapi32 user32
++EXTRADLLFLAGS = -mwindows -municode
++
++SOURCES = \
++	main.c
+diff --git a/programs/juicesetupsmoke/main.c b/programs/juicesetupsmoke/main.c
+new file mode 100644
+index 00000000000..7ea6440c3c7
+--- /dev/null
++++ b/programs/juicesetupsmoke/main.c
+@@ -0,0 +1,164 @@
++/*
++ * Ordinary setup.exe smoke test for Juice/Grape.
++ * Juice-original code; uses only ARM64 Win32 APIs.
++ */
++
++#define UNICODE
++#define _UNICODE
++#include <windows.h>
++#include <wchar.h>
++
++#define ARRAY_LEN(a) (sizeof(a) / sizeof((a)[0]))
++#define JUICE_MACHINE_ARM64 0xaa64
++
++static void write_marker( const WCHAR *name, const char *contents )
++{
++    WCHAR path[MAX_PATH];
++    HANDLE file;
++    DWORD written;
++
++    wsprintfW( path, L"Z:\\var\\mobile\\Documents\\%s", name );
++    file = CreateFileW( path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS,
++                        FILE_ATTRIBUTE_NORMAL, NULL );
++    if (file == INVALID_HANDLE_VALUE) return;
++    WriteFile( file, contents, lstrlenA(contents), &written, NULL );
++    CloseHandle( file );
++}
++
++static BOOL make_target_paths( WCHAR *directory, WCHAR *executable )
++{
++    WCHAR local[MAX_PATH];
++    DWORD length;
++
++    length = GetEnvironmentVariableW( L"LOCALAPPDATA", local, ARRAY_LEN(local) );
++    if (!length || length >= ARRAY_LEN(local) - 32) return FALSE;
++    wsprintfW( directory, L"%s\\Juice\\SetupSmoke", local );
++    wsprintfW( executable, L"%s\\JuiceSetupSmoke.exe", directory );
++    return TRUE;
++}
++
++static BOOL create_target_directory( const WCHAR *directory )
++{
++    WCHAR parent[MAX_PATH];
++    WCHAR *separator;
++    DWORD error;
++
++    lstrcpynW( parent, directory, ARRAY_LEN(parent) );
++    separator = wcsrchr( parent, '\\' );
++    if (!separator) return FALSE;
++    *separator = 0;
++    if (!CreateDirectoryW( parent, NULL ))
++    {
++        error = GetLastError();
++        if (error != ERROR_ALREADY_EXISTS) return FALSE;
++    }
++    if (!CreateDirectoryW( directory, NULL ))
++    {
++        error = GetLastError();
++        if (error != ERROR_ALREADY_EXISTS) return FALSE;
++    }
++    return TRUE;
++}
++
++static BOOL set_string( HKEY key, const WCHAR *name, const WCHAR *value )
++{
++    return RegSetValueExW( key, name, 0, REG_SZ, (const BYTE *)value,
++                           (lstrlenW(value) + 1) * sizeof(WCHAR) ) == ERROR_SUCCESS;
++}
++
++static BOOL register_application( const WCHAR *target )
++{
++    static const WCHAR key_name[] = L"Software\\Juice\\Applications\\SetupSmoke";
++    HKEY key;
++    DWORD disposition;
++    DWORD machine = JUICE_MACHINE_ARM64;
++    WCHAR uninstall[1200];
++
++    if (RegCreateKeyExW( HKEY_CURRENT_USER, key_name, 0, NULL, 0, KEY_WRITE,
++                         NULL, &key, &disposition ) != ERROR_SUCCESS) return FALSE;
++    wsprintfW( uninstall, L"\"%s\" /uninstall", target );
++    set_string( key, L"Name", L"Juice Setup Smoke" );
++    set_string( key, L"Path", target );
++    set_string( key, L"Arguments", L"/installed" );
++    set_string( key, L"Uninstall", uninstall );
++    RegSetValueExW( key, L"Machine", 0, REG_DWORD, (const BYTE *)&machine,
++                    sizeof(machine) );
++    RegCloseKey( key );
++    return TRUE;
++}
++
++static BOOL start_installed( const WCHAR *target )
++{
++    WCHAR command[1400];
++    STARTUPINFOW startup = {sizeof(startup)};
++    PROCESS_INFORMATION process;
++
++    wsprintfW( command, L"\"%s\" /installed", target );
++    if (!CreateProcessW( NULL, command, NULL, NULL, FALSE, 0, NULL, NULL,
++                         &startup, &process )) return FALSE;
++    CloseHandle( process.hThread );
++    CloseHandle( process.hProcess );
++    return TRUE;
++}
++
++static int uninstall_application( const WCHAR *target )
++{
++    RegDeleteTreeW( HKEY_CURRENT_USER, L"Software\\Juice\\Applications\\SetupSmoke" );
++    MoveFileExW( target, NULL, MOVEFILE_DELAY_UNTIL_REBOOT );
++    write_marker( L"Juice-Setup-uninstall.ok", "JUICE_SETUP_UNINSTALL_OK\n" );
++    MessageBoxW( NULL, L"Juice Setup Smoke was uninstalled.", L"Juice Setup",
++                 MB_OK | MB_ICONINFORMATION );
++    return 0;
++}
++
++int WINAPI wWinMain( HINSTANCE instance, HINSTANCE previous, WCHAR *command_line, int show )
++{
++    WCHAR source[MAX_PATH];
++    WCHAR directory[MAX_PATH];
++    WCHAR target[MAX_PATH];
++    WCHAR message[1500];
++
++    if (!make_target_paths( directory, target ))
++    {
++        MessageBoxW( NULL, L"LocalAppData is unavailable.", L"Juice Setup",
++                     MB_OK | MB_ICONERROR );
++        return 2;
++    }
++    if (wcsstr( command_line, L"/uninstall" )) return uninstall_application( target );
++    if (wcsstr( command_line, L"/installed" ))
++    {
++        write_marker( L"Juice-Setup-launch.ok", "JUICE_SETUP_LAUNCH_OK\n" );
++        MessageBoxW( NULL, L"The installed ARM64 setup smoke application works.",
++                     L"Juice Setup Smoke", MB_OK | MB_ICONINFORMATION );
++        return 0;
++    }
++
++    if (!GetModuleFileNameW( NULL, source, ARRAY_LEN(source) ) ||
++        !create_target_directory( directory ))
++    {
++        MessageBoxW( NULL, L"Could not create the persistent install directory.",
++                     L"Juice Setup", MB_OK | MB_ICONERROR );
++        return 3;
++    }
++    if (!CopyFileW( source, target, FALSE ))
++    {
++        wsprintfW( message, L"Could not copy the application (error %lu).", GetLastError() );
++        MessageBoxW( NULL, message, L"Juice Setup", MB_OK | MB_ICONERROR );
++        return 4;
++    }
++    if (!register_application( target ))
++    {
++        MessageBoxW( NULL, L"Could not register the installed application.",
++                     L"Juice Setup", MB_OK | MB_ICONERROR );
++        return 5;
++    }
++
++    write_marker( L"Juice-Setup-install.ok", "JUICE_SETUP_INSTALL_OK\n" );
++    if (!start_installed( target ))
++    {
++        MessageBoxW( NULL, L"Installed, but the launch smoke step failed.",
++                     L"Juice Setup", MB_OK | MB_ICONERROR );
++        return 6;
++    }
++    return 0;
++}
+diff --git a/programs/juicetextsmoke/Makefile.in b/programs/juicetextsmoke/Makefile.in
+new file mode 100644
+index 00000000000..1733f5ded84
+--- /dev/null
++++ b/programs/juicetextsmoke/Makefile.in
+@@ -0,0 +1,6 @@
++MODULE = JuiceTextSmoke.exe
++IMPORTS = gdi32 user32
++EXTRADLLFLAGS = -mwindows -municode
++
++SOURCES = \
++	main.c
+diff --git a/programs/juicetextsmoke/main.c b/programs/juicetextsmoke/main.c
+new file mode 100644
+index 00000000000..70c07799de5
+--- /dev/null
++++ b/programs/juicetextsmoke/main.c
+@@ -0,0 +1,213 @@
++/*
++ * Deterministic GDI text and UIKit text-input smoke test for Juice/Grape.
++ * Juice-original code.
++ */
++
++#define UNICODE
++#define _UNICODE
++#include <windows.h>
++#include <wchar.h>
++
++#define ID_EDIT   1001
++#define ID_BUTTON 1002
++#define ID_STATUS 1003
++#define EXPECTED_TEXT L"Juice input works 42"
++
++static HWND main_window, edit_control, status_control;
++static HFONT title_font, body_font, mono_font;
++static BOOL render_marker_written, input_marker_written;
++static UINT paint_count;
++
++static void write_marker( const WCHAR *name, const char *contents )
++{
++    WCHAR path[MAX_PATH];
++    HANDLE file;
++    DWORD written;
++
++    wsprintfW( path, L"Z:\\var\\mobile\\Documents\\%s", name );
++    file = CreateFileW( path, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS,
++                        FILE_ATTRIBUTE_NORMAL, NULL );
++    if (file == INVALID_HANDLE_VALUE) return;
++    WriteFile( file, contents, lstrlenA(contents), &written, NULL );
++    CloseHandle( file );
++}
++
++static void verify_input(void)
++{
++    WCHAR value[256];
++
++    GetWindowTextW( edit_control, value, ARRAYSIZE(value) );
++    if (!wcscmp( value, EXPECTED_TEXT ))
++    {
++        SetWindowTextW( status_control, L"PASS: UIKit text reached the Win32 EDIT control." );
++        if (!input_marker_written)
++        {
++            write_marker( L"Juice-Text-input.ok", "JUICE_TEXT_INPUT_OK value=Juice input works 42\n" );
++            input_marker_written = TRUE;
++        }
++    }
++    else SetWindowTextW( status_control, L"Waiting for the exact test phrase..." );
++}
++
++static void create_fonts(HWND hwnd)
++{
++    HDC dc = GetDC( hwnd );
++    int dpi = GetDeviceCaps( dc, LOGPIXELSY );
++
++    ReleaseDC( hwnd, dc );
++    title_font = CreateFontW( -MulDiv( 30, dpi, 72 ), 0, 0, 0, FW_BOLD, FALSE, FALSE,
++                              FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
++                              CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial" );
++    body_font = CreateFontW( -MulDiv( 17, dpi, 72 ), 0, 0, 0, FW_NORMAL, FALSE, FALSE,
++                             FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
++                             CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial" );
++    mono_font = CreateFontW( -MulDiv( 16, dpi, 72 ), 0, 0, 0, FW_NORMAL, FALSE, FALSE,
++                             FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
++                             ANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier New" );
++}
++
++static void create_controls(HWND hwnd)
++{
++    HWND instruction, verify_button;
++
++    instruction = CreateWindowW( L"STATIC",
++                   L"Tap the edit field, then send: Juice input works 42",
++                   WS_CHILD | WS_VISIBLE, 34, 302, 650, 28, hwnd, NULL, NULL, NULL );
++    edit_control = CreateWindowExW( WS_EX_CLIENTEDGE, L"EDIT", L"",
++                   WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL,
++                   34, 338, 520, 42, hwnd, (HMENU)ID_EDIT, NULL, NULL );
++    verify_button = CreateWindowW( L"BUTTON", L"Verify text",
++                   WS_CHILD | WS_VISIBLE | WS_TABSTOP, 570, 338, 144, 42,
++                   hwnd, (HMENU)ID_BUTTON, NULL, NULL );
++    status_control = CreateWindowW( L"STATIC", L"Waiting for the exact test phrase...",
++                   WS_CHILD | WS_VISIBLE, 34, 394, 680, 30,
++                   hwnd, (HMENU)ID_STATUS, NULL, NULL );
++
++    SendMessageW( instruction, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( edit_control, WM_SETFONT, (WPARAM)mono_font, TRUE );
++    SendMessageW( verify_button, WM_SETFONT, (WPARAM)body_font, TRUE );
++    SendMessageW( status_control, WM_SETFONT, (WPARAM)body_font, TRUE );
++}
++
++static void paint_window(HWND hwnd)
++{
++    static const WCHAR heading[] = L"Juice GDI Text Smoke";
++    static const WCHAR sentence[] = L"TextOutW: The quick brown fox jumps over 13 lazy grapes.";
++    static const WCHAR paragraph[] =
++        L"DrawTextW wraps this paragraph inside a measured rectangle.\n"
++        L"ASCII, punctuation, and spacing must all remain visible.\n"
++        L"Unicode sample: caf\x00e9  \x03a9  \x2713";
++    PAINTSTRUCT ps;
++    HDC dc = BeginPaint( hwnd, &ps );
++    RECT client, block;
++    HBRUSH background = CreateSolidBrush( RGB(18, 30, 48) );
++    HBRUSH panel = CreateSolidBrush( RGB(239, 244, 250) );
++    HFONT previous;
++    SIZE extent = {0};
++    char marker[160];
++
++    GetClientRect( hwnd, &client );
++    FillRect( dc, &client, background );
++    SetRect( &block, 28, 82, client.right - 28, 280 );
++    FillRect( dc, &block, panel );
++    FrameRect( dc, &block, GetStockObject(DKGRAY_BRUSH) );
++    SetBkMode( dc, TRANSPARENT );
++
++    previous = SelectObject( dc, title_font );
++    SetTextColor( dc, RGB(255, 255, 255) );
++    TextOutW( dc, 28, 24, heading, ARRAYSIZE(heading) - 1 );
++
++    SelectObject( dc, body_font );
++    SetTextColor( dc, RGB(24, 40, 64) );
++    TextOutW( dc, 48, 104, sentence, ARRAYSIZE(sentence) - 1 );
++    SetRect( &block, 48, 148, client.right - 48, 260 );
++    DrawTextW( dc, paragraph, -1, &block, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_NOPREFIX );
++
++    SelectObject( dc, mono_font );
++    SetTextColor( dc, RGB(149, 255, 189) );
++    TextOutW( dc, 30, client.bottom - 58, EXPECTED_TEXT, ARRAYSIZE(EXPECTED_TEXT) - 1 );
++    GetTextExtentPoint32W( dc, sentence, ARRAYSIZE(sentence) - 1, &extent );
++    SelectObject( dc, previous );
++    DeleteObject( panel );
++    DeleteObject( background );
++    EndPaint( hwnd, &ps );
++
++    paint_count++;
++    if (!render_marker_written && extent.cx > 100 && extent.cy > 8)
++    {
++        wsprintfA( marker, "JUICE_TEXT_GDI_OK extent=%ldx%ld paint=%u\n",
++                   extent.cx, extent.cy, paint_count );
++        write_marker( L"Juice-Text-render.ok", marker );
++        render_marker_written = TRUE;
++    }
++}
++
++static LRESULT CALLBACK window_proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
++{
++    switch (message)
++    {
++    case WM_CREATE:
++        main_window = hwnd;
++        return 0;
++    case WM_COMMAND:
++        if ((LOWORD(wparam) == ID_EDIT && HIWORD(wparam) == EN_CHANGE) ||
++            LOWORD(wparam) == ID_BUTTON) verify_input();
++        return 0;
++    case WM_TIMER:
++        InvalidateRect( hwnd, NULL, FALSE );
++        if (paint_count >= 5) KillTimer( hwnd, 1 );
++        return 0;
++    case WM_PAINT:
++        paint_window( hwnd );
++        return 0;
++    case WM_DESTROY:
++        DeleteObject( title_font );
++        DeleteObject( body_font );
++        DeleteObject( mono_font );
++        PostQuitMessage( 0 );
++        return 0;
++    }
++    return DefWindowProcW( hwnd, message, wparam, lparam );
++}
++
++int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, WCHAR *command_line, int show)
++{
++    WNDCLASSW class = {0};
++    MSG message;
++
++    class.style = CS_HREDRAW | CS_VREDRAW;
++    class.lpfnWndProc = window_proc;
++    class.hInstance = instance;
++    class.hCursor = LoadCursorW( NULL, (LPCWSTR)IDC_ARROW );
++    class.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
++    class.lpszClassName = L"JuiceTextSmokeWindow";
++    if (!RegisterClassW( &class )) return 2;
++
++    main_window = CreateWindowW( class.lpszClassName, L"Juice Text Rendering & Input Smoke",
++                                 WS_OVERLAPPEDWINDOW,
++                                 CW_USEDEFAULT, CW_USEDEFAULT, 780, 520,
++                                 NULL, NULL, instance, NULL );
++    if (!main_window)
++    {
++        char failure[96];
++        wsprintfA( failure, "JUICE_TEXT_CREATE_FAILED error=%lu\n", GetLastError() );
++        write_marker( L"Juice-Text-create-failed.log", failure );
++        return 3;
++    }
++
++    /* wineios.drv attaches the top-level surface as CreateWindowW returns.
++     * Do not request a DC or construct child surfaces from WM_CREATE. */
++    create_fonts( main_window );
++    create_controls( main_window );
++    write_marker( L"Juice-Text-create-stage.ok", "JUICE_TEXT_CREATE_COMPLETE_OK\n" );
++    ShowWindow( main_window, SW_SHOW );
++    UpdateWindow( main_window );
++    SetFocus( edit_control );
++    SetTimer( main_window, 1, 500, NULL );
++    while (GetMessageW( &message, NULL, 0, 0 ) > 0)
++    {
++        TranslateMessage( &message );
++        DispatchMessageW( &message );
++    }
++    return (int)message.wParam;
++}
+diff --git a/server/mapping.c b/server/mapping.c
+index a53b6b68304..2ee4831c750 100644
+--- a/server/mapping.c
++++ b/server/mapping.c
+@@ -21,6 +21,7 @@
+ #include "config.h"
+ 
+ #include <assert.h>
++#include <errno.h>
+ #include <fcntl.h>
+ #include <stdarg.h>
+ #include <stdio.h>
+@@ -272,11 +273,33 @@ static inline mem_size_t round_size( mem_size_t size, mem_size_t mask )
+     return (size + mask) & ~mask;
+ }
+ 
++static void free_available_high_map_addr( client_ptr_t base, mem_size_t size )
++{
++    unsigned int flags = MAP_PRIVATE | MAP_ANON;
++
++#ifdef MAP_FIXED_NOREPLACE
++    flags |= MAP_FIXED_NOREPLACE;
++#endif
++
++    while (base >> 32)
++    {
++        void *ret = mmap( (void *)base, host_page_mask + 1, PROT_NONE, flags, -1, 0 );
++        if (ret != MAP_FAILED) munmap( ret, host_page_mask + 1 );
++        if ((ret != MAP_FAILED && ret >= (void *)base) || errno == EEXIST)
++        {
++            free_map_addr( base, size );
++            return;
++        }
++        base >>= 1;
++        size >>= 1;
++    }
++}
++
+ void init_memory(void)
+ {
+     host_page_mask = sysconf( _SC_PAGESIZE ) - 1;
+     free_map_addr( 0x60000000, 0x1c000000 );
+-    free_map_addr( 0x600000000000, 0x100000000000 );
++    free_available_high_map_addr( 0x600000000000, 0x100000000000 );
+ }
+ 
+ static void ranges_dump( struct object *obj, int verbose )
 diff --git a/server/process.h b/server/process.h
-index dff766d..158ffaf 100644
+index dff766d60d3..158ffafe1d1 100644
 --- a/server/process.h
 +++ b/server/process.h
 @@ -126,7 +126,11 @@ extern void set_process_base_priority( struct process *process, int base_priorit
@@ -2502,7 +5826,7 @@ index dff766d..158ffaf 100644
  #elif defined(__sun)
  #define USE_PROCFS
 diff --git a/tools/winebuild/res32.c b/tools/winebuild/res32.c
-index 798dee7..bdf9ee2 100644
+index 798dee79b1e..bdf9ee22a00 100644
 --- a/tools/winebuild/res32.c
 +++ b/tools/winebuild/res32.c
 @@ -196,12 +196,40 @@ static void load_next_resource( DLLSPEC *spec, const char *name )

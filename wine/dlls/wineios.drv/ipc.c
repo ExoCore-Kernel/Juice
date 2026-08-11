@@ -79,12 +79,14 @@ BOOL ios_ipc_process_input(void)
    input.type=INPUT_MOUSE;
    input.mi.dx=msg.x;
    input.mi.dy=msg.y;
+   target=NtUserChildWindowFromPointEx(hwnd,msg.x,msg.y,
+                                       CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
    if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
    {
     input.mi.dx+=window.left;
     input.mi.dy+=window.top;
    }
-   target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
+   if(!target||target==hwnd) target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
    if(!target) target=hwnd;
    if(msg.flags&(JUICE_IOS_LEFT_DOWN|JUICE_IOS_RIGHT_DOWN))
    {

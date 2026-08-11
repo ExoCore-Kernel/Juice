@@ -280,6 +280,7 @@ extern void set_process_instrumentation_callback( void *callback );
 
 extern void *get_cpu_area( struct thread_data *data, USHORT machine );
 extern void set_thread_id( struct thread_data *data );
+extern NTSTATUS WINAPI NtWineGetCurrentTebAccessor( void **accessor );
 extern NTSTATUS init_thread_stack( TEB *teb, ULONG_PTR limit, SIZE_T reserve_size, SIZE_T commit_size );
 extern void DECLSPEC_NORETURN abort_thread( int status );
 extern void DECLSPEC_NORETURN abort_process( int status );

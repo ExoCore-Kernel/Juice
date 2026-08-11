@@ -194,6 +194,9 @@ NTSTATUS arm64ec_process_init( HMODULE module )
     __os_arm64x_dispatch_call_no_redirect = RtlFindExportedRoutineByName( module, "ExitToX64" );
     __os_arm64x_dispatch_fptr = RtlFindExportedRoutineByName( module, "DispatchJump" );
     __os_arm64x_dispatch_ret = RtlFindExportedRoutineByName( module, "RetToEntryThunk" );
+    ERR( "[JuiceHybrid] process dispatch module=%p exit=%p jump=%p ret=%p\n", module,
+         __os_arm64x_dispatch_call_no_redirect, __os_arm64x_dispatch_fptr,
+         __os_arm64x_dispatch_ret );
 
 #define GET_PTR(name) p ## name = arm64ec_redirect_ptr( module, \
                                       RtlFindExportedRoutineByName( module, #name ), metadata )
@@ -302,6 +305,9 @@ void arm64ec_update_hybrid_metadata( void *module, IMAGE_NT_HEADERS *nt,
 
             NtProtectVirtualMemory( NtCurrentProcess(), &base, &size, PAGE_READWRITE, &protect_old );
 
+            ERR( "[JuiceHybrid] metadata module=%p slot=%x exit=%p\n", module,
+                 (unsigned int)metadata->__os_arm64x_dispatch_call_no_redirect,
+                 __os_arm64x_dispatch_call_no_redirect );
 #define SET_FUNC(func,val) update_hybrid_pointer( module, sec, metadata->func, val )
             SET_FUNC( __os_arm64x_dispatch_call, arm64x_check_call );
             SET_FUNC( __os_arm64x_dispatch_call_no_redirect, __os_arm64x_dispatch_call_no_redirect );
@@ -318,6 +324,11 @@ void arm64ec_update_hybrid_metadata( void *module, IMAGE_NT_HEADERS *nt,
             SET_FUNC( GetX64InformationFunctionPointer, __os_arm64x_get_x64_information );
             SET_FUNC( SetX64InformationFunctionPointer, __os_arm64x_set_x64_information );
 #undef SET_FUNC
+            if (__os_arm64x_dispatch_call_no_redirect)
+                ERR( "[JuiceHybrid] metadata stored address=%p value=%p\n",
+                     get_rva( module, metadata->__os_arm64x_dispatch_call_no_redirect ),
+                     *(void **)get_rva( module,
+                                        metadata->__os_arm64x_dispatch_call_no_redirect ) );
 
             NtProtectVirtualMemory( NtCurrentProcess(), &base, &size, protect_old, &protect_old );
             return;
@@ -611,6 +622,7 @@ DEFINE_SYSCALL(NtWriteFile, (HANDLE handle, HANDLE event, PIO_APC_ROUTINE apc, v
 DEFINE_SYSCALL(NtWriteFileGather, (HANDLE file, HANDLE event, PIO_APC_ROUTINE apc, void *apc_user, IO_STATUS_BLOCK *io, FILE_SEGMENT_ELEMENT *segments, ULONG length, LARGE_INTEGER *offset, ULONG *key))
 DEFINE_SYSCALL(NtWriteRequestData, (HANDLE handle, LPC_MESSAGE *request, ULONG id, void *buffer, ULONG len, ULONG *retlen))
 DEFINE_SYSCALL(NtWriteVirtualMemory, (HANDLE process, void *addr, const void *buffer, SIZE_T size, SIZE_T *bytes_written))
+DEFINE_SYSCALL(NtWineGetCurrentTebAccessor, (void **accessor))
 DEFINE_SYSCALL(NtYieldExecution, (void))
 
 NTSTATUS SYSCALL_API NtAllocateVirtualMemory( HANDLE process, PVOID *ret, ULONG_PTR zero_bits,
@@ -1827,6 +1839,13 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
     return emulated_processor_features[feature];
 }
 
+/***********************************************************************
+ *              RtlWow64SuspendThread (NTDLL.@)
+ */
+NTSTATUS WINAPI RtlWow64SuspendThread( HANDLE thread, ULONG *count )
+{
+    return NtSuspendThread( thread, count );
+}
 
 /*************************************************************************
  *		RtlWalkFrameChain (NTDLL.@)

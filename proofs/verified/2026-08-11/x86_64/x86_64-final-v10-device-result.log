@@ -1,0 +1,5 @@
+c66c6785487e0dfa3eb20c4e8f494fae42d6f4b7e677a656bb591a910a7b6eac  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape-X64/tests/x86_64-smoke.exe
+941c936efd649c1281a2f9a1be5dfd6cea043abe42a00abda244c7fcec368c29  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll
+0f72a409d06adc2531fa67421f416e2d918086e42f95e5f6027ca32ed1d61cde  /var/mobile/Documents/Juice-x86_64-final-v10.ok
+JUICE_X86_64_DEVICE_SMOKE_OK status=100 marker=/var/mobile/Documents/Juice-x86_64-final-v10.ok log=/var/mobile/Documents/Juice-x86_64-final-v10.log
+JUICE_X86_64_CANONICAL_RESULT=0

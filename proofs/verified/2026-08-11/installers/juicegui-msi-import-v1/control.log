@@ -1,0 +1,4 @@
+JUICE_CONTROL_TEST_LISTENING socket=/var/mobile/Documents/JuiceLab-20260811/source/build/tests/juicegui-msi-import-v1/control.sock
+JUICE_CONTROL_TEST_REQUEST type=1 request=1048969217 status=1 flags=7 path=
+JUICE_CONTROL_TEST_IMPORT_RESPONSE request=1048969217 path=Z:\var\mobile\Documents\JuiceLab-20260811\source\build\tests\installers-v15\JuiceMSISmoke.msi
+JUICE_CONTROL_TEST_RESULT success=1 marker=/var/mobile/Documents/JuiceLab-20260811/source/build/tests/juicegui-msi-import-v1/control-import.ok completion=not-required

@@ -23,9 +23,10 @@ The audited build environment is:
 Install TrollStore separately. With the Procursus repositories configured, the
 complete tool dependency command is:
 
-    sudo /var/jb/usr/bin/apt-get install bash bison build-essential clang coreutils file git ldid libfreetype-dev m4 make odcctools pkg-config python3 rsync sudo unzip zip
+    sudo /var/jb/usr/bin/apt-get install bash bison build-essential clang coreutils file git ldid libfreetype-dev lld-16 m4 make odcctools pkg-config python3 rsync sudo unzip zip
 
-libfreetype-dev installs the FreeType runtime and its PNG/Brotli dependencies.
+`lld-16` supplies the `lld-link` PE linker matched to the audited Clang 16
+toolchain. libfreetype-dev installs the FreeType runtime and its PNG/Brotli dependencies.
 It is required for Windows glyph rendering. A different target device that
 receives the TIPA must also have the matching rootless FreeType runtime package.
 
@@ -60,6 +61,10 @@ Install the newest TIPA with:
 
 TrollStore performs the final installation/signing pass. Directly overwriting a
 Mach-O inside an installed app is unsupported and normally breaks iOS trust.
+
+The default package preserves the known-good ARM64 path. If a completed
+Grape-X64 stage is supplied through `JUICE_X64_RUNTIME_STAGE`, packaging adds
+it beside Grape without replacing any ARM64 file.
 
 ## Individual stages
 
@@ -137,6 +142,47 @@ arguments to /var/jb/usr/bin/clang. Ordinary C, C++, and assembly inputs pass
 through untouched. make verify includes a functional packing test.
 Set JUICE_KEEP_PACKED_RESOURCES=1 only when inspecting a saved Winebuild
 assembly; successful normal builds remove the temporary packed blob.
+
+## Prefix initialization and installers
+
+New prefixes run controlled Wineboot initialization and write
+`.juice-prefix-ready` only after Wineboot signals readiness. The GUI setting
+means “skip Wineboot after initialization”; it never suppresses the first
+bootstrap of a new default prefix. `JUICE_SKIP_WINEBOOT=0` and
+`JUICE_FORCE_WINEBOOT=1` are available to the device CLI runner for explicit
+initialization and repair tests.
+
+The default 81-module runtime includes Wineboot, msiexec, MSI, Cabinet, RPC,
+OLE, services, registry, and shell support. After Grape and its ARM64 PE build
+exist, build the deterministic MSI and setup smoke packages with:
+
+    make installer-smokes
+
+They are written below `build/tests/installers`. They are test inputs, not
+third-party redistributables.
+
+## Experimental x86-64 build
+
+The translator components are intentionally separate from the ARM64 device
+build. On an ARM64 Linux host with CMake, Ninja or Make, Git, Curl, Python, and
+an xz-capable tar, run:
+
+    make verify-fex
+    make x64-components
+
+The scripts verify the pinned FEX revision and patch, download the pinned
+ARM64 LLVM-MinGW archive only after checking its SHA-256, build
+`libarm64ecfex.dll`, build the 81-module ARM64X/ARM64EC Wine closure, and build
+the AMD64 marker executable. Once a verified ARM64 stage is available at
+`build/runtime-stage/Grape`, assemble and package both roots with:
+
+    make x64-runtime
+    make x64-tipa
+
+`Grape` and `Grape-X64` remain separate in the TIPA, as do their persistent
+prefixes. The UIKit host reads the PE machine field and selects Grape-X64 only
+for AMD64/ARM64EC input when the experimental option is enabled. This is
+translation through Wine/FEX, not a virtual machine.
 
 ## FreeType detail
 

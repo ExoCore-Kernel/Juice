@@ -22,9 +22,9 @@ GUI source and local source matched byte-for-byte:
 - JuiceZip.m:
   c4e466a01d412e57a77d3e129de305fc916cf1658495b288d7cdef7568817fc3
 
-The only subsequent app-source change adds
-DYLD_LIBRARY_PATH=/var/jb/usr/lib to the child environment. The resulting
-repository app/main.m hash is:
+The only app-source change made during that 2026-08-01 audit added
+DYLD_LIBRARY_PATH=/var/jb/usr/lib to the child environment. The resulting hash
+at that historical checkpoint was:
 
     b1041ab6e107570500370cdf2e21724285e77a6e4cc1d09f1bb5855d4612170a
 
@@ -131,3 +131,18 @@ stale and contradictory binaries rather than a reproducible source repository.
 
 Historical scripts under legacy keep their old absolute paths and flags only as
 provenance. They are not supported entrypoints.
+
+## 2026-08-11 core v20 addendum
+
+The later core pass expanded the curated manifest from 42 to 81 PE modules,
+added installer infrastructure, JuiceGUI, the versioned UIKit control channel,
+and the isolated ARM64EC/FEX runtime. A complete on-device Wine build and both
+runtime assembly manifests passed. The exact Wine patch now spans 62 paths and
+has SHA-256
+`837ad8d75adf0af46f93bc6c4fb06e4052f1d8f4e688bc81a439b44a791b9659`.
+
+The installed v20 TIPA passed fresh ARM64, AMD64/FEX, text, desktop,
+application-launch, MSI, setup-EXE, persistence, uninstall, and controlled
+Wineboot smokes. Unlike this historical audit section, the canonical current
+evidence and hashes are maintained under
+`proofs/verified/2026-08-11/final-v20/`.

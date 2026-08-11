@@ -1,0 +1,6 @@
+MODULE = JuiceGUI.exe
+IMPORTS = advapi32 gdi32 shell32 user32
+EXTRADLLFLAGS = -mwindows -municode
+
+SOURCES = \
+	juicegui.c

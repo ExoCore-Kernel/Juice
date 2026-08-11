@@ -126,7 +126,11 @@ if [[ ! -x "$TROLLSTORE_HELPER" ]]; then
     exit 92
 fi
 
-"$SUDO" "$TROLLSTORE_HELPER" install force "$IPA" >"$LOG" 2>&1
+if ! "$SUDO" "$TROLLSTORE_HELPER" install force "$IPA" >"$LOG" 2>&1; then
+    echo "TrollStore failed to CoreTrust-sign $output" >&2
+    cat "$LOG" >&2
+    exit 95
+fi
 
 INSTALLED_APP="$(
     find /var/containers/Bundle/Application \

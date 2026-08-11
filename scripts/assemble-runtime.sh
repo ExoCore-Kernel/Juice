@@ -14,20 +14,46 @@ case "$STAGE" in "$ROOT"/build/*) ;; *) echo "Unsafe runtime stage: $STAGE" >&2;
 test -f "$MODULES" || { echo "Missing runtime module manifest: $MODULES" >&2; exit 2; }
 rm -rf "$GRAPE"
 mkdir -p "$GRAPE/build/wine-ios/server" "$GRAPE/build/wine-ios/loader" \
-  "$GRAPE/build/wine-ios/dlls/ntdll" "$GRAPE/build/wine-ios/dlls/win32u" \
+  "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows" \
+  "$GRAPE/build/wine-ios/dlls/crypt32" \
+  "$GRAPE/build/wine-ios/dlls/mountmgr.sys" \
+  "$GRAPE/build/wine-ios/dlls/win32u" \
   "$GRAPE/build/wine-ios/dlls/wineios.drv" "$GRAPE/build/wine-ios/dlls/ws2_32" \
-  "$GRAPE/build/wine-ios/nls" "$GRAPE/runtime/lib/wine/aarch64-windows" \
+  "$GRAPE/build/wine-ios/include" "$GRAPE/build/wine-ios/nls" \
+  "$GRAPE/runtime/lib/wine/aarch64-windows" \
   "$GRAPE/tools"
 
 cp "$NATIVE/server/wineserver" "$GRAPE/build/wine-ios/server/"
 cp "$NATIVE/loader/wine" "$GRAPE/build/wine-ios/loader/"
+test -s "$NATIVE/loader/wine.inf" || {
+  echo "Missing generated Wine prefix initializer: $NATIVE/loader/wine.inf" >&2
+  exit 3
+}
+cp "$NATIVE/loader/wine.inf" "$GRAPE/build/wine-ios/loader/"
 cp "$NATIVE/dlls/ntdll/ntdll.so" "$GRAPE/build/wine-ios/dlls/ntdll/"
+cp "$PEBUILD/dlls/ntdll/aarch64-windows/ntdll.dll" \
+  "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows/"
+cp "$NATIVE/dlls/crypt32/crypt32.so" "$GRAPE/build/wine-ios/dlls/crypt32/"
+cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$GRAPE/build/wine-ios/dlls/mountmgr.sys/"
 cp "$NATIVE/dlls/win32u/win32u.so" "$GRAPE/build/wine-ios/dlls/win32u/"
 cp "$NATIVE/dlls/wineios.drv/wineios.so" "$GRAPE/build/wine-ios/dlls/wineios.drv/"
 cp "$NATIVE/dlls/ws2_32/ws2_32.so" "$GRAPE/build/wine-ios/dlls/ws2_32/"
+for winmd in windows.applicationmodel windows.globalization windows.graphics \
+  windows.media windows.networking windows.perception windows.storage \
+  windows.system windows.ui windows.ui.xaml; do
+  test -s "$NATIVE/include/$winmd.winmd" || {
+    echo "Missing required Wine metadata: $NATIVE/include/$winmd.winmd" >&2
+    exit 3
+  }
+  cp "$NATIVE/include/$winmd.winmd" "$GRAPE/build/wine-ios/include/"
+done
 
 # Wine may resolve the Unix driver beside either the build tree or PE module.
 cp "$NATIVE/dlls/wineios.drv/wineios.so" "$GRAPE/runtime/lib/wine/aarch64-windows/wineios.so"
+cp "$NATIVE/dlls/ws2_32/ws2_32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/ws2_32.so"
+cp "$NATIVE/dlls/crypt32/crypt32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/crypt32.so"
+cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$GRAPE/runtime/lib/wine/aarch64-windows/mountmgr.so"
+cp "$NATIVE/dlls/win32u/win32u.so" "$GRAPE/runtime/lib/wine/aarch64-windows/win32u.so"
 
 mapfile -t pe_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
 for target in "${pe_targets[@]}"; do
@@ -55,6 +81,11 @@ fi
 
 cp "$ROOT/wine/nls/"*.nls "$GRAPE/build/wine-ios/nls/"
 rsync -a "$ROOT/packaging/prefix-template/" "$GRAPE/prefix-template/"
+mkdir -p "$GRAPE/prefix-template/drive_c/windows/system32"
+cp "$PEBUILD/programs/juicegui/aarch64-windows/JuiceGUI.exe" \
+  "$GRAPE/prefix-template/drive_c/windows/system32/"
+cp "$PEBUILD/programs/winemine/aarch64-windows/winemine.exe" \
+  "$GRAPE/prefix-template/drive_c/windows/system32/"
 "${BASH:-bash}" "$ROOT/scripts/build-launchers.sh"
 cp "$ROOT/build/launchers/grape-trace-parent" "$ROOT/build/launchers/grape-nested-wrapper" "$GRAPE/tools/"
 chmod 755 "$GRAPE/build/wine-ios/server/wineserver" "$GRAPE/build/wine-ios/loader/wine" "$GRAPE/tools/"*

@@ -1,7 +1,33 @@
 # GUI controls
 
-Juice keeps its controls outside the Windows surface in normal mode. Fullscreen
-expands the surface while retaining an exit overlay.
+Juice normally opens directly into the full-screen `JuiceGUI.exe` desktop.
+Wine manages and composites application windows inside this one surface. The
+small `...` button in the upper-right exposes the UIKit diagnostic controls;
+the same host controls can return to the desktop without restarting Wine.
+
+The desktop application bar provides Juice, Launch, Install App, Files,
+Refresh, and Uninstall. The application list is populated from Juice's catalog
+and the standard per-user and machine-wide Wine uninstall keys. ARM64 entries
+launch directly. Detected AMD64 or ARM64EC entries are visibly labelled
+experimental and request the isolated Grape-X64/FEX host route.
+
+## Installing applications
+
+Install App requests a file through the versioned `wineios.drv`/UIKit control
+channel. The iOS picker accepts MSI, EXE, and ZIP selections and imports the
+chosen item into Juice's persistent imported-files directory.
+
+- MSI files launch as `msiexec /i <path>`.
+- ARM64 setup executables launch normally in Grape.
+- AMD64 setup executables use Grape-X64/FEX when the experimental runtime is
+  present and enabled.
+- ZIP files use the host's traversal-safe portable importer.
+
+The default Wine prefix is persistent under
+`/var/mobile/Documents/JuiceData`; app restarts and TIPA updates do not erase
+installed programs. Juice-owned programs are refreshed from the app bundle on
+upgrade, while ordinary files belonging to installed programs are not
+overwritten.
 
 ## Pointer input
 
@@ -30,11 +56,12 @@ The app-side transport field clears after a successful send. It is not the
 Windows edit control itself. Input is sent only to the active socket and HWND
 associated with the currently displayed frame.
 
-The v12 driver synchronously delivers WM_CHAR, queries the resulting text
-length, invalidates parent and child, and presents the active surface. This
-message path has diagnostic proof, but the old binary displayed no glyphs
-because native Wine was configured without FreeType. A FreeType-enabled build
-and visual retest are required before release.
+The driver synchronously delivers WM_CHAR, queries the resulting text length,
+invalidates parent and child, and presents the active surface. The v20 iPad
+proof visibly rendered the test phrase and PASS status after 20 UTF-16 units
+reached a Win32 EDIT control. The paired frame, log, and independent
+render/input markers are in
+`proofs/verified/2026-08-11/final-v20/text/`.
 
 ## Fullscreen
 
@@ -42,6 +69,17 @@ Tap Fullscreen to hide the launcher form and diagnostic view and expand the
 canvas to the safe display area. Tap Exit Fullscreen to restore the controls.
 Juice also hides the status bar and home-indicator hint while fullscreen is
 active.
+
+## Wallpaper
+
+The built-in desktop background is drawn procedurally and allocates no bitmap.
+To use a custom image, place a Windows BMP at:
+
+    /var/mobile/Documents/JuiceData/Wallpaper.bmp
+
+Then choose Juice > Reload wallpaper. Juice centre-crops the bitmap to fill the
+desktop. Advanced users can override the Windows path in
+`HKCU\Software\Juice\Desktop`, value `Wallpaper`.
 
 ## Diagnostics
 
@@ -62,5 +100,6 @@ Relevant markers are:
 
 GUI_TEXT_SENT proves the app wrote the protocol message. The JuiceInput line
 proves the active Wine driver decoded it and ran the synchronous message,
-length, repaint, and presentation path. Visible glyphs are still the required
-end-to-end result; successful transport logs alone are insufficient.
+length, repaint, and presentation path. For a release proof, retain both these
+lines and the rendered framebuffer; protocol logs alone do not prove that
+glyphs were visible.

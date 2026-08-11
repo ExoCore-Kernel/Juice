@@ -1195,13 +1195,26 @@ static NTSTATUS open_builtin_pe_file( const char *name, OBJECT_ATTRIBUTES *attr,
 {
     NTSTATUS status;
     HANDLE mapping;
+    BOOL juice_trace = getenv( "JUICE_EXPERIMENTAL_X64" ) != NULL;
 
     *module = NULL;
     status = open_dll_file( name, attr, &mapping );
+    if (juice_trace)
+    {
+        fprintf( stderr, "[JuiceHybrid] open name=%s machine=%04x status=%08x\n",
+                 name, machine, status );
+        fflush( stderr );
+    }
     if (!status)
     {
         status = virtual_map_builtin_module( mapping, module, size, image_info,
                                              limit_low, limit_high, machine, prefer_native, offset );
+        if (juice_trace)
+        {
+            fprintf( stderr, "[JuiceHybrid] map name=%s status=%08x module=%p size=%zx\n",
+                     name, status, *module, *size );
+            fflush( stderr );
+        }
         NtClose( mapping );
     }
     return status;

@@ -3,6 +3,9 @@ WINE REGISTRY Version 2
 
 #arch=win64
 
+[Hardware\\Description\\System\\CentralProcessor\\0] 1784101258
+#time=1dd142d46e937fa
+
 [Software\\Classes\\Wow6432Node] 1784050117
 #time=1dd13b63471ece2
 

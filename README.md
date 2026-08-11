@@ -8,21 +8,30 @@ the same Wine delta as an auditable patch, packaging assets, and build scripts.
 
 Juice currently provides:
 
+- a lightweight native ARM64 `JuiceGUI.exe` desktop inside one Wine desktop
+  surface, with an application list, taskbar, custom BMP wallpaper, Files, and
+  installer controls;
 - a UIKit surface for Wine windows and BGRA frames;
 - touch-to-Wine pointer input with selectable left and right buttons;
 - direct ARM64 Windows EXE selection;
+- automatic PE architecture detection and an isolated, explicitly
+  experimental x86-64 path through ARM64EC Wine and FEX;
 - safe portable ZIP import with adjacent DLLs and assets preserved;
 - fullscreen display;
 - UTF-16 text and Backspace, Tab, and Enter transport to a touched control;
+- persistent Wine prefixes plus MSI and ordinary setup-EXE support;
+- a versioned, non-framebuffer control channel from `wineios.drv` to UIKit for
+  file import and host-routed launches;
 - persistent app and Wine-driver diagnostic logs.
 
-WineMine and the ARM64 portable build of Notepad4 have both rendered real
-Windows windows on the test iPad. Touch, portable ZIP import, and frame delivery
-were proven on device. The previous binary had been configured without
-FreeType, so Windows text glyphs were not visible even when message logs showed
-successful delivery. The supported build now requires FreeType and exposes its
-runtime library path. That corrected build still needs a final visual text
-retest before text rendering is called a completed milestone.
+The 2026-08-11 v20 device pass verified ARM64 WineMine, the native JuiceGUI
+desktop, visible GDI text, UTF-16 edit-control input, FEX-translated x86-64
+execution, MSI install/launch/persistence/uninstall, and an ordinary ARM64
+setup executable. The deterministic control peer exercised the same versioned
+request/response protocol used by the UIKit document picker and retained every
+marker, log, and framebuffer under
+`proofs/verified/2026-08-11/final-v20/`. A real foreground picker selection is
+still a manual release check because it requires an unlocked, attended iPad.
 
 ## Supported target
 
@@ -51,6 +60,14 @@ executable. The final TIPA and checksum are written under dist. See
 [Building](docs/BUILDING.md) for the complete prerequisite command, clean-build
 behavior, useful overrides, and macOS-only steps.
 
+The optional x86-64 components are reproducibly built on ARM64 Linux with the
+pinned LLVM-MinGW and FEX revisions, then combined with a verified ARM64 Grape
+runtime:
+
+    make x64-components
+    make x64-runtime
+    make x64-tipa
+
 ## Source integrity
 
 The full Wine tree is based on commit
@@ -65,11 +82,15 @@ silently drifting apart.
 
 ## Using Juice
 
-Tap Choose EXE or Portable ZIP and select an ARM64 Windows executable or ZIP.
-For ZIPs, Juice preserves the directory tree and launches from the selected
-executable's directory, allowing adjacent dependencies to resolve. x86 and x64
-translation are not included. See [Portable applications](docs/PORTABLE-APPS.md)
-and [GUI controls](docs/CONTROLS.md).
+Juice launches directly into its full-screen Wine desktop. Use Install App for
+an MSI, setup EXE, or portable ZIP; Files opens the persistent imported-files
+area. Juice preserves ZIP directory trees and launches from the selected
+executable's directory so adjacent dependencies resolve. Windows ARM64 runs
+natively through Grape. AMD64 is detected automatically and routed through the
+separate experimental ARM64EC/FEX runtime when that runtime is packaged and
+enabled. 32-bit x86 is not supported. See
+[Portable applications](docs/PORTABLE-APPS.md) and
+[GUI controls](docs/CONTROLS.md).
 
 ## Repository map
 

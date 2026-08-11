@@ -1,0 +1,6 @@
+457585173b236c654df790c82adb4e69ea084756e845412e635db5453e7602fc  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/runtime/lib/wine/aarch64-windows/cmd.exe
+7a91dbbaa618de95230b301a6072eb2ad2dfa88b7c161b2211c0f2ae26f46cbd  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/build/wine-ios/dlls/ntdll/ntdll.so
+a0cb2ef16a52b207734a3e7aa63a091e3e639a35ac1a0c07e6ab55e7389951ae  /var/containers/Bundle/Application/CC5BA8E5-587D-4BCE-957C-34B8AD5CD6CA/Juice.app/Grape/runtime/lib/wine/aarch64-windows/ntdll.dll
+e8943f49fcf5d1596586a45ea9b71eeaa30021e8216124d55a716000249d5ddb  /var/mobile/Documents/Juice-arm64-final-v11.ok
+JUICE_ARM64_DEVICE_SMOKE_OK status=0 marker=/var/mobile/Documents/Juice-arm64-final-v11.ok log=/var/mobile/Documents/Juice-arm64-final-v11.log
+JUICE_ARM64_CANONICAL_RESULT=0

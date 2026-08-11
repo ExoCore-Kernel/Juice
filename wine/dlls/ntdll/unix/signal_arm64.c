@@ -1116,6 +1116,10 @@ static BOOL handle_syscall_fault( struct thread_data *data, ucontext_t *context,
 #ifdef __APPLE__
 /* Juice iOS x18 SIGSEGV recovery bridge */
 extern void juice_ios_restore_x18_and_retry(void);
+static volatile sig_atomic_t juice_x18_recovery_count;
+static volatile sig_atomic_t juice_tls_recovery_count;
+static volatile sig_atomic_t juice_trampoline_recovery_count;
+static volatile sig_atomic_t juice_derived_teb_recovery_count;
 
 __ASM_GLOBAL_FUNC( juice_ios_restore_x18_and_retry,
                    "mov x18, x17\n\t"
@@ -1140,6 +1144,37 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
     DWORD64 esr = get_fault_esr( sigcontext );
 
 #ifdef __APPLE__
+    /*
+     * A nested fault can occur at the trampoline's TEB load if Darwin
+     * clears the x17 carrier while returning from the first signal.  The
+     * generic recovery must not overwrite x16 in that case: x16 still holds
+     * the original PE retry address, and replacing it with trampoline+4
+     * creates a tight branch-to-self loop.  Emulate this one load and resume
+     * at the following CBZ while preserving x16.
+     */
+    if (data->teb &&
+        PC_sig(sigcontext) == (ULONG_PTR)juice_ios_restore_x18_and_retry + 4 &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR))
+    {
+        sig_atomic_t number = ++juice_trampoline_recovery_count;
+
+        REGn_sig(17, sigcontext) =
+            *(const ULONG_PTR *)((const char *)data->teb + 0x378);
+        REGn_sig(18, sigcontext) = (ULONG_PTR)data->teb;
+        PC_sig(sigcontext) += 4;
+        if (number <= 16)
+        {
+            fprintf( stderr,
+                     "[JuiceX18] trampoline #%d retry=%p restored_x17=%p "
+                     "teb=%p\n",
+                     (int)number, (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(17, sigcontext), data->teb );
+            fflush( stderr );
+        }
+        return;
+    }
+
     /*
      * iOS reserves the first 4 GiB for Mach-O __PAGEZERO, so the normal
      * Windows KUSER_SHARED_DATA address (0x7ffe0000) cannot be mapped.
@@ -1210,13 +1245,172 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
         (ULONG_PTR)siginfo->si_addr < 0x10000 &&
         (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW || ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR))
     {
+        sig_atomic_t number = ++juice_x18_recovery_count;
         ULONG_PTR retry = PC_sig(sigcontext);
+
+        if (number <= 32)
+        {
+            fprintf( stderr,
+                     "[JuiceX18] broad #%d pc=%p fault=%p instr=%08x "
+                     "x8=%p x16=%p x17=%p x18=%p teb=%p\n",
+                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
+                     siginfo->si_addr, *(const ULONG *)PC_sig(sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(8, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(17, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(18, sigcontext), data->teb );
+            fflush( stderr );
+        }
         if ((ULONG_PTR)siginfo->si_addr == 0x1488 &&
             REGn_sig(16, sigcontext) == retry - 0x1c) retry -= 8;
         REGn_sig(16, sigcontext) = retry;
         REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
         PC_sig(sigcontext) = (ULONG_PTR)juice_ios_restore_x18_and_retry;
         return;
+    }
+
+    /*
+     * Darwin may expose a reconstructed x18 in the signal context even
+     * though the faulting PE instruction executed with x18 cleared.  A
+     * low-address data abort through an instruction whose base register is
+     * literally x18 is therefore safe to retry with the Wine TEB restored.
+     */
+    if (data->teb &&
+        (ULONG_PTR)siginfo->si_addr < 0x10000 &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
+        !(PC_sig(sigcontext) & 3) &&
+        ((*(const ULONG *)PC_sig(sigcontext) >> 5) & 0x1f) == 18)
+    {
+        sig_atomic_t number = ++juice_x18_recovery_count;
+
+        if (number <= 32)
+        {
+            fprintf( stderr,
+                     "[JuiceX18] direct #%d pc=%p fault=%p instr=%08x "
+                     "x16=%p x17=%p x18=%p teb=%p\n",
+                     (int)number,
+                     (void *)(ULONG_PTR)PC_sig(sigcontext), siginfo->si_addr,
+                     *(const ULONG *)PC_sig(sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(17, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(18, sigcontext), data->teb );
+            fflush( stderr );
+        }
+
+        REGn_sig(16, sigcontext) = PC_sig(sigcontext);
+        REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
+        PC_sig(sigcontext) = (ULONG_PTR)juice_ios_restore_x18_and_retry;
+        return;
+    }
+
+    /*
+     * Darwin can clear the physical x18 while reporting Wine's reconstructed
+     * x18 in the signal context.  If PE code computed &TEB->field while x18
+     * was physically clear, a later load/store faults through a small offset
+     * held in another base register (for example x19 == 0x1258).  Repair that
+     * derived base and retry.  Limit this to non-null offsets inside the TEB
+     * range and to AArch64 load/store encodings; this deliberately does not
+     * turn ordinary null dereferences into TEB accesses.
+     */
+    if (data->teb &&
+        (ULONG_PTR)siginfo->si_addr >= 0x20 &&
+        (ULONG_PTR)siginfo->si_addr < 0x4000 &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
+        !(PC_sig(sigcontext) & 3))
+    {
+        ULONG instruction = *(const ULONG *)PC_sig(sigcontext);
+        unsigned int base_register = (instruction >> 5) & 0x1f;
+
+        if ((instruction & 0x0a000000) == 0x08000000 &&
+            base_register <= 28 && REGn_sig(base_register, sigcontext) >= 0x20 &&
+            REGn_sig(base_register, sigcontext) < 0x4000)
+        {
+            ULONG_PTR base = REGn_sig(base_register, sigcontext);
+            ULONG_PTR fault = (ULONG_PTR)siginfo->si_addr;
+
+            if (fault >= base && fault - base < 0x1000)
+            {
+                sig_atomic_t number = ++juice_derived_teb_recovery_count;
+
+                REGn_sig(base_register, sigcontext) =
+                    base + (ULONG_PTR)data->teb;
+                if (number <= 32)
+                {
+                    fprintf( stderr,
+                             "[JuiceX18] derived #%d pc=%p fault=%p "
+                             "instr=%08x base=x%u value=%p fixed=%p teb=%p\n",
+                             (int)number,
+                             (void *)(ULONG_PTR)PC_sig(sigcontext),
+                             siginfo->si_addr, instruction, base_register,
+                             (void *)base,
+                             (void *)(ULONG_PTR)REGn_sig(base_register, sigcontext),
+                             data->teb );
+                    fflush( stderr );
+                }
+                return;
+            }
+        }
+    }
+
+    /*
+     * FEX's Windows TLS helpers derive x8 from x18 immediately before
+     * accessing TEB::TlsSlots.  Match only those exact instruction
+     * sequences and the fixed TLS-slot address range.
+     */
+    if (data->teb &&
+        (ULONG_PTR)siginfo->si_addr >= 0x1480 &&
+        (ULONG_PTR)siginfo->si_addr < 0x1680 &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
+        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8)
+    {
+        BOOL recover = FALSE;
+        ULONG instruction = *(const ULONG *)PC_sig(sigcontext);
+
+        if (*(const ULONG *)(PC_sig(sigcontext) - 4) == 0x8b204e48 &&
+            (instruction == 0xf94a4100 ||
+             (instruction & 0xffffffe0) == 0xf90a4100))
+            recover = TRUE;
+        else if (*(const ULONG *)(PC_sig(sigcontext) - 8) == 0x8b204e48 &&
+                 *(const ULONG *)(PC_sig(sigcontext) - 4) == 0x52800020 &&
+                 (instruction & 0xffffffe0) == 0xf90a4100)
+            recover = TRUE;
+        else if (*(const ULONG *)(PC_sig(sigcontext) - 8) == 0x8b204e48 &&
+                 (*(const ULONG *)(PC_sig(sigcontext) - 4) & 0xffffffe0) == 0x2a0003e0 &&
+                 (instruction & 0xffffffe0) == 0xf90a4100)
+            recover = TRUE;
+
+        if (recover)
+        {
+            sig_atomic_t number = ++juice_tls_recovery_count;
+
+            if (number <= 32)
+            {
+                fprintf( stderr,
+                         "[JuiceX18] tls #%d pc=%p fault=%p "
+                         "instr=%08x x8=%p fixed_x8=%p x18=%p teb=%p\n",
+                         (int)number,
+                         (void *)(ULONG_PTR)PC_sig(sigcontext),
+                         siginfo->si_addr, instruction,
+                         (void *)(ULONG_PTR)REGn_sig(8, sigcontext),
+                         (void *)(ULONG_PTR)(REGn_sig(8, sigcontext) +
+                                             (ULONG_PTR)data->teb),
+                         (void *)(ULONG_PTR)REGn_sig(18, sigcontext), data->teb );
+                fflush( stderr );
+            }
+
+            /*
+             * x8 already contains the slot offset produced while Darwin had
+             * x18 cleared.  Repair that effective address directly.  This
+             * lets the faulting load/store retry without another signal
+             * return through the x18 trampoline (which could repeat forever
+             * for TlsAlloc's STR XZR compiler variant).
+             */
+            REGn_sig(8, sigcontext) += (ULONG_PTR)data->teb;
+            return;
+        }
     }
 
     /*
@@ -1263,7 +1457,7 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
             stderr,
             "[JuiceStage] native segv #%d; "
             "signal=%d code=%d pc=%p lr=%p "
-            "sp=%p x16=%p x17=%p x18=%p "
+            "sp=%p x8=%p x16=%p x17=%p x18=%p "
             "addr=%p esr=%016llx ec=%02llx "
             "teb=%p frame=%p\n",
             (int)juice_number,
@@ -1272,6 +1466,8 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
             (void *)(ULONG_PTR)PC_sig(sigcontext),
             (void *)(ULONG_PTR)LR_sig(sigcontext),
             (void *)(ULONG_PTR)SP_sig(sigcontext),
+            (void *)(ULONG_PTR)
+                REGn_sig(8, sigcontext),
             (void *)(ULONG_PTR)
                 REGn_sig(16, sigcontext),
             (void *)(ULONG_PTR)
@@ -1337,6 +1533,21 @@ static void ill_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
     CONTEXT context;
     EXCEPTION_RECORD rec = { .ExceptionCode = EXCEPTION_ILLEGAL_INSTRUCTION,
                              .ExceptionAddress = (void *)PC_sig(sigcontext) };
+
+    fprintf( stderr,
+             "[JuiceStage] native ill; signal=%d code=%d pc=%p lr=%p "
+             "sp=%p x0=%p x1=%p x16=%p x17=%p x18=%p teb=%p\\n",
+             signal, siginfo->si_code,
+             (void *)(ULONG_PTR)PC_sig(sigcontext),
+             (void *)(ULONG_PTR)LR_sig(sigcontext),
+             (void *)(ULONG_PTR)SP_sig(sigcontext),
+             (void *)(ULONG_PTR)REGn_sig(0, sigcontext),
+             (void *)(ULONG_PTR)REGn_sig(1, sigcontext),
+             (void *)(ULONG_PTR)REGn_sig(16, sigcontext),
+             (void *)(ULONG_PTR)REGn_sig(17, sigcontext),
+             (void *)(ULONG_PTR)REGn_sig(18, sigcontext),
+             data->teb );
+    fflush( stderr );
 
     if (!(PSTATE_sig( sigcontext ) & 0x10) && /* AArch64 (not WoW) */
         !(PC_sig( sigcontext ) & 3))

@@ -30,6 +30,7 @@
 #include <dlfcn.h>
 #include <sys/stat.h>
 #ifdef __APPLE__
+#include <TargetConditionals.h>
 #include <Security/Security.h>
 #endif
 #ifdef SONAME_LIBGNUTLS
@@ -914,6 +915,8 @@ static void import_certs_from_path(LPCSTR path, BOOL allow_dir)
 }
 
 static const char * const CRYPT_knownLocations[] = {
+ "/var/jb/etc/ssl/certs/ca-certificates.crt", /* rootless iOS */
+ "/var/jb/etc/ssl/certs",                    /* rootless iOS */
  "/etc/ssl/certs/ca-certificates.crt",
  "/etc/ssl/certs",
  "/etc/pki/tls/certs/ca-bundle.crt",
@@ -927,7 +930,7 @@ static void load_root_certs(void)
 {
     unsigned int i;
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !TARGET_OS_IPHONE
     const SecTrustSettingsDomain domains[] = {
         kSecTrustSettingsDomainSystem,
         kSecTrustSettingsDomainAdmin,

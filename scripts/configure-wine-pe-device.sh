@@ -8,6 +8,7 @@ BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 SHELL_BIN="${SHELL_BIN:-$JBROOT/usr/bin/sh}"
 HOST_TRIPLET="${JUICE_HOST_TRIPLET:-aarch64-apple-darwin$(uname -r)}"
 PE_CLANG="${JUICE_PE_CLANG:-$ROOT/build/toolchain/clang}"
+PE_ARCHS="${JUICE_PE_ARCHS:-aarch64}"
 
 case "$BUILD" in
   "$ROOT"/build/*) ;;
@@ -42,7 +43,7 @@ set +e
 "$SHELL_BIN" "$SOURCE/configure" \
   --build="$HOST_TRIPLET" --host="$HOST_TRIPLET" \
   --prefix="$ROOT/build/wine-runtime-arm64" \
-  --enable-archs=aarch64 --with-mingw="$PE_CLANG" \
+  --enable-archs="$PE_ARCHS" --with-mingw="$PE_CLANG" \
   --disable-tests --disable-win16 --without-freetype \
   --without-x --without-wayland --without-coreaudio --without-cups \
   --without-dbus --without-ffmpeg --without-fontconfig --without-gettext \
@@ -73,4 +74,4 @@ grep -Fq "aarch64_CC = $PE_CLANG" Makefile || {
   echo "PE configure did not select the resource-aware Clang wrapper." >&2
   exit 4
 }
-echo "JUICE_PE_CONFIGURE_OK path=$BUILD compiler=$PE_CLANG"
+echo "JUICE_PE_CONFIGURE_OK path=$BUILD compiler=$PE_CLANG archs=$PE_ARCHS"

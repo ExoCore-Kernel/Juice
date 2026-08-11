@@ -32,6 +32,9 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+#if defined(__APPLE__) && !TARGET_OS_IPHONE
 #include <DiskArbitration/DiskArbitration.h>
 #include <SystemConfiguration/SCDynamicStoreCopyDHCPInfo.h>
 #include <SystemConfiguration/SCNetworkConfiguration.h>
@@ -48,7 +51,7 @@
 
 WINE_DEFAULT_DEBUG_CHANNEL(mountmgr);
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !TARGET_OS_IPHONE
 
 typedef struct
 {
@@ -232,16 +235,16 @@ void run_diskarbitration_loop(void)
     CFRelease( session );
 }
 
-#else  /* __APPLE__ */
+#else  /* macOS Disk Arbitration */
 
 void run_diskarbitration_loop(void)
 {
     TRACE( "Skipping, Disk Arbitration support not compiled in\n" );
 }
 
-#endif  /* __APPLE__ */
+#endif  /* macOS Disk Arbitration */
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && !TARGET_OS_IPHONE
 
 static UInt8 map_option( unsigned int option )
 {

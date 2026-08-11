@@ -5,6 +5,7 @@ dist/
 *.ipa
 *.tar.gz
 *.sha256
+!proofs/**/*.sha256
 Diamond*/
 __pycache__/
 *.pyc

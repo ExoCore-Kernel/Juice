@@ -6,8 +6,13 @@ required=(
   app/main.m app/JuiceZip.m app/tests/ZipExtractorTests.m
   launcher/grape-trace-parent.c launcher/grape-nested-wrapper.c
   config/runtime-modules.txt config/wine-base.txt patches/wine-ios.patch
+  config/x86_64-build.env patches/fex-juice-ios.patch
   scripts/build-all-device.sh scripts/build-pe-compiler-wrapper-device.sh
   scripts/regenerate-wine-patch.sh
+  scripts/regenerate-fex-patch.sh scripts/verify-fex-patch.sh
+  scripts/run-control-bridge-smoke-device.py
+  scripts/run-gui-text-smoke-device.py scripts/run-grape-cli-device.sh
+  scripts/run-arm64-smoke-device.sh scripts/run-x86_64-smoke-device.sh
   scripts/verify-wine-patch.sh
   toolchain/juice-bison toolchain/juice-cc toolchain/juice-cxx
   toolchain/juice-pe-clang.c toolchain/juice-pack-incbins.py
@@ -15,7 +20,14 @@ required=(
   wine/dlls/wineios.drv/Makefile.in wine/dlls/wineios.drv/dllmain.c
   wine/dlls/wineios.drv/iosdrv.c wine/dlls/wineios.drv/iosdrv.h
   wine/dlls/wineios.drv/ipc.c wine/dlls/wineios.drv/ipc.h
+  wine/dlls/wineios.drv/control.c wine/dlls/wineios.drv/control.h
+  wine/dlls/wineios.drv/control_protocol.h
+  wine/programs/juicegui/juicegui.c
+  wine/programs/juicesetupsmoke/main.c
+  wine/programs/juicetextsmoke/main.c wine/include/juiceios.h
   packaging/prefix-template/system.reg packaging/prefix-template/user.reg
+  proofs/verified/2026-08-11/final-v20/README.md
+  proofs/verified/2026-08-11/final-v20/SHA256SUMS
 )
 for path in "${required[@]}"; do
   test -e "$ROOT/$path" || { echo "Missing $path" >&2; exit 2; }
@@ -31,6 +43,8 @@ while IFS= read -r script; do bash -n "$script"; done < <(
 bash -n "$ROOT/toolchain/juice-bison" "$ROOT/toolchain/juice-cc"
 for python_source in \
   "$ROOT/scripts/patch-pe-shared-data.py" \
+  "$ROOT/scripts/run-control-bridge-smoke-device.py" \
+  "$ROOT/scripts/run-gui-text-smoke-device.py" \
   "$ROOT/toolchain/juice-pack-incbins.py"; do
   python3 -c 'import ast,pathlib,sys; ast.parse(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))' \
     "$python_source"
@@ -40,6 +54,8 @@ cc -std=c11 -Wall -Wextra -fsyntax-only "$ROOT/toolchain/juice-pe-clang.c"
 grep -q 'PORTABLE_ZIP_READY' "$ROOT/app/main.m"
 grep -q 'FULLSCREEN_CHANGED' "$ROOT/app/main.m"
 grep -q 'GUI_TEXT_SENT' "$ROOT/app/main.m"
+grep -q 'CONTROL_V1_FILE_PICKER_OPEN' "$ROOT/app/main.m"
+grep -q 'PE_ARCH_DETECTED' "$ROOT/app/main.m"
 grep -q 'MOUSE_BUTTON_MODE' "$ROOT/app/main.m"
 grep -q 'DYLD_LIBRARY_PATH=' "$ROOT/app/main.m"
 grep -q 'offset + 22u + JZRead16' "$ROOT/app/JuiceZip.m"
@@ -50,9 +66,13 @@ grep -q 'JUICE_IOS_TEXT' "$ROOT/wine/dlls/wineios.drv/ipc.h"
 grep -q 'MOUSEEVENTF_RIGHTDOWN' "$ROOT/wine/dlls/wineios.drv/ipc.c"
 grep -q 'self.activeClient=fd' "$ROOT/app/main.m"
 grep -q 'NtUserWindowFromPoint' "$ROOT/wine/dlls/wineios.drv/ipc.c"
+grep -q 'NtUserChildWindowFromPointEx' "$ROOT/wine/dlls/wineios.drv/ipc.c"
 grep -q 'NtUserMessageCall(target,WM_CHAR' "$ROOT/wine/dlls/wineios.drv/ipc.c"
 grep -q 'ios_ipc_register_queue' "$ROOT/wine/dlls/wineios.drv/ipc.c"
 grep -q 'iosdrv_present_now' "$ROOT/wine/dlls/wineios.drv/ipc.c"
+grep -q 'JUICE_CONTROL_VERSION' "$ROOT/wine/dlls/wineios.drv/control_protocol.h"
+grep -q 'JUICE_GUI_ARM64_OK' "$ROOT/wine/programs/juicegui/juicegui.c"
+grep -q 'JUICE_TEXT_GDI_OK' "$ROOT/wine/programs/juicetextsmoke/main.c"
 grep -q 'input.mi.dx+=window.left' "$ROOT/wine/dlls/wineios.drv/ipc.c"
 grep -q 'runtime/lib/wine/aarch64-windows/wineios.so' "$ROOT/scripts/assemble-runtime.sh"
 grep -q 'FREETYPE_CFLAGS' "$ROOT/scripts/configure-wine-device.sh"
@@ -115,13 +135,13 @@ for raw in path.read_text(encoding="utf-8").splitlines():
         entries.append(entry)
 pattern = re.compile(
     r"(?:dlls|programs)/[A-Za-z0-9_.+-]+/aarch64-windows/"
-    r"[A-Za-z0-9_.+-]+\.(?:dll|exe|drv)"
+    r"[A-Za-z0-9_.+-]+\.(?:dll|exe|drv|sys)"
 )
 invalid = [entry for entry in entries if not pattern.fullmatch(entry)]
 duplicates = sorted({entry for entry in entries if entries.count(entry) > 1})
 basenames = [pathlib.PurePosixPath(entry).name for entry in entries]
 basename_duplicates = sorted({name for name in basenames if basenames.count(name) > 1})
-if len(entries) < 40 or invalid or duplicates or basename_duplicates:
+if len(entries) < 81 or invalid or duplicates or basename_duplicates:
     raise SystemExit(
         "invalid runtime manifest: "
         f"count={len(entries)} invalid={invalid} duplicates={duplicates} "
@@ -140,10 +160,17 @@ if test -n "$excluded"; then
   echo "Wine tree contains excluded Git metadata or backup file: $excluded" >&2
   exit 3
 fi
-oversized="$(find "$ROOT" -path "$ROOT/.git" -prune -o \
+oversized="$(find "$ROOT" \
+  \( -path "$ROOT/.git" -o -path "$ROOT/build" -o -path "$ROOT/dist" \) -prune -o \
   -type f -size +95M -print)"
 if test -n "$oversized"; then
   echo "A tracked-source candidate exceeds GitHub's 100 MB limit: $oversized" >&2
   exit 4
+fi
+if test -d "$ROOT/screenshots"; then
+  (cd "$ROOT/screenshots" && sha256sum -c SHA256SUMS)
+fi
+if test -d "$ROOT/proofs/verified/2026-08-11/final-v20"; then
+  (cd "$ROOT/proofs/verified/2026-08-11/final-v20" && sha256sum -c SHA256SUMS)
 fi
 echo "JUICE_SOURCE_VERIFY_OK"
