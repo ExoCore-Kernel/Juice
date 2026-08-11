@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/x86_64-build.env"
+CACHE="${JUICE_X64_CACHE:-$ROOT/build/x86_64-cache}"
+TOOLCHAIN="$CACHE/llvm-mingw-$JUICE_LLVM_MINGW_VERSION-ucrt-ubuntu-22.04-aarch64"
+BUILD="${JUICE_WOW64_PE_BUILD:-$ROOT/build/wine-wow64-pe}"
+
+case "$BUILD" in
+  "$ROOT"/build/*) ;;
+  *) test "${JUICE_ALLOW_EXTERNAL_BUILD:-0}" = 1 || {
+       echo "Refusing WoW64 Wine build outside build/: $BUILD" >&2
+       exit 2
+     };;
+esac
+
+test "$(uname -s)" = Linux || {
+  echo "The WoW64 PE build must run on an ARM64 Linux host." >&2
+  exit 2
+}
+for tool in bison flex make; do
+  command -v "$tool" >/dev/null || { echo "Missing build tool: $tool" >&2; exit 2; }
+done
+
+"$ROOT/scripts/bootstrap-x86_64-toolchain-linux.sh"
+export PATH="$TOOLCHAIN/bin:/usr/local/bin:/usr/bin:/bin"
+mkdir -p "$BUILD"
+(
+  cd "$BUILD"
+  "$ROOT/wine/configure" \
+    --prefix=/usr/local \
+    --enable-archs=i386,aarch64 \
+    --with-mingw=clang \
+    --disable-tests --disable-win16 \
+    --without-freetype --without-x --without-wayland --without-coreaudio \
+    --without-cups --without-dbus --without-ffmpeg --without-fontconfig \
+    --without-gettext --without-gphoto --without-gnutls --without-gssapi \
+    --without-gstreamer --without-krb5 --without-netapi --without-opencl \
+    --without-opengl --without-oss --without-pcap --without-pcsclite \
+    --without-pulse --without-sane --without-sdl --without-udev \
+    --without-usb --without-v4l2 --without-vulkan
+)
+
+pe_archs="$(sed -n 's/^PE_ARCHS = *//p' "$BUILD/Makefile" | head -1)"
+[[ " $pe_archs " == *" i386 "* && " $pe_archs " == *" aarch64 "* ]] || {
+  echo "Wine configure did not enable i386/AArch64 WoW64. PE_ARCHS=$pe_archs" >&2
+  exit 3
+}
+echo "JUICE_WOW64_CONFIGURE_OK path=$BUILD pe_archs=$pe_archs"
