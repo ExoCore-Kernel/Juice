@@ -117,5 +117,4 @@ host filesystem through Wine's Z: drive. Only run software you trust. Read
 [Security](SECURITY.md) before testing or distributing it.
 
 Wine remains LGPL-2.1-or-later under its in-tree license files. Juice-original
-code has not yet been assigned an open-source license by its owner. Choose and
-add that license before public release; see [Licensing](LICENSES/README.md).
+code is licensed under the MIT license. 
