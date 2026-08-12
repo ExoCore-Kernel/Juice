@@ -9,3 +9,6 @@ docs, and the relevant parts of legacy are currently copyright the Juice
 project owner with all rights reserved. The owner must choose and add an
 explicit open-source license before advertising the project as open source.
 Merely publishing the source on GitHub does not grant reuse rights.
+
+
+JUICE CODE IS PROVIDED UNDER THE MIT LICENSE. 
