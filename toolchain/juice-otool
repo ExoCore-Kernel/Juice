@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+TOOLCHAIN="${JUICE_IOS_TOOLCHAIN:-$ROOT/build/ios-toolchain}"
+PREFIX="${JUICE_IOS_TRIPLE_PREFIX:-arm-apple-darwin11}"
+CCTOOLS_OTOOL="${JUICE_IOS_OTOOL:-$TOOLCHAIN/bin/$PREFIX-otool}"
+
+if test -x "$CCTOOLS_OTOOL"; then
+  exec "$CCTOOLS_OTOOL" "$@"
+fi
+# Keep a limited inspection fallback for source checks and diagnostics. Wine's
+# actual Linux cross-build preflight requires cctools otool.
+command -v llvm-objdump >/dev/null 2>&1 || {
+  echo "Missing cctools otool ($CCTOOLS_OTOOL) and llvm-objdump fallback." >&2
+  exit 2
+}
+if test "${1:-}" = "-L"; then
+  shift
+  exec llvm-objdump --macho --dylibs-used "$@"
+fi
+exec llvm-objdump --macho "$@"

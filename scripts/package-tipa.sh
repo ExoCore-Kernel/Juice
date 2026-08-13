@@ -36,17 +36,26 @@ if test -n "$X64_RUNTIME"; then
   runtime_roots+=("$APP/Grape-X64")
 fi
 
-if test -x /var/jb/usr/bin/ldid; then
+LDID_BIN="${LDID:-}"
+IOS_TOOLCHAIN="${JUICE_IOS_TOOLCHAIN:-$ROOT/build/ios-toolchain}"
+if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/usr/bin/ldid; fi
+if test -z "$LDID_BIN" && test -x "$IOS_TOOLCHAIN/bin/ldid"; then LDID_BIN="$IOS_TOOLCHAIN/bin/ldid"; fi
+if test -z "$LDID_BIN"; then LDID_BIN="$(command -v ldid 2>/dev/null || true)"; fi
+if test "${JUICE_REQUIRE_SIGNING:-0}" = 1 && { test -z "$LDID_BIN" || test ! -x "$LDID_BIN"; }; then
+  echo "ldid is required for this package because Juice child/JIT entitlements must be embedded." >&2
+  exit 3
+fi
+if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
   while IFS= read -r -d '' candidate; do
     if file "$candidate" | grep -q 'Mach-O'; then
-      /var/jb/usr/bin/ldid -S"$ROOT/config/child-entitlements.plist" -Cadhoc "$candidate"
+      "$LDID_BIN" -S"$ROOT/config/child-entitlements.plist" -Cadhoc "$candidate"
     fi
   done < <(find "${runtime_roots[@]}" -type f -print0)
   if test -n "$X64_RUNTIME"; then
-    /var/jb/usr/bin/ldid -S"$ROOT/config/cli-allow-jit-entitlements.plist" -Cadhoc \
+    "$LDID_BIN" -S"$ROOT/config/cli-allow-jit-entitlements.plist" -Cadhoc \
       "$APP/Grape-X64/build/wine-ios/loader/wine"
   fi
-  /var/jb/usr/bin/ldid -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$APP/Juice"
+  "$LDID_BIN" -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$APP/Juice"
 fi
 
 forbidden="$(find "$APP" \( -type d -name .git -o \

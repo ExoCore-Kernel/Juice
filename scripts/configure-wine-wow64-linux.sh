@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
 CACHE="${JUICE_X64_CACHE:-$ROOT/build/x86_64-cache}"
-TOOLCHAIN="$CACHE/llvm-mingw-$JUICE_LLVM_MINGW_VERSION-ucrt-ubuntu-22.04-aarch64"
+TOOLCHAIN="$CACHE/$JUICE_LLVM_MINGW_DIRNAME"
 BUILD="${JUICE_WOW64_PE_BUILD:-$ROOT/build/wine-wow64-pe}"
 
 case "$BUILD" in
@@ -16,9 +16,13 @@ case "$BUILD" in
 esac
 
 test "$(uname -s)" = Linux || {
-  echo "The WoW64 PE build must run on an ARM64 Linux host." >&2
+  echo "The WoW64 PE build must run on Linux." >&2
   exit 2
 }
+case "$(uname -m)" in
+  x86_64|amd64|aarch64|arm64) ;;
+  *) echo "Unsupported Linux host architecture: $(uname -m)" >&2; exit 2;;
+esac
 for tool in bison flex make; do
   command -v "$tool" >/dev/null || { echo "Missing build tool: $tool" >&2; exit 2; }
 done

@@ -5,16 +5,31 @@ ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 OUT="${JUICE_APP_BUILD_DIR:-$ROOT/build/app/Juice.app}"
 MIN_IOS="${JUICE_MIN_IOS:-14.0}"
 
+target_flags=()
 if command -v xcrun >/dev/null 2>&1; then
   SDK="${IOS_SDK:-$(xcrun --sdk iphoneos --show-sdk-path)}"
   CC="${CC:-$(xcrun --sdk iphoneos --find clang)}"
+  target_flags=(-target "arm64-apple-ios$MIN_IOS" -arch arm64 -isysroot "$SDK" "-miphoneos-version-min=$MIN_IOS")
+elif test "$(uname -s)" = Linux; then
+  IOS_TOOLCHAIN="${JUICE_IOS_TOOLCHAIN:-$ROOT/build/ios-toolchain}"
+  SDK="${IOS_SDK:-}"
+  if test -z "$SDK" && test -d "$IOS_TOOLCHAIN/SDK"; then
+    SDK="$(find "$IOS_TOOLCHAIN/SDK" -maxdepth 2 -type d -name 'iPhoneOS*.sdk' -print -quit 2>/dev/null || true)"
+  fi
+  CC="${CC:-$ROOT/toolchain/juice-ios-cc}"
+  export JUICE_IOS_TOOLCHAIN="$IOS_TOOLCHAIN" IOS_SDK="$SDK"
 else
   JBROOT="${JBROOT:-/var/jb}"
   SDK="${IOS_SDK:-$JBROOT/usr/share/SDKs/iPhoneOS.sdk}"
   CC="${CC:-$JBROOT/usr/bin/clang}"
+  target_flags=(-target "arm64-apple-ios$MIN_IOS" -arch arm64 -isysroot "$SDK" "-miphoneos-version-min=$MIN_IOS")
 fi
 
-test -x "$CC" || { echo "Missing clang: $CC" >&2; exit 2; }
+if [[ "$CC" == */* ]]; then
+  test -x "$CC" || { echo "Missing clang: $CC" >&2; exit 2; }
+else
+  command -v "$CC" >/dev/null 2>&1 || { echo "Missing clang: $CC" >&2; exit 2; }
+fi
 test -d "$SDK" || { echo "Missing iPhoneOS SDK: $SDK" >&2; exit 2; }
 case "$OUT" in "$ROOT"/build/*) ;; *) test "${JUICE_ALLOW_EXTERNAL_BUILD:-0}" = 1 || {
   echo "Unsafe app build path: $OUT" >&2; exit 2;
@@ -22,15 +37,18 @@ case "$OUT" in "$ROOT"/build/*) ;; *) test "${JUICE_ALLOW_EXTERNAL_BUILD:-0}" = 
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
-"$CC" -target "arm64-apple-ios$MIN_IOS" -arch arm64 -isysroot "$SDK" \
-  "-miphoneos-version-min=$MIN_IOS" -fobjc-arc -fblocks -O2 \
+"$CC" "${target_flags[@]}" -fobjc-arc -fblocks -O2 \
   "$ROOT/app/main.m" "$ROOT/app/JuiceZip.m" "$ROOT/app/JuiceLegacyWin32.m" \
   -framework UIKit -framework Foundation -framework QuartzCore \
   -framework CoreGraphics -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
 
-if test -x /var/jb/usr/bin/ldid; then
-  /var/jb/usr/bin/ldid -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$OUT/Juice"
+LDID_BIN="${LDID:-}"
+if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/usr/bin/ldid; fi
+if test -z "$LDID_BIN" && test -n "${JUICE_IOS_TOOLCHAIN:-}" && test -x "$JUICE_IOS_TOOLCHAIN/bin/ldid"; then LDID_BIN="$JUICE_IOS_TOOLCHAIN/bin/ldid"; fi
+if test -z "$LDID_BIN"; then LDID_BIN="$(command -v ldid 2>/dev/null || true)"; fi
+if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
+  "$LDID_BIN" -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$OUT/Juice"
 elif command -v codesign >/dev/null 2>&1; then
   codesign --force --sign - --entitlements "$ROOT/config/app-entitlements.plist" "$OUT/Juice"
 fi

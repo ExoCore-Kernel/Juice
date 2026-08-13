@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Front-end for the cctools-port iOS cross toolchain. The compiler itself is a
+# native Linux executable; only its output is arm64 Mach-O for iOS.
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+TOOLCHAIN="${JUICE_IOS_TOOLCHAIN:-$ROOT/build/ios-toolchain}"
+PREFIX="${JUICE_IOS_TRIPLE_PREFIX:-arm-apple-darwin11}"
+MIN_IOS="${JUICE_MIN_IOS:-14.0}"
+
+case "$(basename "$0")" in
+  *cxx*|*++*) REAL_COMPILER="${JUICE_IOS_CCTOOLS_CXX:-$TOOLCHAIN/bin/$PREFIX-clang++}" ;;
+  *)         REAL_COMPILER="${JUICE_IOS_CCTOOLS_CC:-$TOOLCHAIN/bin/$PREFIX-clang}" ;;
+esac
+
+test -x "$REAL_COMPILER" || {
+  cat >&2 <<MSG
+Missing Linux iOS cross compiler: $REAL_COMPILER
+Build cctools-port's usage_examples/ios_toolchain for arm64, then set:
+  export JUICE_IOS_TOOLCHAIN=/absolute/path/to/its/target
+MSG
+  exit 2
+}
+
+if test -n "${IOS_SDK:-}"; then
+  test -d "$IOS_SDK" || { echo "Missing iPhoneOS SDK: $IOS_SDK" >&2; exit 2; }
+  export IOS_SDK_SYSROOT="$IOS_SDK"
+fi
+export IOS_TARGET_CPU="${IOS_TARGET_CPU:-arm64}"
+export IPHONEOS_DEPLOYMENT_TARGET="$MIN_IOS"
+
+exec "$REAL_COMPILER" "$@"

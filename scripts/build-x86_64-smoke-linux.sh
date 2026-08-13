@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
 CACHE="${JUICE_X64_CACHE:-$ROOT/build/x86_64-cache}"
-TOOLCHAIN="$CACHE/llvm-mingw-$JUICE_LLVM_MINGW_VERSION-ucrt-ubuntu-22.04-aarch64"
+TOOLCHAIN="$CACHE/$JUICE_LLVM_MINGW_DIRNAME"
 OUTPUT="${JUICE_X64_SMOKE_OUTPUT:-$ROOT/build/x86_64-smoke.exe}"
 
 case "$OUTPUT" in

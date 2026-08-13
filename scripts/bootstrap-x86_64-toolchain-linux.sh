@@ -4,17 +4,17 @@ set -euo pipefail
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
 CACHE="${JUICE_X64_CACHE:-$ROOT/build/x86_64-cache}"
-TOOLCHAIN="$CACHE/llvm-mingw-$JUICE_LLVM_MINGW_VERSION-ucrt-ubuntu-22.04-aarch64"
+TOOLCHAIN="$CACHE/$JUICE_LLVM_MINGW_DIRNAME"
 DOWNLOADS="$CACHE/downloads"
 ARCHIVE_PATH="$DOWNLOADS/$JUICE_LLVM_MINGW_ARCHIVE"
 
 test "$(uname -s)" = Linux || {
-  echo "The x86-64 component build requires an ARM64 Linux host." >&2
+  echo "The x86-64 component build requires a Linux host." >&2
   exit 2
 }
 case "$(uname -m)" in
-  aarch64|arm64) ;;
-  *) echo "The pinned translator toolchain is for an ARM64 Linux host." >&2; exit 2;;
+  x86_64|amd64|aarch64|arm64) ;;
+  *) echo "Unsupported Linux host architecture: $(uname -m)" >&2; exit 2;;
 esac
 case "$CACHE" in
   "$ROOT"/build/*) ;;
