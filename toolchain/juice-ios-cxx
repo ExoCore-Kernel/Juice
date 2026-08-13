@@ -8,6 +8,21 @@ TOOLCHAIN="${JUICE_IOS_TOOLCHAIN:-$ROOT/build/ios-toolchain}"
 PREFIX="${JUICE_IOS_TRIPLE_PREFIX:-arm-apple-darwin11}"
 MIN_IOS="${JUICE_MIN_IOS:-14.0}"
 
+# cctools-port's compiler wrapper expects its sibling linker/tools on PATH.
+# Its Linux-hosted linker also loads helper libraries (notably
+# libBlocksRuntime.so) from the toolchain prefix at runtime. Keep both paths
+# scoped to this compiler process so callers do not need to configure them.
+export PATH="$TOOLCHAIN/bin${PATH:+:$PATH}"
+host_lib_path=""
+for dir in "$TOOLCHAIN/lib" "$TOOLCHAIN/lib64"; do
+  if test -d "$dir"; then
+    host_lib_path="${host_lib_path:+$host_lib_path:}$dir"
+  fi
+done
+if test -n "$host_lib_path"; then
+  export LD_LIBRARY_PATH="$host_lib_path${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
+
 case "$(basename "$0")" in
   *cxx*|*++*) REAL_COMPILER="${JUICE_IOS_CCTOOLS_CXX:-$TOOLCHAIN/bin/$PREFIX-clang++}" ;;
   *)         REAL_COMPILER="${JUICE_IOS_CCTOOLS_CC:-$TOOLCHAIN/bin/$PREFIX-clang}" ;;
