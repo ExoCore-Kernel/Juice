@@ -40,9 +40,8 @@ fi
 # The first Linux cross-build implementation considered FreeType enabled when
 # configure found ft2build.h. Wine's actual win32u renderer has a second gate:
 # SONAME_LIBFREETYPE. Darwin soname discovery can fail while cross-configuring
-# on Linux, leaving perfectly valid FreeType headers but compiling the renderer
-# out. Repair that old cached configuration in place rather than discarding the
-# configured tree or any already-built PE/FEX/WoW64 work.
+# on Linux. Also make the cached renderer load Juice's bundled dylib directly,
+# rather than depending on DYLD_LIBRARY_PATH or a device-side FreeType install.
 freetype_reconfigure=0
 if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test -f "$WINE_BUILD/Makefile"; then
   native_config="$WINE_BUILD/include/config.h"
@@ -51,10 +50,11 @@ if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test -f "$WINE_BUILD/Makefile"; t
     freetype_reconfigure=1
   else
     freetype_soname="$(bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
-    if grep -Fq "#define SONAME_LIBFREETYPE \"$freetype_soname\"" "$native_config"; then
-      echo "JUICE_FREETYPE_CONFIG_REUSE path=$native_config soname=$freetype_soname"
+    freetype_runtime_name="@executable_path/../../../../Libraries/$freetype_soname"
+    if grep -Fq "#define SONAME_LIBFREETYPE \"$freetype_runtime_name\"" "$native_config"; then
+      echo "JUICE_FREETYPE_CONFIG_REUSE path=$native_config soname=$freetype_runtime_name"
     else
-      python3 - "$native_config" "$freetype_soname" <<'PY'
+      python3 - "$native_config" "$freetype_runtime_name" <<'PY'
 from pathlib import Path
 import re
 import sys
@@ -73,7 +73,7 @@ temporary = path.with_name(path.name + ".juice-freetype-new")
 temporary.write_text(text, encoding="utf-8", errors="surrogateescape")
 temporary.replace(path)
 PY
-      echo "JUICE_FREETYPE_CONFIG_RETROFIT path=$native_config soname=$freetype_soname"
+      echo "JUICE_FREETYPE_CONFIG_RETROFIT path=$native_config soname=$freetype_runtime_name"
     fi
   fi
 fi
