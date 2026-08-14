@@ -9,12 +9,29 @@ PE_BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 
 "$ROOT/scripts/preflight-linux-x86_64.sh"
 
-if test "${JUICE_REBUILD_HOST_TOOLS:-0}" = 1 || \
-   test ! -x "$TOOLS/tools/makedep" || \
-   test ! -x "$TOOLS/tools/winebuild/winebuild"; then
+required_host_tools=(
+  "$TOOLS/tools/makedep"
+  "$TOOLS/tools/winebuild/winebuild"
+  "$TOOLS/tools/winegcc/winegcc"
+  "$TOOLS/tools/widl/widl"
+  "$TOOLS/tools/wrc/wrc"
+  "$TOOLS/tools/wmc/wmc"
+)
+need_host_tools=0
+if test "${JUICE_REBUILD_HOST_TOOLS:-0}" = 1; then
+  need_host_tools=1
+else
+  for tool in "${required_host_tools[@]}"; do
+    if test ! -x "$tool"; then
+      echo "JUICE_WINE_TOOL_MISSING path=$tool"
+      need_host_tools=1
+    fi
+  done
+fi
+if test "$need_host_tools" = 1; then
   "$ROOT/scripts/build-wine-tools-linux.sh"
 else
-  echo "JUICE_WINE_TOOLS_REUSE path=$TOOLS"
+  echo "JUICE_WINE_TOOLS_REUSE path=$TOOLS count=${#required_host_tools[@]}"
 fi
 
 if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile"; then
