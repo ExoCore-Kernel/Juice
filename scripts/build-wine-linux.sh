@@ -38,13 +38,57 @@ JUICE_PYTHON="$PE_PYTHON" \
 JUICE_INCBIN_PACKER="$PE_PACKER" \
   /bin/bash "$ROOT/scripts/build-pe-compiler-wrapper-linux.sh"
 
-# Keep these exported while Wine's generated rules invoke the wrapper. This is
-# also enough to retrofit a previously configured PE Makefile: overriding
-# aarch64_CC below replaces the plain clang selected by older Linux configures.
+# Keep these exported while Wine's generated rules invoke the wrapper.
 export JUICE_REAL_PE_CLANG="$PE_CLANG"
 export JUICE_PYTHON="$PE_PYTHON"
 export JUICE_INCBIN_PACKER="$PE_PACKER"
 export JUICE_PE_BUILD_DIR="$PEBUILD"
+
+# makedep expands the PE compiler into --cc-cmd="..." when it generates the
+# Makefile. Older cached Linux configure trees therefore keep invoking plain
+# clang from winebuild even if aarch64_CC is overridden on the make command
+# line. Retrofit only the cached AArch64 compiler and its baked --cc-cmd value;
+# this preserves the configured tree and avoids another configure/makedep pass.
+"$PE_PYTHON" - "$PEBUILD/Makefile" "$PE_WRAPPER" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+makefile = Path(sys.argv[1])
+wrapper = sys.argv[2]
+text = makefile.read_text(encoding="utf-8", errors="surrogateescape")
+match = re.search(r"(?m)^aarch64_CC[ \t]*=[ \t]*(.*)$", text)
+if not match:
+    raise SystemExit("PE Makefile has no aarch64_CC assignment")
+old = match.group(1).strip()
+changed = False
+if old != wrapper:
+    text = text[:match.start(1)] + wrapper + text[match.end(1):]
+    changed = True
+
+# cc_cmds[] is expanded by makedep into literal --cc-cmd strings used by both
+# winegcc and direct winebuild import-library rules. Replace the exact compiler
+# that belonged to the cached AArch64 configuration, not arbitrary host tools.
+old_cc_cmd = f'--cc-cmd="{old}"'
+new_cc_cmd = f'--cc-cmd="{wrapper}"'
+if old_cc_cmd in text:
+    text = text.replace(old_cc_cmd, new_cc_cmd)
+    changed = True
+
+if changed:
+    temporary = makefile.with_name(makefile.name + ".juice-wrapper-new")
+    temporary.write_text(text, encoding="utf-8", errors="surrogateescape")
+    temporary.replace(makefile)
+    print(f"JUICE_PE_MAKEFILE_WRAPPER_RETROFIT path={makefile} old={old} new={wrapper}")
+else:
+    print(f"JUICE_PE_MAKEFILE_WRAPPER_REUSE path={makefile} compiler={wrapper}")
+
+# Refuse to continue if the stale plain compiler is still baked into a PE link
+# rule; that would reproduce the missing .incbin resource failure later.
+check = makefile.read_text(encoding="utf-8", errors="surrogateescape")
+if f'--cc-cmd="{wrapper}"' not in check:
+    raise SystemExit("PE Makefile does not contain the resource-aware --cc-cmd wrapper")
+PY
 
 # cctools-port's Clang can lower __builtin___clear_cache to an external
 # ___clear_cache symbol that iOS does not export. Build a tiny compatibility
