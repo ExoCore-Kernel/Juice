@@ -35,6 +35,15 @@ runtime_roots=("$APP/Grape")
 if test -n "$X64_RUNTIME"; then
   rsync -a "$X64_RUNTIME/" "$APP/Grape-X64/"
   runtime_roots+=("$APP/Grape-X64")
+
+  # arm64 iOS executables are linked with a 4 GiB __PAGEZERO and ld64 does
+  # not support -pagezero_size for iOS. That consumes every address Wine's
+  # WoW64 layer can represent in 32-bit process structures. Patch only the
+  # packaged Grape-X64 Wine executable to retain one inaccessible 16 KiB page
+  # at zero and leave the rest of low VA free. ldid signs it afterwards.
+  x64_loader="$APP/Grape-X64/build/wine-ios/loader/wine"
+  test -f "$x64_loader" || { echo "Missing Grape-X64 Wine loader: $x64_loader" >&2; exit 3; }
+  python3 "$ROOT/scripts/patch-ios-wow64-pagezero.py" "$x64_loader"
 fi
 
 # Wine deliberately loads FreeType at runtime with dlopen(SONAME_LIBFREETYPE).
