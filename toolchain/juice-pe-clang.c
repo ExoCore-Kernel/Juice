@@ -133,6 +133,10 @@ int main(int argc, char **argv)
     char **clang_arguments;
     char **packed_paths;
     int compiler_status;
+    int i386_target = 0;
+    int i386_ntdll_loader = 0;
+    int add_loader_alias;
+    int output_index;
     int index;
 
     if (!clang || !*clang) clang = "/var/jb/usr/bin/clang";
@@ -169,6 +173,11 @@ int main(int argc, char **argv)
 
     for (index = 1; index < argc; index++)
     {
+        if (!strcmp(argv[index], "i686-windows") || !strcmp(argv[index], "i386-windows"))
+            i386_target = 1;
+        if (has_suffix(argv[index], "/dlls/ntdll/loader.c"))
+            i386_ntdll_loader = 1;
+
         if ((has_suffix(argv[index], ".s") || has_suffix(argv[index], ".S")) &&
             access(argv[index], R_OK) == 0)
         {
@@ -181,7 +190,8 @@ int main(int argc, char **argv)
         }
     }
 
-    clang_arguments = calloc((size_t)argc + 1, sizeof(*clang_arguments));
+    add_loader_alias = i386_target && i386_ntdll_loader;
+    clang_arguments = calloc((size_t)argc + (add_loader_alias ? 2u : 1u), sizeof(*clang_arguments));
     if (!clang_arguments)
     {
         fprintf(stderr, "juice-pe-clang: out of memory\n");
@@ -189,8 +199,14 @@ int main(int argc, char **argv)
         goto cleanup;
     }
     clang_arguments[0] = (char *)clang;
-    for (index = 1; index < argc; index++) clang_arguments[index] = argv[index];
-    clang_arguments[argc] = NULL;
+    output_index = 1;
+    for (index = 1; index < argc; index++) clang_arguments[output_index++] = argv[index];
+    if (add_loader_alias)
+    {
+        clang_arguments[output_index++] = "-Dloader_init_impl=loader_init";
+        fprintf(stderr, "juice-pe-clang: restoring loader_init symbol for i386 ntdll\n");
+    }
+    clang_arguments[output_index] = NULL;
 
     compiler_status = run_compiler(clang, clang_arguments);
     free(clang_arguments);
