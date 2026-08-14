@@ -8,7 +8,7 @@ required=(
   config/runtime-modules.txt config/wine-base.txt patches/wine-ios.patch
   config/x86_64-build.env patches/fex-juice-ios.patch
   scripts/build-all-device.sh scripts/build-pe-compiler-wrapper-device.sh
-  scripts/detect-freetype-soname-linux.sh
+  scripts/detect-freetype-soname-linux.sh scripts/patch-ios-wow64-pagezero.py
   scripts/regenerate-wine-patch.sh
   scripts/regenerate-fex-patch.sh scripts/verify-fex-patch.sh
   scripts/run-control-bridge-smoke-device.py
@@ -43,6 +43,7 @@ while IFS= read -r script; do bash -n "$script"; done < <(
 )
 bash -n "$ROOT/toolchain/juice-bison" "$ROOT/toolchain/juice-cc"
 for python_source in \
+  "$ROOT/scripts/patch-ios-wow64-pagezero.py" \
   "$ROOT/scripts/patch-pe-shared-data.py" \
   "$ROOT/scripts/run-control-bridge-smoke-device.py" \
   "$ROOT/scripts/run-gui-text-smoke-device.py" \
@@ -78,8 +79,12 @@ grep -q 'input.mi.dx+=window.left' "$ROOT/wine/dlls/wineios.drv/ipc.c"
 grep -q 'runtime/lib/wine/aarch64-windows/wineios.so' "$ROOT/scripts/assemble-runtime.sh"
 grep -q 'FREETYPE_CFLAGS' "$ROOT/scripts/configure-wine-device.sh"
 grep -q 'ac_cv_lib_soname_freetype' "$ROOT/scripts/configure-wine-linux.sh"
-grep -q 'SONAME_LIBFREETYPE' "$ROOT/scripts/configure-wine-linux.sh"
+grep -q '@executable_path/../../../../Libraries/' "$ROOT/scripts/configure-wine-linux.sh"
 grep -q 'JUICE_FREETYPE_CONFIG_RETROFIT' "$ROOT/scripts/build-all-linux-x86_64.sh"
+grep -q 'JUICE_FREETYPE_BUNDLED' "$ROOT/scripts/package-tipa.sh"
+grep -q 'JUICE_WOW64_PAGEZERO_PATCHED' "$ROOT/scripts/patch-ios-wow64-pagezero.py"
+grep -q 'patch-ios-wow64-pagezero.py' "$ROOT/scripts/package-tipa.sh"
+grep -q 'bundle libraries path=' "$ROOT/launcher/grape-trace-parent.c"
 grep -q 'PWD="$PEBUILD"' "$ROOT/scripts/build-wine-device.sh"
 grep -q 'with-mingw="$PE_CLANG"' "$ROOT/scripts/configure-wine-pe-device.sh"
 grep -q '^UNIX_LIBS.*CORETEXT_LIBS' "$ROOT/wine/dlls/win32u/Makefile.in"
@@ -87,6 +92,38 @@ if grep -q '^UNIX_LIBS.*APPKIT_LIBS' "$ROOT/wine/dlls/win32u/Makefile.in"; then
   echo "win32u must not link the macOS-only AppKit framework on iOS." >&2
   exit 1
 fi
+
+python3 - "$ROOT/scripts/patch-ios-wow64-pagezero.py" <<'PY'
+import pathlib
+import struct
+import subprocess
+import sys
+import tempfile
+
+patcher = pathlib.Path(sys.argv[1])
+with tempfile.TemporaryDirectory(prefix="juice-pagezero-test-") as temporary:
+    path = pathlib.Path(temporary) / "wine"
+    header = struct.pack("<8I", 0xFEEDFACF, 0x0100000C, 0, 2, 1, 72, 0, 0)
+    segment = struct.pack(
+        "<2I16s4Q4I",
+        0x19,
+        72,
+        b"__PAGEZERO\0\0\0\0\0\0",
+        0,
+        0x100000000,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    )
+    path.write_bytes(header + segment)
+    subprocess.run([sys.executable, str(patcher), str(path)], check=True, stdout=subprocess.DEVNULL)
+    data = path.read_bytes()
+    assert struct.unpack_from("<Q", data, 32 + 32)[0] == 0x4000
+print("JUICE_WOW64_PAGEZERO_PATCHER_OK")
+PY
 
 python3 - "$ROOT/toolchain/juice-pack-incbins.py" <<'PY'
 import os
