@@ -32,7 +32,7 @@ test -d "$SDK" || { echo "Missing iPhoneOS SDK. Set IOS_SDK or JUICE_IOS_TOOLCHA
 for tool in "$CC_WRAPPER" "$CXX_WRAPPER" "$AR_BIN" "$RANLIB_BIN" "$OTOOL_BIN"; do
   test -x "$tool" || { echo "Missing iOS cross-toolchain executable: $tool" >&2; exit 2; }
 done
-test -x "$TOOLS/tools/makedep" -a -x "$TOOLS/tools/winebuild/winebuild" || "$ROOT/scripts/build-wine-tools-linux.sh"
+test -x "$TOOLS/tools/makedep" -a -x "$TOOLS/tools/winebuild/winebuild" || /bin/bash "$ROOT/scripts/build-wine-tools-linux.sh"
 
 mkdir -p "$BUILD"
 cd "$BUILD"
@@ -58,6 +58,7 @@ case "$HOST_TRIPLET" in
 esac
 
 freetype_args=()
+freetype_soname=""
 if test "${JUICE_WITHOUT_FREETYPE:-0}" = 1; then
   freetype_args+=(--without-freetype)
 else
@@ -66,6 +67,15 @@ else
   }
   export FREETYPE_CFLAGS="${FREETYPE_CFLAGS:--I$ROOTLESS/usr/include/freetype2}"
   export FREETYPE_LIBS="${FREETYPE_LIBS:--L$ROOTLESS/usr/lib -lfreetype}"
+
+  # WINE_CHECK_SONAME normally discovers this by inspecting a linked target
+  # executable. In a Linux -> Darwin cross-configure that extraction can fail
+  # even when the FreeType header/link probes pass. If SONAME_LIBFREETYPE is
+  # missing, win32u/freetype.c compiles its entire renderer out. Pin the cache
+  # value to the soname from the exact rootless iOS sysroot being used.
+  freetype_soname="$(JUICE_IOS_ROOTLESS_SYSROOT="$ROOTLESS" JUICE_IOS_TOOLCHAIN="$IOS_TOOLCHAIN" \
+    JUICE_IOS_OTOOL="$OTOOL_BIN" /bin/bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
+  export ac_cv_lib_soname_freetype="$freetype_soname"
 fi
 
 set +e
@@ -90,9 +100,13 @@ grep -Eq '^HOST_ARCH = +aarch64$' Makefile || { echo "Wine cross-configure did n
 
 freetype_status=enabled
 if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
-  grep -q '^#define HAVE_FT2BUILD_H 1' include/config.h || { echo "Wine Linux cross-configure did not enable FreeType." >&2; exit 5; }
+  grep -q '^#define HAVE_FT2BUILD_H 1' include/config.h || { echo "Wine Linux cross-configure did not enable FreeType headers." >&2; exit 5; }
+  grep -Fq "#define SONAME_LIBFREETYPE \"$freetype_soname\"" include/config.h || {
+    echo "Wine Linux cross-configure did not enable the FreeType runtime loader ($freetype_soname)." >&2
+    exit 5
+  }
 else
   freetype_status=disabled
 fi
 
-echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status"
+echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status${freetype_soname:+ freetype_soname=$freetype_soname}"
