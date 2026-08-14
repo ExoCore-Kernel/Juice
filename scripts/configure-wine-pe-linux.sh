@@ -20,7 +20,10 @@ CONFIG_GUESS="${JUICE_CONFIG_GUESS:-$SOURCE/tools/config.guess}"
 test -x "$CONFIG_GUESS" || { echo "Missing executable Wine config.guess: $CONFIG_GUESS" >&2; exit 2; }
 BUILD_TRIPLET="${JUICE_BUILD_TRIPLET:-$($CONFIG_GUESS)}"
 HOST_TRIPLET="${JUICE_HOST_TRIPLET:-aarch64-apple-darwin}"
-PE_CLANG="${JUICE_PE_CLANG:-$TOOLCHAIN/bin/aarch64-w64-mingw32-clang}"
+REAL_PE_CLANG="${JUICE_REAL_PE_CLANG:-${JUICE_PE_CLANG:-$TOOLCHAIN/bin/aarch64-w64-mingw32-clang}}"
+PE_WRAPPER="${JUICE_PE_WRAPPER:-$ROOT/build/toolchain-linux/clang}"
+PE_PACKER="${JUICE_INCBIN_PACKER:-$ROOT/toolchain/juice-pack-incbins.py}"
+PE_PYTHON="${JUICE_PYTHON:-$(command -v python3 || true)}"
 PE_ARCHS="${JUICE_PE_ARCHS:-aarch64}"
 SHELL_BIN="${SHELL_BIN:-/bin/bash}"
 
@@ -35,7 +38,15 @@ for tool in "$CC_WRAPPER" "$CXX_WRAPPER" "$AR_BIN" "$RANLIB_BIN" "$OTOOL_BIN"; d
 done
 test -x "$TOOLS/tools/makedep" -a -x "$TOOLS/tools/winebuild/winebuild" || "$ROOT/scripts/build-wine-tools-linux.sh"
 "$ROOT/scripts/bootstrap-x86_64-toolchain-linux.sh"
-test -x "$PE_CLANG" || { echo "Missing ARM64 PE compiler: $PE_CLANG" >&2; exit 2; }
+test -x "$REAL_PE_CLANG" || { echo "Missing ARM64 PE compiler: $REAL_PE_CLANG" >&2; exit 2; }
+test -n "$PE_PYTHON" -a -x "$PE_PYTHON" || { echo "Missing Python 3 for PE resource packing." >&2; exit 2; }
+test -r "$PE_PACKER" || { echo "Missing PE incbin packer: $PE_PACKER" >&2; exit 2; }
+JUICE_PE_WRAPPER="$PE_WRAPPER" \
+JUICE_REAL_PE_CLANG="$REAL_PE_CLANG" \
+JUICE_PYTHON="$PE_PYTHON" \
+JUICE_INCBIN_PACKER="$PE_PACKER" \
+  /bin/bash "$ROOT/scripts/build-pe-compiler-wrapper-linux.sh"
+test -x "$PE_WRAPPER" || { echo "Missing Linux PE compiler wrapper: $PE_WRAPPER" >&2; exit 2; }
 
 mkdir -p "$BUILD"
 cd "$BUILD"
@@ -48,6 +59,10 @@ export AR="$AR_BIN" RANLIB="$RANLIB_BIN" OTOOL="$OTOOL_BIN"
 export BISON="${BISON:-bison}" YACC="${YACC:-bison -y}" M4="${M4:-m4}"
 export CFLAGS="${CFLAGS:--O2}" CXXFLAGS="${CXXFLAGS:--O2}"
 export wine_cv_recent_bison=yes ac_cv_func_pthread_create=yes JUICE_IOS_DEVICE=1
+export JUICE_REAL_PE_CLANG="$REAL_PE_CLANG"
+export JUICE_PE_BUILD_DIR="$BUILD"
+export JUICE_INCBIN_PACKER="$PE_PACKER"
+export JUICE_PYTHON="$PE_PYTHON"
 
 # Wine's configure test keys off __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8. Apple/iOS
 # Clang does not reliably define that GCC compatibility macro for AArch64 even
@@ -62,7 +77,7 @@ esac
 set +e
 "$SHELL_BIN" "$SOURCE/configure" \
   --build="$BUILD_TRIPLET" --host="$HOST_TRIPLET" --with-wine-tools="$TOOLS" \
-  --prefix="$ROOT/build/wine-runtime-arm64" --enable-archs="$PE_ARCHS" --with-mingw="$PE_CLANG" \
+  --prefix="$ROOT/build/wine-runtime-arm64" --enable-archs="$PE_ARCHS" --with-mingw="$PE_WRAPPER" \
   --disable-tests --disable-win16 --without-freetype \
   --without-x --without-wayland --without-coreaudio --without-cups \
   --without-dbus --without-ffmpeg --without-fontconfig --without-gettext \
@@ -79,16 +94,16 @@ test -f Makefile || { echo "PE Linux cross-configure did not create a Makefile."
 grep -Fq 'dlls/wineios.drv/aarch64-windows/wineios.drv:' Makefile || { echo "The configured Linux PE build is missing wineios.drv." >&2; exit 4; }
 pe_cc_line="$(grep -E '^aarch64_CC[[:space:]]*=' Makefile | head -n1 || true)"
 test -n "$pe_cc_line" || { echo "PE Linux cross-configure did not define aarch64_CC." >&2; exit 4; }
-pe_clang_name="$(basename "$PE_CLANG")"
+pe_wrapper_name="$(basename "$PE_WRAPPER")"
 case "$pe_cc_line" in
-  *"$PE_CLANG"*|*"$pe_clang_name"*|*aarch64-w64-mingw32*) ;;
+  *"$PE_WRAPPER"*|*"$pe_wrapper_name"*) ;;
   *)
-    echo "PE Linux cross-configure selected an unexpected AArch64 compiler." >&2
-    echo "Requested: $PE_CLANG" >&2
+    echo "PE Linux cross-configure did not select the resource-aware compiler wrapper." >&2
+    echo "Requested: $PE_WRAPPER" >&2
     echo "Generated: $pe_cc_line" >&2
     exit 4
     ;;
 esac
 grep -Fq "toolsdir = $TOOLS" Makefile || { echo "PE Linux cross-configure did not use the native Linux Wine tools tree." >&2; exit 4; }
 
-echo "JUICE_PE_LINUX_CONFIGURE_OK path=$BUILD compiler=$PE_CLANG archs=$PE_ARCHS toolchain=$IOS_TOOLCHAIN"
+echo "JUICE_PE_LINUX_CONFIGURE_OK path=$BUILD compiler=$PE_WRAPPER real=$REAL_PE_CLANG archs=$PE_ARCHS toolchain=$IOS_TOOLCHAIN"
