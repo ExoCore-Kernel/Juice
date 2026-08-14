@@ -59,6 +59,7 @@ esac
 
 freetype_args=()
 freetype_soname=""
+freetype_runtime_name=""
 if test "${JUICE_WITHOUT_FREETYPE:-0}" = 1; then
   freetype_args+=(--without-freetype)
 else
@@ -70,12 +71,13 @@ else
 
   # WINE_CHECK_SONAME normally discovers this by inspecting a linked target
   # executable. In a Linux -> Darwin cross-configure that extraction can fail
-  # even when the FreeType header/link probes pass. If SONAME_LIBFREETYPE is
-  # missing, win32u/freetype.c compiles its entire renderer out. Pin the cache
-  # value to the soname from the exact rootless iOS sysroot being used.
+  # even when the FreeType header/link probes pass. Determine the exact target
+  # dylib name, then make Wine load the copy packaged inside Juice.app instead
+  # of requiring the destination jailbreak to have FreeType installed.
   freetype_soname="$(JUICE_IOS_ROOTLESS_SYSROOT="$ROOTLESS" JUICE_IOS_TOOLCHAIN="$IOS_TOOLCHAIN" \
     JUICE_IOS_OTOOL="$OTOOL_BIN" /bin/bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
-  export ac_cv_lib_soname_freetype="$freetype_soname"
+  freetype_runtime_name="@executable_path/../../../../Libraries/$freetype_soname"
+  export ac_cv_lib_soname_freetype="$freetype_runtime_name"
 fi
 
 set +e
@@ -101,12 +103,12 @@ grep -Eq '^HOST_ARCH = +aarch64$' Makefile || { echo "Wine cross-configure did n
 freetype_status=enabled
 if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
   grep -q '^#define HAVE_FT2BUILD_H 1' include/config.h || { echo "Wine Linux cross-configure did not enable FreeType headers." >&2; exit 5; }
-  grep -Fq "#define SONAME_LIBFREETYPE \"$freetype_soname\"" include/config.h || {
-    echo "Wine Linux cross-configure did not enable the FreeType runtime loader ($freetype_soname)." >&2
+  grep -Fq "#define SONAME_LIBFREETYPE \"$freetype_runtime_name\"" include/config.h || {
+    echo "Wine Linux cross-configure did not enable the bundled FreeType runtime loader ($freetype_runtime_name)." >&2
     exit 5
   }
 else
   freetype_status=disabled
 fi
 
-echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status${freetype_soname:+ freetype_soname=$freetype_soname}"
+echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status${freetype_runtime_name:+ freetype_soname=$freetype_runtime_name}"
