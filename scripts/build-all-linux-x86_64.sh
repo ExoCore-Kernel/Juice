@@ -37,7 +37,48 @@ else
   echo "JUICE_WINE_TOOLS_REUSE path=$TOOLS count=${#required_host_tools[@]}"
 fi
 
-if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile"; then
+# The first Linux cross-build implementation considered FreeType enabled when
+# configure found ft2build.h. Wine's actual win32u renderer has a second gate:
+# SONAME_LIBFREETYPE. Darwin soname discovery can fail while cross-configuring
+# on Linux, leaving perfectly valid FreeType headers but compiling the renderer
+# out. Repair that old cached configuration in place rather than discarding the
+# configured tree or any already-built PE/FEX/WoW64 work.
+freetype_reconfigure=0
+if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test -f "$WINE_BUILD/Makefile"; then
+  native_config="$WINE_BUILD/include/config.h"
+  if ! grep -q '^#define HAVE_FT2BUILD_H 1' "$native_config" 2>/dev/null; then
+    echo "JUICE_FREETYPE_CONFIG_REPAIR mode=reconfigure reason=missing-header path=$native_config"
+    freetype_reconfigure=1
+  else
+    freetype_soname="$(bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
+    if grep -Fq "#define SONAME_LIBFREETYPE \"$freetype_soname\"" "$native_config"; then
+      echo "JUICE_FREETYPE_CONFIG_REUSE path=$native_config soname=$freetype_soname"
+    else
+      python3 - "$native_config" "$freetype_soname" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+soname = sys.argv[2]
+text = path.read_text(encoding="utf-8", errors="surrogateescape")
+pattern = re.compile(
+    r'(?m)^(?:/\* #undef SONAME_LIBFREETYPE \*/|#define SONAME_LIBFREETYPE ".*")$'
+)
+replacement = f'#define SONAME_LIBFREETYPE "{soname}"'
+if not pattern.search(text):
+    raise SystemExit(f"Wine config.h has no SONAME_LIBFREETYPE slot: {path}")
+text = pattern.sub(replacement, text, count=1)
+temporary = path.with_name(path.name + ".juice-freetype-new")
+temporary.write_text(text, encoding="utf-8", errors="surrogateescape")
+temporary.replace(path)
+PY
+      echo "JUICE_FREETYPE_CONFIG_RETROFIT path=$native_config soname=$freetype_soname"
+    fi
+  fi
+fi
+
+if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile" || test "$freetype_reconfigure" = 1; then
   bash "$ROOT/scripts/configure-wine-linux.sh"
 else
   echo "JUICE_WINE_CONFIGURE_REUSE path=$WINE_BUILD"
