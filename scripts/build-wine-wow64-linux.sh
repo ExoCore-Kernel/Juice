@@ -114,14 +114,22 @@ fi
 
 mapfile -t base_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
 targets=()
+skipped_targets=()
 for target in "${base_targets[@]}"; do
   case "$target" in
     programs/juicegui/*|programs/juicetextsmoke/*) continue ;;
   esac
-  targets+=("${target/aarch64-windows/i386-windows}")
+  candidate="${target/aarch64-windows/i386-windows}"
+  if grep -Fq "$candidate:" "$BUILD/Makefile"; then
+    targets+=("$candidate")
+  else
+    skipped_targets+=("$candidate")
+    echo "JUICE_WOW64_TARGET_SKIP reason=no-generated-rule target=$candidate"
+  fi
 done
 
-test "${#targets[@]}" -gt 0 || { echo "WoW64 runtime target list is empty." >&2; exit 2; }
+test "${#targets[@]}" -gt 0 || { echo "WoW64 runtime target list is empty after filtering." >&2; exit 2; }
+echo "JUICE_WOW64_TARGET_FILTER selected=${#targets[@]} skipped=${#skipped_targets[@]}"
 
 LOG="$LOGDIR/wine-wow64.log"
 RETRY_LOG="$LOGDIR/wine-wow64-retry.log"
@@ -169,4 +177,4 @@ for target in "${targets[@]}"; do
 done
 
 test "$bad" -eq 0
-echo "JUICE_WOW64_BUILD_OK path=$BUILD modules=${#targets[@]}"
+echo "JUICE_WOW64_BUILD_OK path=$BUILD modules=${#targets[@]} skipped=${#skipped_targets[@]}"
