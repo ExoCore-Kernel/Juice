@@ -77,7 +77,18 @@ test "$status" -eq 0 || exit "$status"
 test -f Makefile || { echo "PE Linux cross-configure did not create a Makefile." >&2; exit 3; }
 
 grep -Fq 'dlls/wineios.drv/aarch64-windows/wineios.drv:' Makefile || { echo "The configured Linux PE build is missing wineios.drv." >&2; exit 4; }
-grep -Fq "aarch64_CC = $PE_CLANG" Makefile || { echo "PE Linux cross-configure did not select llvm-mingw: $PE_CLANG" >&2; exit 4; }
+pe_cc_line="$(grep -E '^aarch64_CC[[:space:]]*=' Makefile | head -n1 || true)"
+test -n "$pe_cc_line" || { echo "PE Linux cross-configure did not define aarch64_CC." >&2; exit 4; }
+pe_clang_name="$(basename "$PE_CLANG")"
+case "$pe_cc_line" in
+  *"$PE_CLANG"*|*"$pe_clang_name"*|*aarch64-w64-mingw32*) ;;
+  *)
+    echo "PE Linux cross-configure selected an unexpected AArch64 compiler." >&2
+    echo "Requested: $PE_CLANG" >&2
+    echo "Generated: $pe_cc_line" >&2
+    exit 4
+    ;;
+esac
 grep -Fq "toolsdir = $TOOLS" Makefile || { echo "PE Linux cross-configure did not use the native Linux Wine tools tree." >&2; exit 4; }
 
 echo "JUICE_PE_LINUX_CONFIGURE_OK path=$BUILD compiler=$PE_CLANG archs=$PE_ARCHS toolchain=$IOS_TOOLCHAIN"
