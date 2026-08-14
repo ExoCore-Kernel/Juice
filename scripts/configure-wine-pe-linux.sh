@@ -94,9 +94,8 @@ test -f Makefile || { echo "PE Linux cross-configure did not create a Makefile."
 grep -Fq 'dlls/wineios.drv/aarch64-windows/wineios.drv:' Makefile || { echo "The configured Linux PE build is missing wineios.drv." >&2; exit 4; }
 pe_cc_line="$(grep -E '^aarch64_CC[[:space:]]*=' Makefile | head -n1 || true)"
 test -n "$pe_cc_line" || { echo "PE Linux cross-configure did not define aarch64_CC." >&2; exit 4; }
-pe_wrapper_name="$(basename "$PE_WRAPPER")"
 case "$pe_cc_line" in
-  *"$PE_WRAPPER"*|*"$pe_wrapper_name"*) ;;
+  *"$PE_WRAPPER"*) ;;
   *)
     echo "PE Linux cross-configure did not select the resource-aware compiler wrapper." >&2
     echo "Requested: $PE_WRAPPER" >&2
