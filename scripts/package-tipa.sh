@@ -9,6 +9,7 @@ X64_RUNTIME=""
 if test -n "${JUICE_X64_RUNTIME_STAGE:-}"; then
   X64_RUNTIME="$JUICE_X64_RUNTIME_STAGE/Grape-X64"
 fi
+ROOTLESS="${JUICE_IOS_ROOTLESS_SYSROOT:-$ROOT/build/deps/rootless-sysroot}"
 PACKAGE="$ROOT/build/package"
 APP="$PACKAGE/Payload/Juice.app"
 OUTPUT="${1:-$ROOT/dist/Juice-$(date +%Y%m%d-%H%M%S).tipa}"
@@ -34,6 +35,33 @@ runtime_roots=("$APP/Grape")
 if test -n "$X64_RUNTIME"; then
   rsync -a "$X64_RUNTIME/" "$APP/Grape-X64/"
   runtime_roots+=("$APP/Grape-X64")
+fi
+
+# Wine deliberately loads FreeType at runtime with dlopen(SONAME_LIBFREETYPE).
+# Linux builds fetch the target Procursus dylib into the rootless sysroot, so
+# package that exact target library instead of requiring every destination
+# device to have the optional FreeType package installed under /var/jb.
+if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
+  test -e "$ROOTLESS/usr/lib/libfreetype.dylib" || {
+    echo "Missing packaged FreeType input: $ROOTLESS/usr/lib/libfreetype.dylib" >&2
+    exit 3
+  }
+  freetype_soname="$(JUICE_IOS_ROOTLESS_SYSROOT="$ROOTLESS" bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
+  mkdir -p "$APP/Libraries"
+  shopt -s nullglob
+  freetype_libs=("$ROOTLESS/usr/lib"/libfreetype*.dylib)
+  shopt -u nullglob
+  test "${#freetype_libs[@]}" -gt 0 || {
+    echo "No FreeType dylibs were found in $ROOTLESS/usr/lib." >&2
+    exit 3
+  }
+  cp -a "${freetype_libs[@]}" "$APP/Libraries/"
+  test -e "$APP/Libraries/$freetype_soname" || {
+    echo "Bundled FreeType is missing configured soname $freetype_soname." >&2
+    exit 3
+  }
+  runtime_roots+=("$APP/Libraries")
+  echo "JUICE_FREETYPE_BUNDLED soname=$freetype_soname path=$APP/Libraries/$freetype_soname"
 fi
 
 LDID_BIN="${LDID:-}"
