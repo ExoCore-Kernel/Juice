@@ -8,6 +8,7 @@ required=(
   config/runtime-modules.txt config/wine-base.txt patches/wine-ios.patch
   config/x86_64-build.env patches/fex-juice-ios.patch
   scripts/build-all-device.sh scripts/build-pe-compiler-wrapper-device.sh
+  scripts/detect-freetype-soname-linux.sh
   scripts/regenerate-wine-patch.sh
   scripts/regenerate-fex-patch.sh scripts/verify-fex-patch.sh
   scripts/run-control-bridge-smoke-device.py
@@ -76,6 +77,9 @@ grep -q 'JUICE_TEXT_GDI_OK' "$ROOT/wine/programs/juicetextsmoke/main.c"
 grep -q 'input.mi.dx+=window.left' "$ROOT/wine/dlls/wineios.drv/ipc.c"
 grep -q 'runtime/lib/wine/aarch64-windows/wineios.so' "$ROOT/scripts/assemble-runtime.sh"
 grep -q 'FREETYPE_CFLAGS' "$ROOT/scripts/configure-wine-device.sh"
+grep -q 'ac_cv_lib_soname_freetype' "$ROOT/scripts/configure-wine-linux.sh"
+grep -q 'SONAME_LIBFREETYPE' "$ROOT/scripts/configure-wine-linux.sh"
+grep -q 'JUICE_FREETYPE_CONFIG_RETROFIT' "$ROOT/scripts/build-all-linux-x86_64.sh"
 grep -q 'PWD="$PEBUILD"' "$ROOT/scripts/build-wine-device.sh"
 grep -q 'with-mingw="$PE_CLANG"' "$ROOT/scripts/configure-wine-pe-device.sh"
 grep -q '^UNIX_LIBS.*CORETEXT_LIBS' "$ROOT/wine/dlls/win32u/Makefile.in"
