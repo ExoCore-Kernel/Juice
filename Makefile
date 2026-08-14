@@ -2,7 +2,12 @@ ROOT := $(CURDIR)
 BASH := $(if $(wildcard /var/jb/usr/bin/bash),/var/jb/usr/bin/bash,/bin/bash)
 REUSE_X64 ?= auto
 
-.PHONY: verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa reuse reuse-install verify-fex linux-x86_64 linux-x86_64-x64 linux-x86_64-deps linux-x86_64-sdk linux-x86_64-freetype linux-x86_64-preflight linux-x86_64-ios-toolchain linux-x86_64-toolchain linux-x86_64-host-tools linux-x86_64-configure linux-x86_64-configure-pe linux-x86_64-build
+.DEFAULT_GOAL := all
+
+.PHONY: all verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa reuse reuse-install verify-fex linux-x86_64 linux-x86_64-x64 linux-x86_64-deps linux-x86_64-sdk linux-x86_64-freetype linux-x86_64-preflight linux-x86_64-ios-toolchain linux-x86_64-toolchain linux-x86_64-host-tools linux-x86_64-configure linux-x86_64-configure-pe linux-x86_64-build
+
+# Primary build: complete Juice TIPA from an x86_64 Linux host.
+all: linux-x86_64-x64
 
 verify: ; $(BASH) scripts/verify-source.sh
 preflight: ; $(BASH) scripts/preflight-device.sh
@@ -79,4 +84,4 @@ linux-x86_64-x64: linux-x86_64-preflight
 	@v="$${JUICE_IOS_SDK_VERSION:-16.5}"; \
 	 IOS_SDK="$${IOS_SDK:-$(ROOT)/build/deps/theos-sdks/iPhoneOS$$v.sdk}" \
 	 JUICE_IOS_ROOTLESS_SYSROOT="$${JUICE_IOS_ROOTLESS_SYSROOT:-$(ROOT)/build/deps/rootless-sysroot}" \
-	 JUICE_BUILD_X64=1 $(BASH) scripts/build-all-linux-x86_64.sh
+	 JUICE_BUILD_X64=1 JUICE_REQUIRE_WIN32="$${JUICE_REQUIRE_WIN32:-1}" $(BASH) scripts/build-all-linux-x86_64.sh
