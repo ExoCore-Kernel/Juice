@@ -18,9 +18,7 @@
     defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
 
 #include <errno.h>
-#include <mach/kern_return.h>
-#include <mach/mach_init.h>
-#include <mach/vm_map.h>
+#include <mach/mach.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 
