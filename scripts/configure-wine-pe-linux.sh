@@ -49,6 +49,16 @@ export BISON="${BISON:-bison}" YACC="${YACC:-bison -y}" M4="${M4:-m4}"
 export CFLAGS="${CFLAGS:--O2}" CXXFLAGS="${CXXFLAGS:--O2}"
 export wine_cv_recent_bison=yes ac_cv_func_pthread_create=yes JUICE_IOS_DEVICE=1
 
+# Wine's configure test keys off __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8. Apple/iOS
+# Clang does not reliably define that GCC compatibility macro for AArch64 even
+# though 64-bit compare-and-swap is available on the target. Preseed Wine's
+# cache result only for the AArch64 Darwin cross-target.
+case "$HOST_TRIPLET" in
+  aarch64-apple-darwin*)
+    export wine_cv_64bit_compare_swap="${wine_cv_64bit_compare_swap:-none needed}"
+    ;;
+esac
+
 set +e
 "$SHELL_BIN" "$SOURCE/configure" \
   --build="$BUILD_TRIPLET" --host="$HOST_TRIPLET" --with-wine-tools="$TOOLS" \
