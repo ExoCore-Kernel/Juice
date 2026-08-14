@@ -107,13 +107,31 @@ echo "JUICE_X64_HYBRID_LAYOUT arm64_programs=$arm64_programs hybrid_modules=$hyb
 if test "$win32_ready" = 1; then
   mkdir -p "$GRAPE/runtime/lib/wine/i386-windows" \
     "$GRAPE/prefix-template/drive_c/windows/syswow64"
+  test -f "$WOW64/Makefile" || {
+    echo "Legacy Win32 build is missing its generated Makefile: $WOW64/Makefile" >&2
+    exit 3
+  }
+
   x86_targets=()
+  x86_skipped_targets=()
   for target in "${targets[@]}"; do
     case "$target" in
       programs/juicegui/*|programs/juicetextsmoke/*) continue ;;
     esac
-    x86_targets+=("${target/aarch64-windows/i386-windows}")
+    candidate="${target/aarch64-windows/i386-windows}"
+    if grep -Fq "$candidate:" "$WOW64/Makefile"; then
+      x86_targets+=("$candidate")
+    else
+      x86_skipped_targets+=("$candidate")
+      echo "JUICE_WIN32_STAGE_SKIP reason=no-generated-rule target=$candidate"
+    fi
   done
+
+  test "${#x86_targets[@]}" -gt 0 || {
+    echo "Legacy Win32 runtime target list is empty after filtering." >&2
+    exit 3
+  }
+  echo "JUICE_WIN32_STAGE_FILTER selected=${#x86_targets[@]} skipped=${#x86_skipped_targets[@]}"
 
   for target in "${x86_targets[@]}"; do
     module="$WOW64/$target"
@@ -136,7 +154,7 @@ if test "$win32_ready" = 1; then
     esac
   done
 
-  echo "JUICE_WIN32_RUNTIME_INCLUDED modules=${#x86_targets[@]} fex=$FEX_WOW64_DLL"
+  echo "JUICE_WIN32_RUNTIME_INCLUDED modules=${#x86_targets[@]} skipped=${#x86_skipped_targets[@]} fex=$FEX_WOW64_DLL"
 else
   echo "JUICE_WIN32_RUNTIME_SKIPPED reason=components_missing hint='make win32-components'"
 fi
