@@ -44,4 +44,17 @@ fi
 export IOS_TARGET_CPU="${IOS_TARGET_CPU:-arm64}"
 export IPHONEOS_DEPLOYMENT_TARGET="$MIN_IOS"
 
-exec "$REAL_COMPILER" "$@"
+# Wine's virtual-memory mapper needs exact low addresses for WoW64. Force an
+# iOS-only compatibility header into that one translation unit; other Wine and
+# Juice sources retain the ordinary SDK mmap definitions.
+extra_args=()
+for arg in "$@"; do
+  case "$arg" in
+    */dlls/ntdll/unix/virtual.c|dlls/ntdll/unix/virtual.c)
+      extra_args=(-include "$ROOT/toolchain/juice-ios-map-tryfixed.h")
+      break
+      ;;
+  esac
+done
+
+exec "$REAL_COMPILER" "${extra_args[@]}" "$@"
