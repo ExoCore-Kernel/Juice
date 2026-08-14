@@ -4,12 +4,16 @@ set -euo pipefail
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
 CACHE="${JUICE_X64_CACHE:-$ROOT/build/x86_64-cache}"
-TOOLCHAIN="$CACHE/llvm-mingw-$JUICE_LLVM_MINGW_VERSION-ucrt-ubuntu-22.04-aarch64"
+TOOLCHAIN="$CACHE/$JUICE_LLVM_MINGW_DIRNAME"
 BUILD="${JUICE_WOW64_PE_BUILD:-$ROOT/build/wine-wow64-pe}"
 MODULES="${JUICE_X64_RUNTIME_MODULES:-$ROOT/config/runtime-modules.txt}"
 JOBS="${JUICE_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
 
-bash "$ROOT/scripts/configure-wine-wow64-linux.sh"
+if test "${JUICE_WOW64_RECONFIGURE:-${JUICE_RECONFIGURE:-0}}" = 1 || test ! -f "$BUILD/Makefile"; then
+  bash "$ROOT/scripts/configure-wine-wow64-linux.sh"
+else
+  echo "JUICE_WOW64_CONFIGURE_REUSE path=$BUILD"
+fi
 export PATH="$TOOLCHAIN/bin:/usr/local/bin:/usr/bin:/bin"
 
 mapfile -t base_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
