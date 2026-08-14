@@ -15,6 +15,7 @@ PE_WRAPPER="${JUICE_WOW64_PE_WRAPPER:-$ROOT/build/toolchain-linux/clang}"
 PE_PACKER="${JUICE_INCBIN_PACKER:-$ROOT/toolchain/juice-pack-incbins.py}"
 PE_PYTHON="${JUICE_PYTHON:-$(command -v python3 || true)}"
 LOGDIR="${JUICE_BUILD_LOG_DIR:-$ROOT/build/logs}"
+LOADER_FIX_MARKER="$BUILD/.juice-i386-loader-init-v1"
 
 if test "${JUICE_WOW64_RECONFIGURE:-${JUICE_RECONFIGURE:-0}}" = 1 || test ! -f "$BUILD/Makefile"; then
   bash "$ROOT/scripts/configure-wine-wow64-linux.sh"
@@ -36,7 +37,7 @@ JUICE_PE_WRAPPER="$PE_WRAPPER" \
 JUICE_REAL_PE_CLANG="$REAL_CLANG" \
 JUICE_PYTHON="$PE_PYTHON" \
 JUICE_INCBIN_PACKER="$PE_PACKER" \
-  "$ROOT/scripts/build-pe-compiler-wrapper-linux.sh"
+  bash "$ROOT/scripts/build-pe-compiler-wrapper-linux.sh"
 export JUICE_REAL_PE_CLANG="$REAL_CLANG"
 export JUICE_PYTHON="$PE_PYTHON"
 export JUICE_INCBIN_PACKER="$PE_PACKER"
@@ -88,6 +89,28 @@ for arch in ("i386", "aarch64"):
 if f'--cc-cmd="{wrapper}"' not in check:
     raise SystemExit("WoW64 Makefile has no resource-aware --cc-cmd wrapper")
 PY
+
+# Juice's direct ARM64 loader trampoline intentionally renames loader_init() to
+# loader_init_impl() for the AArch64 PE build. The source-level condition also
+# reaches the i386 WoW64 compile, but i386 has no AArch64 trampoline to recreate
+# loader_init. The PE wrapper restores the upstream symbol only while compiling
+# i386 ntdll/loader.c. Rebuild just that object and ntdll once; keep every other
+# cached WoW64 object intact.
+if test ! -f "$LOADER_FIX_MARKER" || test "$ROOT/toolchain/juice-pe-clang.c" -nt "$LOADER_FIX_MARKER"; then
+  echo "JUICE_WOW64_LOADER_SYMBOL_REPAIR target=dlls/ntdll/i386-windows/ntdll.dll"
+  rm -f "$BUILD/dlls/ntdll/i386-windows/loader.o" \
+        "$BUILD/dlls/ntdll/i386-windows/ntdll.dll"
+  "$MAKE" --output-sync=target -C "$BUILD" -j1 \
+    SHELL="$SHELL_BIN" PWD="$BUILD" \
+    "i386_CC=$PE_WRAPPER" "aarch64_CC=$PE_WRAPPER" \
+    dlls/ntdll/i386-windows/ntdll.dll
+  test -s "$BUILD/dlls/ntdll/i386-windows/ntdll.dll" || {
+    echo "WoW64 i386 ntdll loader-symbol repair did not produce ntdll.dll" >&2
+    exit 3
+  }
+  touch "$LOADER_FIX_MARKER"
+  echo "JUICE_WOW64_LOADER_SYMBOL_OK path=$BUILD/dlls/ntdll/i386-windows/ntdll.dll"
+fi
 
 mapfile -t base_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
 targets=()
