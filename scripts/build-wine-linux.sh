@@ -13,13 +13,28 @@ MAKE="${MAKE:-make}"
 SHELL_BIN="${SHELL_BIN:-/bin/bash}"
 PE_CLANG="${JUICE_PE_CLANG:-$TOOLCHAIN/bin/aarch64-w64-mingw32-clang}"
 LOGDIR="${JUICE_BUILD_LOG_DIR:-$ROOT/build/logs}"
+IOS_CC="${JUICE_IOS_CC:-$ROOT/toolchain/juice-ios-cc}"
+CACHE_SHIM_SOURCE="$ROOT/scripts/ios-clear-cache-shim.c"
+CACHE_SHIM_DIR="$ROOT/build/ios-shims"
+CACHE_SHIM_OBJ="$CACHE_SHIM_DIR/clear-cache.o"
 
 case "$(uname -m)" in x86_64|amd64) ;; *) echo "build-wine-linux.sh currently targets an x86_64 Linux host." >&2; exit 2;; esac
 
 test -f "$NATIVE/Makefile" || "$ROOT/scripts/configure-wine-linux.sh"
 test -f "$PEBUILD/Makefile" || "$ROOT/scripts/configure-wine-pe-linux.sh"
 test -f "$MODULES" || { echo "Missing runtime module manifest: $MODULES" >&2; exit 3; }
-mkdir -p "$LOGDIR"
+test -f "$CACHE_SHIM_SOURCE" || { echo "Missing iOS clear-cache shim: $CACHE_SHIM_SOURCE" >&2; exit 3; }
+mkdir -p "$LOGDIR" "$CACHE_SHIM_DIR"
+
+# cctools-port's Clang can lower __builtin___clear_cache to an external
+# ___clear_cache symbol that iOS does not export. Build a tiny compatibility
+# object once; it forwards that compiler-runtime ABI to sys_icache_invalidate().
+if test ! -f "$CACHE_SHIM_OBJ" || test "$CACHE_SHIM_SOURCE" -nt "$CACHE_SHIM_OBJ"; then
+  echo "JUICE_IOS_CACHE_SHIM_BUILD output=$CACHE_SHIM_OBJ"
+  "$IOS_CC" -c "$CACHE_SHIM_SOURCE" -o "$CACHE_SHIM_OBJ"
+else
+  echo "JUICE_IOS_CACHE_SHIM_REUSE output=$CACHE_SHIM_OBJ"
+fi
 
 # Keep the normal path fast and parallel. If a bulk make fails, retry only the
 # requested targets one at a time. This preserves everything already compiled,
@@ -94,7 +109,9 @@ native_data_targets=(
   include/windows.ui.xaml.winmd
 )
 
-make_targets native "$NATIVE" -- "${native_targets[@]}" "${native_data_targets[@]}"
+# ntdll's Unix link already consumes $(RT_LIBS). Appending the shim here makes
+# the fix work with an existing configured Makefile, so no reconfigure is needed.
+make_targets native "$NATIVE" "RT_LIBS+=$CACHE_SHIM_OBJ" -- "${native_targets[@]}" "${native_data_targets[@]}"
 
 # These macOS frameworks are intentionally absent from iPhoneOS. The patched
 # mountmgr contains iOS stubs and only needs CoreFoundation.
