@@ -40,8 +40,29 @@ if test ! -f "$BUILD/Makefile" || test "${JUICE_RECONFIGURE:-0}" = 1; then
   )
 fi
 
-"$MAKE" -C "$BUILD" -j"$JOBS" tools/makedep tools/winebuild/winebuild
-for tool in "$BUILD/tools/makedep" "$BUILD/tools/winebuild/winebuild"; do
+# A cross-configured Wine tree uses native build-host generators from toolsdir.
+# Build the complete set used by IDL/header/resource and module generation so a
+# later target does not fail because only makedep/winebuild happened to exist.
+host_targets=(
+  tools/makedep
+  tools/winebuild/winebuild
+  tools/winegcc/winegcc
+  tools/widl/widl
+  tools/wrc/wrc
+  tools/wmc/wmc
+)
+
+"$MAKE" --output-sync=target -C "$BUILD" -j"$JOBS" "${host_targets[@]}"
+
+host_tools=(
+  "$BUILD/tools/makedep"
+  "$BUILD/tools/winebuild/winebuild"
+  "$BUILD/tools/winegcc/winegcc"
+  "$BUILD/tools/widl/widl"
+  "$BUILD/tools/wrc/wrc"
+  "$BUILD/tools/wmc/wmc"
+)
+for tool in "${host_tools[@]}"; do
   test -x "$tool" || { echo "Missing Linux Wine build tool: $tool" >&2; exit 3; }
   file "$tool" | grep -Eq 'ELF 64-bit.*x86-64' || {
     echo "Wine build tool is not an x86_64 Linux executable: $tool" >&2
@@ -50,4 +71,4 @@ for tool in "$BUILD/tools/makedep" "$BUILD/tools/winebuild/winebuild"; do
   }
 done
 
-echo "JUICE_WINE_TOOLS_LINUX_OK path=$BUILD"
+echo "JUICE_WINE_TOOLS_LINUX_OK path=$BUILD count=${#host_tools[@]}"
