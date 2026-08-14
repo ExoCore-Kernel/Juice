@@ -3,15 +3,29 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 OUTPUT="${JUICE_TIPA_OUTPUT:-}"
+TOOLS="${JUICE_WINE_TOOLS_BUILD:-$ROOT/build/wine-tools-linux}"
+WINE_BUILD="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
+PE_BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 
 "$ROOT/scripts/preflight-linux-x86_64.sh"
-"$ROOT/scripts/build-wine-tools-linux.sh"
 
-if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}/Makefile"; then
-  "$ROOT/scripts/configure-wine-linux.sh"
+if test "${JUICE_REBUILD_HOST_TOOLS:-0}" = 1 || \
+   test ! -x "$TOOLS/tools/makedep" || \
+   test ! -x "$TOOLS/tools/winebuild/winebuild"; then
+  "$ROOT/scripts/build-wine-tools-linux.sh"
+else
+  echo "JUICE_WINE_TOOLS_REUSE path=$TOOLS"
 fi
-if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}/Makefile"; then
+
+if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile"; then
+  "$ROOT/scripts/configure-wine-linux.sh"
+else
+  echo "JUICE_WINE_CONFIGURE_REUSE path=$WINE_BUILD"
+fi
+if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$PE_BUILD/Makefile"; then
   "$ROOT/scripts/configure-wine-pe-linux.sh"
+else
+  echo "JUICE_PE_CONFIGURE_REUSE path=$PE_BUILD"
 fi
 
 "$ROOT/scripts/build-wine-linux.sh"
