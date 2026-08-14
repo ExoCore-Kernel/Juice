@@ -6,8 +6,10 @@
  * __clear_cache(begin, end) helper when cross-linking with cctools-port.
  * iOS exposes sys_icache_invalidate() in libc instead, so provide the
  * expected helper without depending on a compiler runtime library.
+ * Match Clang's builtin ABI exactly to avoid a conflicting declaration.
  */
-void __clear_cache(char *begin, char *end)
+void __clear_cache(void *begin, void *end)
 {
-    if (end > begin) sys_icache_invalidate(begin, (size_t)(end - begin));
+    if ((char *)end > (char *)begin)
+        sys_icache_invalidate(begin, (size_t)((char *)end - (char *)begin));
 }
