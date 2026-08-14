@@ -9,7 +9,11 @@ BUILD="${JUICE_ARM64EC_PE_BUILD:-$ROOT/build/wine-arm64ec-pe}"
 MODULES="${JUICE_X64_RUNTIME_MODULES:-$ROOT/config/runtime-modules.txt}"
 JOBS="${JUICE_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
 
-"$ROOT/scripts/configure-wine-arm64ec-linux.sh"
+if test "${JUICE_ARM64EC_RECONFIGURE:-${JUICE_RECONFIGURE:-0}}" = 1 || test ! -f "$BUILD/Makefile"; then
+  "$ROOT/scripts/configure-wine-arm64ec-linux.sh"
+else
+  echo "JUICE_ARM64EC_CONFIGURE_REUSE path=$BUILD"
+fi
 export PATH="$TOOLCHAIN/bin:/usr/local/bin:/usr/bin:/bin"
 mapfile -t targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
 test "${#targets[@]}" -gt 0 || { echo "Hybrid runtime manifest is empty." >&2; exit 2; }
