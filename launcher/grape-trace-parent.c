@@ -25,6 +25,65 @@ extern int ptrace(
 #define PT_DETACH 11
 #endif
 
+/*
+ * The Linux-built TIPA carries target-side libraries (currently FreeType) in
+ * Juice.app/Libraries.  The UIKit launcher starts this tracer, which in turn
+ * starts Wine, so this is the last reliable place to prepend the bundle path
+ * before dyld initializes the Wine process.  Existing rootless library paths
+ * are retained as fallbacks for the rest of the Procursus runtime.
+ */
+static void prepend_bundle_libraries(const char *program)
+{
+    const char *marker;
+    const char *old;
+    size_t root_length;
+    size_t length;
+    char *value;
+
+    marker = strstr(program, "/Grape-X64/");
+    if (!marker)
+        marker = strstr(program, "/Grape/");
+    if (!marker)
+        return;
+
+    root_length = (size_t)(marker - program);
+    old = getenv("DYLD_LIBRARY_PATH");
+    length = root_length + strlen("/Libraries") + 1;
+    if (old && *old)
+        length += 1 + strlen(old);
+
+    value = malloc(length);
+    if (!value)
+        return;
+
+    if (old && *old)
+        snprintf(
+            value,
+            length,
+            "%.*s/Libraries:%s",
+            (int)root_length,
+            program,
+            old
+        );
+    else
+        snprintf(
+            value,
+            length,
+            "%.*s/Libraries",
+            (int)root_length,
+            program
+        );
+
+    if (!setenv("DYLD_LIBRARY_PATH", value, 1))
+        fprintf(
+            stderr,
+            "[JuiceWine parent] bundle libraries path=%s\n",
+            value
+        );
+
+    free(value);
+}
+
 static int ptrace_continue(
     pid_t child,
     int signal_number
@@ -114,6 +173,8 @@ int main(int argc, char **argv)
 
         return 64;
     }
+
+    prepend_bundle_libraries(argv[1]);
 
     fprintf(
         stderr,
