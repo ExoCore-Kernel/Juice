@@ -109,9 +109,11 @@ native_data_targets=(
   include/windows.ui.xaml.winmd
 )
 
-# ntdll's Unix link already consumes $(RT_LIBS). Appending the shim here makes
-# the fix work with an existing configured Makefile, so no reconfigure is needed.
-make_targets native "$NATIVE" "RT_LIBS+=$CACHE_SHIM_OBJ" -- "${native_targets[@]}" "${native_data_targets[@]}"
+# Wine expands UNIX_LIBS while generating the configured Makefile, so changing
+# RT_LIBS here cannot affect an already-configured tree. The generated Unix
+# linker rule reads $(LDFLAGS) at build time, which lets us inject the cache
+# shim without reconfiguring or regenerating the Makefile.
+make_targets native "$NATIVE" "LDFLAGS+=$CACHE_SHIM_OBJ" -- "${native_targets[@]}" "${native_data_targets[@]}"
 
 # These macOS frameworks are intentionally absent from iPhoneOS. The patched
 # mountmgr contains iOS stubs and only needs CoreFoundation.
