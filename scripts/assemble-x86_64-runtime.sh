@@ -52,18 +52,37 @@ mkdir -p "$GRAPE/runtime/lib/wine/aarch64-windows" "$GRAPE/tests" \
   "$GRAPE/prefix-template/drive_c/windows/system32"
 
 mapfile -t targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
+arm64_programs=0
+hybrid_modules=0
 for target in "${targets[@]}"; do
-  module="$HYBRID/$target"
-  test -s "$module" || { echo "Missing hybrid module: $target" >&2; exit 3; }
-  cp "$module" "$GRAPE/runtime/lib/wine/aarch64-windows/$(basename "$target")"
+  destination="$GRAPE/runtime/lib/wine/aarch64-windows/$(basename "$target")"
+  case "$target" in
+    programs/*)
+      # Grape-X64 begins as a copy of the verified ARM64 Grape runtime. Keep
+      # helper EXEs native ARM64; Wine's ARM64EC multiarch build does not expose
+      # a hybrid aarch64-windows rule for every program (notably conhost.exe),
+      # and ARM64 programs are valid alongside ARM64X DLLs.
+      test -s "$destination" || {
+        echo "Missing base ARM64 helper program: $target ($destination)" >&2
+        exit 3
+      }
+      arm64_programs=$((arm64_programs + 1))
+      ;;
+    *)
+      module="$HYBRID/$target"
+      test -s "$module" || { echo "Missing hybrid module: $target" >&2; exit 3; }
+      cp "$module" "$destination"
+      hybrid_modules=$((hybrid_modules + 1))
+      ;;
+  esac
 done
 cp "$HYBRID/dlls/ntdll/aarch64-windows/ntdll.dll" \
   "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll"
 cp "$FEX_DLL" "$GRAPE/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll"
 cp "$FEX_DLL" "$GRAPE/prefix-template/drive_c/windows/system32/libarm64ecfex.dll"
-cp "$HYBRID/programs/juicegui/aarch64-windows/JuiceGUI.exe" \
+cp "$GRAPE/runtime/lib/wine/aarch64-windows/JuiceGUI.exe" \
   "$GRAPE/prefix-template/drive_c/windows/system32/JuiceGUI.exe"
-cp "$HYBRID/programs/winemine/aarch64-windows/winemine.exe" \
+cp "$GRAPE/runtime/lib/wine/aarch64-windows/winemine.exe" \
   "$GRAPE/prefix-template/drive_c/windows/system32/winemine.exe"
 cp "$SMOKE" "$GRAPE/tests/x86_64-smoke.exe"
 cp "$SMOKE" "$GRAPE/runtime/lib/wine/aarch64-windows/x86_64-smoke.exe"
@@ -82,6 +101,8 @@ for target in "${targets[@]}"; do
     exit 3
   }
 done
+
+echo "JUICE_X64_HYBRID_LAYOUT arm64_programs=$arm64_programs hybrid_modules=$hybrid_modules"
 
 if test "$win32_ready" = 1; then
   mkdir -p "$GRAPE/runtime/lib/wine/i386-windows" \
