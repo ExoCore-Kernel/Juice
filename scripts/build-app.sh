@@ -38,7 +38,8 @@ rm -rf "$OUT"
 mkdir -p "$OUT"
 
 "$CC" "${target_flags[@]}" -fobjc-arc -fblocks -O2 \
-  "$ROOT/app/main.m" "$ROOT/app/JuiceZip.m" "$ROOT/app/JuiceLegacyWin32.m" \
+  "$ROOT/app/main.m" "$ROOT/app/JuiceZip.m" "$ROOT/app/JuicePrefixRepair.m" \
+  "$ROOT/app/JuiceLegacyWin32.m" \
   -framework UIKit -framework Foundation -framework QuartzCore \
   -framework CoreGraphics -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
