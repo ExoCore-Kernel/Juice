@@ -32,6 +32,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <libkern/OSCacheControl.h>
 #include <mach/mach_traps.h>
 #include <mach/vm_statistics.h>
 #include <sys/mman.h>
@@ -41,6 +42,22 @@
 #ifndef MAP_TRYFIXED
 #define MAP_TRYFIXED JUICE_MAP_TRYFIXED
 #endif
+
+/*
+ * Clang's __builtin___clear_cache() lowers to a call to __clear_cache on this
+ * Linux-hosted iOS cross toolchain, but the resulting ntdll.so does not link a
+ * compiler-rt implementation of that helper. Wine may also call
+ * __clear_cache() directly when HAVE___CLEAR_CACHE is enabled.
+ *
+ * Mirror the working Mythic iOS path and bridge that ABI helper to Apple's
+ * public instruction-cache invalidation API. This header is force-included
+ * only for virtual.c, so the definition stays scoped to the one native Wine
+ * dylib that needs it.
+ */
+void __clear_cache(void *start, void *end)
+{
+    sys_icache_invalidate(start, (size_t)((char *)end - (char *)start));
+}
 
 static inline int juice_ios_x64_low_range(void *address, size_t size)
 {
