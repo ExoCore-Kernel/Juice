@@ -41,6 +41,7 @@
 #include "initguid.h"
 #include "devguid.h"
 #include "xinput.h"
+#include "juiceinput.h"
 
 #include "wine/debug.h"
 
@@ -96,6 +97,94 @@ static struct xinput_controller controllers[XUSER_MAX_COUNT];
 static HMODULE xinput_instance;
 static HANDLE start_event;
 static HANDLE update_event;
+
+/* iOS cannot expose GameController.framework devices through Linux udev/HID.
+ * Juice therefore publishes one controller through a tiny read-only shared
+ * file.  Mapping it once keeps XInputGetState allocation-free and avoids a
+ * polling thread when no physical controller is connected. */
+static INIT_ONCE juice_gamepad_once = INIT_ONCE_STATIC_INIT;
+static HANDLE juice_gamepad_file = INVALID_HANDLE_VALUE;
+static HANDLE juice_gamepad_mapping;
+static const struct juice_gamepad_shared_state *juice_gamepad_state;
+static BOOL juice_gamepad_configured;
+
+static BOOL CALLBACK init_juice_gamepad(INIT_ONCE *once, void *param, void **context)
+{
+    char path[MAX_PATH * 4];
+    DWORD length;
+
+    length = GetEnvironmentVariableA("JUICE_GAMEPAD_STATE", path, ARRAY_SIZE(path));
+    if (!length || length >= ARRAY_SIZE(path)) return TRUE;
+    juice_gamepad_configured = TRUE;
+    juice_gamepad_file = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                     NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (juice_gamepad_file == INVALID_HANDLE_VALUE)
+    {
+        WARN("failed to open Juice gamepad state %s, error %lu\n", debugstr_a(path), GetLastError());
+        return TRUE;
+    }
+    juice_gamepad_mapping = CreateFileMappingA(juice_gamepad_file, NULL, PAGE_READONLY, 0,
+                                                JUICE_GAMEPAD_SHARED_SIZE, NULL);
+    if (!juice_gamepad_mapping)
+    {
+        WARN("failed to map Juice gamepad state, error %lu\n", GetLastError());
+        CloseHandle(juice_gamepad_file);
+        juice_gamepad_file = INVALID_HANDLE_VALUE;
+        return TRUE;
+    }
+    juice_gamepad_state = MapViewOfFile(juice_gamepad_mapping, FILE_MAP_READ, 0, 0,
+                                        JUICE_GAMEPAD_SHARED_SIZE);
+    if (!juice_gamepad_state || juice_gamepad_state->magic != JUICE_GAMEPAD_MAGIC ||
+        juice_gamepad_state->version != JUICE_GAMEPAD_VERSION ||
+        juice_gamepad_state->size != JUICE_GAMEPAD_SHARED_SIZE)
+    {
+        WARN("invalid Juice gamepad state mapping\n");
+        if (juice_gamepad_state) UnmapViewOfFile(juice_gamepad_state);
+        juice_gamepad_state = NULL;
+        CloseHandle(juice_gamepad_mapping);
+        juice_gamepad_mapping = NULL;
+        CloseHandle(juice_gamepad_file);
+        juice_gamepad_file = INVALID_HANDLE_VALUE;
+        return TRUE;
+    }
+    TRACE("using Juice GameController XInput bridge at %s\n", debugstr_a(path));
+    return TRUE;
+}
+
+static BOOL is_juice_gamepad_configured(void)
+{
+    InitOnceExecuteOnce(&juice_gamepad_once, init_juice_gamepad, NULL, NULL);
+    return juice_gamepad_configured;
+}
+
+static BOOL read_juice_gamepad(XINPUT_STATE *state)
+{
+    struct juice_gamepad_shared_state snapshot;
+    unsigned int attempts;
+    uint32_t sequence;
+
+    if (!is_juice_gamepad_configured() || !juice_gamepad_state) return FALSE;
+    for (attempts = 0; attempts < 8; attempts++)
+    {
+        sequence = juice_gamepad_state->sequence;
+        if (sequence & 1) continue;
+        MemoryBarrier();
+        memcpy(&snapshot, juice_gamepad_state, sizeof(snapshot));
+        MemoryBarrier();
+        if (sequence == juice_gamepad_state->sequence && !(sequence & 1)) break;
+    }
+    if (attempts == 8 || snapshot.magic != JUICE_GAMEPAD_MAGIC || !snapshot.connected) return FALSE;
+    memset(state, 0, sizeof(*state));
+    state->dwPacketNumber = snapshot.packet ? snapshot.packet : 1;
+    state->Gamepad.wButtons = snapshot.buttons;
+    state->Gamepad.bLeftTrigger = snapshot.left_trigger;
+    state->Gamepad.bRightTrigger = snapshot.right_trigger;
+    state->Gamepad.sThumbLX = snapshot.thumb_lx;
+    state->Gamepad.sThumbLY = snapshot.thumb_ly;
+    state->Gamepad.sThumbRX = snapshot.thumb_rx;
+    state->Gamepad.sThumbRY = snapshot.thumb_ry;
+    return TRUE;
+}
 
 static SRWLOCK state_lock = SRWLOCK_INIT;
 static XINPUT_STATE current_state[XUSER_MAX_COUNT];
@@ -813,6 +902,8 @@ void WINAPI DECLSPEC_HOTPATCH XInputEnable(BOOL enable)
 
     TRACE("enable %d.\n", enable);
 
+    if (is_juice_gamepad_configured()) return;
+
     /* Setting to false will stop messages from XInputSetState being sent
     to the controllers. Setting to true will send the last vibration
     value (sent to XInputSetState) to the controller and allow messages to
@@ -834,6 +925,15 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputSetState(DWORD index, XINPUT_VIBRATION *vib
     DWORD ret;
 
     TRACE("index %lu, vibration %p.\n", index, vibration);
+
+    if (is_juice_gamepad_configured())
+    {
+        XINPUT_STATE state;
+        if (index >= XUSER_MAX_COUNT || !vibration) return ERROR_BAD_ARGUMENTS;
+        if (index || !read_juice_gamepad(&state)) return ERROR_DEVICE_NOT_CONNECTED;
+        /* GameController haptics are deliberately not advertised yet. */
+        return ERROR_SUCCESS;
+    }
 
     start_update_thread();
 
@@ -857,6 +957,13 @@ static DWORD xinput_get_state(DWORD index, XINPUT_STATE *state)
     DWORD ret;
 
     if (!state) return ERROR_BAD_ARGUMENTS;
+
+    if (is_juice_gamepad_configured())
+    {
+        if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
+        if (index || !read_juice_gamepad(state)) return ERROR_DEVICE_NOT_CONNECTED;
+        return ERROR_SUCCESS;
+    }
 
     start_update_thread();
 
@@ -1145,6 +1252,16 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetBatteryInformation(DWORD index, BYTE typ
 
     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
 
+    if (is_juice_gamepad_configured())
+    {
+        XINPUT_STATE state;
+        if (!battery) return ERROR_BAD_ARGUMENTS;
+        if (index || !read_juice_gamepad(&state)) return ERROR_DEVICE_NOT_CONNECTED;
+        battery->BatteryType = BATTERY_TYPE_UNKNOWN;
+        battery->BatteryLevel = BATTERY_LEVEL_FULL;
+        return ERROR_SUCCESS;
+    }
+
     EnterCriticalSection(&xinput_cs);
     ret = controllers[index].device ? ERROR_NOT_SUPPORTED : ERROR_DEVICE_NOT_CONNECTED;
     LeaveCriticalSection(&xinput_cs);
@@ -1158,6 +1275,27 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetCapabilitiesEx(DWORD unk, DWORD index, D
     DWORD ret = ERROR_SUCCESS;
 
     TRACE("unk %lu, index %lu, flags %#lx, capabilities %p.\n", unk, index, flags, caps);
+
+    if (is_juice_gamepad_configured())
+    {
+        XINPUT_STATE state;
+        if (index >= XUSER_MAX_COUNT || !caps) return ERROR_BAD_ARGUMENTS;
+        if (index || !read_juice_gamepad(&state)) return ERROR_DEVICE_NOT_CONNECTED;
+        memset(caps, 0, sizeof(*caps));
+        caps->Capabilities.Type = XINPUT_DEVTYPE_GAMEPAD;
+        caps->Capabilities.SubType = XINPUT_DEVSUBTYPE_GAMEPAD;
+        caps->Capabilities.Gamepad.wButtons = 0xffff;
+        caps->Capabilities.Gamepad.bLeftTrigger = 0xff;
+        caps->Capabilities.Gamepad.bRightTrigger = 0xff;
+        caps->Capabilities.Gamepad.sThumbLX = 0x7fff;
+        caps->Capabilities.Gamepad.sThumbLY = 0x7fff;
+        caps->Capabilities.Gamepad.sThumbRX = 0x7fff;
+        caps->Capabilities.Gamepad.sThumbRY = 0x7fff;
+        caps->VendorId = 0x05ac;
+        caps->ProductId = 1;
+        caps->VersionNumber = JUICE_GAMEPAD_VERSION;
+        return ERROR_SUCCESS;
+    }
 
     start_update_thread();
 

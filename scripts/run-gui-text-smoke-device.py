@@ -28,9 +28,13 @@ MSG_WINDOW = 3
 MSG_FRAME = 5
 MSG_INPUT = 100
 MSG_TEXT = 101
+MSG_HARDWARE_KEY = 103
 INPUT_LEFT_DOWN = 1
 INPUT_LEFT_UP = 2
+HARDWARE_KEY_DOWN = 1
+HARDWARE_KEY_UP = 2
 HEADER = struct.Struct("<III4xQiiiiII")
+GAMEPAD_STATE = struct.Struct("<IHHIIIHBBhhhhIIQ16s")
 
 
 def read_exact(connection: socket.socket, size: int) -> bytes | None:
@@ -89,6 +93,7 @@ class DisplayHost:
         click_points: list[tuple[int, int]],
         input_delay: float,
         send_text: bool,
+        hardware_key: bool,
         input_gate: Path | None,
         expected_window: tuple[int, int] | None,
     ) -> None:
@@ -103,6 +108,7 @@ class DisplayHost:
         self.click_points = click_points
         self.input_delay = input_delay
         self.send_text = send_text
+        self.hardware_key = hardware_key
         self.input_gate = input_gate
         self.expected_window = expected_window
         self.listener: socket.socket | None = None
@@ -218,6 +224,28 @@ class DisplayHost:
             if self.send_text:
                 self._send_message(
                     connection, MSG_TEXT, hwnd, payload=self.text.encode("utf-16-le")
+                )
+            if self.hardware_key:
+                self._send_message(
+                    connection,
+                    MSG_HARDWARE_KEY,
+                    hwnd,
+                    x=0x41,
+                    y=0x1E,
+                    flags=HARDWARE_KEY_DOWN,
+                )
+                self._send_message(
+                    connection,
+                    MSG_HARDWARE_KEY,
+                    hwnd,
+                    x=0x41,
+                    y=0x1E,
+                    flags=HARDWARE_KEY_UP,
+                )
+                print(
+                    f"JUICE_HARDWARE_KEY_HOST_SENT hwnd=0x{hwnd:x} "
+                    "vk=0x41 scan=0x1e down=1 up=1",
+                    flush=True,
                 )
             print(
                 f"JUICE_TEXT_HOST_INPUT_SENT hwnd=0x{hwnd:x} "
@@ -378,6 +406,8 @@ def main() -> int:
     parser.add_argument("--text", default="Juice input works 42")
     parser.add_argument("--no-input", action="store_true")
     parser.add_argument("--no-text", action="store_true")
+    parser.add_argument("--hardware-key", action="store_true")
+    parser.add_argument("--gamepad-state", type=Path)
     parser.add_argument("--click", type=pair, action="append")
     parser.add_argument("--input-delay", type=float, default=0.25)
     parser.add_argument("--inject-after-marker", action="store_true")
@@ -414,12 +444,43 @@ def main() -> int:
         click_points,
         args.input_delay,
         not args.no_text,
+        args.hardware_key,
         input_gate,
         args.expect_window,
     )
     host.start()
+    if args.gamepad_state:
+        args.gamepad_state.parent.mkdir(parents=True, exist_ok=True)
+        args.gamepad_state.write_bytes(
+            GAMEPAD_STATE.pack(
+                0x3147504A,
+                1,
+                GAMEPAD_STATE.size,
+                2,
+                1,
+                42,
+                0x1000,
+                96,
+                0,
+                12345,
+                0,
+                0,
+                -23456,
+                0,
+                0xFFFFFFFF,
+                time.monotonic_ns(),
+                bytes(16),
+            )
+        )
+        print(
+            f"JUICE_GAMECONTROLLER_HOST_STATE_READY path={args.gamepad_state} "
+            "packet=42 buttons=0x1000 lt=96 lx=12345 ry=-23456",
+            flush=True,
+        )
     environment = os.environ.copy()
     environment["JUICE_IOS_SOCKET"] = str(args.socket)
+    if args.gamepad_state:
+        environment["JUICE_GAMEPAD_STATE"] = "Z:" + str(args.gamepad_state).replace("/", "\\")
     process = subprocess.Popen(command, env=environment, start_new_session=True)
     deadline = time.monotonic() + args.timeout
     success = False
@@ -453,6 +514,27 @@ def main() -> int:
     finally:
         terminate_process(process)
         host.close()
+        if args.gamepad_state:
+            disconnected = GAMEPAD_STATE.pack(
+                0x3147504A,
+                1,
+                GAMEPAD_STATE.size,
+                4,
+                0,
+                43,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0xFFFFFFFF,
+                time.monotonic_ns(),
+                bytes(16),
+            )
+            args.gamepad_state.write_bytes(disconnected)
     return 0 if success else 1
 
 

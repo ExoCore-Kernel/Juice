@@ -172,6 +172,27 @@ BOOL ios_ipc_process_input(void)
    presented=iosdrv_present_now(hwnd);
    fprintf(stderr,"[JuiceInput] key surface=%p target=%p vk=%x delivered=%u length=%ld redraw=%u present=%u\n",hwnd,target,msg.flags&0xffffu,sent,(long)text_length,redrawn,presented);
   }
+  else if(msg.type==JUICE_IOS_HARDWARE_KEY&&!msg.size&&msg.y>0&&msg.y<=0xff&&
+          (msg.flags&(JUICE_IOS_KEY_DOWN|JUICE_IOS_KEY_UP)))
+  {
+   target=input_target?input_target:hwnd;
+   if(msg.flags&JUICE_IOS_KEY_DOWN)
+   {
+    NtUserSetForegroundWindow(hwnd);
+    NtUserSetActiveWindow(hwnd);
+    NtUserSetFocus(target);
+   }
+   input.type=INPUT_KEYBOARD;
+   input.ki.wVk=msg.x;
+   input.ki.wScan=msg.y;
+   input.ki.dwFlags=KEYEVENTF_SCANCODE;
+   if(msg.flags&JUICE_IOS_KEY_EXTENDED) input.ki.dwFlags|=KEYEVENTF_EXTENDEDKEY;
+   if(msg.flags&JUICE_IOS_KEY_UP) input.ki.dwFlags|=KEYEVENTF_KEYUP;
+   sent=NtUserSendHardwareInput(target,0,&input,0);
+   fprintf(stderr,"[JuiceInput] hardware-key surface=%p target=%p vk=%x scan=%x down=%u extended=%u repeat=%u sent=%u\n",
+           hwnd,target,msg.x,msg.y,!!(msg.flags&JUICE_IOS_KEY_DOWN),
+           !!(msg.flags&JUICE_IOS_KEY_EXTENDED),!!(msg.flags&JUICE_IOS_KEY_REPEAT),sent);
+  }
   else
   {
    fprintf(stderr,"[JuiceInput] ignored invalid message type=%u size=%u flags=%x\n",
@@ -212,7 +233,11 @@ void ios_ipc_init(unsigned int width,unsigned int height,unsigned int dpi)
  struct sockaddr_un addr;
  struct juice_ios_msg hello={JUICE_IOS_MAGIC,JUICE_IOS_HELLO,0,0,0,0,(INT)width,(INT)height,dpi,(UINT)getpid()};
 
- if(!path||!*path) return;
+ if(!path||!*path)
+ {
+  fprintf(stderr,"[JuiceInput] display socket disabled: JUICE_IOS_SOCKET is unset\n");
+  return;
+ }
  memset(&addr,0,sizeof(addr));
  addr.sun_family=AF_UNIX;
  if(strlen(path)>=sizeof(addr.sun_path)) return;
@@ -220,16 +245,19 @@ void ios_ipc_init(unsigned int width,unsigned int height,unsigned int dpi)
  ipc_fd=socket(AF_UNIX,SOCK_STREAM,0);
  if(ipc_fd<0||connect(ipc_fd,(struct sockaddr *)&addr,sizeof(addr))<0)
  {
+  fprintf(stderr,"[JuiceInput] display socket connect failed path=%s errno=%d\n",path,errno);
   if(ipc_fd>=0) close(ipc_fd);
   ipc_fd=-1;
   return;
  }
  if(!write_all(ipc_fd,&hello,sizeof(hello)))
  {
+  fprintf(stderr,"[JuiceInput] display hello failed path=%s errno=%d\n",path,errno);
   close(ipc_fd);
   ipc_fd=-1;
   return;
  }
+ fprintf(stderr,"[JuiceInput] display connected path=%s desktop=%ux%u dpi=%u\n",path,width,height,dpi);
  ios_ipc_register_queue();
 }
 void ios_ipc_window(HWND hwnd,const RECT *rect,BOOL visible){send_msg(JUICE_IOS_WINDOW,hwnd,rect,NULL,0,0,visible);}

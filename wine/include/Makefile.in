@@ -420,6 +420,7 @@ SOURCES = \
 	isguids.h \
 	ivectorchangedeventargs.idl \
 	juiceios.h \
+	juiceinput.h \
 	kbd.h \
 	knownfolders.h \
 	ks.h \

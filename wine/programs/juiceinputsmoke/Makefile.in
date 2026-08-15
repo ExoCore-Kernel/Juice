@@ -1,0 +1,6 @@
+MODULE = JuiceInputSmoke.exe
+IMPORTS = gdi32 user32
+EXTRADLLFLAGS = -mwindows -municode
+
+SOURCES = \
+	main.c

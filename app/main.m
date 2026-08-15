@@ -1,9 +1,12 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <GameController/GameController.h>
 #import "JuiceZip.h"
 #import "../wine/dlls/wineios.drv/control_protocol.h"
+#import "../wine/include/juiceinput.h"
 #import <spawn.h>
 #import <sys/socket.h>
+#import <sys/mman.h>
 #import <sys/un.h>
 #import <sys/wait.h>
 #import <fcntl.h>
@@ -18,11 +21,17 @@
 #define MSG_INPUT 100u
 #define MSG_TEXT 101u
 #define MSG_KEY 102u
+#define MSG_HARDWARE_KEY 103u
 #define INPUT_LEFT_DOWN 1u
 #define INPUT_LEFT_UP 2u
 #define INPUT_RIGHT_DOWN 4u
 #define INPUT_RIGHT_UP 8u
+#define HARDWARE_KEY_DOWN 1u
+#define HARDWARE_KEY_UP 2u
+#define HARDWARE_KEY_EXTENDED 4u
+#define HARDWARE_KEY_REPEAT 8u
 typedef struct { uint32_t magic,type,size; uint64_t hwnd; int32_t x,y,width,height; uint32_t stride,flags; } JuiceMsg;
+typedef struct { uint16_t virtualKey,scanCode; BOOL extended; } JuiceKeyMap;
 
 typedef NS_ENUM(uint16_t, JuicePEMachine) {
  JuicePEMachineUnknown=0,
@@ -37,6 +46,81 @@ static BOOL WriteAll(int fd,const void *p,size_t n){const char *b=p;while(n){ssi
 static char **CopyStrings(NSArray<NSString *> *a){char **v=calloc(a.count+1,sizeof(char *));for(NSUInteger i=0;i<a.count;i++)v[i]=strdup(a[i].UTF8String);return v;}
 static void FreeStrings(char **v){if(!v)return;for(size_t i=0;v[i];i++)free(v[i]);free(v);}
 static void CopyControlString(char *destination,size_t capacity,NSString *value){if(!capacity)return;destination[0]=0;if(value.length) [value getCString:destination maxLength:capacity encoding:NSUTF8StringEncoding];}
+static int16_t JuiceControllerAxis(float value){if(value<=-1.f)return INT16_MIN;if(value>=1.f)return INT16_MAX;return (int16_t)(value*(value<0?32768.f:32767.f));}
+static uint8_t JuiceControllerTrigger(float value){if(value<=0.f)return 0;if(value>=1.f)return UINT8_MAX;return (uint8_t)(value*255.f+.5f);}
+static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
+{
+ static const uint8_t letterScans[26]={0x1e,0x30,0x2e,0x20,0x12,0x21,0x22,0x23,0x17,0x24,0x25,0x26,0x32,0x31,0x18,0x19,0x10,0x13,0x1f,0x14,0x16,0x2f,0x11,0x2d,0x15,0x2c};
+ static const uint8_t digitScans[10]={0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b};
+ static const uint8_t functionScans[12]={0x3b,0x3c,0x3d,0x3e,0x3f,0x40,0x41,0x42,0x43,0x44,0x57,0x58};
+ if(usage>=0x04&&usage<=0x1d)return (JuiceKeyMap){(uint16_t)(0x41+usage-0x04),letterScans[usage-0x04],NO};
+ if(usage>=0x1e&&usage<=0x27)
+ {
+  NSUInteger index=usage-0x1e;
+  return (JuiceKeyMap){(uint16_t)(index==9?0x30:0x31+index),digitScans[index],NO};
+ }
+ if(usage>=0x3a&&usage<=0x45)return (JuiceKeyMap){(uint16_t)(0x70+usage-0x3a),functionScans[usage-0x3a],NO};
+ switch(usage)
+ {
+  case 0x28:return (JuiceKeyMap){0x0d,0x1c,NO};
+  case 0x29:return (JuiceKeyMap){0x1b,0x01,NO};
+  case 0x2a:return (JuiceKeyMap){0x08,0x0e,NO};
+  case 0x2b:return (JuiceKeyMap){0x09,0x0f,NO};
+  case 0x2c:return (JuiceKeyMap){0x20,0x39,NO};
+  case 0x2d:return (JuiceKeyMap){0xbd,0x0c,NO};
+  case 0x2e:return (JuiceKeyMap){0xbb,0x0d,NO};
+  case 0x2f:return (JuiceKeyMap){0xdb,0x1a,NO};
+  case 0x30:return (JuiceKeyMap){0xdd,0x1b,NO};
+  case 0x31:case 0x32:return (JuiceKeyMap){0xdc,0x2b,NO};
+  case 0x33:return (JuiceKeyMap){0xba,0x27,NO};
+  case 0x34:return (JuiceKeyMap){0xde,0x28,NO};
+  case 0x35:return (JuiceKeyMap){0xc0,0x29,NO};
+  case 0x36:return (JuiceKeyMap){0xbc,0x33,NO};
+  case 0x37:return (JuiceKeyMap){0xbe,0x34,NO};
+  case 0x38:return (JuiceKeyMap){0xbf,0x35,NO};
+  case 0x39:return (JuiceKeyMap){0x14,0x3a,NO};
+  case 0x46:return (JuiceKeyMap){0x2c,0x37,YES};
+  case 0x47:return (JuiceKeyMap){0x91,0x46,NO};
+  case 0x48:return (JuiceKeyMap){0x13,0x45,NO};
+  case 0x49:return (JuiceKeyMap){0x2d,0x52,YES};
+  case 0x4a:return (JuiceKeyMap){0x24,0x47,YES};
+  case 0x4b:return (JuiceKeyMap){0x21,0x49,YES};
+  case 0x4c:return (JuiceKeyMap){0x2e,0x53,YES};
+  case 0x4d:return (JuiceKeyMap){0x23,0x4f,YES};
+  case 0x4e:return (JuiceKeyMap){0x22,0x51,YES};
+  case 0x4f:return (JuiceKeyMap){0x27,0x4d,YES};
+  case 0x50:return (JuiceKeyMap){0x25,0x4b,YES};
+  case 0x51:return (JuiceKeyMap){0x28,0x50,YES};
+  case 0x52:return (JuiceKeyMap){0x26,0x48,YES};
+  case 0x53:return (JuiceKeyMap){0x90,0x45,YES};
+  case 0x54:return (JuiceKeyMap){0x6f,0x35,YES};
+  case 0x55:return (JuiceKeyMap){0x6a,0x37,NO};
+  case 0x56:return (JuiceKeyMap){0x6d,0x4a,NO};
+  case 0x57:return (JuiceKeyMap){0x6b,0x4e,NO};
+  case 0x58:return (JuiceKeyMap){0x0d,0x1c,YES};
+  case 0x59:return (JuiceKeyMap){0x61,0x4f,NO};
+  case 0x5a:return (JuiceKeyMap){0x62,0x50,NO};
+  case 0x5b:return (JuiceKeyMap){0x63,0x51,NO};
+  case 0x5c:return (JuiceKeyMap){0x64,0x4b,NO};
+  case 0x5d:return (JuiceKeyMap){0x65,0x4c,NO};
+  case 0x5e:return (JuiceKeyMap){0x66,0x4d,NO};
+  case 0x5f:return (JuiceKeyMap){0x67,0x47,NO};
+  case 0x60:return (JuiceKeyMap){0x68,0x48,NO};
+  case 0x61:return (JuiceKeyMap){0x69,0x49,NO};
+  case 0x62:return (JuiceKeyMap){0x60,0x52,NO};
+  case 0x63:return (JuiceKeyMap){0x6e,0x53,NO};
+  case 0x65:return (JuiceKeyMap){0x5d,0x5d,YES};
+  case 0xe0:return (JuiceKeyMap){0xa2,0x1d,NO};
+  case 0xe1:return (JuiceKeyMap){0xa0,0x2a,NO};
+  case 0xe2:return (JuiceKeyMap){0xa4,0x38,NO};
+  case 0xe3:return (JuiceKeyMap){0x5b,0x5b,YES};
+  case 0xe4:return (JuiceKeyMap){0xa3,0x1d,YES};
+  case 0xe5:return (JuiceKeyMap){0xa1,0x36,NO};
+  case 0xe6:return (JuiceKeyMap){0xa5,0x38,YES};
+  case 0xe7:return (JuiceKeyMap){0x5c,0x5c,YES};
+  default:return (JuiceKeyMap){0,0,NO};
+ }
+}
 
 @interface WineWindowState : NSObject
 @property(nonatomic) uint64_t hwnd;
@@ -52,15 +136,42 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
 @property(nonatomic) uint64_t hwnd;
 @property(nonatomic) BOOL rightClick;
 @property(nonatomic,copy) void (^input)(JuiceMsg);
+@property(nonatomic,copy) void (^keyInput)(JuiceKeyMap,BOOL,BOOL,NSString *);
 @end
 @implementation WineCanvas
 -(instancetype)init{if((self=[super init])){self.userInteractionEnabled=YES;self.contentMode=UIViewContentModeScaleAspectFit;self.backgroundColor=UIColor.blackColor;}return self;}
+-(BOOL)canBecomeFirstResponder{return YES;}
+-(void)didMoveToWindow{[super didMoveToWindow];if(self.window)dispatch_async(dispatch_get_main_queue(),^{[self becomeFirstResponder];});}
 -(CGPoint)winePoint:(UITouch *)touch{CGPoint p=[touch locationInView:self];CGSize im=self.image.size;if(!im.width||!im.height)return p;CGFloat s=MIN(self.bounds.size.width/im.width,self.bounds.size.height/im.height);CGFloat ox=(self.bounds.size.width-im.width*s)/2,oy=(self.bounds.size.height-im.height*s)/2;return CGPointMake(MAX(0,MIN(im.width-1,(p.x-ox)/s)),MAX(0,MIN(im.height-1,(p.y-oy)/s)));}
 -(void)send:(UITouch *)t flags:(uint32_t)flags{if(!self.input)return;if(flags&INPUT_LEFT_DOWN)flags=self.rightClick?INPUT_RIGHT_DOWN:INPUT_LEFT_DOWN;else if(flags&INPUT_LEFT_UP)flags=self.rightClick?INPUT_RIGHT_UP:INPUT_LEFT_UP;CGPoint p=[self winePoint:t];JuiceMsg m={JUICE_MAGIC,MSG_INPUT,0,self.hwnd,(int32_t)p.x,(int32_t)p.y,0,0,0,flags};self.input(m);}
--(void)touchesBegan:(NSSet *)t withEvent:(UIEvent *)e{[self send:t.anyObject flags:1];}
+-(void)touchesBegan:(NSSet *)t withEvent:(UIEvent *)e{[self becomeFirstResponder];[self send:t.anyObject flags:1];}
 -(void)touchesMoved:(NSSet *)t withEvent:(UIEvent *)e{[self send:t.anyObject flags:0];}
 -(void)touchesEnded:(NSSet *)t withEvent:(UIEvent *)e{[self send:t.anyObject flags:2];}
 -(void)touchesCancelled:(NSSet *)t withEvent:(UIEvent *)e{[self send:t.anyObject flags:2];}
+-(BOOL)sendPresses:(NSSet<UIPress *> *)presses down:(BOOL)down cancelled:(BOOL)cancelled
+{
+ BOOL handled=NO;
+ for(UIPress *press in presses)
+ {
+  UIKey *key=press.key;
+  if(!key)continue;
+  JuiceKeyMap mapped=JuiceMapHIDUsage((NSUInteger)key.keyCode);
+  NSString *fallback=mapped.scanCode?nil:key.characters;
+  if(mapped.scanCode||fallback.length)
+  {
+   handled=YES;
+   if(self.keyInput)self.keyInput(mapped,down,NO,fallback);
+   if(cancelled&&down&&self.keyInput)self.keyInput(mapped,NO,NO,nil);
+  }
+ }
+ return handled;
+}
+-(void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{if(![self sendPresses:presses down:YES cancelled:NO])[super pressesBegan:presses withEvent:event];}
+-(void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{if(![self sendPresses:presses down:NO cancelled:NO])[super pressesEnded:presses withEvent:event];}
+-(void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{if(![self sendPresses:presses down:NO cancelled:YES])[super pressesCancelled:presses withEvent:event];}
 @end
 
 @interface JuiceController : UIViewController <UITextFieldDelegate,UIDocumentPickerDelegate>
@@ -79,13 +190,16 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
 @property(nonatomic,strong) NSMutableArray<NSNumber *> *wineWindowOrder;
 @property(nonatomic,copy) NSString *socketPath,*controlSocketPath,*grape,*prefix;
 @property(nonatomic,strong) UIDocumentPickerViewController *controlPicker;
+@property(nonatomic,strong) GCController *activeGameController;
 @property(nonatomic) uint32_t controlRequestID,controlFilters;
 @property(nonatomic) pid_t child,server;
-@property(nonatomic) int childInput,lastLegacyClient,inputClient;
+@property(nonatomic) int childInput,lastLegacyClient,inputClient,gamepadFD;
 @property(nonatomic) uint64_t lastLegacyHwnd,inputHwnd;
 @property(nonatomic) CGSize wineDesktopSize;
 @property(nonatomic,strong) UIImage *lastLegacyImage;
 @property(nonatomic) BOOL experimentalMultiWindow,experimentalX64;
+@property(nonatomic) struct juice_gamepad_shared_state *gamepadState;
+@property(nonatomic) uint32_t hardwareKeyEvents;
 @property(nonatomic) BOOL didAutoLaunch,reportedFrame,fullscreen,usingX64,serverUsingX64,desktopMode,prefixNeedsInitialization;
 @property(nonatomic,copy) NSString *persistentLogPath;
 @end
@@ -106,13 +220,14 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  self.experimentalX64=x64?[x64 boolValue]:NO;
  self.listenFD=self.activeClient=self.controlListenFD=self.controlPickerFD=-1;
  self.child=self.server=-1;
- self.childInput=-1;
+ self.childInput=self.gamepadFD=-1;
  self.persistentLogPath=@"/var/mobile/Documents/Juice-GUI-Headless.log";
  [@"JUICE_HEADLESS_TEST_BEGIN\n" writeToFile:self.persistentLogPath atomically:YES
   encoding:NSUTF8StringEncoding error:nil];
  [NSFileManager.defaultManager createDirectoryAtPath:@"/var/mobile/Documents/JuiceData"
   withIntermediateDirectories:YES attributes:nil error:nil];
  [self buildUI];
+ [self setupExternalInput];
  [self startDisplayServer];
  [self startControlServer];
  [self append:[NSString stringWithFormat:@"EXPERIMENTAL_STATE multi_window=%d x86_64=%d\n",
@@ -159,6 +274,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  self.canvas.translatesAutoresizingMaskIntoConstraints=NO;
  __weak typeof(self) weakSelf=self;
  self.canvas.input=^(JuiceMsg message){[weakSelf handleCanvasInput:message];};
+ self.canvas.keyInput=^(JuiceKeyMap key,BOOL down,BOOL repeat,NSString *fallback){[weakSelf sendHardwareKey:key down:down repeat:repeat fallback:fallback];};
 
  self.log=[UITextView new];
  self.log.editable=NO;
@@ -441,6 +557,122 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   if(CGRectContainsPoint(rect,point))return state;
  }
  return nil;
+}
+-(void)sendHardwareKey:(JuiceKeyMap)key down:(BOOL)down repeat:(BOOL)repeat fallback:(NSString *)fallback
+{
+ if(!self.canvas.hwnd)
+ {
+  if(self.hardwareKeyEvents++<4)[self append:@"HARDWARE_KEY_REJECTED reason=no-window\n"];
+  return;
+ }
+ if(!key.scanCode&&down&&fallback.length)
+ {
+  NSData *payload=[fallback dataUsingEncoding:NSUTF16LittleEndianStringEncoding];
+  JuiceMsg text={JUICE_MAGIC,MSG_TEXT,0,self.canvas.hwnd,0,0,0,0,0,0};
+  BOOL delivered=[self broadcastMessage:&text payload:payload];
+  if(self.hardwareKeyEvents++<12)[self append:[NSString stringWithFormat:@"HARDWARE_KEY_TEXT_FALLBACK utf16_units=%lu delivered=%d\n",(unsigned long)(payload.length/2),delivered]];
+  return;
+ }
+ if(!key.scanCode)return;
+ uint32_t flags=down?HARDWARE_KEY_DOWN:HARDWARE_KEY_UP;
+ if(key.extended)flags|=HARDWARE_KEY_EXTENDED;
+ if(repeat)flags|=HARDWARE_KEY_REPEAT;
+ JuiceMsg message={JUICE_MAGIC,MSG_HARDWARE_KEY,0,self.canvas.hwnd,key.virtualKey,key.scanCode,0,0,0,flags};
+ BOOL delivered=[self broadcastMessage:&message payload:nil];
+ if(self.hardwareKeyEvents++<12)[self append:[NSString stringWithFormat:@"HARDWARE_KEY_SENT hwnd=0x%llx vk=0x%x scan=0x%x down=%d extended=%d delivered=%d\n",(unsigned long long)self.canvas.hwnd,key.virtualKey,key.scanCode,down,key.extended,delivered]];
+}
+-(void)writeGamepadConnected:(BOOL)connected gamepad:(GCExtendedGamepad *)gamepad
+{
+ struct juice_gamepad_shared_state *state=self.gamepadState;
+ if(!state)return;
+ uint32_t sequence=state->sequence;
+ if(sequence&1)sequence++;
+ state->sequence=sequence+1;
+ __sync_synchronize();
+ state->connected=connected;
+ state->packet++;
+ state->buttons=0;
+ state->left_trigger=state->right_trigger=0;
+ state->thumb_lx=state->thumb_ly=state->thumb_rx=state->thumb_ry=0;
+ state->battery_level=UINT32_MAX;
+ if(connected&&gamepad)
+ {
+  if(gamepad.dpad.up.isPressed)state->buttons|=0x0001;
+  if(gamepad.dpad.down.isPressed)state->buttons|=0x0002;
+  if(gamepad.dpad.left.isPressed)state->buttons|=0x0004;
+  if(gamepad.dpad.right.isPressed)state->buttons|=0x0008;
+  if(gamepad.buttonMenu.isPressed)state->buttons|=0x0010;
+  if(gamepad.buttonOptions.isPressed)state->buttons|=0x0020;
+  if(gamepad.leftThumbstickButton.isPressed)state->buttons|=0x0040;
+  if(gamepad.rightThumbstickButton.isPressed)state->buttons|=0x0080;
+  if(gamepad.leftShoulder.isPressed)state->buttons|=0x0100;
+  if(gamepad.rightShoulder.isPressed)state->buttons|=0x0200;
+  if(@available(iOS 14.5,*)){if(gamepad.buttonHome.isPressed)state->buttons|=0x0400;}
+  if(gamepad.buttonA.isPressed)state->buttons|=0x1000;
+  if(gamepad.buttonB.isPressed)state->buttons|=0x2000;
+  if(gamepad.buttonX.isPressed)state->buttons|=0x4000;
+  if(gamepad.buttonY.isPressed)state->buttons|=0x8000;
+  state->left_trigger=JuiceControllerTrigger(gamepad.leftTrigger.value);
+  state->right_trigger=JuiceControllerTrigger(gamepad.rightTrigger.value);
+  state->thumb_lx=JuiceControllerAxis(gamepad.leftThumbstick.xAxis.value);
+  state->thumb_ly=JuiceControllerAxis(gamepad.leftThumbstick.yAxis.value);
+  state->thumb_rx=JuiceControllerAxis(gamepad.rightThumbstick.xAxis.value);
+  state->thumb_ry=JuiceControllerAxis(gamepad.rightThumbstick.yAxis.value);
+ }
+ state->timestamp_ns=(uint64_t)(CACurrentMediaTime()*1000000000.0);
+ __sync_synchronize();
+ state->sequence=sequence+2;
+}
+-(void)attachGameController:(GCController *)controller
+{
+ if(self.activeGameController||!controller.extendedGamepad)return;
+ self.activeGameController=controller;
+ controller.handlerQueue=dispatch_get_main_queue();
+ __weak typeof(self) weakSelf=self;
+ controller.extendedGamepad.valueChangedHandler=^(GCExtendedGamepad *gamepad,__unused GCControllerElement *element){[weakSelf writeGamepadConnected:YES gamepad:gamepad];};
+ [self writeGamepadConnected:YES gamepad:controller.extendedGamepad];
+ [self append:[NSString stringWithFormat:@"GAME_CONTROLLER_CONNECTED profile=xinput-v1 vendor=%@\n",controller.vendorName?:@"unknown"]];
+}
+-(void)controllerConnected:(NSNotification *)notification
+{dispatch_async(dispatch_get_main_queue(),^{[self attachGameController:notification.object];});}
+-(void)controllerDisconnected:(NSNotification *)notification
+{
+ dispatch_async(dispatch_get_main_queue(),^{
+  if(notification.object!=self.activeGameController)return;
+  self.activeGameController.extendedGamepad.valueChangedHandler=nil;
+  self.activeGameController=nil;
+  [self writeGamepadConnected:NO gamepad:nil];
+  [self append:@"GAME_CONTROLLER_DISCONNECTED profile=xinput-v1\n"];
+ });
+}
+-(void)setupExternalInput
+{
+ NSString *path=@"/var/mobile/Documents/JuiceData/controller-v1.bin";
+ self.gamepadFD=open(path.fileSystemRepresentation,O_RDWR|O_CREAT,0600);
+ if(self.gamepadFD<0||ftruncate(self.gamepadFD,JUICE_GAMEPAD_SHARED_SIZE)<0)
+ {
+  if(self.gamepadFD>=0){close(self.gamepadFD);self.gamepadFD=-1;}
+  [self append:[NSString stringWithFormat:@"EXTERNAL_INPUT_ERROR state=%@ errno=%d\n",path,errno]];
+  return;
+ }
+ void *mapping=mmap(NULL,JUICE_GAMEPAD_SHARED_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,self.gamepadFD,0);
+ if(mapping==MAP_FAILED)
+ {
+  close(self.gamepadFD);self.gamepadFD=-1;
+  [self append:[NSString stringWithFormat:@"EXTERNAL_INPUT_ERROR mmap errno=%d\n",errno]];
+  return;
+ }
+ self.gamepadState=mapping;
+ memset(self.gamepadState,0,JUICE_GAMEPAD_SHARED_SIZE);
+ self.gamepadState->magic=JUICE_GAMEPAD_MAGIC;
+ self.gamepadState->version=JUICE_GAMEPAD_VERSION;
+ self.gamepadState->size=JUICE_GAMEPAD_SHARED_SIZE;
+ self.gamepadState->sequence=2;
+ self.gamepadState->battery_level=UINT32_MAX;
+ [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(controllerConnected:) name:GCControllerDidConnectNotification object:nil];
+ [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(controllerDisconnected:) name:GCControllerDidDisconnectNotification object:nil];
+ for(GCController *controller in GCController.controllers){if(controller.extendedGamepad){[self attachGameController:controller];break;}}
+ [self append:[NSString stringWithFormat:@"EXTERNAL_INPUT_READY keyboard=hardware gamecontroller=xinput-v1 state=%@\n",path]];
 }
 -(BOOL)sendMessage:(JuiceMsg *)message payload:(NSData *)payload toFD:(int)fd
 {
@@ -1077,6 +1309,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   NSString *source=[pe stringByAppendingPathComponent:name];
   NSString *destination=[system32 stringByAppendingPathComponent:name];
   BOOL juiceManaged=[name caseInsensitiveCompare:@"JuiceGUI.exe"]==NSOrderedSame||
+                    [name caseInsensitiveCompare:@"JuiceInputSmoke.exe"]==NSOrderedSame||
                     [name caseInsensitiveCompare:@"JuiceTextSmoke.exe"]==NSOrderedSame||
                     [name caseInsensitiveCompare:@"winemine.exe"]==NSOrderedSame||
                     [name caseInsensitiveCompare:@"x86_64-smoke.exe"]==NSOrderedSame;
@@ -1114,6 +1347,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   @"DYLD_LIBRARY_PATH=/var/jb/usr/lib",
   [@"JUICE_IOS_SOCKET=" stringByAppendingString:self.socketPath],
   [@"JUICE_IOS_CONTROL_SOCKET=" stringByAppendingString:self.controlSocketPath],
+  [@"JUICE_GAMEPAD_STATE=" stringByAppendingString:@JUICE_GAMEPAD_WINDOWS_PATH],
   [NSString stringWithFormat:@"JUICE_SKIP_WINEBOOT=%d",self.winebootSwitch.on&&!self.prefixNeedsInitialization],
   [@"WINEDEBUG=" stringByAppendingString:(self.debugField.text.length?self.debugField.text:@"-all")],
   @"WINEARCH=win64",@"PATH=/usr/bin:/bin",@"LANG=C"
@@ -1141,7 +1375,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  [field resignFirstResponder];
  return YES;
 }
--(void)dealloc{[self stopTapped];if(self.listenFD>=0)close(self.listenFD);if(self.controlListenFD>=0)close(self.controlListenFD);if(self.controlPickerFD>=0)close(self.controlPickerFD);unlink(self.socketPath.fileSystemRepresentation);unlink(self.controlSocketPath.fileSystemRepresentation);}
+-(void)dealloc{[NSNotificationCenter.defaultCenter removeObserver:self];[self stopTapped];if(self.gamepadState){[self writeGamepadConnected:NO gamepad:nil];munmap(self.gamepadState,JUICE_GAMEPAD_SHARED_SIZE);self.gamepadState=NULL;}if(self.gamepadFD>=0)close(self.gamepadFD);if(self.listenFD>=0)close(self.listenFD);if(self.controlListenFD>=0)close(self.controlListenFD);if(self.controlPickerFD>=0)close(self.controlPickerFD);unlink(self.socketPath.fileSystemRepresentation);unlink(self.controlSocketPath.fileSystemRepresentation);}
 @end
 @interface AppDelegate:UIResponder<UIApplicationDelegate>@property(nonatomic,strong)UIWindow *window;@end
 @implementation AppDelegate

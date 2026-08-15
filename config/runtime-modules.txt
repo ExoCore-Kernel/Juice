@@ -23,6 +23,7 @@ dlls/dhcpcsvc/aarch64-windows/dhcpcsvc.dll
 dlls/dwrite/aarch64-windows/dwrite.dll
 dlls/dxgi/aarch64-windows/dxgi.dll
 dlls/gdi32/aarch64-windows/gdi32.dll
+dlls/hid/aarch64-windows/hid.dll
 dlls/iertutil/aarch64-windows/iertutil.dll
 dlls/imagehlp/aarch64-windows/imagehlp.dll
 dlls/imm32/aarch64-windows/imm32.dll
@@ -62,11 +63,17 @@ dlls/wininet/aarch64-windows/wininet.dll
 dlls/wineios.drv/aarch64-windows/wineios.drv
 dlls/wintrust/aarch64-windows/wintrust.dll
 dlls/ws2_32/aarch64-windows/ws2_32.dll
+dlls/xinput1_1/aarch64-windows/xinput1_1.dll
+dlls/xinput1_2/aarch64-windows/xinput1_2.dll
+dlls/xinput1_3/aarch64-windows/xinput1_3.dll
+dlls/xinput1_4/aarch64-windows/xinput1_4.dll
+dlls/xinput9_1_0/aarch64-windows/xinput9_1_0.dll
 programs/cmd/aarch64-windows/cmd.exe
 programs/conhost/aarch64-windows/conhost.exe
 programs/explorer/aarch64-windows/explorer.exe
 programs/expand/aarch64-windows/expand.exe
 programs/juicegui/aarch64-windows/JuiceGUI.exe
+programs/juiceinputsmoke/aarch64-windows/JuiceInputSmoke.exe
 programs/juicetextsmoke/aarch64-windows/JuiceTextSmoke.exe
 programs/makecab/aarch64-windows/makecab.exe
 programs/msidb/aarch64-windows/msidb.exe
