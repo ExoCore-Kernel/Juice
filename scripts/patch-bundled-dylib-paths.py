@@ -5,14 +5,20 @@ Procursus rootless packages use install names rooted at /var/jb/usr/lib. Juice
 ships a small self-contained subset of those libraries inside the app bundle,
 so rewrite only dependency load commands whose basename is present beside the
 dylib. Keep each dylib's LC_ID_DYLIB unchanged: the ID is not used to locate the
-library being opened, and changing a short existing ID to a longer
-@loader_path name can exceed the fixed Mach-O load-command string capacity.
+library being opened.
+
+Mach-O load-command strings have fixed capacities. Some Procursus dependency
+commands are too small to hold ``@loader_path/<original-long-name>``. In that
+case create a compact local alias (j0, j1, ...) and point the dependency at
+``@loader_path/<alias>``. Alias files are copied only after all original dylibs
+have been patched, so aliases contain the same already-fixed dependency graph.
 Apple/system dependencies are left untouched.
 """
 
 from __future__ import annotations
 
 import pathlib
+import shutil
 import struct
 import sys
 
@@ -41,6 +47,10 @@ def decode_c_string(data: bytearray, start: int, end: int) -> str:
     return raw.decode("utf-8", errors="surrogateescape")
 
 
+def encoded_length(value: str) -> int:
+    return len(value.encode("utf-8", errors="surrogateescape")) + 1
+
+
 def replace_c_string(data: bytearray, start: int, end: int, value: str, path: pathlib.Path) -> None:
     encoded = value.encode("utf-8", errors="surrogateescape") + b"\0"
     capacity = end - start
@@ -50,7 +60,46 @@ def replace_c_string(data: bytearray, start: int, end: int, value: str, path: pa
     data[start : start + len(encoded)] = encoded
 
 
-def patch_one(path: pathlib.Path, available: set[str]) -> int:
+class AliasTable:
+    def __init__(self, directory: pathlib.Path, reserved_names: set[str]) -> None:
+        self.directory = directory
+        self.reserved_names = set(reserved_names)
+        self.by_target: dict[str, str] = {}
+
+    def get(self, target_basename: str) -> str:
+        existing = self.by_target.get(target_basename)
+        if existing is not None:
+            return existing
+
+        index = len(self.by_target)
+        while True:
+            alias = f"j{index}"
+            index += 1
+            if alias not in self.reserved_names:
+                break
+        self.reserved_names.add(alias)
+        self.by_target[target_basename] = alias
+        return alias
+
+    def materialize(self) -> int:
+        count = 0
+        for target_basename, alias in sorted(self.by_target.items(), key=lambda item: item[1]):
+            source = self.directory / target_basename
+            destination = self.directory / alias
+            if not source.exists():
+                fail(f"alias target disappeared: {source}")
+            if destination.exists() or destination.is_symlink():
+                fail(f"alias destination already exists: {destination}")
+            # Follow Procursus soname symlinks and copy the fully patched target.
+            # This makes the eventual app bundle independent of symlink handling
+            # by zip/installers and lets the normal signing pass sign each alias.
+            shutil.copy2(source, destination, follow_symlinks=True)
+            print(f"JUICE_DYLIB_ALIAS alias={alias} target={target_basename}")
+            count += 1
+        return count
+
+
+def patch_one(path: pathlib.Path, available: set[str], aliases: AliasTable) -> int:
     data = bytearray(path.read_bytes())
     if len(data) < 32:
         return 0
@@ -83,12 +132,24 @@ def patch_one(path: pathlib.Path, available: set[str]) -> int:
                 fail(f"invalid dylib name offset in {path}")
             start = offset + name_offset
             end = offset + cmdsize
+            capacity = end - start
             old = decode_c_string(data, start, end)
             basename = pathlib.PurePosixPath(old).name
 
             replacement = None
             if basename in available:
-                replacement = f"@loader_path/{basename}"
+                direct = f"@loader_path/{basename}"
+                if encoded_length(direct) <= capacity:
+                    replacement = direct
+                else:
+                    alias = aliases.get(basename)
+                    compact = f"@loader_path/{alias}"
+                    if encoded_length(compact) > capacity:
+                        fail(
+                            f"even compact dependency alias does not fit in {path}: "
+                            f"{compact!r} ({encoded_length(compact)} > {capacity})"
+                        )
+                    replacement = compact
 
             if replacement and replacement != old:
                 replace_c_string(data, start, end, replacement, path)
@@ -108,18 +169,22 @@ def main(directory: pathlib.Path) -> None:
 
     entries = list(directory.iterdir())
     available = {entry.name for entry in entries if entry.exists() or entry.is_symlink()}
+    # Capture the original real files before aliases are created. Aliases are
+    # materialized afterwards from these already-patched files.
     files = [entry for entry in entries if entry.is_file() and not entry.is_symlink()]
+    aliases = AliasTable(directory, available)
     patched_files = 0
     rewritten_commands = 0
     for path in sorted(files):
-        count = patch_one(path, available)
+        count = patch_one(path, available, aliases)
         if count:
             patched_files += 1
             rewritten_commands += count
 
+    alias_count = aliases.materialize()
     print(
         f"JUICE_BUNDLED_DYLIB_PATHS_OK path={directory} "
-        f"files={patched_files} rewrites={rewritten_commands}"
+        f"files={patched_files} rewrites={rewritten_commands} aliases={alias_count}"
     )
 
 
