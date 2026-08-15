@@ -16,6 +16,7 @@ rm -rf "$GRAPE"
 mkdir -p "$GRAPE/build/wine-ios/server" "$GRAPE/build/wine-ios/loader" \
   "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows" \
   "$GRAPE/build/wine-ios/dlls/crypt32" \
+  "$GRAPE/build/wine-ios/dlls/dwrite" \
   "$GRAPE/build/wine-ios/dlls/mountmgr.sys" \
   "$GRAPE/build/wine-ios/dlls/win32u" \
   "$GRAPE/build/wine-ios/dlls/wineios.drv" "$GRAPE/build/wine-ios/dlls/ws2_32" \
@@ -34,6 +35,11 @@ cp "$NATIVE/dlls/ntdll/ntdll.so" "$GRAPE/build/wine-ios/dlls/ntdll/"
 cp "$PEBUILD/dlls/ntdll/aarch64-windows/ntdll.dll" \
   "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows/"
 cp "$NATIVE/dlls/crypt32/crypt32.so" "$GRAPE/build/wine-ios/dlls/crypt32/"
+dwrite_unixlib=0
+if test -s "$NATIVE/dlls/dwrite/dwrite.so"; then
+  cp "$NATIVE/dlls/dwrite/dwrite.so" "$GRAPE/build/wine-ios/dlls/dwrite/"
+  dwrite_unixlib=1
+fi
 cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$GRAPE/build/wine-ios/dlls/mountmgr.sys/"
 cp "$NATIVE/dlls/win32u/win32u.so" "$GRAPE/build/wine-ios/dlls/win32u/"
 cp "$NATIVE/dlls/wineios.drv/wineios.so" "$GRAPE/build/wine-ios/dlls/wineios.drv/"
@@ -48,10 +54,13 @@ for winmd in windows.applicationmodel windows.globalization windows.graphics \
   cp "$NATIVE/include/$winmd.winmd" "$GRAPE/build/wine-ios/include/"
 done
 
-# Wine may resolve the Unix driver beside either the build tree or PE module.
+# Wine may resolve a Unix side beside either the build tree or its PE module.
 cp "$NATIVE/dlls/wineios.drv/wineios.so" "$GRAPE/runtime/lib/wine/aarch64-windows/wineios.so"
 cp "$NATIVE/dlls/ws2_32/ws2_32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/ws2_32.so"
 cp "$NATIVE/dlls/crypt32/crypt32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/crypt32.so"
+if test "$dwrite_unixlib" = 1; then
+  cp "$NATIVE/dlls/dwrite/dwrite.so" "$GRAPE/runtime/lib/wine/aarch64-windows/dwrite.so"
+fi
 cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$GRAPE/runtime/lib/wine/aarch64-windows/mountmgr.so"
 cp "$NATIVE/dlls/win32u/win32u.so" "$GRAPE/runtime/lib/wine/aarch64-windows/win32u.so"
 
@@ -98,4 +107,4 @@ chmod 755 "$GRAPE/build/wine-ios/server/wineserver" "$GRAPE/build/wine-ios/loade
   LC_ALL=C find Grape -type f -print0 | sort -z | xargs -0 sha256sum > RUNTIME-MANIFEST.sha256
 )
 module_count="$(find "$GRAPE/runtime/lib/wine/aarch64-windows" -type f | wc -l | tr -d ' ')"
-echo "JUICE_RUNTIME_ASSEMBLED path=$GRAPE modules=$module_count lowva_helper=$GRAPE/tools/juice-lowva-helper"
+echo "JUICE_RUNTIME_ASSEMBLED path=$GRAPE modules=$module_count dwrite_unixlib=$dwrite_unixlib lowva_helper=$GRAPE/tools/juice-lowva-helper"
