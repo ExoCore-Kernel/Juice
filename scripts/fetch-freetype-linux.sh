@@ -9,14 +9,24 @@ CACHE="${JUICE_PROCURSUS_CACHE:-$ROOT/build/deps/procursus}"
 SYSROOT="${JUICE_IOS_ROOTLESS_SYSROOT:-$ROOT/build/deps/rootless-sysroot}"
 INDEX="$CACHE/Packages-${SUITE}-${ARCH}.xz"
 INDEX_URL="$BASE/dists/$SUITE/main/binary-$ARCH/Packages.xz"
+CLOSURE_MARKER="$SYSROOT/.juice-freetype-runtime-v2"
 
 case "$(uname -s)" in Linux) ;; *) echo "The automatic FreeType fetcher is for Linux hosts." >&2; exit 2;; esac
 for tool in curl dpkg-deb python3 sha256sum xz; do
   command -v "$tool" >/dev/null 2>&1 || { echo "Missing FreeType fetch dependency: $tool" >&2; exit 2; }
 done
 
-if test -f "$SYSROOT/usr/include/freetype2/ft2build.h" && test -e "$SYSROOT/usr/lib/libfreetype.dylib" && test "${JUICE_REFRESH_DEPS:-0}" != 1; then
-  echo "JUICE_FREETYPE_SYSROOT_OK path=$SYSROOT source=procursus cached=1"
+# FreeType itself is not a standalone runtime in Procursus. Its package metadata
+# declares libbrotli1 and libpng16-16 as runtime dependencies, so cache validity
+# requires those dylibs too. Older Juice sysroots only contained libfreetype and
+# would compile correctly but fail Wine's dlopen() on-device.
+if test -f "$SYSROOT/usr/include/freetype2/ft2build.h" && \
+   test -e "$SYSROOT/usr/lib/libfreetype.dylib" && \
+   test -f "$CLOSURE_MARKER" && \
+   compgen -G "$SYSROOT/usr/lib/libbrotli*.dylib" >/dev/null && \
+   compgen -G "$SYSROOT/usr/lib/libpng*.dylib" >/dev/null && \
+   test "${JUICE_REFRESH_DEPS:-0}" != 1; then
+  echo "JUICE_FREETYPE_SYSROOT_OK path=$SYSROOT source=procursus cached=1 closure=libfreetype6,libbrotli1,libpng16-16"
   exit 0
 fi
 
@@ -64,7 +74,11 @@ print(r['Filename'] + '\t' + r['SHA256'])
 PY
 }
 
-for package in libfreetype-dev libfreetype6; do
+# libfreetype6 Depends: libbrotli1, libpng16-16 in Procursus. Keep the list
+# explicit so this build input stays small and reproducible instead of pulling a
+# general jailbreak bootstrap dependency graph into Juice.app.
+packages=(libfreetype-dev libfreetype6 libbrotli1 libpng16-16)
+for package in "${packages[@]}"; do
   row="$(find_package "$package")"
   filename="${row%%$'\t'*}"
   expected="${row#*$'\t'}"
@@ -88,6 +102,8 @@ test -d "$source_root" || {
 }
 test -f "$source_root/usr/include/freetype2/ft2build.h" || { echo "Procursus FreeType headers were missing after extraction." >&2; exit 4; }
 test -e "$source_root/usr/lib/libfreetype.dylib" || { echo "Procursus libfreetype.dylib was missing after extraction." >&2; exit 4; }
+compgen -G "$source_root/usr/lib/libbrotli*.dylib" >/dev/null || { echo "Procursus Brotli runtime dylibs were missing after extraction." >&2; exit 4; }
+compgen -G "$source_root/usr/lib/libpng*.dylib" >/dev/null || { echo "Procursus libpng runtime dylibs were missing after extraction." >&2; exit 4; }
 
 case "$SYSROOT" in
   "$ROOT"/build/*) ;;
@@ -106,7 +122,11 @@ cat > "$SYSROOT/.juice-freetype-source" <<INFO
 repository=$BASE
 suite=$SUITE
 architecture=$ARCH
-packages=libfreetype-dev,libfreetype6
+packages=${packages[*]}
+INFO
+cat > "$CLOSURE_MARKER" <<INFO
+version=2
+runtime=libfreetype6,libbrotli1,libpng16-16
 INFO
 
-echo "JUICE_FREETYPE_SYSROOT_OK path=$SYSROOT source=procursus cached=0 suite=$SUITE arch=$ARCH"
+echo "JUICE_FREETYPE_SYSROOT_OK path=$SYSROOT source=procursus cached=0 suite=$SUITE arch=$ARCH closure=libfreetype6,libbrotli1,libpng16-16"
