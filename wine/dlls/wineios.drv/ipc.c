@@ -17,6 +17,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(iosdrv);
 static int ipc_fd=-1; static pthread_mutex_t ipc_lock=PTHREAD_MUTEX_INITIALIZER;
 static __thread BOOL queue_registered;
 static HWND input_target;
+static BOOL pointer_down;
 static BOOL write_all(int fd,const void *data,size_t size){const char *p=data;while(size){ssize_t n=write(fd,p,size);if(n<0&&errno==EINTR)continue;if(n<=0)return FALSE;p+=n;size-=n;}return TRUE;}
 static BOOL read_all(int fd,void *data,size_t size){char *p=data;while(size){ssize_t n=read(fd,p,size);if(n<0&&errno==EINTR)continue;if(n<=0)return FALSE;p+=n;size-=n;}return TRUE;}
 static void send_msg(UINT type,HWND hwnd,const RECT *rect,const void *payload,UINT size,UINT stride,UINT flags)
@@ -76,24 +77,58 @@ BOOL ios_ipc_process_input(void)
   hwnd=(HWND)(UINT_PTR)msg.hwnd;
   if(msg.type==JUICE_IOS_INPUT&&!msg.size)
   {
+   BOOL desktop_coords=(msg.flags&JUICE_IOS_COORDS_DESKTOP)!=0;
+   BOOL down=(msg.flags&(JUICE_IOS_LEFT_DOWN|JUICE_IOS_RIGHT_DOWN))!=0;
+   BOOL up=(msg.flags&(JUICE_IOS_LEFT_UP|JUICE_IOS_RIGHT_UP))!=0;
+   INT local_x=msg.x,local_y=msg.y;
+
    input.type=INPUT_MOUSE;
-   input.mi.dx=msg.x;
-   input.mi.dy=msg.y;
-   target=NtUserChildWindowFromPointEx(hwnd,msg.x,msg.y,
-                                       CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
-   if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
+   if(desktop_coords)
    {
-    input.mi.dx+=window.left;
-    input.mi.dy+=window.top;
+    /*
+     * Keep the hardware pointer in screen space for the whole drag. The host
+     * used to subtract an old window origin and this side then added a newer
+     * one, which made moving windows oscillate behind the finger.
+     */
+    input.mi.dx=msg.x;
+    input.mi.dy=msg.y;
+
+    if(pointer_down&&input_target&&!down) target=input_target;
+    else
+    {
+     if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
+     {
+      local_x-=window.left;
+      local_y-=window.top;
+     }
+     target=NtUserChildWindowFromPointEx(hwnd,local_x,local_y,
+                                         CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
+     if(!target||target==hwnd) target=NtUserWindowFromPoint(msg.x,msg.y);
+     if(!target) target=hwnd;
+    }
    }
-   if(!target||target==hwnd) target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
-   if(!target) target=hwnd;
-   if(msg.flags&(JUICE_IOS_LEFT_DOWN|JUICE_IOS_RIGHT_DOWN))
+   else
+   {
+    input.mi.dx=msg.x;
+    input.mi.dy=msg.y;
+    target=NtUserChildWindowFromPointEx(hwnd,msg.x,msg.y,
+                                        CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
+    if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
+    {
+     input.mi.dx+=window.left;
+     input.mi.dy+=window.top;
+    }
+    if(!target||target==hwnd) target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
+    if(!target) target=hwnd;
+   }
+
+   if(down)
    {
     NtUserSetForegroundWindow(hwnd);
     NtUserSetActiveWindow(hwnd);
     NtUserSetFocus(target);
     input_target=target;
+    pointer_down=TRUE;
    }
    input.mi.dwFlags=MOUSEEVENTF_ABSOLUTE|MOUSEEVENTF_MOVE|MOUSEEVENTF_MOVE_NOCOALESCE;
    if(msg.flags&JUICE_IOS_LEFT_DOWN) input.mi.dwFlags|=MOUSEEVENTF_LEFTDOWN;
@@ -101,8 +136,9 @@ BOOL ios_ipc_process_input(void)
    if(msg.flags&JUICE_IOS_RIGHT_DOWN) input.mi.dwFlags|=MOUSEEVENTF_RIGHTDOWN;
    if(msg.flags&JUICE_IOS_RIGHT_UP) input.mi.dwFlags|=MOUSEEVENTF_RIGHTUP;
    sent=NtUserSendHardwareInput(target,0,&input,0);
-   fprintf(stderr,"[JuiceInput] dispatched surface=%p target=%p local=%d,%d desktop=%d,%d flags=%x sent=%u\n",
-           hwnd,target,msg.x,msg.y,input.mi.dx,input.mi.dy,input.mi.dwFlags,sent);
+   if(up) pointer_down=FALSE;
+   fprintf(stderr,"[JuiceInput] dispatched surface=%p target=%p coords=%s wire=%d,%d desktop=%d,%d flags=%x sent=%u\n",
+           hwnd,target,desktop_coords?"desktop":"local",msg.x,msg.y,input.mi.dx,input.mi.dy,input.mi.dwFlags,sent);
   }
   else if(msg.type==JUICE_IOS_TEXT&&msg.size&&!(msg.size%sizeof(WCHAR)))
   {
