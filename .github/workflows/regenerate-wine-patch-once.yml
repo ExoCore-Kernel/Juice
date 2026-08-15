@@ -28,8 +28,10 @@ jobs:
           # git diff --check notices them when that tracked data file is
           # reproduced into the audit worktree. Keep normal verification
           # unchanged; bypass only the generator's final whitespace gate.
-          sed '/^[[:space:]]*git diff --check[[:space:]]*$/d' scripts/regenerate-wine-patch.sh > /tmp/regenerate-wine-patch.sh
-          bash /tmp/regenerate-wine-patch.sh /tmp/wine-upstream
+          temp_generator="scripts/.regenerate-wine-patch-once.sh"
+          sed '/^[[:space:]]*git diff --check[[:space:]]*$/d' scripts/regenerate-wine-patch.sh > "$temp_generator"
+          bash "$temp_generator" /tmp/wine-upstream
+          rm -f "$temp_generator"
           git config user.name "ExoCore-Kernel CI"
           git config user.email "actions@users.noreply.github.com"
           git add patches/wine-ios.patch
