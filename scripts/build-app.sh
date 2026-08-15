@@ -46,27 +46,11 @@ mkdir -p "$OUT"
   -framework CoreGraphics -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
 
-# Keep the repository-side icon payloads text-only so the same GitHub tooling
-# can update them, then materialize normal PNG resources into Juice.app here.
-python3 - "$ROOT/resources" "$OUT" <<'PY'
-import base64
-import pathlib
-import sys
-
-source = pathlib.Path(sys.argv[1])
-destination = pathlib.Path(sys.argv[2])
-icons = sorted(source.glob("AppIcon*.png.b64"))
-if not icons:
-    raise SystemExit("Missing Juice app icon resources.")
-for encoded in icons:
-    output = destination / encoded.name[:-4]
-    output.write_bytes(base64.b64decode(encoded.read_text().strip(), validate=True))
-print(f"JUICE_APP_ICONS_DECODED count={len(icons)}")
-PY
 shopt -s nullglob
-app_icons=("$OUT"/AppIcon*.png)
+app_icons=("$ROOT/resources"/AppIcon*.png)
 shopt -u nullglob
-test "${#app_icons[@]}" -gt 0 || { echo "No Juice app icons were decoded." >&2; exit 3; }
+test "${#app_icons[@]}" -gt 0 || { echo "Missing Juice app icon resources." >&2; exit 3; }
+cp "${app_icons[@]}" "$OUT/"
 
 LDID_BIN="${LDID:-}"
 if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/usr/bin/ldid; fi
