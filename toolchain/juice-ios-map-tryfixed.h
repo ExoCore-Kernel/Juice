@@ -11,25 +11,21 @@
  * This header is force-included only for ntdll/unix/virtual.c. Defining a
  * private MAP_TRYFIXED selects Wine's existing try-fixed branch. The mmap
  * wrapper strips that private flag, reserves the exact range with the public
- * same-address-space vm_allocate API, then uses MAP_FIXED only after Juice
- * owns that reservation. This avoids blindly replacing unrelated mappings.
+ * iPhoneOS Mach VM trap, then uses MAP_FIXED only after Juice owns that
+ * reservation. This avoids blindly replacing unrelated mappings.
+ *
+ * Do not include <mach/mach.h> here. iPhoneOS mach_init.h declares a function
+ * named host_page_size(), which collides with Wine's host_page_size variable.
+ * mach_traps.h exposes the VM allocate/deallocate traps and task_self_trap()
+ * without introducing that declaration.
  */
-#if defined(__APPLE__) && defined(__aarch64__) && \
+#if defined(__APPLE__) && (defined(__aarch64__) || defined(__arm64__)) && \
     defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
 
 #include <errno.h>
-
-/*
- * mach_init.h (pulled in by mach/mach.h) declares a public function named
- * host_page_size(). Wine's virtual.c already has a file-scope variable named
- * host_page_size, so force-including the umbrella header would turn all of
- * Wine's later uses into references to the Mach function. Rename only that
- * declaration while parsing the Mach headers; Juice never calls it here.
- */
-#define host_page_size juice_mach_api_host_page_size
-#include <mach/mach.h>
-#undef host_page_size
-
+#include <stdint.h>
+#include <mach/mach_traps.h>
+#include <mach/vm_statistics.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 
@@ -49,14 +45,14 @@ static inline void *juice_ios_mmap_tryfixed(
 {
     if (flags & JUICE_MAP_TRYFIXED)
     {
-        vm_address_t reservation = (vm_address_t)address;
+        mach_vm_offset_t reservation = (mach_vm_offset_t)(uintptr_t)address;
         kern_return_t result;
         void *mapped;
 
-        result = vm_allocate(
-            mach_task_self(),
+        result = _kernelrpc_mach_vm_allocate_trap(
+            task_self_trap(),
             &reservation,
-            (vm_size_t)size,
+            (mach_vm_size_t)size,
             VM_FLAGS_FIXED
         );
         if (result != KERN_SUCCESS)
@@ -74,7 +70,8 @@ static inline void *juice_ios_mmap_tryfixed(
             offset
         );
         if (mapped == MAP_FAILED)
-            vm_deallocate(mach_task_self(), reservation, (vm_size_t)size);
+            _kernelrpc_mach_vm_deallocate_trap(
+                task_self_trap(), reservation, (mach_vm_size_t)size );
         return mapped;
     }
 
