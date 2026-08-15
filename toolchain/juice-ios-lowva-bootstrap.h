@@ -24,13 +24,15 @@ extern char **environ;
  * effect with a disposable fixed mmap before allowing Wine's WoW64 startup to
  * continue.
  *
- * This is intentionally gated by JUICE_EXPERIMENTAL_X64 and never runs for
- * the normal ARM64 Grape runtime.
+ * This is gated by BOTH JUICE_EXPERIMENTAL_X64 and JUICE_EXPERIMENTAL_WIN32,
+ * so ordinary ARM64 and 64-bit Grape-X64 launches are completely untouched.
  */
 static inline int juice_lowva_enabled(void)
 {
-    const char *enabled = getenv("JUICE_EXPERIMENTAL_X64");
-    return enabled && enabled[0] == '1' && enabled[1] == '\0';
+    const char *x64 = getenv("JUICE_EXPERIMENTAL_X64");
+    const char *win32 = getenv("JUICE_EXPERIMENTAL_WIN32");
+    return x64 && x64[0] == '1' && x64[1] == '\0' &&
+           win32 && win32[0] == '1' && win32[1] == '\0';
 }
 
 static inline const char *juice_lowva_helper_path(void)
