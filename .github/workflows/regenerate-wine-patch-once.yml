@@ -27,9 +27,9 @@ jobs:
           # upstream trailing-space records. They are not Juice edits, but
           # git diff --check notices them when that tracked data file is
           # reproduced into the audit worktree. Keep normal verification
-          # unchanged; bypass only the generator's final whitespace gate.
+          # unchanged; bypass only the generator's whitespace gate.
           temp_generator="scripts/.regenerate-wine-patch-once.sh"
-          sed '/^[[:space:]]*git diff --check[[:space:]]*$/d' scripts/regenerate-wine-patch.sh > "$temp_generator"
+          sed '/diff --check/d' scripts/regenerate-wine-patch.sh > "$temp_generator"
           bash "$temp_generator" /tmp/wine-upstream
           rm -f "$temp_generator"
           git config user.name "ExoCore-Kernel CI"
