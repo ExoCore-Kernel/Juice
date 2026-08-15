@@ -41,9 +41,15 @@ mkdir -p "$OUT"
   "$ROOT/app/main.m" "$ROOT/app/JuiceZip.m" "$ROOT/app/JuicePrefixRepair.m" \
   "$ROOT/app/JuiceLegacyWin32.m" "$ROOT/app/JuiceLogExport.m" \
   "$ROOT/app/JuiceMultiWindowFix.m" "$ROOT/app/JuiceFramebufferFix.m" \
+  "$ROOT/app/JuiceBootProgress.m" \
   -framework UIKit -framework Foundation -framework QuartzCore \
   -framework CoreGraphics -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
+shopt -s nullglob
+app_icons=("$ROOT/resources"/AppIcon*.png)
+shopt -u nullglob
+test "${#app_icons[@]}" -gt 0 || { echo "Missing Juice app icon resources." >&2; exit 3; }
+cp "${app_icons[@]}" "$OUT/"
 
 LDID_BIN="${LDID:-}"
 if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/usr/bin/ldid; fi
@@ -55,4 +61,4 @@ elif command -v codesign >/dev/null 2>&1; then
   codesign --force --sign - --entitlements "$ROOT/config/app-entitlements.plist" "$OUT/Juice"
 fi
 
-echo "JUICE_APP_BUILD_OK path=$OUT/Juice"
+echo "JUICE_APP_BUILD_OK path=$OUT/Juice icons=${#app_icons[@]}"
