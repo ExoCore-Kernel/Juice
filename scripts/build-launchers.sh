@@ -45,8 +45,14 @@ if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/us
 if test -z "$LDID_BIN" && test -n "${JUICE_IOS_TOOLCHAIN:-}" && test -x "$JUICE_IOS_TOOLCHAIN/bin/ldid"; then LDID_BIN="$JUICE_IOS_TOOLCHAIN/bin/ldid"; fi
 if test -z "$LDID_BIN"; then LDID_BIN="$(command -v ldid 2>/dev/null || true)"; fi
 if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
-  for binary in "$OUT/grape-trace-parent" "$OUT/grape-nested-wrapper" "$OUT/juice-lowva-helper"; do
+  for binary in "$OUT/grape-trace-parent" "$OUT/grape-nested-wrapper"; do
     "$LDID_BIN" -S"$ROOT/config/child-entitlements.plist" -Cadhoc "$binary"
   done
+  "$LDID_BIN" -S"$ROOT/config/lowva-helper-entitlements.plist" -Cadhoc "$OUT/juice-lowva-helper"
+  helper_entitlements="$($LDID_BIN -e "$OUT/juice-lowva-helper" 2>/dev/null || true)"
+  printf '%s' "$helper_entitlements" | grep -q 'IOSurfaceRootUserClient' || {
+    echo "Low-VA helper signing is missing IOSurfaceRootUserClient." >&2
+    exit 3
+  }
 fi
-echo "JUICE_LAUNCHERS_BUILD_OK path=$OUT lowva_helper=$OUT/juice-lowva-helper"
+echo "JUICE_LAUNCHERS_BUILD_OK path=$OUT lowva_helper=$OUT/juice-lowva-helper iosurface_entitlement=1"
