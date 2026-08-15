@@ -36,6 +36,7 @@
 #endif
 #ifdef __APPLE__
 # include <mach-o/dyld.h>
+# include <mach/mach.h>
 #endif
 
 #include "main.h"
@@ -84,6 +85,37 @@ static void init_reserved_areas(void)
 }
 
 #endif
+
+/*
+ * iOS requires a normal arm64 executable to retain the standard 4 GiB
+ * __PAGEZERO load command. Rewriting that load command after linking makes the
+ * image fail iOS exec validation before Wine can even start. The translated
+ * Grape-X64 runtime still needs addresses below 4 GiB for Wine's WoW64 data,
+ * though, so keep a completely normal iOS Mach-O and remove the no-access
+ * reservation from the live task after the kernel has accepted the image.
+ *
+ * Preserve the first 64 KiB as the usual NULL/low-pointer guard and release
+ * [0x10000, 4GiB). The app marks every Grape-X64 launch with
+ * JUICE_EXPERIMENTAL_X64=1; the verified ARM64 Grape path is left untouched.
+ */
+static void juice_release_ios_low_address_space(void)
+{
+#if defined(__APPLE__) && (defined(__arm64__) || defined(__aarch64__)) && \
+    defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
+    const char *enabled = getenv( "JUICE_EXPERIMENTAL_X64" );
+    const mach_vm_address_t start = 0x10000ull;
+    const mach_vm_address_t end = 0x100000000ull;
+    kern_return_t status;
+
+    if (!enabled || strcmp( enabled, "1" )) return;
+
+    status = mach_vm_deallocate( mach_task_self(), start, end - start );
+    fprintf( stderr,
+             "[JuiceWine] iOS low-VA release start=0x%llx end=0x%llx status=%d%s\n",
+             (unsigned long long)start, (unsigned long long)end, status,
+             status == KERN_SUCCESS ? " OK" : " FAILED" );
+#endif
+}
 
 /* canonicalize path and return its directory name */
 static char *realpath_dirname( const char *name )
@@ -175,6 +207,7 @@ int main( int argc, char *argv[] )
 {
     void *handle;
 
+    juice_release_ios_low_address_space();
     init_reserved_areas();
 
     if ((handle = try_dlopen( get_self_exe() )) ||
