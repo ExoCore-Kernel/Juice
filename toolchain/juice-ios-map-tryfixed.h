@@ -20,10 +20,12 @@
  * directly with MAP_FIXED. Before the loader release there cannot have been
  * unrelated mappings there because __PAGEZERO covered the whole range.
  *
- * Do not include <mach/mach.h> here. iPhoneOS mach_init.h declares a function
- * named host_page_size(), which collides with Wine's host_page_size variable.
- * mach_traps.h exposes the VM allocate/deallocate traps and task_self_trap()
- * without introducing that declaration.
+ * Do not include <mach/mach.h> here. Some iPhoneOS Mach header combinations
+ * expose a function named host_page_size(), which collides with Wine's
+ * host_page_size variable. Even mach_traps.h can pull that declaration in
+ * transitively on some SDKs, so temporarily rename the token while importing
+ * the Mach declarations below. virtual.c independently applies the same shield
+ * around its own Mach includes.
  */
 #if defined(__APPLE__) && (defined(__aarch64__) || defined(__arm64__)) && \
     defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
@@ -32,8 +34,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define host_page_size juice_mach_host_page_size
 #include <mach/mach_traps.h>
 #include <mach/vm_statistics.h>
+#undef host_page_size
 #include <sys/mman.h>
 #include <sys/types.h>
 
