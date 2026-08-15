@@ -3,11 +3,18 @@
 #import <objc/runtime.h>
 
 /*
- * Keep log exporting isolated from the main controller implementation.  Juice's
+ * Keep log exporting isolated from the main controller implementation. Juice's
  * main UI already owns a persistent log file containing both controller events
- * and the child Wine/FEX stdout+stderr stream.  This category installs one
- * button after the controller has built its form and shares a timestamped
- * snapshot through the normal iOS activity sheet.
+ * and the child Wine/FEX stdout+stderr stream. This category installs one
+ * button after the controller has built its form and exports a timestamped
+ * snapshot through UIDocumentPickerViewController.
+ *
+ * Do not hand /var/mobile/Documents URLs directly to UIActivityViewController.
+ * Juice is intentionally unsandboxed under TrollStore and those paths are not
+ * normal app-container document URLs. Share extensions can require a sandbox
+ * extension for every URL they receive, which makes that route unnecessarily
+ * fragile. Instead create an immutable snapshot in Juice's temporary directory
+ * and ask the system document picker to copy it to the user's chosen location.
  */
 @interface JuiceController : UIViewController
 @end
@@ -35,7 +42,9 @@
     /* Swizzled: this invokes JuiceController's original -viewDidLoad. */
     [self juice_logExport_viewDidLoad];
 
-    id value = [self valueForKey:@"form"];
+    id value = nil;
+    @try { value = [self valueForKey:@"form"]; }
+    @catch (__unused NSException *exception) {}
     if (![value isKindOfClass:UIStackView.class]) return;
 
     UIStackView *form = value;
@@ -47,12 +56,40 @@
     [form addArrangedSubview:button];
 }
 
+- (void)juice_showLogExportError:(NSString *)message
+{
+    void (^show)(void) = ^{
+        if (self.presentedViewController) return;
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Log export failed"
+         message:message.length ? message : @"Juice could not create the log export."
+         preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+         style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+    };
+    if (NSThread.isMainThread) show();
+    else dispatch_async(dispatch_get_main_queue(), show);
+}
+
 - (void)juice_exportLogTapped:(UIButton *)sender
 {
+    /* UI presentation must stay on the main thread even if this selector is
+       ever invoked programmatically from one of Juice's worker queues. */
+    if (!NSThread.isMainThread)
+    {
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf juice_exportLogTapped:sender];
+        });
+        return;
+    }
+
     NSString *source = nil;
     @try { source = [self valueForKey:@"persistentLogPath"]; }
     @catch (__unused NSException *exception) {}
 
+    /* NSData gives us a stable snapshot. The live log can continue growing
+       while the document picker is open without changing the exported bytes. */
     NSData *contents = source.length ? [NSData dataWithContentsOfFile:source] : nil;
     if (!contents.length)
     {
@@ -70,7 +107,8 @@
          preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"OK"
          style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
+        if (!self.presentedViewController)
+            [self presentViewController:alert animated:YES completion:nil];
         return;
     }
 
@@ -78,42 +116,72 @@
     formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     formatter.dateFormat = @"yyyyMMdd-HHmmss";
     NSString *stamp = [formatter stringFromDate:NSDate.date];
-    NSString *directory = @"/var/mobile/Documents/Juice-Logs";
-    NSString *destination = [directory stringByAppendingPathComponent:
-     [NSString stringWithFormat:@"Juice-%@.txt", stamp]];
+
+    NSFileManager *files = NSFileManager.defaultManager;
+    NSURL *temporaryRoot = files.temporaryDirectory;
+    NSURL *stagingDirectory = [temporaryRoot URLByAppendingPathComponent:
+     [NSString stringWithFormat:@"JuiceLogExport-%@", NSUUID.UUID.UUIDString]
+     isDirectory:YES];
+    NSURL *snapshotURL = [stagingDirectory URLByAppendingPathComponent:
+     [NSString stringWithFormat:@"Juice-%@.txt", stamp]
+     isDirectory:NO];
 
     NSError *error = nil;
-    [NSFileManager.defaultManager createDirectoryAtPath:directory
-     withIntermediateDirectories:YES attributes:nil error:&error];
-    if (!error && ![contents writeToFile:destination options:NSDataWritingAtomic error:&error]) {}
-
-    if (error)
+    if (![files createDirectoryAtURL:stagingDirectory
+          withIntermediateDirectories:YES attributes:nil error:&error] ||
+        ![contents writeToURL:snapshotURL options:NSDataWritingAtomic error:&error])
     {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Log export failed"
-         message:error.localizedDescription ?: @"Juice could not create the log file."
-         preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK"
-         style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
+        [self juice_showLogExportError:error.localizedDescription];
         return;
     }
 
-    NSURL *url = [NSURL fileURLWithPath:destination];
-    UIActivityViewController *share = [[UIActivityViewController alloc]
-     initWithActivityItems:@[url] applicationActivities:nil];
-    UIPopoverPresentationController *popover = share.popoverPresentationController;
-    if (popover)
+    UIDocumentPickerViewController *picker = nil;
+    if (@available(iOS 14.0, *))
     {
-        popover.sourceView = sender ?: self.view;
-        popover.sourceRect = sender ? sender.bounds : self.view.bounds;
+        picker = [[UIDocumentPickerViewController alloc]
+         initForExportingURLs:@[snapshotURL] asCopy:YES];
     }
-    [self presentViewController:share animated:YES completion:nil];
+    else
+    {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        picker = [[UIDocumentPickerViewController alloc]
+         initWithURL:snapshotURL inMode:UIDocumentPickerModeExportToService];
+#pragma clang diagnostic pop
+    }
+
+    if (!picker)
+    {
+        [self juice_showLogExportError:@"iOS could not create the document exporter."];
+        return;
+    }
+
+    picker.modalPresentationStyle = UIModalPresentationFormSheet;
+
+    /* Do not set self as the export picker's delegate. JuiceController's
+       existing document-picker delegate is the EXE/ZIP importer and would
+       otherwise try to interpret the exported .txt as a program selection. */
+    @try
+    {
+        if (self.presentedViewController)
+        {
+            [self juice_showLogExportError:@"Close the current dialog or file picker and try again."];
+            return;
+        }
+        [self presentViewController:picker animated:YES completion:nil];
+    }
+    @catch (NSException *exception)
+    {
+        [self juice_showLogExportError:exception.reason ?: @"iOS rejected the document exporter."];
+        return;
+    }
 
     SEL appendSelector = NSSelectorFromString(@"append:");
     if ([self respondsToSelector:appendSelector])
     {
-        NSString *message = [NSString stringWithFormat:@"LOG_EXPORTED path=%@ bytes=%lu\n",
-                             destination, (unsigned long)contents.length];
+        NSString *message = [NSString stringWithFormat:
+         @"LOG_EXPORT_PICKER_OPEN snapshot=%@ bytes=%lu\n",
+         snapshotURL.path, (unsigned long)contents.length];
         ((void (*)(id, SEL, id))objc_msgSend)(self, appendSelector, message);
     }
 }
