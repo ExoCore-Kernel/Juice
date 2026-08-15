@@ -3,9 +3,11 @@
 
 Procursus rootless packages use install names rooted at /var/jb/usr/lib. Juice
 ships a small self-contained subset of those libraries inside the app bundle,
-so rewrite only dependencies whose basename is present beside the dylib. This
-keeps Apple/system dependencies untouched and avoids requiring the destination
-jailbreak to have matching optional packages installed.
+so rewrite only dependency load commands whose basename is present beside the
+dylib. Keep each dylib's LC_ID_DYLIB unchanged: the ID is not used to locate the
+library being opened, and changing a short existing ID to a longer
+@loader_path name can exceed the fixed Mach-O load-command string capacity.
+Apple/system dependencies are left untouched.
 """
 
 from __future__ import annotations
@@ -21,9 +23,8 @@ LC_LOAD_WEAK_DYLIB = 0x80000018
 LC_REEXPORT_DYLIB = 0x8000001F
 LC_LAZY_LOAD_DYLIB = 0x20
 LC_LOAD_UPWARD_DYLIB = 0x80000023
-DYLIB_COMMANDS = {
+DEPENDENCY_COMMANDS = {
     LC_LOAD_DYLIB,
-    LC_ID_DYLIB,
     LC_LOAD_WEAK_DYLIB,
     LC_REEXPORT_DYLIB,
     LC_LAZY_LOAD_DYLIB,
@@ -71,7 +72,10 @@ def patch_one(path: pathlib.Path, available: set[str]) -> int:
         if cmdsize < 8 or offset + cmdsize > len(data):
             fail(f"invalid load command size {cmdsize} in {path}")
 
-        if cmd in DYLIB_COMMANDS:
+        # LC_ID_DYLIB describes this file's identity; it is not a dependency
+        # lookup path. Leave it intact. Only dependency commands need to be
+        # redirected away from Procursus /var/jb paths into Juice.app/Libraries.
+        if cmd in DEPENDENCY_COMMANDS:
             if cmdsize < 24:
                 fail(f"short dylib load command in {path}")
             name_offset = struct.unpack_from("<I", data, offset + 8)[0]
@@ -83,9 +87,7 @@ def patch_one(path: pathlib.Path, available: set[str]) -> int:
             basename = pathlib.PurePosixPath(old).name
 
             replacement = None
-            if cmd == LC_ID_DYLIB:
-                replacement = f"@loader_path/{path.name}"
-            elif basename in available:
+            if basename in available:
                 replacement = f"@loader_path/{basename}"
 
             if replacement and replacement != old:
