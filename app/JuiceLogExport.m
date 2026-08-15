@@ -22,6 +22,7 @@
 @interface JuiceController (JuiceLogExport)
 - (void)juice_logExport_viewDidLoad;
 - (void)juice_exportLogTapped:(UIButton *)sender;
+- (void)juice_showLogExportError:(NSString *)message;
 @end
 
 @implementation JuiceController (JuiceLogExport)
@@ -84,6 +85,16 @@
         return;
     }
 
+    /* Never attempt to stack another exporter on top of an existing modal. */
+    if (self.presentedViewController)
+    {
+        SEL appendSelector = NSSelectorFromString(@"append:");
+        if ([self respondsToSelector:appendSelector])
+            ((void (*)(id, SEL, id))objc_msgSend)(self, appendSelector,
+             @"LOG_EXPORT_REJECTED reason=modal-already-presented\n");
+        return;
+    }
+
     NSString *source = nil;
     @try { source = [self valueForKey:@"persistentLogPath"]; }
     @catch (__unused NSException *exception) {}
@@ -107,8 +118,7 @@
          preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"OK"
          style:UIAlertActionStyleDefault handler:nil]];
-        if (!self.presentedViewController)
-            [self presentViewController:alert animated:YES completion:nil];
+        [self presentViewController:alert animated:YES completion:nil];
         return;
     }
 
@@ -163,11 +173,6 @@
        otherwise try to interpret the exported .txt as a program selection. */
     @try
     {
-        if (self.presentedViewController)
-        {
-            [self juice_showLogExportError:@"Close the current dialog or file picker and try again."];
-            return;
-        }
         [self presentViewController:picker animated:YES completion:nil];
     }
     @catch (NSException *exception)
