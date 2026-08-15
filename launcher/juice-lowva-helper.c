@@ -11,19 +11,28 @@
 
 /*
  * Juice Grape-X64 needs a 32-bit Windows address space, but arm64 iOS exec
- * commits a 4 GiB hard page-zero by setting vm_map::min_offset to 4 GiB.
+ * enforces a hard page-zero by raising vm_map::min_offset to roughly 4 GiB.
  * Removing the PAGEZERO mapping from userspace is therefore insufficient:
  * vm_map still rejects fixed allocations below min_offset with ENOMEM.
  *
- * This intentionally tiny helper runs setuid-root on a jailbroken device and
+ * This intentionally tiny helper runs as root on a jailbroken device and
  * uses Dopamine's libjailbreak primitives to lower ONLY the target Wine
- * process' vm_map minimum.  The Wine process is blocked waiting for us while
+ * process' vm_map minimum. The Wine process is blocked waiting for us while
  * this happens and immediately performs a userspace mmap probe afterwards.
  *
- * The offsets below are the stable iOS 16 arm64 layout published by Dopamine
- * (task.map=0x28, vm_map.hdr=0x10, vm_map_header.min/max=0x10/0x18).
- * We refuse to write unless the target is Darwin 22.x and the live structure
- * exactly matches the expected 4 GiB hard-page-zero shape.
+ * The Darwin 22 / XNU 8796 arm64 layout is:
+ *   _vm_map.lock              0x00 (lck_rw_t is 16 bytes)
+ *   _vm_map.hdr              0x10
+ *   hdr.links.start/min      0x20
+ *   hdr.links.end/max        0x28
+ * and task->map is at 0x28 on the supported Dopamine/libjailbreak target.
+ *
+ * Important: XNU's Mach-O loader may raise min_offset beyond exactly 4 GiB
+ * while establishing hard PAGEZERO. Therefore a legitimate live value can
+ * be 0x100000000 + a page-aligned delta (the user's iOS 16.6 trace showed
+ * 0x100aec000). Requiring exact equality to 4 GiB incorrectly rejected the
+ * real vm_map before any write. We instead validate the actual XNU shape:
+ * a page-aligned minimum at/above 4 GiB, below a sane page-aligned maximum.
  */
 
 #define JUICE_TASK_MAP_OFFSET       0x28ull
@@ -32,6 +41,8 @@
 #define JUICE_VM_HEADER_MAX_OFFSET  0x18ull
 #define JUICE_HARD_PAGEZERO         0x100000000ull
 #define JUICE_LOWVA_MIN             0x10000ull
+#define JUICE_MIN_ALIGNMENT         0x1000ull
+#define JUICE_USER_MAP_MAX_SANITY   0x0001000000000000ull
 
 typedef int (*jb_init_fn)(void);
 typedef uint64_t (*proc_find_fn)(pid_t);
@@ -54,6 +65,11 @@ static int valid_kernel_pointer(uint64_t p)
        high addresses. Keep this deliberately broad; the live-field checks
        below are the authoritative guard before any write. */
     return p >= 0xffff000000000000ull;
+}
+
+static int page_aligned(uint64_t value)
+{
+    return (value & (JUICE_MIN_ALIGNMENT - 1)) == 0;
 }
 
 int main(int argc, char **argv)
@@ -83,9 +99,9 @@ int main(int argc, char **argv)
         return 64;
     }
 
-    /* A setuid-root invocation starts with ruid=mobile/euid=root. Dopamine's
-       primitive initializer deliberately requires real uid 0, so mirror
-       jbctl and commit all uid slots to root first. */
+    /* A root-persona/setuid-root invocation can start with ruid=mobile and
+       euid=root. Dopamine's primitive initializer deliberately requires real
+       uid 0, so commit all uid slots to root first. */
     if (getuid() != 0 && geteuid() == 0 && setuid(0) != 0)
     {
         fprintf(stderr, "JUICE_LOWVA_HELPER_ERROR stage=setuid errno=%d\n", errno);
@@ -94,7 +110,7 @@ int main(int argc, char **argv)
     if (getuid() != 0)
     {
         fprintf(stderr,
-                "JUICE_LOWVA_HELPER_ERROR stage=privilege uid=%d euid=%d hint=setuid-root\n",
+                "JUICE_LOWVA_HELPER_ERROR stage=privilege uid=%d euid=%d hint=root-persona\n",
                 getuid(), geteuid());
         return 77;
     }
@@ -163,10 +179,14 @@ int main(int argc, char **argv)
     old_min = kread64(min_field);
     old_max = kread64(max_field);
 
-    /* The exact expected old minimum is our strongest safety check. Also
-       require a sane map upper bound before changing anything. */
-    if (old_min != JUICE_HARD_PAGEZERO || old_max <= JUICE_HARD_PAGEZERO ||
-        old_max > 0x0001000000000000ull)
+    /* XNU may slide/raise the hard PAGEZERO boundary. Do not require
+       old_min == 4 GiB: require the structural invariants that identify a
+       sensible user vm_map instead. This keeps the kernel write narrowly
+       guarded while accepting real iOS 16.6 maps such as 0x100aec000. */
+    if (old_max <= JUICE_HARD_PAGEZERO || old_max > JUICE_USER_MAP_MAX_SANITY ||
+        !page_aligned(old_max) ||
+        !((old_min == JUICE_LOWVA_MIN) ||
+          (old_min >= JUICE_HARD_PAGEZERO && old_min < old_max && page_aligned(old_min))))
     {
         fprintf(stderr,
                 "JUICE_LOWVA_HELPER_ERROR stage=validate map=0x%" PRIx64
@@ -174,6 +194,16 @@ int main(int argc, char **argv)
                 map, old_min, old_max);
         dlclose(lib);
         return 73;
+    }
+
+    if (old_min == JUICE_LOWVA_MIN)
+    {
+        fprintf(stderr,
+                "JUICE_LOWVA_KERNEL_MIN_OK pid=%d task=0x%" PRIx64 " map=0x%" PRIx64
+                " old=0x%" PRIx64 " new=0x%" PRIx64 " max=0x%" PRIx64 " already=1\n",
+                pid, task, map, old_min, old_min, old_max);
+        dlclose(lib);
+        return 0;
     }
 
     rc = kwrite64(min_field, JUICE_LOWVA_MIN);
@@ -189,7 +219,7 @@ int main(int argc, char **argv)
 
     fprintf(stderr,
             "JUICE_LOWVA_KERNEL_MIN_OK pid=%d task=0x%" PRIx64 " map=0x%" PRIx64
-            " old=0x%" PRIx64 " new=0x%" PRIx64 " max=0x%" PRIx64 "\n",
+            " old=0x%" PRIx64 " new=0x%" PRIx64 " max=0x%" PRIx64 " already=0\n",
             pid, task, map, old_min, verify, old_max);
     dlclose(lib);
     return 0;
