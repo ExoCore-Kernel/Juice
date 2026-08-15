@@ -49,17 +49,47 @@ export IPHONEOS_DEPLOYMENT_TARGET="$MIN_IOS"
 # that asks the optional jailbreak helper to lower only the Grape-X64 child's
 # vm_map minimum before Wine starts allocating its WoW64 address space.
 extra_args=()
+link_extra_args=()
+cache_shim_obj="$ROOT/build/ios-shims/clear-cache.o"
+ntdll_link=0
+cache_shim_present=0
+
 for arg in "$@"; do
   case "$arg" in
     */dlls/ntdll/unix/virtual.c|dlls/ntdll/unix/virtual.c)
       extra_args=(-include "$ROOT/toolchain/juice-ios-map-tryfixed.h")
-      break
       ;;
     */loader/main.c|loader/main.c)
       extra_args=(-include "$ROOT/toolchain/juice-ios-lowva-bootstrap.h")
-      break
+      ;;
+  esac
+
+  case "$arg" in
+    */dlls/ntdll/ntdll.so|dlls/ntdll/ntdll.so)
+      ntdll_link=1
+      ;;
+    "$cache_shim_obj"|*/build/ios-shims/clear-cache.o|build/ios-shims/clear-cache.o)
+      cache_shim_present=1
       ;;
   esac
 done
 
-exec "$REAL_COMPILER" "${extra_args[@]}" "$@"
+# Some generated Wine link rules do not consistently preserve an LDFLAGS+=
+# object injected by the outer build script. virtual.c can legitimately lower
+# __builtin___clear_cache() to an external ___clear_cache reference under the
+# Linux-hosted cctools toolchain, so make the compiler wrapper itself guarantee
+# that the compatibility object is present on the native ntdll.so link.
+#
+# Keep the outer LDFLAGS injection as a fast path, but never add the object a
+# second time; this makes both cached and freshly generated Wine Makefiles safe.
+if test "$ntdll_link" = 1 && test "$cache_shim_present" = 0; then
+  test -f "$cache_shim_obj" || {
+    echo "Missing iOS clear-cache shim for ntdll link: $cache_shim_obj" >&2
+    echo "Run scripts/build-wine-linux.sh so the shim is built before ntdll.so." >&2
+    exit 3
+  }
+  link_extra_args+=("$cache_shim_obj")
+  echo "JUICE_IOS_CACHE_SHIM_LINK target=dlls/ntdll/ntdll.so object=$cache_shim_obj" >&2
+fi
+
+exec "$REAL_COMPILER" "${extra_args[@]}" "$@" "${link_extra_args[@]}"
