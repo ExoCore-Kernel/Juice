@@ -6,17 +6,22 @@
 /*
  * Multi-window presentation fixes for the UIKit host.
  *
- * The first compositor rendered every Wine window into the full 1024x768
- * virtual desktop. That is technically desktop-correct, but it makes normal
- * small Windows applications occupy a tiny patch of an iPad screen. It also
- * meant input coordinates stopped matching once the host view should have
- * been cropped/scaled around the visible window group.
- *
  * Keep Wine's desktop coordinates internally, but present only the bounding
- * viewport of the visible windows. UIKit can then aspect-fit that viewport in
- * exactly the same way as legacy single-window mode. Mouse/touch input is
- * translated back through the viewport and, if needed, through any difference
- * between the current window rectangle and its backing surface dimensions.
+ * viewport of the visible window group. Two details are important here:
+ *
+ *  1. The viewport must not chase a window while the user is dragging it.
+ *     If the crop origin changes between touch events, the same physical
+ *     finger position maps to a different Wine desktop coordinate and creates
+ *     a feedback loop that looks like jitter. Lock the viewport for the whole
+ *     pointer capture and recalculate it only after button-up.
+ *
+ *  2. A Wine window surface and its latest window geometry can briefly be
+ *     different sizes during create/resize. The old compositor stretched the
+ *     entire backing surface to the new rectangle. Oversized stale backing
+ *     pixels therefore appeared as a large white/unused area next to small
+ *     apps such as WineMine. Wine's iOS software surfaces are 1 pixel per
+ *     desktop unit, so preserve that 1:1 mapping and clip any excess backing
+ *     pixels instead of scaling them into view.
  */
 
 #define JUICE_MAGIC 0x4a554943u
@@ -38,6 +43,7 @@ static void (*OriginalCompositeWineDesktop)(id, SEL);
 static void (*OriginalHandleCanvasInput)(id, SEL, JuiceMsg);
 static char JuiceCompositeViewportKey;
 static char JuiceCompositeLoggedViewportKey;
+static char JuiceCapturedViewportKey;
 
 static id JuiceValue(id object, NSString *key)
 {
@@ -74,6 +80,24 @@ static BOOL JuiceStateDrawable(id state)
     return [JuiceValue(state, @"visible") boolValue] && [JuiceValue(state, @"image") isKindOfClass:UIImage.class];
 }
 
+/*
+ * The backing UIImage is generated directly from the Wine software surface,
+ * so its pixels are desktop pixels. Never stretch a stale backing allocation
+ * to a newer window rectangle. Use only the area present in both.
+ */
+static CGRect JuiceStateDrawableRect(id state)
+{
+    CGRect rect = JuiceStateRect(state);
+    UIImage *image = JuiceValue(state, @"image");
+    if (![image isKindOfClass:UIImage.class]) return rect;
+
+    CGFloat width = image.size.width;
+    CGFloat height = image.size.height;
+    if (rect.size.width > 0.0) width = MIN(width, rect.size.width);
+    if (rect.size.height > 0.0) height = MIN(height, rect.size.height);
+    return CGRectMake(rect.origin.x, rect.origin.y, MAX(1.0, width), MAX(1.0, height));
+}
+
 static CGRect JuiceDesktopRect(id self)
 {
     NSValue *value = JuiceValue(self, @"wineDesktopSize");
@@ -84,7 +108,7 @@ static CGRect JuiceDesktopRect(id self)
 
 static CGRect JuiceClippedWindowRect(id state, CGRect desktop)
 {
-    CGRect rect = JuiceStateRect(state);
+    CGRect rect = JuiceStateDrawableRect(state);
     if (CGRectIsEmpty(rect) || CGRectIsNull(rect)) return CGRectNull;
     CGRect clipped = CGRectIntersection(rect, desktop);
     return CGRectIsEmpty(clipped) || CGRectIsNull(clipped) ? CGRectNull : clipped;
@@ -125,9 +149,31 @@ static void JuiceLogViewportIfChanged(id self, CGRect viewport, CGRect desktop)
     objc_setAssociatedObject(self, &JuiceCompositeLoggedViewportKey,
                              [NSValue valueWithCGRect:viewport], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     JuiceAppend(self, [NSString stringWithFormat:
-        @"MULTI_WINDOW_VIEWPORT rect=%.0f,%.0f %.0fx%.0f desktop=%.0fx%.0f\n",
+        @"MULTI_WINDOW_VIEWPORT rect=%.0f,%.0f %.0fx%.0f desktop=%.0fx%.0f locked=%d\n",
         viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height,
-        desktop.size.width, desktop.size.height]);
+        desktop.size.width, desktop.size.height,
+        objc_getAssociatedObject(self, &JuiceCapturedViewportKey) != nil]);
+}
+
+static void JuiceDrawStateImage(id state, CGContextRef context)
+{
+    UIImage *image = JuiceValue(state, @"image");
+    if (![image isKindOfClass:UIImage.class]) return;
+
+    CGRect logical = JuiceStateRect(state);
+    CGRect drawable = JuiceStateDrawableRect(state);
+    if (CGRectIsEmpty(drawable) || CGRectIsNull(drawable)) return;
+
+    /*
+     * Draw the framebuffer at its native 1:1 size and clip it to the current
+     * Wine window rectangle. This discards stale oversized backing pixels
+     * without distorting the live application contents.
+     */
+    CGContextSaveGState(context);
+    CGContextClipToRect(context, drawable);
+    [image drawInRect:CGRectMake(logical.origin.x, logical.origin.y,
+                                 image.size.width, image.size.height)];
+    CGContextRestoreGState(context);
 }
 
 static void JuiceFixedCompositeWineDesktop(id self, SEL _cmd)
@@ -147,8 +193,14 @@ static void JuiceFixedCompositeWineDesktop(id self, SEL _cmd)
         return;
     }
 
+    int capturedClient = [JuiceValue(self, @"inputClient") intValue];
+    uint64_t capturedHwnd = [JuiceValue(self, @"inputHwnd") unsignedLongLongValue];
+    if (capturedClient < 0 || !capturedHwnd)
+        objc_setAssociatedObject(self, &JuiceCapturedViewportKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
     CGRect desktop = JuiceDesktopRect(self);
-    CGRect viewport = JuiceViewportForWindows(self, order, windows);
+    NSValue *lockedValue = objc_getAssociatedObject(self, &JuiceCapturedViewportKey);
+    CGRect viewport = lockedValue ? lockedValue.CGRectValue : JuiceViewportForWindows(self, order, windows);
     objc_setAssociatedObject(self, &JuiceCompositeViewportKey,
                              [NSValue valueWithCGRect:viewport], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
@@ -166,10 +218,9 @@ static void JuiceFixedCompositeWineDesktop(id self, SEL _cmd)
         id state = windows[key];
         if (!JuiceStateDrawable(state)) continue;
 
-        CGRect rect = JuiceStateRect(state);
+        CGRect rect = JuiceStateDrawableRect(state);
         if (CGRectIsEmpty(rect) || CGRectIsNull(rect) || !CGRectIntersectsRect(rect, viewport)) continue;
-        UIImage *image = JuiceValue(state, @"image");
-        [image drawInRect:rect];
+        JuiceDrawStateImage(state, context);
         topState = state;
     }
 
@@ -227,13 +278,22 @@ static void JuiceFixedHandleCanvasInput(id self, SEL _cmd, JuiceMsg message)
     NSArray<NSNumber *> *order = JuiceValue(self, @"wineWindowOrder");
     if (![windows isKindOfClass:NSDictionary.class] || ![order isKindOfClass:NSArray.class]) return;
 
-    NSValue *viewportValue = objc_getAssociatedObject(self, &JuiceCompositeViewportKey);
-    CGRect viewport = viewportValue ? viewportValue.CGRectValue : JuiceDesktopRect(self);
-    CGPoint desktopPoint = CGPointMake(message.x + viewport.origin.x, message.y + viewport.origin.y);
-    CGRect desktop = JuiceDesktopRect(self);
-
     BOOL down = (message.flags & (INPUT_LEFT_DOWN | INPUT_RIGHT_DOWN)) != 0;
     BOOL up = (message.flags & (INPUT_LEFT_UP | INPUT_RIGHT_UP)) != 0;
+
+    NSValue *viewportValue = objc_getAssociatedObject(self, &JuiceCapturedViewportKey);
+    if (!viewportValue) viewportValue = objc_getAssociatedObject(self, &JuiceCompositeViewportKey);
+    CGRect viewport = viewportValue ? viewportValue.CGRectValue : JuiceDesktopRect(self);
+
+    /* Freeze the exact coordinate basis used for the button-down event. */
+    if (down && !objc_getAssociatedObject(self, &JuiceCapturedViewportKey))
+    {
+        NSValue *locked = [NSValue valueWithCGRect:viewport];
+        objc_setAssociatedObject(self, &JuiceCapturedViewportKey, locked, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+
+    CGPoint desktopPoint = CGPointMake(message.x + viewport.origin.x, message.y + viewport.origin.y);
+    CGRect desktop = JuiceDesktopRect(self);
     id target = nil;
 
     int capturedClient = [JuiceValue(self, @"inputClient") intValue];
@@ -244,11 +304,15 @@ static void JuiceFixedHandleCanvasInput(id self, SEL _cmd, JuiceMsg message)
         if (!JuiceStateDrawable(target)) target = nil;
     }
     if (!target) target = JuiceTopWindowAtDesktopPoint(windows, order, desktopPoint, desktop);
-    if (!target) return;
+    if (!target)
+    {
+        if (up) objc_setAssociatedObject(self, &JuiceCapturedViewportKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return;
+    }
 
     uint64_t hwnd = [JuiceValue(target, @"hwnd") unsignedLongLongValue];
     int client = [JuiceValue(target, @"clientFD") intValue];
-    CGRect rect = JuiceStateRect(target);
+    CGRect rect = JuiceStateDrawableRect(target);
     UIImage *image = JuiceValue(target, @"image");
     if (client < 0 || !hwnd || CGRectIsEmpty(rect) || !image) return;
 
@@ -258,16 +322,8 @@ static void JuiceFixedHandleCanvasInput(id self, SEL _cmd, JuiceMsg message)
         JuiceSetValue(self, @"inputClient", @(client));
     }
 
-    CGFloat localX = desktopPoint.x - rect.origin.x;
-    CGFloat localY = desktopPoint.y - rect.origin.y;
-
-    /* Normally these ratios are 1. They also make input survive a resize race
-       where the host has new geometry one frame before Wine swaps surfaces. */
-    if (rect.size.width > 0.0 && image.size.width > 0.0) localX *= image.size.width / rect.size.width;
-    if (rect.size.height > 0.0 && image.size.height > 0.0) localY *= image.size.height / rect.size.height;
-
-    localX = JuiceClamp(localX, image.size.width);
-    localY = JuiceClamp(localY, image.size.height);
+    CGFloat localX = JuiceClamp(desktopPoint.x - rect.origin.x, rect.size.width);
+    CGFloat localY = JuiceClamp(desktopPoint.y - rect.origin.y, rect.size.height);
 
     message.magic = JUICE_MAGIC;
     message.type = MSG_INPUT;
@@ -284,6 +340,12 @@ static void JuiceFixedHandleCanvasInput(id self, SEL _cmd, JuiceMsg message)
     {
         JuiceSetValue(self, @"inputHwnd", @0);
         JuiceSetValue(self, @"inputClient", @(-1));
+        objc_setAssociatedObject(self, &JuiceCapturedViewportKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+        /* Recenter only after the drag is finished. */
+        SEL composite = NSSelectorFromString(@"compositeWineDesktop");
+        if ([self respondsToSelector:composite])
+            ((void (*)(id, SEL))objc_msgSend)(self, composite);
     }
 }
 
