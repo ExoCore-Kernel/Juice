@@ -59,7 +59,8 @@ static int valid_kernel_pointer(uint64_t p)
 int main(int argc, char **argv)
 {
     pid_t pid;
-    struct utsname u;
+    struct utsname u = {0};
+    int uname_status;
     void *lib;
     jb_init_fn jb_init;
     proc_find_fn proc_find;
@@ -98,11 +99,12 @@ int main(int argc, char **argv)
         return 77;
     }
 
-    if (uname(&u) != 0 || strncmp(u.release, "22.", 3))
+    uname_status = uname(&u);
+    if (uname_status != 0 || strncmp(u.release, "22.", 3))
     {
         fprintf(stderr,
                 "JUICE_LOWVA_HELPER_ERROR stage=os release=%s expected=Darwin-22.x\n",
-                uname(&u) == 0 ? u.release : "unknown");
+                uname_status == 0 ? u.release : "unknown");
         return 78;
     }
 
