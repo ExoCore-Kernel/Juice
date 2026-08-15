@@ -42,15 +42,30 @@ mkdir -p "$OUT"
   "$ROOT/app/JuiceApiSetBootstrap.m" "$ROOT/app/JuiceLegacyWin32.m" \
   "$ROOT/app/JuiceLogExport.m" "$ROOT/app/JuiceMultiWindowFix.m" \
   "$ROOT/app/JuiceFramebufferFix.m" "$ROOT/app/JuiceBootProgress.m" \
+  "$ROOT/app/JuiceBootOverlayVisibility.m" \
   -framework UIKit -framework Foundation -framework QuartzCore \
   -framework CoreGraphics -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
 
+# Generate the icon set from the compact canonical grape artwork data on every
+# build instead of copying pre-rendered PNGs. This avoids stale or partially
+# corrupted binary resources getting carried into a TIPA and guarantees plain
+# 8-bit RGB, non-interlaced PNG output for both the app icon and boot overlay.
+command -v python3 >/dev/null 2>&1 || { echo "python3 is required to generate Juice app icons." >&2; exit 3; }
+python3 "$ROOT/scripts/generate-app-icons.py" "$OUT"
 shopt -s nullglob
-app_icons=("$ROOT/resources"/AppIcon*.png)
+app_icons=("$OUT"/AppIcon*.png)
 shopt -u nullglob
-test "${#app_icons[@]}" -gt 0 || { echo "Missing Juice app icon resources." >&2; exit 3; }
-cp "${app_icons[@]}" "$OUT/"
+test "${#app_icons[@]}" -eq 6 || {
+  echo "Expected 6 generated Juice app icons, found ${#app_icons[@]}." >&2
+  exit 3
+}
+for icon in "${app_icons[@]}"; do
+  file "$icon" | grep -q 'PNG image data' || {
+    echo "Generated app icon is not a valid PNG: $icon" >&2
+    exit 3
+  }
+done
 
 LDID_BIN="${LDID:-}"
 if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/usr/bin/ldid; fi
@@ -62,4 +77,4 @@ elif command -v codesign >/dev/null 2>&1; then
   codesign --force --sign - --entitlements "$ROOT/config/app-entitlements.plist" "$OUT/Juice"
 fi
 
-echo "JUICE_APP_BUILD_OK path=$OUT/Juice icons=${#app_icons[@]}"
+echo "JUICE_APP_BUILD_OK path=$OUT/Juice icons=${#app_icons[@]} icon_source=generated-rgb8"
