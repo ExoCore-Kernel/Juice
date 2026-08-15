@@ -9,6 +9,9 @@ PE_BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 LOWVA_HEADER="$ROOT/toolchain/juice-ios-map-tryfixed.h"
 LOWVA_OBJECT="$WINE_BUILD/dlls/ntdll/unix/virtual.o"
 LOWVA_STAMP="$WINE_BUILD/.juice-ios-lowva-shim.sha256"
+LOWVA_BOOTSTRAP_HEADER="$ROOT/toolchain/juice-ios-lowva-bootstrap.h"
+LOWVA_BOOTSTRAP_OBJECT="$WINE_BUILD/loader/main.o"
+LOWVA_BOOTSTRAP_STAMP="$WINE_BUILD/.juice-ios-lowva-bootstrap.sha256"
 STATIC_FREETYPE="${JUICE_STATIC_FREETYPE:-1}"
 STATIC_FREETYPE_BUILD="${JUICE_STATIC_FREETYPE_BUILD:-$ROOT/build/freetype-static-ios}"
 STATIC_FREETYPE_LIB="$STATIC_FREETYPE_BUILD/install/lib/libfreetype.a"
@@ -53,10 +56,10 @@ if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test "$STATIC_FREETYPE" = 1; then
   bash "$ROOT/scripts/prepare-static-freetype-wine-linux.sh"
 fi
 
-# The iOS exact-address mmap shim is force-included by the compiler wrapper,
+# These iOS compatibility headers are force-included by the compiler wrapper,
 # so Wine's generated dependency graph does not necessarily know that changing
-# the header must rebuild virtual.o. Track the shim by content hash and discard
-# only that one object when it changes. Everything else remains incremental.
+# either header must rebuild its translation unit. Track both by content hash
+# and discard only the affected object. Everything else remains incremental.
 if test -f "$WINE_BUILD/Makefile" && test -f "$LOWVA_HEADER"; then
   lowva_hash="$(sha256sum "$LOWVA_HEADER" | awk '{print $1}')"
   old_lowva_hash="$(cat "$LOWVA_STAMP" 2>/dev/null || true)"
@@ -66,6 +69,18 @@ if test -f "$WINE_BUILD/Makefile" && test -f "$LOWVA_HEADER"; then
     echo "JUICE_IOS_LOWVA_OBJECT_REFRESH object=$LOWVA_OBJECT hash=$lowva_hash"
   else
     echo "JUICE_IOS_LOWVA_OBJECT_REUSE object=$LOWVA_OBJECT hash=$lowva_hash"
+  fi
+fi
+
+if test -f "$WINE_BUILD/Makefile" && test -f "$LOWVA_BOOTSTRAP_HEADER"; then
+  bootstrap_hash="$(sha256sum "$LOWVA_BOOTSTRAP_HEADER" | awk '{print $1}')"
+  old_bootstrap_hash="$(cat "$LOWVA_BOOTSTRAP_STAMP" 2>/dev/null || true)"
+  if test "$bootstrap_hash" != "$old_bootstrap_hash"; then
+    rm -f "$LOWVA_BOOTSTRAP_OBJECT" "$WINE_BUILD/loader/wine"
+    printf '%s\n' "$bootstrap_hash" > "$LOWVA_BOOTSTRAP_STAMP"
+    echo "JUICE_IOS_LOWVA_BOOTSTRAP_REFRESH object=$LOWVA_BOOTSTRAP_OBJECT hash=$bootstrap_hash"
+  else
+    echo "JUICE_IOS_LOWVA_BOOTSTRAP_REUSE object=$LOWVA_BOOTSTRAP_OBJECT hash=$bootstrap_hash"
   fi
 fi
 
