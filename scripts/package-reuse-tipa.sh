@@ -155,6 +155,11 @@ fi
 
 "${BASH:-bash}" "$ROOT/scripts/build-app.sh"
 cp "$ROOT/build/app/Juice.app/Juice" "$ROOT/config/Info.plist" "$APP/"
+shopt -s nullglob
+app_icons=("$ROOT/build/app/Juice.app"/AppIcon*.png)
+shopt -u nullglob
+test "${#app_icons[@]}" -gt 0 || { echo "Built Juice.app has no app icons." >&2; exit 3; }
+cp "${app_icons[@]}" "$APP/"
 
 stage_runtime()
 {
@@ -195,6 +200,20 @@ if test -x /var/jb/usr/bin/ldid; then
     /var/jb/usr/bin/ldid -S"$ROOT/config/cli-allow-jit-entitlements.plist" -Cadhoc \
       "$APP/Grape-X64/build/wine-ios/loader/wine"
   fi
+
+  for runtime_root in "${runtime_roots[@]}"; do
+    lowva_helper="$runtime_root/tools/juice-lowva-helper"
+    if test -f "$lowva_helper" && file "$lowva_helper" | grep -q 'Mach-O'; then
+      /var/jb/usr/bin/ldid -S"$ROOT/config/lowva-helper-entitlements.plist" -Cadhoc "$lowva_helper"
+      helper_entitlements="$(/var/jb/usr/bin/ldid -e "$lowva_helper" 2>/dev/null || true)"
+      printf '%s' "$helper_entitlements" | grep -q 'IOSurfaceRootUserClient' || {
+        echo "Packaged low-VA helper is missing IOSurfaceRootUserClient: $lowva_helper" >&2
+        exit 5
+      }
+      echo "JUICE_LOWVA_HELPER_SIGNED path=$lowva_helper iosurface_entitlement=1"
+    fi
+  done
+
   /var/jb/usr/bin/ldid -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$APP/Juice"
 fi
 
@@ -211,4 +230,4 @@ fi
 )
 sha256sum "$OUTPUT" > "$OUTPUT.sha256"
 
-echo "JUICE_REUSE_TIPA_OK path=$OUTPUT native=1 x64=$([ -n "$X64_RUNTIME" ] && echo 1 || echo 0) win32=$WIN32 link_mode=$LINK_MODE"
+echo "JUICE_REUSE_TIPA_OK path=$OUTPUT native=1 x64=$([ -n "$X64_RUNTIME" ] && echo 1 || echo 0) win32=$WIN32 link_mode=$LINK_MODE icons=${#app_icons[@]}"
