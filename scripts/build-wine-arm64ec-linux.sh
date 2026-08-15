@@ -95,11 +95,14 @@ PY
 mapfile -t manifest_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
 test "${#manifest_targets[@]}" -gt 0 || { echo "Hybrid runtime manifest is empty." >&2; exit 2; }
 
-# ARM64X is required for Wine DLLs/drivers. Helper EXEs do not need to be
-# hybrid: Grape-X64 starts as a copy of the verified ARM64 Grape runtime and
-# can execute ARM64 helper programs natively. Some Wine ARM64EC configurations
-# intentionally do not expose an aarch64-windows target for programs (for
-# example conhost.exe), so do not request nonexistent hybrid program targets.
+# ARM64X is required for Wine DLLs/drivers that contain executable code. Helper
+# EXEs do not need to be hybrid: Grape-X64 starts as a copy of the verified ARM64
+# Grape runtime and can execute ARM64 helper programs natively. Wine also has a
+# small set of data-only PE images such as apisetschema.dll. They contain no
+# architecture-specific executable code, and winebuild intentionally emits the
+# aarch64-windows target as ordinary COFF-ARM64 even in a multiarch ARM64EC tree.
+# Keep those data images native instead of rejecting a correct build for not
+# being COFF-ARM64X.
 hybrid_targets=()
 program_count=0
 for target in "${manifest_targets[@]}"; do
@@ -155,9 +158,19 @@ for target in "${hybrid_targets[@]}"; do
   test -s "$module" || { echo "Missing hybrid module: $target" >&2; bad=$((bad + 1)); continue; }
   format="$("$TOOLCHAIN/bin/llvm-readobj" --file-headers "$module" 2>/dev/null |
     sed -n 's/^Format: //p')"
-  if test "$format" != COFF-ARM64X; then
+  case "$target" in
+    dlls/apisetschema/aarch64-windows/apisetschema.dll)
+      valid_formats=" COFF-ARM64 COFF-ARM64X "
+      ;;
+    *)
+      valid_formats=" COFF-ARM64X "
+      ;;
+  esac
+  if [[ "$valid_formats" != *" $format "* ]]; then
     echo "Unexpected hybrid format $format: $target" >&2
     bad=$((bad + 1))
+  elif test "$format" = COFF-ARM64; then
+    echo "JUICE_ARM64EC_NATIVE_DATA_MODULE target=$target format=$format"
   fi
 done
 test "$bad" -eq 0
