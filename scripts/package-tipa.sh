@@ -36,20 +36,31 @@ if test -n "$X64_RUNTIME"; then
   rsync -a "$X64_RUNTIME/" "$APP/Grape-X64/"
   runtime_roots+=("$APP/Grape-X64")
 
-  # arm64 iOS executables are linked with a 4 GiB __PAGEZERO and ld64 does
-  # not support -pagezero_size for iOS. That consumes every address Wine's
-  # WoW64 layer can represent in 32-bit process structures. Patch only the
-  # packaged Grape-X64 Wine executable to retain one inaccessible 16 KiB page
-  # at zero and leave the rest of low VA free. ldid signs it afterwards.
+  # Grape-X64 starts from the verified ARM64 Grape runtime and must keep the
+  # exact same normal iOS Mach-O loader. Do not rewrite __PAGEZERO in the file:
+  # iOS rejects a non-standard pagezero executable before main() with ENOEXEC.
+  # The loader now releases the low VA reservation from the live task after
+  # launch when JUICE_EXPERIMENTAL_X64=1, preserving a valid signed image.
   x64_loader="$APP/Grape-X64/build/wine-ios/loader/wine"
+  arm64_loader="$APP/Grape/build/wine-ios/loader/wine"
   test -f "$x64_loader" || { echo "Missing Grape-X64 Wine loader: $x64_loader" >&2; exit 3; }
-  python3 "$ROOT/scripts/patch-ios-wow64-pagezero.py" "$x64_loader"
+  test -f "$arm64_loader" || { echo "Missing ARM64 Wine loader: $arm64_loader" >&2; exit 3; }
+  file "$x64_loader" | grep -Eq 'Mach-O 64-bit arm64' || {
+    echo "Grape-X64 loader is not a valid arm64 Mach-O before signing." >&2
+    file "$x64_loader" >&2 || true
+    exit 3
+  }
+  cmp -s "$arm64_loader" "$x64_loader" || {
+    echo "Grape-X64 loader diverged from the verified ARM64 loader before packaging." >&2
+    exit 3
+  }
+  echo "JUICE_X64_LOADER_VALID path=$x64_loader strategy=runtime-low-va-release"
 fi
 
 # Wine deliberately loads FreeType at runtime with dlopen(SONAME_LIBFREETYPE).
-# Linux builds fetch the target Procursus dylib into the rootless sysroot, so
-# package that exact target library instead of requiring every destination
-# device to have the optional FreeType package installed under /var/jb.
+# Procursus libfreetype6 itself depends on libbrotli1 and libpng16-16. Bundle
+# that small runtime closure and rewrite only intra-bundle dylib references to
+# @loader_path so rootless /var/jb install names do not leak into the TIPA.
 if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
   test -e "$ROOTLESS/usr/lib/libfreetype.dylib" || {
     echo "Missing packaged FreeType input: $ROOTLESS/usr/lib/libfreetype.dylib" >&2
@@ -59,18 +70,30 @@ if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
   mkdir -p "$APP/Libraries"
   shopt -s nullglob
   freetype_libs=("$ROOTLESS/usr/lib"/libfreetype*.dylib)
+  brotli_libs=("$ROOTLESS/usr/lib"/libbrotli*.dylib)
+  png_libs=("$ROOTLESS/usr/lib"/libpng*.dylib)
   shopt -u nullglob
   test "${#freetype_libs[@]}" -gt 0 || {
     echo "No FreeType dylibs were found in $ROOTLESS/usr/lib." >&2
     exit 3
   }
-  cp -a "${freetype_libs[@]}" "$APP/Libraries/"
+  test "${#brotli_libs[@]}" -gt 0 || {
+    echo "No Brotli dylibs were found in $ROOTLESS/usr/lib; refresh the FreeType dependency cache." >&2
+    exit 3
+  }
+  test "${#png_libs[@]}" -gt 0 || {
+    echo "No libpng dylibs were found in $ROOTLESS/usr/lib; refresh the FreeType dependency cache." >&2
+    exit 3
+  }
+  cp -a "${freetype_libs[@]}" "${brotli_libs[@]}" "${png_libs[@]}" "$APP/Libraries/"
   test -e "$APP/Libraries/$freetype_soname" || {
     echo "Bundled FreeType is missing configured soname $freetype_soname." >&2
     exit 3
   }
+  python3 "$ROOT/scripts/patch-bundled-dylib-paths.py" "$APP/Libraries"
   runtime_roots+=("$APP/Libraries")
-  echo "JUICE_FREETYPE_BUNDLED soname=$freetype_soname path=$APP/Libraries/$freetype_soname"
+  bundled_library_count="$(find "$APP/Libraries" -type f -name '*.dylib' | wc -l | tr -d ' ')"
+  echo "JUICE_FREETYPE_BUNDLED soname=$freetype_soname path=$APP/Libraries/$freetype_soname libraries=$bundled_library_count closure=libfreetype6,libbrotli1,libpng16-16"
 fi
 
 LDID_BIN="${LDID:-}"
