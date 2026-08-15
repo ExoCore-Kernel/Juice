@@ -6,6 +6,9 @@ OUTPUT="${JUICE_TIPA_OUTPUT:-}"
 TOOLS="${JUICE_WINE_TOOLS_BUILD:-$ROOT/build/wine-tools-linux}"
 WINE_BUILD="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
 PE_BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
+LOWVA_HEADER="$ROOT/toolchain/juice-ios-map-tryfixed.h"
+LOWVA_OBJECT="$WINE_BUILD/dlls/ntdll/unix/virtual.o"
+LOWVA_STAMP="$WINE_BUILD/.juice-ios-lowva-shim.sha256"
 
 # POSIX/FUSE overlays may not preserve executable mode bits reliably. Invoke
 # repository shell helpers explicitly through bash so builds do not require
@@ -35,6 +38,22 @@ if test "$need_host_tools" = 1; then
   bash "$ROOT/scripts/build-wine-tools-linux.sh"
 else
   echo "JUICE_WINE_TOOLS_REUSE path=$TOOLS count=${#required_host_tools[@]}"
+fi
+
+# The iOS exact-address mmap shim is force-included by the compiler wrapper,
+# so Wine's generated dependency graph does not necessarily know that changing
+# the header must rebuild virtual.o. Track the shim by content hash and discard
+# only that one object when it changes. Everything else remains incremental.
+if test -f "$WINE_BUILD/Makefile" && test -f "$LOWVA_HEADER"; then
+  lowva_hash="$(sha256sum "$LOWVA_HEADER" | awk '{print $1}')"
+  old_lowva_hash="$(cat "$LOWVA_STAMP" 2>/dev/null || true)"
+  if test "$lowva_hash" != "$old_lowva_hash"; then
+    rm -f "$LOWVA_OBJECT"
+    printf '%s\n' "$lowva_hash" > "$LOWVA_STAMP"
+    echo "JUICE_IOS_LOWVA_OBJECT_REFRESH object=$LOWVA_OBJECT hash=$lowva_hash"
+  else
+    echo "JUICE_IOS_LOWVA_OBJECT_REUSE object=$LOWVA_OBJECT hash=$lowva_hash"
+  fi
 fi
 
 # The first Linux cross-build implementation considered FreeType enabled when
