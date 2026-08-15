@@ -3,7 +3,7 @@
 #import <limits.h>
 #import <zlib.h>
 
-static NSString *const JuiceZipErrorDomain = @"com.jacksipad.juice.zip";
+static NSString *const JuiceZipErrorDomain = @"com.exocore.Juice.zip";
 
 static uint16_t JZRead16(const uint8_t *p)
 {
