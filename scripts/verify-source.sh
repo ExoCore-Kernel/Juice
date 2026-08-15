@@ -83,7 +83,12 @@ grep -q '@executable_path/../../../../Libraries/' "$ROOT/scripts/configure-wine-
 grep -q 'JUICE_FREETYPE_CONFIG_RETROFIT' "$ROOT/scripts/build-all-linux-x86_64.sh"
 grep -q 'JUICE_FREETYPE_BUNDLED' "$ROOT/scripts/package-tipa.sh"
 grep -q 'JUICE_WOW64_PAGEZERO_PATCHED' "$ROOT/scripts/patch-ios-wow64-pagezero.py"
-grep -q 'patch-ios-wow64-pagezero.py' "$ROOT/scripts/package-tipa.sh"
+# The experimental x64 loader now keeps its signed 4 GiB __PAGEZERO intact so
+# iOS will exec it. Low VA is unlocked in the live task by the bundled root
+# helper instead; verify that packaging preserves the specialized entitlement.
+grep -q 'JUICE_LOWVA_HELPER_SIGNED' "$ROOT/scripts/package-tipa.sh"
+grep -q 'lowva-helper-entitlements.plist' "$ROOT/scripts/package-tipa.sh"
+grep -q 'IOSurfaceRootUserClient' "$ROOT/config/lowva-helper-entitlements.plist"
 grep -q 'bundle libraries path=' "$ROOT/launcher/grape-trace-parent.c"
 grep -q 'PWD="$PEBUILD"' "$ROOT/scripts/build-wine-device.sh"
 grep -q 'with-mingw="$PE_CLANG"' "$ROOT/scripts/configure-wine-pe-device.sh"
