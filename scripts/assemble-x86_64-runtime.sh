@@ -91,15 +91,27 @@ for target in "${targets[@]}"; do
   staged="$GRAPE/runtime/lib/wine/aarch64-windows/$(basename "$target")"
   format="$("$TOOLCHAIN/bin/llvm-readobj" --file-headers "$staged" 2>/dev/null |
     sed -n 's/^Format: //p')"
-  if [[ "$target" == programs/* ]]; then
-    valid_formats=" COFF-ARM64 COFF-ARM64X "
-  else
-    valid_formats=" COFF-ARM64X "
-  fi
+  case "$target" in
+    programs/*)
+      valid_formats=" COFF-ARM64 COFF-ARM64X "
+      ;;
+    dlls/apisetschema/aarch64-windows/apisetschema.dll)
+      # apisetschema.dll is a data-only PE image. Wine intentionally emits an
+      # ordinary aarch64 image because there is no executable code requiring
+      # ARM64EC/ARM64X thunks.
+      valid_formats=" COFF-ARM64 COFF-ARM64X "
+      ;;
+    *)
+      valid_formats=" COFF-ARM64X "
+      ;;
+  esac
   [[ "$valid_formats" == *" $format "* ]] || {
     echo "Staged module has an invalid hybrid format: $staged ($format)" >&2
     exit 3
   }
+  if test "$format" = COFF-ARM64 && [[ "$target" != programs/* ]]; then
+    echo "JUICE_X64_NATIVE_DATA_MODULE target=$target format=$format"
+  fi
 done
 
 echo "JUICE_X64_HYBRID_LAYOUT arm64_programs=$arm64_programs hybrid_modules=$hybrid_modules"
