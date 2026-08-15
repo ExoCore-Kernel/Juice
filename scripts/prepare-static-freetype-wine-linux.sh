@@ -47,12 +47,15 @@ if test "$need_configure" = 1; then
   tmp="$(mktemp -d "$ROOT/build/.static-freetype-config.XXXXXX")"
   win32u="$ROOT/wine/dlls/win32u/Makefile.in"
   dwrite="$ROOT/wine/dlls/dwrite/Makefile.in"
-  cp "$win32u" "$tmp/win32u.Makefile.in"
-  cp "$dwrite" "$tmp/dwrite.Makefile.in"
+  cp -p "$win32u" "$tmp/win32u.Makefile.in"
+  cp -p "$dwrite" "$tmp/dwrite.Makefile.in"
   restore()
   {
-    cp "$tmp/win32u.Makefile.in" "$win32u" 2>/dev/null || true
-    cp "$tmp/dwrite.Makefile.in" "$dwrite" 2>/dev/null || true
+    # Preserve the original mtimes as well as contents. Otherwise Make could
+    # think the restored template is newer than the generated Makefile and
+    # silently regenerate away the static link additions on the next command.
+    cp -p "$tmp/win32u.Makefile.in" "$win32u" 2>/dev/null || true
+    cp -p "$tmp/dwrite.Makefile.in" "$dwrite" 2>/dev/null || true
     rm -rf "$tmp"
   }
   trap restore EXIT INT TERM
