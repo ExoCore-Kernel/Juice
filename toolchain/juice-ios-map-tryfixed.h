@@ -74,6 +74,9 @@ static inline void *juice_ios_mmap_tryfixed(
          */
         if (juice_ios_x64_low_range(address, size))
         {
+            static unsigned long lowva_failures;
+            static int reported_success;
+
             mapped = mmap(
                 address,
                 size,
@@ -83,19 +86,29 @@ static inline void *juice_ios_mmap_tryfixed(
                 offset
             );
             if (mapped == MAP_FAILED)
-                fprintf(stderr,
-                        "[JuiceLowVA] MAP_FIXED failed start=%p size=0x%zx prot=%x errno=%d\n",
-                        address, size, prot, errno);
-            else
             {
-                static int reported_success;
-                if (!reported_success)
-                {
-                    reported_success = 1;
+                unsigned long count = ++lowva_failures;
+
+                /*
+                 * Wine probes many candidate low addresses while looking for
+                 * a usable WoW64 hole. Printing every rejected probe can flood
+                 * Juice's UIKit log fast enough to make the app appear hung.
+                 * Keep the beginning of the trace intact, then sample it.
+                 */
+                if (count <= 32 || (count & 0xff) == 0)
                     fprintf(stderr,
-                            "[JuiceLowVA] MAP_FIXED enabled start=%p size=0x%zx prot=%x\n",
-                            address, size, prot);
-                }
+                            "[JuiceLowVA] MAP_FIXED failed count=%lu start=%p size=0x%zx prot=%x errno=%d\n",
+                            count, address, size, prot, errno);
+                if (count == 33)
+                    fprintf(stderr,
+                            "[JuiceLowVA] suppressing repeated MAP_FIXED failures; sampling every 256 probes\n");
+            }
+            else if (!reported_success)
+            {
+                reported_success = 1;
+                fprintf(stderr,
+                        "[JuiceLowVA] MAP_FIXED enabled start=%p size=0x%zx prot=%x failures=%lu\n",
+                        address, size, prot, lowva_failures);
             }
             return mapped;
         }
