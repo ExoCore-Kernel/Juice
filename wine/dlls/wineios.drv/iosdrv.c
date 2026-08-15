@@ -76,9 +76,13 @@ static UINT ios_ShowWindow(HWND hwnd,INT cmd,RECT *rect,UINT swp)
 static BOOL ios_WindowPosChanging(HWND hwnd,UINT flags,BOOL shaped,const struct window_rects *rects){return TRUE;}
 static void ios_WindowPosChanged(HWND hwnd,HWND after,HWND owner,UINT flags,const struct window_rects *rects,struct window_surface *surface)
 {
-    fprintf(stderr,"[JuiceGeom] changed hwnd=%p flags=%x ptr=%p window=%d,%d,%d,%d client=%d,%d,%d,%d visible=%d,%d,%d,%d surface=%p\n",hwnd,flags,rects,rects->window.left,rects->window.top,rects->window.right,rects->window.bottom,rects->client.left,rects->client.top,rects->client.right,rects->client.bottom,rects->visible.left,rects->visible.top,rects->visible.right,rects->visible.bottom,surface);
-    if(host_window_changed)host_window_changed(HandleToUlong(hwnd),&rects->window,!(flags&SWP_HIDEWINDOW));
-    ios_ipc_window(hwnd,&rects->window,!(flags&SWP_HIDEWINDOW));
+    BOOL visible;
+    if(flags&SWP_HIDEWINDOW) visible=FALSE;
+    else if(flags&SWP_SHOWWINDOW) visible=TRUE;
+    else visible=NtUserIsWindowVisible(hwnd);
+    fprintf(stderr,"[JuiceGeom] changed hwnd=%p flags=%x ptr=%p window=%d,%d,%d,%d client=%d,%d,%d,%d visible=%d,%d,%d,%d surface=%p shown=%d\n",hwnd,flags,rects,rects->window.left,rects->window.top,rects->window.right,rects->window.bottom,rects->client.left,rects->client.top,rects->client.right,rects->client.bottom,rects->visible.left,rects->visible.top,rects->visible.right,rects->visible.bottom,surface,visible);
+    if(host_window_changed)host_window_changed(HandleToUlong(hwnd),&rects->window,visible);
+    ios_ipc_window(hwnd,&rects->window,visible);
 }
 static void ios_SetParent(HWND hwnd,HWND parent,HWND old_parent){}
 static void ios_SetCapture(HWND hwnd,UINT flags,HWND previous){}
@@ -128,7 +132,13 @@ static BOOL ios_CreateWindowSurface(HWND hwnd,BOOL layered,const RECT *rect,stru
     unsigned int width=max(1,rect->right-rect->left),height=max(1,rect->bottom-rect->top),stride=width*4; void *bits;
     ios_ipc_register_queue();
     fprintf(stderr,"[JuiceGeom] surface hwnd=%p rect=%d,%d,%d,%d size=%ux%u previous=%p\n",hwnd,rect->left,rect->top,rect->right,rect->bottom,width,height,previous);
-    if(previous&&previous->funcs==&surface_funcs)return TRUE; if(!(bits=calloc(height,stride)))return FALSE;
+    if(previous&&previous->funcs==&surface_funcs)
+    {
+        struct iosdrv_surface *old=(struct iosdrv_surface *)previous;
+        if(old->width==width&&old->height==height)return TRUE;
+        fprintf(stderr,"[JuiceGeom] surface-resize hwnd=%p old=%ux%u new=%ux%u\n",hwnd,old->width,old->height,width,height);
+    }
+    if(!(bits=calloc(height,stride)))return FALSE;
     memset(&info,0,sizeof(info));info.bmiHeader.biSize=sizeof(info.bmiHeader);info.bmiHeader.biWidth=width;
     info.bmiHeader.biHeight=-(LONG)height;info.bmiHeader.biPlanes=1;info.bmiHeader.biBitCount=32;
     info.bmiHeader.biCompression=BI_RGB;info.bmiHeader.biSizeImage=stride*height;
@@ -157,5 +167,4 @@ static struct user_driver_funcs iosdrv_funcs={
     .pWindowPosChanged=ios_WindowPosChanged,.pOpenGLInit=ios_OpenGLInit,.pVulkanInit=ios_VulkanInit};
 NTSTATUS iosdrv_unix_init(void *args)
 {(void)args;host_desktop_changed=dlsym(RTLD_DEFAULT,"wineios_host_desktop_changed");host_window_changed=dlsym(RTLD_DEFAULT,"wineios_host_window_changed");host_window_destroyed=dlsym(RTLD_DEFAULT,"wineios_host_window_destroyed");host_present_bgra=dlsym(RTLD_DEFAULT,"wineios_host_present_bgra");
-init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p size=%zu\n",iosdrv_funcs.pCreateWindow,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;
-}
+init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p size=%zu\n",iosdrv_funcs.pCreateWindow,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;}
