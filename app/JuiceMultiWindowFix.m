@@ -7,7 +7,7 @@
  * Multi-window presentation fixes for the UIKit host.
  *
  * Keep Wine's desktop coordinates internally, but present only the bounding
- * viewport of the visible window group. Two details are important here:
+ * viewport of the visible window group. Three details are important here:
  *
  *  1. The viewport must not chase a window while the user is dragging it.
  *     If the crop origin changes between touch events, the same physical
@@ -15,7 +15,14 @@
  *     a feedback loop that looks like jitter. Lock the viewport for the whole
  *     pointer capture and recalculate it only after button-up.
  *
- *  2. A Wine window surface and its latest window geometry can briefly be
+ *  2. Pointer messages for a moving window must stay in desktop coordinates.
+ *     Converting to window-local coordinates in UIKit and then adding Wine's
+ *     current window origin on the other side races the window move itself.
+ *     A one-frame geometry difference becomes a visible cursor jump. Desktop
+ *     coordinates are stable for the whole drag and also allow the pointer to
+ *     move outside the current window rectangle while capture is active.
+ *
+ *  3. A Wine window surface and its latest window geometry can briefly be
  *     different sizes during create/resize. The old compositor stretched the
  *     entire backing surface to the new rectangle. Oversized stale backing
  *     pixels therefore appeared as a large white/unused area next to small
@@ -30,6 +37,7 @@
 #define INPUT_LEFT_UP 2u
 #define INPUT_RIGHT_DOWN 4u
 #define INPUT_RIGHT_UP 8u
+#define INPUT_COORDS_DESKTOP 0x40000000u
 
 typedef struct
 {
@@ -259,13 +267,6 @@ static BOOL JuiceSendMessageToFD(id self, JuiceMsg *message, NSData *payload, in
     return ((BOOL (*)(id, SEL, JuiceMsg *, id, int))objc_msgSend)(self, selector, message, payload, fd);
 }
 
-static CGFloat JuiceClamp(CGFloat value, CGFloat upper)
-{
-    if (value < 0.0) return 0.0;
-    if (upper > 0.0 && value >= upper) return upper - 1.0;
-    return value;
-}
-
 static void JuiceFixedHandleCanvasInput(id self, SEL _cmd, JuiceMsg message)
 {
     if (![JuiceValue(self, @"experimentalMultiWindow") boolValue])
@@ -313,8 +314,7 @@ static void JuiceFixedHandleCanvasInput(id self, SEL _cmd, JuiceMsg message)
     uint64_t hwnd = [JuiceValue(target, @"hwnd") unsignedLongLongValue];
     int client = [JuiceValue(target, @"clientFD") intValue];
     CGRect rect = JuiceStateDrawableRect(target);
-    UIImage *image = JuiceValue(target, @"image");
-    if (client < 0 || !hwnd || CGRectIsEmpty(rect) || !image) return;
+    if (client < 0 || !hwnd || CGRectIsEmpty(rect)) return;
 
     if (down)
     {
@@ -322,14 +322,18 @@ static void JuiceFixedHandleCanvasInput(id self, SEL _cmd, JuiceMsg message)
         JuiceSetValue(self, @"inputClient", @(client));
     }
 
-    CGFloat localX = JuiceClamp(desktopPoint.x - rect.origin.x, rect.size.width);
-    CGFloat localY = JuiceClamp(desktopPoint.y - rect.origin.y, rect.size.height);
-
+    /*
+     * Do not subtract rect.origin and do not clamp to the window. A title-bar
+     * drag is screen-space pointer capture: the finger remains meaningful even
+     * after the window has moved underneath it or the pointer leaves its old
+     * rectangle. Wine consumes this flag and treats x/y as desktop coords.
+     */
     message.magic = JUICE_MAGIC;
     message.type = MSG_INPUT;
     message.hwnd = hwnd;
-    message.x = (int32_t)floor(localX);
-    message.y = (int32_t)floor(localY);
+    message.x = (int32_t)floor(desktopPoint.x);
+    message.y = (int32_t)floor(desktopPoint.y);
+    message.flags |= INPUT_COORDS_DESKTOP;
 
     id canvas = JuiceValue(self, @"canvas");
     if (canvas) JuiceSetValue(canvas, @"hwnd", @(hwnd));
