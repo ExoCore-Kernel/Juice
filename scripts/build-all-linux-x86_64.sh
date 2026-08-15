@@ -9,6 +9,11 @@ PE_BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 LOWVA_HEADER="$ROOT/toolchain/juice-ios-map-tryfixed.h"
 LOWVA_OBJECT="$WINE_BUILD/dlls/ntdll/unix/virtual.o"
 LOWVA_STAMP="$WINE_BUILD/.juice-ios-lowva-shim.sha256"
+STATIC_FREETYPE="${JUICE_STATIC_FREETYPE:-1}"
+STATIC_FREETYPE_BUILD="${JUICE_STATIC_FREETYPE_BUILD:-$ROOT/build/freetype-static-ios}"
+STATIC_FREETYPE_LIB="$STATIC_FREETYPE_BUILD/install/lib/libfreetype.a"
+STATIC_FREETYPE_HEADER="$STATIC_FREETYPE_BUILD/shim/juice-static-freetype.h"
+STATIC_FREETYPE_SONAME="juice-static-freetype"
 
 # POSIX/FUSE overlays may not preserve executable mode bits reliably. Invoke
 # repository shell helpers explicitly through bash so builds do not require
@@ -40,6 +45,14 @@ else
   echo "JUICE_WINE_TOOLS_REUSE path=$TOOLS count=${#required_host_tools[@]}"
 fi
 
+# iOS dyld is a poor place to discover a missing optional font dependency.
+# Build FreeType into Wine's native win32u and DirectWrite Unix sides instead.
+# The preparation script performs a one-time native configure migration while
+# preserving every compiled Wine object that does not depend on the font setup.
+if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test "$STATIC_FREETYPE" = 1; then
+  bash "$ROOT/scripts/prepare-static-freetype-wine-linux.sh"
+fi
+
 # The iOS exact-address mmap shim is force-included by the compiler wrapper,
 # so Wine's generated dependency graph does not necessarily know that changing
 # the header must rebuild virtual.o. Track the shim by content hash and discard
@@ -56,22 +69,36 @@ if test -f "$WINE_BUILD/Makefile" && test -f "$LOWVA_HEADER"; then
   fi
 fi
 
-# The first Linux cross-build implementation considered FreeType enabled when
-# configure found ft2build.h. Wine's actual win32u renderer has a second gate:
-# SONAME_LIBFREETYPE. Darwin soname discovery can fail while cross-configuring
-# on Linux. Also make the cached renderer load Juice's bundled dylib directly,
-# rather than depending on DYLD_LIBRARY_PATH or a device-side FreeType install.
+# Older builds used a bundled dylib loaded with SONAME_LIBFREETYPE. Keep that
+# path as an opt-out fallback, but the default Linux build now requires the
+# static resolver prepared above. This avoids silently reverting a cached tree
+# to the runtime dlopen path after it was migrated.
 freetype_reconfigure=0
 if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test -f "$WINE_BUILD/Makefile"; then
   native_config="$WINE_BUILD/include/config.h"
-  if ! grep -q '^#define HAVE_FT2BUILD_H 1' "$native_config" 2>/dev/null; then
+  if test "$STATIC_FREETYPE" = 1; then
+    grep -Fq "#define SONAME_LIBFREETYPE \"$STATIC_FREETYPE_SONAME\"" "$native_config" || {
+      echo "Static FreeType preparation did not persist in $native_config." >&2
+      exit 5
+    }
+    grep -Fq "$STATIC_FREETYPE_LIB" "$WINE_BUILD/Makefile" || {
+      echo "Static FreeType archive is missing from the native Wine Makefile." >&2
+      exit 5
+    }
+    grep -Fq "$STATIC_FREETYPE_HEADER" "$WINE_BUILD/Makefile" || {
+      echo "Static FreeType shim is missing from the native Wine Makefile." >&2
+      exit 5
+    }
+    echo "JUICE_FREETYPE_CONFIG_REUSE mode=static path=$native_config soname=$STATIC_FREETYPE_SONAME"
+  elif ! grep -q '^#define HAVE_FT2BUILD_H 1' "$native_config" 2>/dev/null; then
     echo "JUICE_FREETYPE_CONFIG_REPAIR mode=reconfigure reason=missing-header path=$native_config"
     freetype_reconfigure=1
   else
-    freetype_soname="$(bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
+    ROOTLESS="${JUICE_IOS_ROOTLESS_SYSROOT:-$ROOT/build/deps/rootless-sysroot}"
+    freetype_soname="$(JUICE_IOS_ROOTLESS_SYSROOT="$ROOTLESS" bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
     freetype_runtime_name="@executable_path/../../../../Libraries/$freetype_soname"
     if grep -Fq "#define SONAME_LIBFREETYPE \"$freetype_runtime_name\"" "$native_config"; then
-      echo "JUICE_FREETYPE_CONFIG_REUSE path=$native_config soname=$freetype_runtime_name"
+      echo "JUICE_FREETYPE_CONFIG_REUSE mode=dynamic path=$native_config soname=$freetype_runtime_name"
     else
       python3 - "$native_config" "$freetype_runtime_name" <<'PY'
 from pathlib import Path
@@ -92,12 +119,15 @@ temporary = path.with_name(path.name + ".juice-freetype-new")
 temporary.write_text(text, encoding="utf-8", errors="surrogateescape")
 temporary.replace(path)
 PY
-      echo "JUICE_FREETYPE_CONFIG_RETROFIT path=$native_config soname=$freetype_runtime_name"
+      echo "JUICE_FREETYPE_CONFIG_RETROFIT mode=dynamic path=$native_config soname=$freetype_runtime_name"
     fi
   fi
 fi
 
-if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile" || test "$freetype_reconfigure" = 1; then
+if test "$STATIC_FREETYPE" = 1 && test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
+  test -f "$WINE_BUILD/Makefile" || { echo "Static FreeType preparation did not configure native Wine." >&2; exit 5; }
+  echo "JUICE_WINE_CONFIGURE_REUSE path=$WINE_BUILD mode=static-freetype"
+elif test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile" || test "$freetype_reconfigure" = 1; then
   bash "$ROOT/scripts/configure-wine-linux.sh"
 else
   echo "JUICE_WINE_CONFIGURE_REUSE path=$WINE_BUILD"
@@ -132,4 +162,4 @@ else
   bash "$ROOT/scripts/package-tipa.sh"
 fi
 
-echo "JUICE_LINUX_X86_64_BUILD_OK x64=${JUICE_BUILD_X64:-0}"
+echo "JUICE_LINUX_X86_64_BUILD_OK x64=${JUICE_BUILD_X64:-0} static_freetype=$STATIC_FREETYPE"
