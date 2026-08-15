@@ -36,7 +36,7 @@
 #endif
 #ifdef __APPLE__
 # include <mach-o/dyld.h>
-# include <mach/mach.h>
+# include <mach/mach_traps.h>
 #endif
 
 #include "main.h"
@@ -97,6 +97,12 @@ static void init_reserved_areas(void)
  * Preserve the first 64 KiB as the usual NULL/low-pointer guard and release
  * [0x10000, 4GiB). The app marks every Grape-X64 launch with
  * JUICE_EXPERIMENTAL_X64=1; the verified ARM64 Grape path is left untouched.
+ *
+ * Use the public iPhoneOS mach_traps declarations directly instead of
+ * <mach/mach.h>. The umbrella header also declares host_page_size(), which
+ * collides with Wine's unrelated host_page_size variable in virtual.c when
+ * this source is compiled with Juice's shared forced-include compatibility
+ * header.
  */
 static void juice_release_ios_low_address_space(void)
 {
@@ -109,7 +115,7 @@ static void juice_release_ios_low_address_space(void)
 
     if (!enabled || strcmp( enabled, "1" )) return;
 
-    status = mach_vm_deallocate( mach_task_self(), start, end - start );
+    status = _kernelrpc_mach_vm_deallocate_trap( task_self_trap(), start, end - start );
     fprintf( stderr,
              "[JuiceWine] iOS low-VA release start=0x%llx end=0x%llx status=%d%s\n",
              (unsigned long long)start, (unsigned long long)end, status,
