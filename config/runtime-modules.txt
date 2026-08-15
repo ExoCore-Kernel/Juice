@@ -3,6 +3,7 @@
 # services, registry and shell) but does not add Vulkan or DirectX work.
 dlls/advapi32/aarch64-windows/advapi32.dll
 dlls/advpack/aarch64-windows/advpack.dll
+dlls/apisetschema/aarch64-windows/apisetschema.dll
 dlls/bcrypt/aarch64-windows/bcrypt.dll
 dlls/cabinet/aarch64-windows/cabinet.dll
 dlls/cfgmgr32/aarch64-windows/cfgmgr32.dll
