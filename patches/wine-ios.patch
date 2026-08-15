@@ -1,5 +1,5 @@
 diff --git a/.gitattributes b/.gitattributes
-index 1051bd31a7d..a38905c27b6 100644
+index 1051bd31a7..a38905c27b 100644
 --- a/.gitattributes
 +++ b/.gitattributes
 @@ -1,60 +1,58 @@
@@ -110,7 +110,7 @@ index 1051bd31a7d..a38905c27b6 100644
 +nls/*.nls gitlab-generated linguist-generated=true
 diff --git a/UPSTREAM-JUICE.txt b/UPSTREAM-JUICE.txt
 new file mode 100644
-index 00000000000..c6389d07ab5
+index 0000000000..c6389d07ab
 --- /dev/null
 +++ b/UPSTREAM-JUICE.txt
 @@ -0,0 +1,8 @@
@@ -123,7 +123,7 @@ index 00000000000..c6389d07ab5
 +audit patch is ../patches/wine-ios.patch. Wine's own COPYING.LIB and LICENSE
 +files govern this directory.
 diff --git a/configure b/configure
-index 73a4d6a4b6b..1c6571c7c9a 100755
+index 73a4d6a4b6..1c6571c7c9 100755
 --- a/configure
 +++ b/configure
 @@ -1747,6 +1747,9 @@ enable_icacls
@@ -186,7 +186,7 @@ index 73a4d6a4b6b..1c6571c7c9a 100755
 -
 -
 diff --git a/configure.ac b/configure.ac
-index ee0b1c483d4..b25b178b6ac 100644
+index ee0b1c483d..b25b178b6a 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -990,6 +990,15 @@ case $host_os in
@@ -236,7 +236,7 @@ index ee0b1c483d4..b25b178b6ac 100644
  dnl Rules for re-running configure
  
 diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
-index 8a3755f4bde..64ec01e4851 100644
+index 8a3755f4bd..64ec01e485 100644
 --- a/dlls/crypt32/unixlib.c
 +++ b/dlls/crypt32/unixlib.c
 @@ -30,6 +30,7 @@
@@ -266,7 +266,7 @@ index 8a3755f4bde..64ec01e4851 100644
          kSecTrustSettingsDomainSystem,
          kSecTrustSettingsDomainAdmin,
 diff --git a/dlls/kernel32/process.c b/dlls/kernel32/process.c
-index 98313f4634c..4496f090009 100644
+index 98313f4634..4496f09000 100644
 --- a/dlls/kernel32/process.c
 +++ b/dlls/kernel32/process.c
 @@ -39,7 +39,7 @@
@@ -279,7 +279,7 @@ index 98313f4634c..4496f090009 100644
  typedef struct
  {
 diff --git a/dlls/kernel32/sync.c b/dlls/kernel32/sync.c
-index 5b2a8489a01..0939959e979 100644
+index 5b2a8489a0..0939959e97 100644
 --- a/dlls/kernel32/sync.c
 +++ b/dlls/kernel32/sync.c
 @@ -42,7 +42,7 @@
@@ -292,7 +292,7 @@ index 5b2a8489a01..0939959e979 100644
  
  static void get_create_object_attributes( OBJECT_ATTRIBUTES *attr, UNICODE_STRING *nameW,
 diff --git a/dlls/kernelbase/sync.c b/dlls/kernelbase/sync.c
-index 94036acfad4..d588594a1eb 100644
+index 94036acfad..d588594a1e 100644
 --- a/dlls/kernelbase/sync.c
 +++ b/dlls/kernelbase/sync.c
 @@ -39,7 +39,7 @@
@@ -305,7 +305,7 @@ index 94036acfad4..d588594a1eb 100644
  /* check if current version is NT or Win95 */
  static inline BOOL is_version_nt(void)
 diff --git a/dlls/mountmgr.sys/cred.c b/dlls/mountmgr.sys/cred.c
-index 791e9704f3c..b488319b9af 100644
+index 791e9704f3..b488319b9a 100644
 --- a/dlls/mountmgr.sys/cred.c
 +++ b/dlls/mountmgr.sys/cred.c
 @@ -28,6 +28,10 @@
@@ -344,7 +344,7 @@ index 791e9704f3c..b488319b9af 100644
 -#endif /* __APPLE__ */
 +#endif /* macOS credential APIs */
 diff --git a/dlls/mountmgr.sys/diskarb.c b/dlls/mountmgr.sys/diskarb.c
-index 8c81d679b84..9a6bc3900bf 100644
+index 8c81d679b8..9a6bc3900b 100644
 --- a/dlls/mountmgr.sys/diskarb.c
 +++ b/dlls/mountmgr.sys/diskarb.c
 @@ -32,6 +32,9 @@
@@ -387,7 +387,7 @@ index 8c81d679b84..9a6bc3900bf 100644
  static UInt8 map_option( unsigned int option )
  {
 diff --git a/dlls/ntdll/loader.c b/dlls/ntdll/loader.c
-index 443b9841170..e85bcc58d34 100644
+index 443b984117..e85bcc58d3 100644
 --- a/dlls/ntdll/loader.c
 +++ b/dlls/ntdll/loader.c
 @@ -2172,6 +2172,21 @@ static void update_load_config( void *module )
@@ -582,7 +582,7 @@ index 443b9841170..e85bcc58d34 100644
  /***********************************************************************
   *           RtlImageDirectoryEntryToData   (NTDLL.@)
 diff --git a/dlls/ntdll/ntdll.spec b/dlls/ntdll/ntdll.spec
-index 0b6d9b2cbf4..d8810b66f03 100644
+index 0b6d9b2cbf..d8810b66f0 100644
 --- a/dlls/ntdll/ntdll.spec
 +++ b/dlls/ntdll/ntdll.spec
 @@ -470,6 +470,7 @@
@@ -602,7 +602,7 @@ index 0b6d9b2cbf4..d8810b66f03 100644
  @ stdcall RtlWriteRegistryValue(long ptr wstr long ptr long)
  @ stub RtlZeroHeap
 diff --git a/dlls/ntdll/ntdll_misc.h b/dlls/ntdll/ntdll_misc.h
-index 1ac221bf156..88fbe13cd30 100644
+index 1ac221bf15..88fbe13cd3 100644
 --- a/dlls/ntdll/ntdll_misc.h
 +++ b/dlls/ntdll/ntdll_misc.h
 @@ -74,6 +74,7 @@ extern void WINAPI KiUserApcDispatcher(CONTEXT*,ULONG_PTR,ULONG_PTR,ULONG_PTR,PN
@@ -614,7 +614,7 @@ index 1ac221bf156..88fbe13cd30 100644
  /* debug helpers */
  extern LPCSTR debugstr_us( const UNICODE_STRING *str );
 diff --git a/dlls/ntdll/ntsyscalls.h b/dlls/ntdll/ntsyscalls.h
-index 05b121f2580..611fe4c663a 100644
+index 05b121f258..611fe4c663 100644
 --- a/dlls/ntdll/ntsyscalls.h
 +++ b/dlls/ntdll/ntsyscalls.h
 @@ -265,12 +265,13 @@
@@ -648,7 +648,7 @@ index 05b121f2580..611fe4c663a 100644
  #define ALL_SYSCALLS ALL_SYSCALLS32
  #endif
 diff --git a/dlls/ntdll/signal_arm64.c b/dlls/ntdll/signal_arm64.c
-index e560718c770..0403c5e2e68 100644
+index e560718c77..0403c5e2e6 100644
 --- a/dlls/ntdll/signal_arm64.c
 +++ b/dlls/ntdll/signal_arm64.c
 @@ -673,6 +673,73 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
@@ -755,7 +755,7 @@ index e560718c770..0403c5e2e68 100644
  /***********************************************************************
   *           process_breakpoint
 diff --git a/dlls/ntdll/signal_arm64ec.c b/dlls/ntdll/signal_arm64ec.c
-index 140775d1a72..34309bbaf49 100644
+index 140775d1a7..34309bbaf4 100644
 --- a/dlls/ntdll/signal_arm64ec.c
 +++ b/dlls/ntdll/signal_arm64ec.c
 @@ -194,6 +194,9 @@ NTSTATUS arm64ec_process_init( HMODULE module )
@@ -813,7 +813,7 @@ index 140775d1a72..34309bbaf49 100644
  /*************************************************************************
   *		RtlWalkFrameChain (NTDLL.@)
 diff --git a/dlls/ntdll/signal_x86_64.c b/dlls/ntdll/signal_x86_64.c
-index b94e4a23a99..5bb14b3ac24 100644
+index b94e4a23a9..5bb14b3ac2 100644
 --- a/dlls/ntdll/signal_x86_64.c
 +++ b/dlls/ntdll/signal_x86_64.c
 @@ -866,6 +866,13 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
@@ -831,7 +831,7 @@ index b94e4a23a99..5bb14b3ac24 100644
  /*************************************************************************
   *		RtlWalkFrameChain (NTDLL.@)
 diff --git a/dlls/ntdll/thread.c b/dlls/ntdll/thread.c
-index fe083befbca..4785565c055 100644
+index fe083befbc..4785565c05 100644
 --- a/dlls/ntdll/thread.c
 +++ b/dlls/ntdll/thread.c
 @@ -35,7 +35,7 @@ WINE_DECLARE_DEBUG_CHANNEL(relay);
@@ -844,7 +844,7 @@ index fe083befbca..4785565c055 100644
  struct debug_info
  {
 diff --git a/dlls/ntdll/unix/cdrom.c b/dlls/ntdll/unix/cdrom.c
-index 2ed5b5dc680..c5fab6d6870 100644
+index 2ed5b5dc68..c5fab6d687 100644
 --- a/dlls/ntdll/unix/cdrom.c
 +++ b/dlls/ntdll/unix/cdrom.c
 @@ -27,6 +27,17 @@
@@ -1064,7 +1064,7 @@ index 2ed5b5dc680..c5fab6d6870 100644
          char name[100];
  
 diff --git a/dlls/ntdll/unix/env.c b/dlls/ntdll/unix/env.c
-index 460888b95df..39e51375106 100644
+index 460888b95d..39e5137510 100644
 --- a/dlls/ntdll/unix/env.c
 +++ b/dlls/ntdll/unix/env.c
 @@ -1538,6 +1538,17 @@ static WCHAR *build_command_line( WCHAR **wargv )
@@ -1114,7 +1114,7 @@ index 460888b95df..39e51375106 100644
  }
  
 diff --git a/dlls/ntdll/unix/file.c b/dlls/ntdll/unix/file.c
-index b641e4ca336..a81f04fc672 100644
+index b641e4ca33..a81f04fc67 100644
 --- a/dlls/ntdll/unix/file.c
 +++ b/dlls/ntdll/unix/file.c
 @@ -26,6 +26,16 @@
@@ -1179,7 +1179,7 @@ index b641e4ca336..a81f04fc672 100644
  #endif
                      break;
 diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
-index c1321ce679d..ebaf4007eb5 100644
+index c1321ce679..ebaf4007eb 100644
 --- a/dlls/ntdll/unix/loader.c
 +++ b/dlls/ntdll/unix/loader.c
 @@ -382,6 +382,7 @@ static void set_config_dir(void)
@@ -1430,7 +1430,7 @@ index c1321ce679d..ebaf4007eb5 100644
      /* We use this run loop source for two purposes.  First, a run loop exits
       * if it has no more sources scheduled.  So, we need at least one source
 diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
-index 730a0cd9a94..a18dfe68154 100644
+index 730a0cd9a9..a18dfe6815 100644
 --- a/dlls/ntdll/unix/server.c
 +++ b/dlls/ntdll/unix/server.c
 @@ -24,6 +24,17 @@
@@ -1583,7 +1583,7 @@ index 730a0cd9a94..a18dfe68154 100644
  
  
 diff --git a/dlls/ntdll/unix/signal_arm64.c b/dlls/ntdll/unix/signal_arm64.c
-index 522ade368f0..3ef31727986 100644
+index 522ade368f..3ef3172798 100644
 --- a/dlls/ntdll/unix/signal_arm64.c
 +++ b/dlls/ntdll/unix/signal_arm64.c
 @@ -367,6 +367,19 @@ NTSTATUS signal_set_full_context( CONTEXT *context )
@@ -2113,7 +2113,7 @@ index 522ade368f0..3ef31727986 100644
  
  
 diff --git a/dlls/ntdll/unix/system.c b/dlls/ntdll/unix/system.c
-index 2d6e3184ac9..5fd54b9cc04 100644
+index 2d6e3184ac..5fd54b9cc0 100644
 --- a/dlls/ntdll/unix/system.c
 +++ b/dlls/ntdll/unix/system.c
 @@ -24,6 +24,16 @@
@@ -2180,7 +2180,7 @@ index 2d6e3184ac9..5fd54b9cc04 100644
  
  #include <dev/acpica/acpiio.h>
 diff --git a/dlls/ntdll/unix/thread.c b/dlls/ntdll/unix/thread.c
-index 546963a4241..7a201287313 100644
+index 546963a424..7a20128731 100644
 --- a/dlls/ntdll/unix/thread.c
 +++ b/dlls/ntdll/unix/thread.c
 @@ -1662,6 +1662,41 @@ NTSTATUS WINAPI NtRaiseException( EXCEPTION_RECORD *rec, CONTEXT *context, BOOL
@@ -2226,7 +2226,7 @@ index 546963a4241..7a201287313 100644
   *           NtCurrentTeb   (NTDLL.@)
   */
 diff --git a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
-index c8ca97d21a0..425e04ca031 100644
+index c8ca97d21a..425e04ca03 100644
 --- a/dlls/ntdll/unix/unix_private.h
 +++ b/dlls/ntdll/unix/unix_private.h
 @@ -280,6 +280,7 @@ extern void set_process_instrumentation_callback( void *callback );
@@ -2238,7 +2238,7 @@ index c8ca97d21a0..425e04ca031 100644
  extern void DECLSPEC_NORETURN abort_thread( int status );
  extern void DECLSPEC_NORETURN abort_process( int status );
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index eda3fee3d8b..abecc931880 100644
+index eda3fee3d8..abecc93188 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
 @@ -24,6 +24,17 @@
@@ -2900,7 +2900,7 @@ index eda3fee3d8b..abecc931880 100644
  
              if (status == STATUS_SUCCESS)
 diff --git a/dlls/ntoskrnl.exe/instr.c b/dlls/ntoskrnl.exe/instr.c
-index 31e1e6e28a4..a68e46fb0fa 100644
+index 31e1e6e28a..a68e46fb0f 100644
 --- a/dlls/ntoskrnl.exe/instr.c
 +++ b/dlls/ntoskrnl.exe/instr.c
 @@ -490,7 +490,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(int);
@@ -2913,7 +2913,7 @@ index 31e1e6e28a4..a68e46fb0fa 100644
  
  static inline DWORD64 *get_int_reg( CONTEXT *context, int index )
 diff --git a/dlls/win32u/Makefile.in b/dlls/win32u/Makefile.in
-index 454fb2555bc..bb83d60b0a4 100644
+index 454fb2555b..bb83d60b0a 100644
 --- a/dlls/win32u/Makefile.in
 +++ b/dlls/win32u/Makefile.in
 @@ -4,7 +4,7 @@ UNIXLIB   = win32u.so
@@ -2926,7 +2926,7 @@ index 454fb2555bc..bb83d60b0a4 100644
  EXTRADLLFLAGS = -nodefaultlibs
  
 diff --git a/dlls/win32u/defwnd.c b/dlls/win32u/defwnd.c
-index d6852b33ce2..f69f95547fc 100644
+index d6852b33ce..f69f95547f 100644
 --- a/dlls/win32u/defwnd.c
 +++ b/dlls/win32u/defwnd.c
 @@ -489,7 +489,8 @@ static LONG handle_window_pos_changing( HWND hwnd, WINDOWPOS *winpos )
@@ -2949,7 +2949,7 @@ index d6852b33ce2..f69f95547fc 100644
      get_window_rect_rel( hwnd, COORDS_PARENT, &sizing_rect, dpi );
      orig_rect = sizing_rect;
 diff --git a/dlls/win32u/driver.c b/dlls/win32u/driver.c
-index 6270d9bbe10..740e1301f97 100644
+index 6270d9bbe1..740e1301f9 100644
 --- a/dlls/win32u/driver.c
 +++ b/dlls/win32u/driver.c
 @@ -1367,7 +1367,7 @@ void __wine_set_user_driver( const struct user_driver_funcs *funcs, UINT version
@@ -2974,7 +2974,7 @@ index 6270d9bbe10..740e1301f97 100644
          /* another thread beat us to it */
          free( driver );
 diff --git a/dlls/win32u/menu.c b/dlls/win32u/menu.c
-index a700f44af78..5c1483b7fab 100644
+index a700f44af7..5c1483b7fa 100644
 --- a/dlls/win32u/menu.c
 +++ b/dlls/win32u/menu.c
 @@ -2226,6 +2226,7 @@ UINT get_menu_bar_height( HWND hwnd, UINT width, INT org_x, INT org_y )
@@ -3008,7 +3008,7 @@ index a700f44af78..5c1483b7fab 100644
  
  static void draw_popup_arrow( HDC hdc, RECT rect, UINT arrow_width, UINT arrow_height )
 diff --git a/dlls/win32u/message.c b/dlls/win32u/message.c
-index d432eb3c1af..1789b3eeda3 100644
+index d432eb3c1a..1789b3eeda 100644
 --- a/dlls/win32u/message.c
 +++ b/dlls/win32u/message.c
 @@ -45,7 +45,7 @@ WINE_DECLARE_DEBUG_CHANNEL(relay);
@@ -3021,7 +3021,7 @@ index d432eb3c1af..1789b3eeda3 100644
  static const struct ratio no_dpi;
  
 diff --git a/dlls/win32u/sysparams.c b/dlls/win32u/sysparams.c
-index fdcdfc0a946..06e9a11e06a 100644
+index fdcdfc0a94..06e9a11e06 100644
 --- a/dlls/win32u/sysparams.c
 +++ b/dlls/win32u/sysparams.c
 @@ -4782,6 +4782,7 @@ MONITORINFO monitor_info_from_window( HWND hwnd, UINT flags )
@@ -3071,7 +3071,7 @@ index fdcdfc0a946..06e9a11e06a 100644
  
  /* load a font (binary) parameter from the registry */
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 4e2b9283ba1..a7a7069e4ec 100644
+index 4e2b9283ba..a7a7069e4e 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -284,7 +284,7 @@ extern HWND get_full_window_handle( HWND hwnd );
@@ -3084,7 +3084,7 @@ index 4e2b9283ba1..a7a7069e4ec 100644
  extern DWORD get_window_thread( HWND hwnd, DWORD *process );
  extern HWND is_current_process_window( HWND hwnd );
 diff --git a/dlls/win32u/window.c b/dlls/win32u/window.c
-index 924990e8d4f..c1125d7188f 100644
+index 924990e8d4..c1125d7188 100644
 --- a/dlls/win32u/window.c
 +++ b/dlls/win32u/window.c
 @@ -2249,6 +2249,7 @@ static BOOL apply_window_pos( HWND hwnd, HWND insert_after, UINT swp_flags, stru
@@ -3207,7 +3207,7 @@ index 924990e8d4f..c1125d7188f 100644
      if (cs.x > 0x7fffffff - cx) new_rects.window.right = 0x7fffffff;
 diff --git a/dlls/wineios.drv/Makefile.in b/dlls/wineios.drv/Makefile.in
 new file mode 100644
-index 00000000000..f4494e42563
+index 0000000000..f4494e4256
 --- /dev/null
 +++ b/dlls/wineios.drv/Makefile.in
 @@ -0,0 +1,13 @@
@@ -3226,7 +3226,7 @@ index 00000000000..f4494e42563
 +	wineios.drv.spec
 diff --git a/dlls/wineios.drv/control.c b/dlls/wineios.drv/control.c
 new file mode 100644
-index 00000000000..4eeb48e33f7
+index 0000000000..4eeb48e33f
 --- /dev/null
 +++ b/dlls/wineios.drv/control.c
 @@ -0,0 +1,260 @@
@@ -3492,7 +3492,7 @@ index 00000000000..4eeb48e33f7
 +#endif
 diff --git a/dlls/wineios.drv/control.h b/dlls/wineios.drv/control.h
 new file mode 100644
-index 00000000000..abad28e67a7
+index 0000000000..abad28e67a
 --- /dev/null
 +++ b/dlls/wineios.drv/control.h
 @@ -0,0 +1,44 @@
@@ -3542,7 +3542,7 @@ index 00000000000..abad28e67a7
 +#endif
 diff --git a/dlls/wineios.drv/control_protocol.h b/dlls/wineios.drv/control_protocol.h
 new file mode 100644
-index 00000000000..7a3d0dbf1fe
+index 0000000000..7a3d0dbf1f
 --- /dev/null
 +++ b/dlls/wineios.drv/control_protocol.h
 @@ -0,0 +1,54 @@
@@ -3602,7 +3602,7 @@ index 00000000000..7a3d0dbf1fe
 +#endif
 diff --git a/dlls/wineios.drv/dllmain.c b/dlls/wineios.drv/dllmain.c
 new file mode 100644
-index 00000000000..c929ebb38cd
+index 0000000000..c929ebb38c
 --- /dev/null
 +++ b/dlls/wineios.drv/dllmain.c
 @@ -0,0 +1,54 @@
@@ -3662,10 +3662,10 @@ index 00000000000..c929ebb38cd
 +}
 diff --git a/dlls/wineios.drv/iosdrv.c b/dlls/wineios.drv/iosdrv.c
 new file mode 100644
-index 00000000000..961501e5bba
+index 0000000000..2469d14452
 --- /dev/null
 +++ b/dlls/wineios.drv/iosdrv.c
-@@ -0,0 +1,161 @@
+@@ -0,0 +1,170 @@
 +/* UIKit/software framebuffer driver for Wine on iOS. LGPL-2.1-or-later. */
 +#if 0
 +#pragma makedep unix
@@ -3744,9 +3744,13 @@ index 00000000000..961501e5bba
 +static BOOL ios_WindowPosChanging(HWND hwnd,UINT flags,BOOL shaped,const struct window_rects *rects){return TRUE;}
 +static void ios_WindowPosChanged(HWND hwnd,HWND after,HWND owner,UINT flags,const struct window_rects *rects,struct window_surface *surface)
 +{
-+    fprintf(stderr,"[JuiceGeom] changed hwnd=%p flags=%x ptr=%p window=%d,%d,%d,%d client=%d,%d,%d,%d visible=%d,%d,%d,%d surface=%p\n",hwnd,flags,rects,rects->window.left,rects->window.top,rects->window.right,rects->window.bottom,rects->client.left,rects->client.top,rects->client.right,rects->client.bottom,rects->visible.left,rects->visible.top,rects->visible.right,rects->visible.bottom,surface);
-+    if(host_window_changed)host_window_changed(HandleToUlong(hwnd),&rects->window,!(flags&SWP_HIDEWINDOW));
-+    ios_ipc_window(hwnd,&rects->window,!(flags&SWP_HIDEWINDOW));
++    BOOL visible;
++    if(flags&SWP_HIDEWINDOW) visible=FALSE;
++    else if(flags&SWP_SHOWWINDOW) visible=TRUE;
++    else visible=NtUserIsWindowVisible(hwnd);
++    fprintf(stderr,"[JuiceGeom] changed hwnd=%p flags=%x ptr=%p window=%d,%d,%d,%d client=%d,%d,%d,%d visible=%d,%d,%d,%d surface=%p shown=%d\n",hwnd,flags,rects,rects->window.left,rects->window.top,rects->window.right,rects->window.bottom,rects->client.left,rects->client.top,rects->client.right,rects->client.bottom,rects->visible.left,rects->visible.top,rects->visible.right,rects->visible.bottom,surface,visible);
++    if(host_window_changed)host_window_changed(HandleToUlong(hwnd),&rects->window,visible);
++    ios_ipc_window(hwnd,&rects->window,visible);
 +}
 +static void ios_SetParent(HWND hwnd,HWND parent,HWND old_parent){}
 +static void ios_SetCapture(HWND hwnd,UINT flags,HWND previous){}
@@ -3796,7 +3800,13 @@ index 00000000000..961501e5bba
 +    unsigned int width=max(1,rect->right-rect->left),height=max(1,rect->bottom-rect->top),stride=width*4; void *bits;
 +    ios_ipc_register_queue();
 +    fprintf(stderr,"[JuiceGeom] surface hwnd=%p rect=%d,%d,%d,%d size=%ux%u previous=%p\n",hwnd,rect->left,rect->top,rect->right,rect->bottom,width,height,previous);
-+    if(previous&&previous->funcs==&surface_funcs)return TRUE; if(!(bits=calloc(height,stride)))return FALSE;
++    if(previous&&previous->funcs==&surface_funcs)
++    {
++        struct iosdrv_surface *old=(struct iosdrv_surface *)previous;
++        if(old->width==width&&old->height==height)return TRUE;
++        fprintf(stderr,"[JuiceGeom] surface-resize hwnd=%p old=%ux%u new=%ux%u\n",hwnd,old->width,old->height,width,height);
++    }
++    if(!(bits=calloc(height,stride)))return FALSE;
 +    memset(&info,0,sizeof(info));info.bmiHeader.biSize=sizeof(info.bmiHeader);info.bmiHeader.biWidth=width;
 +    info.bmiHeader.biHeight=-(LONG)height;info.bmiHeader.biPlanes=1;info.bmiHeader.biBitCount=32;
 +    info.bmiHeader.biCompression=BI_RGB;info.bmiHeader.biSizeImage=stride*height;
@@ -3825,11 +3835,10 @@ index 00000000000..961501e5bba
 +    .pWindowPosChanged=ios_WindowPosChanged,.pOpenGLInit=ios_OpenGLInit,.pVulkanInit=ios_VulkanInit};
 +NTSTATUS iosdrv_unix_init(void *args)
 +{(void)args;host_desktop_changed=dlsym(RTLD_DEFAULT,"wineios_host_desktop_changed");host_window_changed=dlsym(RTLD_DEFAULT,"wineios_host_window_changed");host_window_destroyed=dlsym(RTLD_DEFAULT,"wineios_host_window_destroyed");host_present_bgra=dlsym(RTLD_DEFAULT,"wineios_host_present_bgra");
-+init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p size=%zu\n",iosdrv_funcs.pCreateWindow,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;
-+}
++init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p size=%zu\n",iosdrv_funcs.pCreateWindow,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;}
 diff --git a/dlls/wineios.drv/iosdrv.h b/dlls/wineios.drv/iosdrv.h
 new file mode 100644
-index 00000000000..773f7761207
+index 0000000000..773f776120
 --- /dev/null
 +++ b/dlls/wineios.drv/iosdrv.h
 @@ -0,0 +1,15 @@
@@ -3850,10 +3859,10 @@ index 00000000000..773f7761207
 +#endif
 diff --git a/dlls/wineios.drv/ipc.c b/dlls/wineios.drv/ipc.c
 new file mode 100644
-index 00000000000..ee9c5fdb289
+index 0000000000..d9700ee87c
 --- /dev/null
 +++ b/dlls/wineios.drv/ipc.c
-@@ -0,0 +1,209 @@
+@@ -0,0 +1,245 @@
 +/* Juice cross-process display transport. LGPL-2.1-or-later. */
 +#if 0
 +#pragma makedep unix
@@ -3873,6 +3882,7 @@ index 00000000000..ee9c5fdb289
 +static int ipc_fd=-1; static pthread_mutex_t ipc_lock=PTHREAD_MUTEX_INITIALIZER;
 +static __thread BOOL queue_registered;
 +static HWND input_target;
++static BOOL pointer_down;
 +static BOOL write_all(int fd,const void *data,size_t size){const char *p=data;while(size){ssize_t n=write(fd,p,size);if(n<0&&errno==EINTR)continue;if(n<=0)return FALSE;p+=n;size-=n;}return TRUE;}
 +static BOOL read_all(int fd,void *data,size_t size){char *p=data;while(size){ssize_t n=read(fd,p,size);if(n<0&&errno==EINTR)continue;if(n<=0)return FALSE;p+=n;size-=n;}return TRUE;}
 +static void send_msg(UINT type,HWND hwnd,const RECT *rect,const void *payload,UINT size,UINT stride,UINT flags)
@@ -3932,24 +3942,58 @@ index 00000000000..ee9c5fdb289
 +  hwnd=(HWND)(UINT_PTR)msg.hwnd;
 +  if(msg.type==JUICE_IOS_INPUT&&!msg.size)
 +  {
++   BOOL desktop_coords=(msg.flags&JUICE_IOS_COORDS_DESKTOP)!=0;
++   BOOL down=(msg.flags&(JUICE_IOS_LEFT_DOWN|JUICE_IOS_RIGHT_DOWN))!=0;
++   BOOL up=(msg.flags&(JUICE_IOS_LEFT_UP|JUICE_IOS_RIGHT_UP))!=0;
++   INT local_x=msg.x,local_y=msg.y;
++
 +   input.type=INPUT_MOUSE;
-+   input.mi.dx=msg.x;
-+   input.mi.dy=msg.y;
-+   target=NtUserChildWindowFromPointEx(hwnd,msg.x,msg.y,
-+                                       CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
-+   if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
++   if(desktop_coords)
 +   {
-+    input.mi.dx+=window.left;
-+    input.mi.dy+=window.top;
++    /*
++     * Keep the hardware pointer in screen space for the whole drag. The host
++     * used to subtract an old window origin and this side then added a newer
++     * one, which made moving windows oscillate behind the finger.
++     */
++    input.mi.dx=msg.x;
++    input.mi.dy=msg.y;
++
++    if(pointer_down&&input_target&&!down) target=input_target;
++    else
++    {
++     if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
++     {
++      local_x-=window.left;
++      local_y-=window.top;
++     }
++     target=NtUserChildWindowFromPointEx(hwnd,local_x,local_y,
++                                         CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
++     if(!target||target==hwnd) target=NtUserWindowFromPoint(msg.x,msg.y);
++     if(!target) target=hwnd;
++    }
 +   }
-+   if(!target||target==hwnd) target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
-+   if(!target) target=hwnd;
-+   if(msg.flags&(JUICE_IOS_LEFT_DOWN|JUICE_IOS_RIGHT_DOWN))
++   else
++   {
++    input.mi.dx=msg.x;
++    input.mi.dy=msg.y;
++    target=NtUserChildWindowFromPointEx(hwnd,msg.x,msg.y,
++                                        CWP_SKIPINVISIBLE|CWP_SKIPDISABLED|CWP_SKIPTRANSPARENT);
++    if(NtUserGetWindowRect(hwnd,&window,NtUserGetDpiForWindow(hwnd)))
++    {
++     input.mi.dx+=window.left;
++     input.mi.dy+=window.top;
++    }
++    if(!target||target==hwnd) target=NtUserWindowFromPoint(input.mi.dx,input.mi.dy);
++    if(!target) target=hwnd;
++   }
++
++   if(down)
 +   {
 +    NtUserSetForegroundWindow(hwnd);
 +    NtUserSetActiveWindow(hwnd);
 +    NtUserSetFocus(target);
 +    input_target=target;
++    pointer_down=TRUE;
 +   }
 +   input.mi.dwFlags=MOUSEEVENTF_ABSOLUTE|MOUSEEVENTF_MOVE|MOUSEEVENTF_MOVE_NOCOALESCE;
 +   if(msg.flags&JUICE_IOS_LEFT_DOWN) input.mi.dwFlags|=MOUSEEVENTF_LEFTDOWN;
@@ -3957,8 +4001,9 @@ index 00000000000..ee9c5fdb289
 +   if(msg.flags&JUICE_IOS_RIGHT_DOWN) input.mi.dwFlags|=MOUSEEVENTF_RIGHTDOWN;
 +   if(msg.flags&JUICE_IOS_RIGHT_UP) input.mi.dwFlags|=MOUSEEVENTF_RIGHTUP;
 +   sent=NtUserSendHardwareInput(target,0,&input,0);
-+   fprintf(stderr,"[JuiceInput] dispatched surface=%p target=%p local=%d,%d desktop=%d,%d flags=%x sent=%u\n",
-+           hwnd,target,msg.x,msg.y,input.mi.dx,input.mi.dy,input.mi.dwFlags,sent);
++   if(up) pointer_down=FALSE;
++   fprintf(stderr,"[JuiceInput] dispatched surface=%p target=%p coords=%s wire=%d,%d desktop=%d,%d flags=%x sent=%u\n",
++           hwnd,target,desktop_coords?"desktop":"local",msg.x,msg.y,input.mi.dx,input.mi.dy,input.mi.dwFlags,sent);
 +  }
 +  else if(msg.type==JUICE_IOS_TEXT&&msg.size&&!(msg.size%sizeof(WCHAR)))
 +  {
@@ -4065,10 +4110,10 @@ index 00000000000..ee9c5fdb289
 +}
 diff --git a/dlls/wineios.drv/ipc.h b/dlls/wineios.drv/ipc.h
 new file mode 100644
-index 00000000000..13cb1453ace
+index 0000000000..d365e86ffe
 --- /dev/null
 +++ b/dlls/wineios.drv/ipc.h
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,26 @@
 +#ifndef __WINE_IOS_IPC_H
 +#define __WINE_IOS_IPC_H
 +#include "iosdrv.h"
@@ -4085,6 +4130,8 @@ index 00000000000..13cb1453ace
 +#define JUICE_IOS_LEFT_UP 2u
 +#define JUICE_IOS_RIGHT_DOWN 4u
 +#define JUICE_IOS_RIGHT_UP 8u
++/* x/y are Wine desktop coordinates instead of window-local coordinates. */
++#define JUICE_IOS_COORDS_DESKTOP 0x40000000u
 +struct juice_ios_msg { UINT magic,type,size; UINT64 hwnd; INT x,y,width,height; UINT stride,flags; };
 +void ios_ipc_init(unsigned int width,unsigned int height,unsigned int dpi);
 +void ios_ipc_register_queue(void);
@@ -4095,7 +4142,7 @@ index 00000000000..13cb1453ace
 +#endif
 diff --git a/dlls/wineios.drv/wineios.drv.spec b/dlls/wineios.drv/wineios.drv.spec
 new file mode 100644
-index 00000000000..3fc6eceac37
+index 0000000000..3fc6eceac3
 --- /dev/null
 +++ b/dlls/wineios.drv/wineios.drv.spec
 @@ -0,0 +1,3 @@
@@ -4103,7 +4150,7 @@ index 00000000000..3fc6eceac37
 +@ stdcall JuiceIOSPollFileImport(long ptr)
 +@ stdcall JuiceIOSHostAction(long wstr)
 diff --git a/dlls/wow64/process.c b/dlls/wow64/process.c
-index 98d1c600dd9..72d011a9ff1 100644
+index 98d1c600dd..72d011a9ff 100644
 --- a/dlls/wow64/process.c
 +++ b/dlls/wow64/process.c
 @@ -1120,10 +1120,9 @@ NTSTATUS WINAPI wow64_NtSuspendThread( UINT *args )
@@ -4119,7 +4166,7 @@ index 98d1c600dd9..72d011a9ff1 100644
   *           wow64_NtTerminateProcess
   */
 diff --git a/dlls/wow64/syscall.c b/dlls/wow64/syscall.c
-index cfeb8f4ae6b..e8c15150f73 100644
+index cfeb8f4ae6..e8c15150f7 100644
 --- a/dlls/wow64/syscall.c
 +++ b/dlls/wow64/syscall.c
 @@ -102,6 +102,7 @@ static void     (WINAPI *pBTCpuProcessInit)(void);
@@ -4151,7 +4198,7 @@ index cfeb8f4ae6b..e8c15150f73 100644
 +    return pBTCpuSuspendLocalThread( thread, count );
 +}
 diff --git a/dlls/wow64/wow64.spec b/dlls/wow64/wow64.spec
-index 5b4e565e593..8f95dfcdbe5 100644
+index 5b4e565e59..8f95dfcdbe 100644
 --- a/dlls/wow64/wow64.spec
 +++ b/dlls/wow64/wow64.spec
 @@ -22,7 +22,7 @@
@@ -4163,8 +4210,724 @@ index 5b4e565e593..8f95dfcdbe5 100644
  @ stdcall -norelay Wow64SystemServiceEx(long ptr)
  @ stub Wow64ValidateUserCallTarget
  @ stub Wow64ValidateUserCallTargetFilter
+diff --git a/dlls/ws2_32/hosts b/dlls/ws2_32/hosts
+index 619e717d50..a538995f99 100644
+--- a/dlls/ws2_32/hosts
++++ b/dlls/ws2_32/hosts
+@@ -1 +1 @@
+-# 127.0.0.1 localhost
++# 127.0.0.1 localhost
+diff --git a/dlls/ws2_32/networks b/dlls/ws2_32/networks
+index adbc95757a..0376b7ca39 100644
+--- a/dlls/ws2_32/networks
++++ b/dlls/ws2_32/networks
+@@ -1 +1 @@
+-# loopback 127
++# loopback 127
+diff --git a/dlls/ws2_32/protocol b/dlls/ws2_32/protocol
+index d47bf21c14..9c9e28b944 100644
+--- a/dlls/ws2_32/protocol
++++ b/dlls/ws2_32/protocol
+@@ -1,21 +1,21 @@
+-# Internet protocols
+-
+-ip           0   IP
+-icmp         1   ICMP
+-ggp          3   GGP
+-tcp          6   TCP
+-egp          8   EGP
+-pup          12  PUP
+-udp          17  UDP
+-hmp          20  HMP
+-xns-idp      22  XNS-IDP
+-rdp          27  RDP
+-ipv6         41  IPv6
+-ipv6-route   43  IPv6-Route
+-ipv6-frag    44  IPv6-Frag
+-esp          50  ESP
+-ah           51  AH
+-ipv6-icmp    58  IPv6-ICMP
+-ipv6-nonxt   59  IPv6-NoNxt
+-ipv6-opts    60  IPv6-Opts
+-rvd          66  RVD
++# Internet protocols
++
++ip           0   IP
++icmp         1   ICMP
++ggp          3   GGP
++tcp          6   TCP
++egp          8   EGP
++pup          12  PUP
++udp          17  UDP
++hmp          20  HMP
++xns-idp      22  XNS-IDP
++rdp          27  RDP
++ipv6         41  IPv6
++ipv6-route   43  IPv6-Route
++ipv6-frag    44  IPv6-Frag
++esp          50  ESP
++ah           51  AH
++ipv6-icmp    58  IPv6-ICMP
++ipv6-nonxt   59  IPv6-NoNxt
++ipv6-opts    60  IPv6-Opts
++rvd          66  RVD
+diff --git a/dlls/ws2_32/services b/dlls/ws2_32/services
+index 43e593daeb..20437a7597 100644
+--- a/dlls/ws2_32/services
++++ b/dlls/ws2_32/services
+@@ -1,325 +1,325 @@
+-# Network services, Internet style
+-
+-echo            7/tcp
+-echo            7/udp
+-discard         9/tcp     sink null
+-discard         9/udp     sink null
+-systat          11/tcp    users
+-daytime         13/tcp
+-daytime         13/udp
+-netstat         15/tcp
+-qotd            17/tcp    quote
+-qotd            17/udp    quote
+-chargen         19/tcp    ttytst source
+-chargen         19/udp    ttytst source
+-ftp-data        20/tcp
+-ftp             21/tcp
+-fsp             21/udp    fspd
+-ssh             22/tcp
+-telnet          23/tcp
+-smtp            25/tcp    mail
+-time            37/tcp    timserver
+-time            37/udp    timserver
+-rlp             39/udp    resource
+-nameserver      42/tcp    name
+-nameserver      42/udp    name
+-whois           43/tcp    nicname
+-tacacs          49/tcp
+-tacacs          49/udp
+-domain          53/tcp
+-domain          53/udp
+-bootps          67/udp    dhcps
+-bootpc          68/udp    dhcpc
+-bootps          67/udp
+-bootpc          68/udp
+-tftp            69/udp
+-gopher          70/tcp
+-finger          79/tcp
+-http            80/tcp    www
+-hosts2-ns       81/tcp
+-hosts2-ns       81/udp
+-kerberos        88/tcp    kerberos5 krb5 kerberos-sec
+-kerberos        88/udp    kerberos5 krb5 kerberos-sec
+-hostname        101/tcp   hostnames
+-iso-tsap        102/tcp   tsap
+-acr-nema        104/tcp   dicom
+-rtelnet         107/tcp
+-pop2            109/tcp   postoffice
+-pop3            110/tcp   pop-3
+-sunrpc          111/tcp   rpcbind portmap
+-sunrpc          111/udp   rpcbind portmap
+-auth            113/tcp   authentication tap ident
+-uucp-path       117/tcp
+-sqlserv         118/tcp
+-nntp            119/tcp   usenet readnews untp
+-ntp             123/udp
+-epmap           135/tcp   loc-srv
+-epmap           135/ucp   loc-srv
+-netbios-ns      137/tcp   nbname
+-netbios-ns      137/udp   nbname
+-netbios-dgm     138/udp   nbdatagram
+-netbios-ssn     139/tcp   nbsession
+-imap2           143/tcp   imap imap4
+-sql-net         150/tcp
+-sqlsrv          156/tcp
+-pcmail-srv      158/tcp
+-snmp            161/tcp
+-snmp            161/udp
+-snmp-trap       162/tcp   snmptrap
+-snmp-trap       162/udp   snmptrap
+-cmip-man        163/tcp
+-cmip-man        163/udp
+-cmip-agent      164/tcp
+-cmip-agent      164/udp
+-print-srv       170/tcp
+-mailq           174/tcp
+-xdmcp           177/udp
+-bgp             179/tcp
+-irc             194/tcp
+-smux            199/tcp
+-qmtp            209/tcp
+-z3950           210/tcp   wais
+-ipx             213/udp
+-ptp-event       319/udp
+-ptp-general     320/udp
+-rtsps           322/tcp
+-rtsps           322/udp
+-pawserv         345/tcp
+-zserv           346/tcp
+-mftp            349/tcp
+-mftp            349/udp
+-rpc2portmap     369/tcp
+-rpc2portmap     369/udp
+-codaauth2       370/tcp
+-codaauth2       370/udp
+-clearcase       371/udp   Clearcase
+-ldap            389/tcp
+-ldap            389/udp
+-svrloc          427/tcp
+-svrloc          427/udp
+-https           443/tcp   MCom
+-https           443/udp   MCom
+-snpp            444/tcp
+-microsoft-ds    445/tcp
+-microsoft-ds    445/udp
+-kpasswd         464/tcp
+-kpasswd         464/udp
+-submissions     465/tcp   ssmtp smtps urd
+-saft            487/tcp
+-isakmp          500/udp   ike
+-crs             507/tcp
+-crs             507/udp
+-exec            512/tcp
+-biff            512/udp   comsat
+-login           513/tcp
+-who             513/udp   whod
+-shell           514/tcp   cmd syslog
+-syslog          514/udp
+-printer         515/tcp   spooler
+-talk            517/udp
+-ntalk           518/udp
+-efs             520/tcp
+-route           520/udp   router routed
+-ulp             522/tcp    
+-ulp             522/udp    
+-timed           525/udp   timeserver
+-tempo           526/tcp   newdate
+-irc-serv        529/tcp
+-irc-serv        529/udp
+-courier         530/tcp   rpc
+-conference      531/tcp   chat
+-netnews         532/tcp   readnews
+-netwall         533/udp
+-gdomap          538/tcp
+-gdomap          538/udp
+-uucp            540/tcp   uucpd
+-klogin          543/tcp
+-kshell          544/tcp   krcmd
+-dhcpv6-client   546/tcp
+-dhcpv6-client   546/udp
+-dhcpv6-server   547/tcp
+-dhcpv6-server   547/udp
+-afpovertcp      548/tcp
+-afpovertcp      548/udp
+-new-rwho        550/udp   new-who
+-rtsp            554/tcp
+-rtsp            554/udp
+-remotefs        556/tcp   rfs rfs_server
+-rmonitor        560/udp   rmonitord
+-monitor         561/udp
+-nntps           563/tcp   snntp
+-nntps           563/udp   snntp
+-whoami          565/tcp
+-whoami          565/udp
+-ms-shuttle      568/tcp
+-ms-shuttle      568/udp
+-ms-rome         569/tcp
+-ms-rome         569/udp
+-submission      587/tcp
+-http-rpc-epmap  593/tcp
+-http-rpc-epmap  593/udp
+-nqs             607/tcp
+-hmmp-ind        612/tcp
+-hmmp-ind        612/udp
+-hmmp-op         613/tcp
+-hmmp-op         613/udp
+-asf-rmcp        623/udp
+-qmqp            628/tcp
+-ipp             631/tcp
+-ldaps           636/tcp   sldap
+-ldaps           636/udp
+-ldp             646/tcp
+-ldp             646/udp
+-tinc            655/tcp
+-tinc            655/udp
+-doom            666/tcp
+-doom            666/udp
+-msexch-routing  691/tcp
+-msexch-routing  691/udp
+-silc            706/tcp
+-kerberos-adm    749/tcp
+-kerberos-adm    749/udp
+-kerberos-iv     750/udp
+-mdbs_daemon     800/tcp
+-mdbs_daemon     800/udp
+-domain-s        853/tcp
+-domain-s        853/udp
+-rsync           873/tcp
+-ftps-data       989/tcp
+-ftps            990/tcp
+-telnets         992/tcp
+-imaps           993/tcp
+-ircs            994/tcp
+-pop3s           995/tcp   spop3
+-pop3s           995/udp   spop3
+-kpop            1109/tcp
+-nfsd-status     1110/tcp
+-nfsd-keepalive  1110/udp
+-nfa             1155/tcp
+-nfa             1155/udp
+-activesync      1034/tcp
+-phone           1167/udp
+-opsmgr          1270/tcp
+-opsmgr          1270/udp
+-ms-sql-s        1433/tcp
+-ms-sql-s        1433/udp
+-ms-sql-m        1434/tcp
+-ms-sql-m        1434/udp
+-ms-sna-server   1477/tcp
+-ms-sna-server   1477/udp
+-ms-sna-base     1478/tcp
+-ms-sna-base     1478/udp
+-wins            1512/tcp
+-wins            1512/udp
+-ingreslock      1524/tcp  ingres
+-stt             1607/tcp
+-stt             1607/udp
+-l2tp            1701/udp
+-pptconference   1711/tcp
+-pptconference   1711/udp
+-pptp            1723/tcp
+-msiccp          1731/tcp
+-msiccp          1731/udp
+-remote-winsock  1745/tcp
+-remote-winsock  1745/udp
+-ms-streaming    1755/tcp
+-ms-streaming    1755/udp
+-msmq            1801/tcp
+-msmq            1801/udp
+-radius          1812/udp
+-radacct         1813/udp
+-msnp            1863/tcp
+-msnp            1863/udp
+-ssdp            1900/tcp
+-ssdp            1900/udp
+-close-combat    1944/tcp
+-close-combat    1944/udp
+-nfsd            2049/udp  nfs
+-knetd           2053/tcp
+-mzap            2106/tcp
+-mzap            2106/udp
+-qwave           2177/tcp
+-qwave           2177/udp
+-directplay      2234/tcp
+-directplay      2234/udp
+-ms-olap3        2382/tcp
+-ms-olap3        2382/udp
+-ms-olap4        2383/tcp
+-ms-olap4        2383/udp
+-ms-olap1        2393/tcp
+-ms-olap1        2393/udp
+-ms-olap2        2394/tcp
+-ms-olap2        2394/udp
+-ms-theater      2460/tcp
+-ms-theater      2460/udp
+-wlbs            2504/tcp
+-wlbs            2504/udp
+-ms-v-worlds     2525/tcp
+-ms-v-worlds     2525/udp
+-sms-rcinfo      2701/tcp
+-sms-rcinfo      2701/udp
+-sms-xfer        2702/tcp
+-sms-xfer        2702/udp
+-sms-chat        2703/tcp
+-sms-chat        2703/udp
+-sms-remctrl     2704/tcp
+-sms-remctrl     2704/udp
+-msolap-ptp2     2725/tcp
+-msolap-ptp2     2725/udp
+-icslap          2869/tcp
+-icslap          2869/udp
+-cifs            3020/tcp
+-cifs            3020/udp
+-xbox            3074/tcp
+-xbox            3074/udp
+-ms-dotnetster   3126/tcp
+-ms-dotnetster   3126/udp
+-ms-rule-engine  3132/tcp
+-ms-rule-engine  3132/udp
+-msft-gc         3268/tcp
+-msft-gc         3268/udp
+-msft-gc-ssl     3269/tcp
+-msft-gc-ssl     3269/udp
+-ms-cluster-net  3343/tcp
+-ms-cluster-net  3343/udp
+-ms-wbt-server   3389/tcp
+-ms-wbt-server   3389/udp
+-ms-la           3535/tcp
+-ms-la           3535/udp
+-pnrp-port       3540/tcp
+-pnrp-port       3540/udp
+-teredo          3544/tcp
+-teredo          3544/udp
+-p2pgroup        3587/tcp
+-p2pgroup        3587/udp
+-ws-discovery    3702/udp
+-ws-discovery    3702/tcp
+-dvcprov-port    3776/tcp
+-dvcprov-port    3776/udp
+-msfw-control    3847/tcp
+-msdts1          3882/tcp
+-sdp-portmapper  3935/tcp
+-sdp-portmapper  3935/udp
+-net-device      4350/tcp
+-net-device      4350/udp
+-ipsec-msft      4500/tcp
+-ipsec-msft      4500/udp
+-llmnr           5355/tcp
+-llmnr           5355/udp
+-wsd             5357/tcp
+-wsd             5358/tcp
+-rrac            5678/tcp
+-rrac            5678/udp
+-dccm            5679/tcp
+-dccm            5679/udp
+-ms-licensing    5720/tcp
+-ms-licensing    5720/udp
+-directplay8     6073/tcp
+-directplay8     6073/udp
+-man             9535/tcp
+-rasadv          9753/tcp
+-rasadv          9753/udp
+-imip-channels   11320/tcp
+-imip-channels   11320/udp
+-directplaysrvr  47624/tcp
+-directplaysrvr  47624/udp
++# Network services, Internet style
++
++echo            7/tcp
++echo            7/udp
++discard         9/tcp     sink null
++discard         9/udp     sink null
++systat          11/tcp    users
++daytime         13/tcp
++daytime         13/udp
++netstat         15/tcp
++qotd            17/tcp    quote
++qotd            17/udp    quote
++chargen         19/tcp    ttytst source
++chargen         19/udp    ttytst source
++ftp-data        20/tcp
++ftp             21/tcp
++fsp             21/udp    fspd
++ssh             22/tcp
++telnet          23/tcp
++smtp            25/tcp    mail
++time            37/tcp    timserver
++time            37/udp    timserver
++rlp             39/udp    resource
++nameserver      42/tcp    name
++nameserver      42/udp    name
++whois           43/tcp    nicname
++tacacs          49/tcp
++tacacs          49/udp
++domain          53/tcp
++domain          53/udp
++bootps          67/udp    dhcps
++bootpc          68/udp    dhcpc
++bootps          67/udp
++bootpc          68/udp
++tftp            69/udp
++gopher          70/tcp
++finger          79/tcp
++http            80/tcp    www
++hosts2-ns       81/tcp
++hosts2-ns       81/udp
++kerberos        88/tcp    kerberos5 krb5 kerberos-sec
++kerberos        88/udp    kerberos5 krb5 kerberos-sec
++hostname        101/tcp   hostnames
++iso-tsap        102/tcp   tsap
++acr-nema        104/tcp   dicom
++rtelnet         107/tcp
++pop2            109/tcp   postoffice
++pop3            110/tcp   pop-3
++sunrpc          111/tcp   rpcbind portmap
++sunrpc          111/udp   rpcbind portmap
++auth            113/tcp   authentication tap ident
++uucp-path       117/tcp
++sqlserv         118/tcp
++nntp            119/tcp   usenet readnews untp
++ntp             123/udp
++epmap           135/tcp   loc-srv
++epmap           135/ucp   loc-srv
++netbios-ns      137/tcp   nbname
++netbios-ns      137/udp   nbname
++netbios-dgm     138/udp   nbdatagram
++netbios-ssn     139/tcp   nbsession
++imap2           143/tcp   imap imap4
++sql-net         150/tcp
++sqlsrv          156/tcp
++pcmail-srv      158/tcp
++snmp            161/tcp
++snmp            161/udp
++snmp-trap       162/tcp   snmptrap
++snmp-trap       162/udp   snmptrap
++cmip-man        163/tcp
++cmip-man        163/udp
++cmip-agent      164/tcp
++cmip-agent      164/udp
++print-srv       170/tcp
++mailq           174/tcp
++xdmcp           177/udp
++bgp             179/tcp
++irc             194/tcp
++smux            199/tcp
++qmtp            209/tcp
++z3950           210/tcp   wais
++ipx             213/udp
++ptp-event       319/udp
++ptp-general     320/udp
++rtsps           322/tcp
++rtsps           322/udp
++pawserv         345/tcp
++zserv           346/tcp
++mftp            349/tcp
++mftp            349/udp
++rpc2portmap     369/tcp
++rpc2portmap     369/udp
++codaauth2       370/tcp
++codaauth2       370/udp
++clearcase       371/udp   Clearcase
++ldap            389/tcp
++ldap            389/udp
++svrloc          427/tcp
++svrloc          427/udp
++https           443/tcp   MCom
++https           443/udp   MCom
++snpp            444/tcp
++microsoft-ds    445/tcp
++microsoft-ds    445/udp
++kpasswd         464/tcp
++kpasswd         464/udp
++submissions     465/tcp   ssmtp smtps urd
++saft            487/tcp
++isakmp          500/udp   ike
++crs             507/tcp
++crs             507/udp
++exec            512/tcp
++biff            512/udp   comsat
++login           513/tcp
++who             513/udp   whod
++shell           514/tcp   cmd syslog
++syslog          514/udp
++printer         515/tcp   spooler
++talk            517/udp
++ntalk           518/udp
++efs             520/tcp
++route           520/udp   router routed
++ulp             522/tcp    
++ulp             522/udp    
++timed           525/udp   timeserver
++tempo           526/tcp   newdate
++irc-serv        529/tcp
++irc-serv        529/udp
++courier         530/tcp   rpc
++conference      531/tcp   chat
++netnews         532/tcp   readnews
++netwall         533/udp
++gdomap          538/tcp
++gdomap          538/udp
++uucp            540/tcp   uucpd
++klogin          543/tcp
++kshell          544/tcp   krcmd
++dhcpv6-client   546/tcp
++dhcpv6-client   546/udp
++dhcpv6-server   547/tcp
++dhcpv6-server   547/udp
++afpovertcp      548/tcp
++afpovertcp      548/udp
++new-rwho        550/udp   new-who
++rtsp            554/tcp
++rtsp            554/udp
++remotefs        556/tcp   rfs rfs_server
++rmonitor        560/udp   rmonitord
++monitor         561/udp
++nntps           563/tcp   snntp
++nntps           563/udp   snntp
++whoami          565/tcp
++whoami          565/udp
++ms-shuttle      568/tcp
++ms-shuttle      568/udp
++ms-rome         569/tcp
++ms-rome         569/udp
++submission      587/tcp
++http-rpc-epmap  593/tcp
++http-rpc-epmap  593/udp
++nqs             607/tcp
++hmmp-ind        612/tcp
++hmmp-ind        612/udp
++hmmp-op         613/tcp
++hmmp-op         613/udp
++asf-rmcp        623/udp
++qmqp            628/tcp
++ipp             631/tcp
++ldaps           636/tcp   sldap
++ldaps           636/udp
++ldp             646/tcp
++ldp             646/udp
++tinc            655/tcp
++tinc            655/udp
++doom            666/tcp
++doom            666/udp
++msexch-routing  691/tcp
++msexch-routing  691/udp
++silc            706/tcp
++kerberos-adm    749/tcp
++kerberos-adm    749/udp
++kerberos-iv     750/udp
++mdbs_daemon     800/tcp
++mdbs_daemon     800/udp
++domain-s        853/tcp
++domain-s        853/udp
++rsync           873/tcp
++ftps-data       989/tcp
++ftps            990/tcp
++telnets         992/tcp
++imaps           993/tcp
++ircs            994/tcp
++pop3s           995/tcp   spop3
++pop3s           995/udp   spop3
++kpop            1109/tcp
++nfsd-status     1110/tcp
++nfsd-keepalive  1110/udp
++nfa             1155/tcp
++nfa             1155/udp
++activesync      1034/tcp
++phone           1167/udp
++opsmgr          1270/tcp
++opsmgr          1270/udp
++ms-sql-s        1433/tcp
++ms-sql-s        1433/udp
++ms-sql-m        1434/tcp
++ms-sql-m        1434/udp
++ms-sna-server   1477/tcp
++ms-sna-server   1477/udp
++ms-sna-base     1478/tcp
++ms-sna-base     1478/udp
++wins            1512/tcp
++wins            1512/udp
++ingreslock      1524/tcp  ingres
++stt             1607/tcp
++stt             1607/udp
++l2tp            1701/udp
++pptconference   1711/tcp
++pptconference   1711/udp
++pptp            1723/tcp
++msiccp          1731/tcp
++msiccp          1731/udp
++remote-winsock  1745/tcp
++remote-winsock  1745/udp
++ms-streaming    1755/tcp
++ms-streaming    1755/udp
++msmq            1801/tcp
++msmq            1801/udp
++radius          1812/udp
++radacct         1813/udp
++msnp            1863/tcp
++msnp            1863/udp
++ssdp            1900/tcp
++ssdp            1900/udp
++close-combat    1944/tcp
++close-combat    1944/udp
++nfsd            2049/udp  nfs
++knetd           2053/tcp
++mzap            2106/tcp
++mzap            2106/udp
++qwave           2177/tcp
++qwave           2177/udp
++directplay      2234/tcp
++directplay      2234/udp
++ms-olap3        2382/tcp
++ms-olap3        2382/udp
++ms-olap4        2383/tcp
++ms-olap4        2383/udp
++ms-olap1        2393/tcp
++ms-olap1        2393/udp
++ms-olap2        2394/tcp
++ms-olap2        2394/udp
++ms-theater      2460/tcp
++ms-theater      2460/udp
++wlbs            2504/tcp
++wlbs            2504/udp
++ms-v-worlds     2525/tcp
++ms-v-worlds     2525/udp
++sms-rcinfo      2701/tcp
++sms-rcinfo      2701/udp
++sms-xfer        2702/tcp
++sms-xfer        2702/udp
++sms-chat        2703/tcp
++sms-chat        2703/udp
++sms-remctrl     2704/tcp
++sms-remctrl     2704/udp
++msolap-ptp2     2725/tcp
++msolap-ptp2     2725/udp
++icslap          2869/tcp
++icslap          2869/udp
++cifs            3020/tcp
++cifs            3020/udp
++xbox            3074/tcp
++xbox            3074/udp
++ms-dotnetster   3126/tcp
++ms-dotnetster   3126/udp
++ms-rule-engine  3132/tcp
++ms-rule-engine  3132/udp
++msft-gc         3268/tcp
++msft-gc         3268/udp
++msft-gc-ssl     3269/tcp
++msft-gc-ssl     3269/udp
++ms-cluster-net  3343/tcp
++ms-cluster-net  3343/udp
++ms-wbt-server   3389/tcp
++ms-wbt-server   3389/udp
++ms-la           3535/tcp
++ms-la           3535/udp
++pnrp-port       3540/tcp
++pnrp-port       3540/udp
++teredo          3544/tcp
++teredo          3544/udp
++p2pgroup        3587/tcp
++p2pgroup        3587/udp
++ws-discovery    3702/udp
++ws-discovery    3702/tcp
++dvcprov-port    3776/tcp
++dvcprov-port    3776/udp
++msfw-control    3847/tcp
++msdts1          3882/tcp
++sdp-portmapper  3935/tcp
++sdp-portmapper  3935/udp
++net-device      4350/tcp
++net-device      4350/udp
++ipsec-msft      4500/tcp
++ipsec-msft      4500/udp
++llmnr           5355/tcp
++llmnr           5355/udp
++wsd             5357/tcp
++wsd             5358/tcp
++rrac            5678/tcp
++rrac            5678/udp
++dccm            5679/tcp
++dccm            5679/udp
++ms-licensing    5720/tcp
++ms-licensing    5720/udp
++directplay8     6073/tcp
++directplay8     6073/udp
++man             9535/tcp
++rasadv          9753/tcp
++rasadv          9753/udp
++imip-channels   11320/tcp
++imip-channels   11320/udp
++directplaysrvr  47624/tcp
++directplaysrvr  47624/udp
 diff --git a/include/Makefile.in b/include/Makefile.in
-index 72a8d43988c..cb2fbd64a60 100644
+index 72a8d43988..cb2fbd64a6 100644
 --- a/include/Makefile.in
 +++ b/include/Makefile.in
 @@ -419,6 +419,7 @@ SOURCES = \
@@ -4177,7 +4940,7 @@ index 72a8d43988c..cb2fbd64a60 100644
  	ks.h \
 diff --git a/include/juiceios.h b/include/juiceios.h
 new file mode 100644
-index 00000000000..3313a1c6e8a
+index 0000000000..3313a1c6e8
 --- /dev/null
 +++ b/include/juiceios.h
 @@ -0,0 +1,40 @@
@@ -4222,7 +4985,7 @@ index 00000000000..3313a1c6e8a
 +
 +#endif
 diff --git a/include/winternl.h b/include/winternl.h
-index 81dc3db2b74..33d32b6de5c 100644
+index 81dc3db2b7..33d32b6de5 100644
 --- a/include/winternl.h
 +++ b/include/winternl.h
 @@ -5420,6 +5420,7 @@ NTSYSAPI USHORT    WINAPI RtlWow64GetCurrentMachine(void);
@@ -4233,9 +4996,73 @@ index 81dc3db2b74..33d32b6de5c 100644
  NTSYSAPI NTSTATUS  WINAPI RtlWriteRegistryValue(ULONG,PCWSTR,PCWSTR,ULONG,PVOID,ULONG);
  NTSYSAPI NTSTATUS  WINAPI RtlZombifyActivationContext(struct _ACTIVATION_CONTEXT *);
  NTSYSAPI NTSTATUS  WINAPI RtlpNtCreateKey(PHANDLE,ACCESS_MASK,const OBJECT_ATTRIBUTES*,ULONG,const UNICODE_STRING*,ULONG,PULONG);
+diff --git a/loader/main.c b/loader/main.c
+index f8b113f313..b8b002f6c2 100644
+--- a/loader/main.c
++++ b/loader/main.c
+@@ -36,6 +36,7 @@
+ #endif
+ #ifdef __APPLE__
+ # include <mach-o/dyld.h>
++# include <mach/mach_traps.h>
+ #endif
+ 
+ #include "main.h"
+@@ -85,6 +86,43 @@ static void init_reserved_areas(void)
+ 
+ #endif
+ 
++/*
++ * iOS requires a normal arm64 executable to retain the standard 4 GiB
++ * __PAGEZERO load command. Rewriting that load command after linking makes the
++ * image fail iOS exec validation before Wine can even start. The translated
++ * Grape-X64 runtime still needs addresses below 4 GiB for Wine's WoW64 data,
++ * though, so keep a completely normal iOS Mach-O and remove the no-access
++ * reservation from the live task after the kernel has accepted the image.
++ *
++ * Preserve the first 64 KiB as the usual NULL/low-pointer guard and release
++ * [0x10000, 4GiB). The app marks every Grape-X64 launch with
++ * JUICE_EXPERIMENTAL_X64=1; the verified ARM64 Grape path is left untouched.
++ *
++ * Use the public iPhoneOS mach_traps declarations directly instead of
++ * <mach/mach.h>. The umbrella header also declares host_page_size(), which
++ * collides with Wine's unrelated host_page_size variable in virtual.c when
++ * this source is compiled with Juice's shared forced-include compatibility
++ * header.
++ */
++static void juice_release_ios_low_address_space(void)
++{
++#if defined(__APPLE__) && (defined(__arm64__) || defined(__aarch64__)) && \
++    defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
++    const char *enabled = getenv( "JUICE_EXPERIMENTAL_X64" );
++    const mach_vm_address_t start = 0x10000ull;
++    const mach_vm_address_t end = 0x100000000ull;
++    kern_return_t status;
++
++    if (!enabled || strcmp( enabled, "1" )) return;
++
++    status = _kernelrpc_mach_vm_deallocate_trap( task_self_trap(), start, end - start );
++    fprintf( stderr,
++             "[JuiceWine] iOS low-VA release start=0x%llx end=0x%llx status=%d%s\n",
++             (unsigned long long)start, (unsigned long long)end, status,
++             status == KERN_SUCCESS ? " OK" : " FAILED" );
++#endif
++}
++
+ /* canonicalize path and return its directory name */
+ static char *realpath_dirname( const char *name )
+ {
+@@ -175,6 +213,7 @@ int main( int argc, char *argv[] )
+ {
+     void *handle;
+ 
++    juice_release_ios_low_address_space();
+     init_reserved_areas();
+ 
+     if ((handle = try_dlopen( get_self_exe() )) ||
 diff --git a/programs/juicegui/Makefile.in b/programs/juicegui/Makefile.in
 new file mode 100644
-index 00000000000..e906f64c174
+index 0000000000..e906f64c17
 --- /dev/null
 +++ b/programs/juicegui/Makefile.in
 @@ -0,0 +1,6 @@
@@ -4247,7 +5074,7 @@ index 00000000000..e906f64c174
 +	juicegui.c
 diff --git a/programs/juicegui/juicegui.c b/programs/juicegui/juicegui.c
 new file mode 100644
-index 00000000000..ae4c30747e2
+index 0000000000..ae4c30747e
 --- /dev/null
 +++ b/programs/juicegui/juicegui.c
 @@ -0,0 +1,1097 @@
@@ -5350,7 +6177,7 @@ index 00000000000..ae4c30747e2
 +}
 diff --git a/programs/juicesetupsmoke/Makefile.in b/programs/juicesetupsmoke/Makefile.in
 new file mode 100644
-index 00000000000..86593b73768
+index 0000000000..86593b7376
 --- /dev/null
 +++ b/programs/juicesetupsmoke/Makefile.in
 @@ -0,0 +1,6 @@
@@ -5362,7 +6189,7 @@ index 00000000000..86593b73768
 +	main.c
 diff --git a/programs/juicesetupsmoke/main.c b/programs/juicesetupsmoke/main.c
 new file mode 100644
-index 00000000000..7ea6440c3c7
+index 0000000000..7ea6440c3c
 --- /dev/null
 +++ b/programs/juicesetupsmoke/main.c
 @@ -0,0 +1,164 @@
@@ -5532,7 +6359,7 @@ index 00000000000..7ea6440c3c7
 +}
 diff --git a/programs/juicetextsmoke/Makefile.in b/programs/juicetextsmoke/Makefile.in
 new file mode 100644
-index 00000000000..1733f5ded84
+index 0000000000..1733f5ded8
 --- /dev/null
 +++ b/programs/juicetextsmoke/Makefile.in
 @@ -0,0 +1,6 @@
@@ -5544,7 +6371,7 @@ index 00000000000..1733f5ded84
 +	main.c
 diff --git a/programs/juicetextsmoke/main.c b/programs/juicetextsmoke/main.c
 new file mode 100644
-index 00000000000..70c07799de5
+index 0000000000..70c07799de
 --- /dev/null
 +++ b/programs/juicetextsmoke/main.c
 @@ -0,0 +1,213 @@
@@ -5762,7 +6589,7 @@ index 00000000000..70c07799de5
 +    return (int)message.wParam;
 +}
 diff --git a/server/mapping.c b/server/mapping.c
-index a53b6b68304..2ee4831c750 100644
+index a53b6b6830..2ee4831c75 100644
 --- a/server/mapping.c
 +++ b/server/mapping.c
 @@ -21,6 +21,7 @@
@@ -5809,7 +6636,7 @@ index a53b6b68304..2ee4831c750 100644
  
  static void ranges_dump( struct object *obj, int verbose )
 diff --git a/server/process.h b/server/process.h
-index dff766d60d3..158ffafe1d1 100644
+index dff766d60d..158ffafe1d 100644
 --- a/server/process.h
 +++ b/server/process.h
 @@ -126,7 +126,11 @@ extern void set_process_base_priority( struct process *process, int base_priorit
@@ -5826,7 +6653,7 @@ index dff766d60d3..158ffafe1d1 100644
  #elif defined(__sun)
  #define USE_PROCFS
 diff --git a/tools/winebuild/res32.c b/tools/winebuild/res32.c
-index 798dee79b1e..bdf9ee22a00 100644
+index 798dee79b1..bdf9ee22a0 100644
 --- a/tools/winebuild/res32.c
 +++ b/tools/winebuild/res32.c
 @@ -196,12 +196,40 @@ static void load_next_resource( DLLSPEC *spec, const char *name )
