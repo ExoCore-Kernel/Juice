@@ -1,6 +1,5 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
-#import <objc/message.h>
 
 #define JUICE_MAGIC 0x4a554943u
 
@@ -80,10 +79,9 @@ typedef struct
     }
     return self;
 }
-
 @end
 
-static void (*OriginalLaunchTapped)(id, SEL);
+static void (*OriginalLaunchRequested)(id, SEL);
 static void (*OriginalAppend)(id, SEL, NSString *);
 static void (*OriginalPresentFrame)(id, SEL, JuiceMsg, NSData *, int, pid_t, BOOL);
 
@@ -193,7 +191,7 @@ static void JuiceFinishBoot(id self)
         objc_setAssociatedObject(self, &JuiceBootProgressKey, @(1.0f), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         JuiceBootOverlayView *overlay = JuiceBootOverlay(self);
         overlay.titleLabel.text = @"Wine is ready";
-        overlay.detailLabel.text = @"Opening the Windows desktop…";
+        overlay.detailLabel.text = @"Opening the Windows display…";
         [overlay.progressView setProgress:1.0f animated:YES];
         JuiceHideBootAfter(self, 0.28, generation);
     });
@@ -219,8 +217,7 @@ static NSInteger JuiceIntegerAfterPrefix(NSString *text, NSString *prefix)
 {
     NSRange range = [text rangeOfString:prefix];
     if (range.location == NSNotFound) return -1;
-    NSString *tail = [text substringFromIndex:NSMaxRange(range)];
-    NSScanner *scanner = [NSScanner scannerWithString:tail];
+    NSScanner *scanner = [NSScanner scannerWithString:[text substringFromIndex:NSMaxRange(range)]];
     NSInteger value = -1;
     return [scanner scanInteger:&value] ? value : -1;
 }
@@ -245,9 +242,12 @@ static void JuiceInspectBootLog(id self, NSString *text)
     if ([text containsString:@"JUICE_LOWVA_HELPER_BEGIN"])
         JuiceAdvanceBoot(self, 0.26f, @"Preparing x86 compatibility memory…");
 
+    if ([text containsString:@"JUICE_LOWVA_KERNEL_MIN_OK"])
+        JuiceAdvanceBoot(self, 0.31f, @"Low-address Windows memory unlocked…");
+
     if ([text containsString:@"JUICE_LOWVA_HELPER_OK"] ||
         [text containsString:@"JUICE_LOWVA_READY"])
-        JuiceAdvanceBoot(self, 0.34f, @"x86 compatibility memory is ready…");
+        JuiceAdvanceBoot(self, 0.35f, @"x86 compatibility memory is ready…");
 
     if ([text containsString:@"[JuiceStage] running controlled wineboot initialization"])
         JuiceAdvanceBoot(self, 0.40f, @"Initializing the Windows prefix…");
@@ -275,10 +275,10 @@ static void JuiceInspectBootLog(id self, NSString *text)
         JuiceAdvanceBoot(self, 0.94f, @"Waiting for the first Windows frame…");
 }
 
-static void JuiceBootLaunchTapped(id self, SEL _cmd)
+static void JuiceBootLaunchRequested(id self, SEL _cmd)
 {
     JuiceShowBoot(self, @"Preparing the Windows runtime…");
-    if (OriginalLaunchTapped) OriginalLaunchTapped(self, _cmd);
+    if (OriginalLaunchRequested) OriginalLaunchRequested(self, _cmd);
 }
 
 static void JuiceBootAppend(id self, SEL _cmd, NSString *text)
@@ -305,9 +305,9 @@ static void JuiceInstallBootProgress(void)
     Class cls = NSClassFromString(@"JuiceController");
     if (!cls) return;
 
-    Method launch = class_getInstanceMethod(cls, NSSelectorFromString(@"launchTapped"));
+    Method launch = class_getInstanceMethod(cls, NSSelectorFromString(@"launchRequested"));
     if (launch)
-        OriginalLaunchTapped = (void (*)(id, SEL))method_setImplementation(launch, (IMP)JuiceBootLaunchTapped);
+        OriginalLaunchRequested = (void (*)(id, SEL))method_setImplementation(launch, (IMP)JuiceBootLaunchRequested);
 
     Method append = class_getInstanceMethod(cls, NSSelectorFromString(@"append:"));
     if (append)
