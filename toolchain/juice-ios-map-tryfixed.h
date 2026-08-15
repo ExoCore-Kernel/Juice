@@ -18,7 +18,18 @@
     defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
 
 #include <errno.h>
+
+/*
+ * mach_init.h (pulled in by mach/mach.h) declares a public function named
+ * host_page_size(). Wine's virtual.c already has a file-scope variable named
+ * host_page_size, so force-including the umbrella header would turn all of
+ * Wine's later uses into references to the Mach function. Rename only that
+ * declaration while parsing the Mach headers; Juice never calls it here.
+ */
+#define host_page_size juice_mach_api_host_page_size
 #include <mach/mach.h>
+#undef host_page_size
+
 #include <sys/mman.h>
 #include <sys/types.h>
 
