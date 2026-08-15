@@ -18,5 +18,7 @@
     <true/>
     <key>com.apple.security.cs.allow-jit</key>
     <true/>
+    <key>com.apple.private.persona-mgmt</key>
+    <true/>
 </dict>
 </plist>
