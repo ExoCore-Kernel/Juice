@@ -44,14 +44,19 @@ fi
 export IOS_TARGET_CPU="${IOS_TARGET_CPU:-arm64}"
 export IPHONEOS_DEPLOYMENT_TARGET="$MIN_IOS"
 
-# Wine's virtual-memory mapper needs exact low addresses for WoW64. Force an
-# iOS-only compatibility header into that one translation unit; other Wine and
-# Juice sources retain the ordinary SDK mmap definitions.
+# Keep iOS-only compatibility code scoped to the translation units that need
+# it. virtual.c gets the MAP_TRYFIXED adapter. loader/main.c gets a constructor
+# that asks the optional jailbreak helper to lower only the Grape-X64 child's
+# vm_map minimum before Wine starts allocating its WoW64 address space.
 extra_args=()
 for arg in "$@"; do
   case "$arg" in
     */dlls/ntdll/unix/virtual.c|dlls/ntdll/unix/virtual.c)
       extra_args=(-include "$ROOT/toolchain/juice-ios-map-tryfixed.h")
+      break
+      ;;
+    */loader/main.c|loader/main.c)
+      extra_args=(-include "$ROOT/toolchain/juice-ios-lowva-bootstrap.h")
       break
       ;;
   esac
