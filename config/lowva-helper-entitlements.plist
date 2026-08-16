@@ -16,6 +16,8 @@
     <true/>
     <key>com.apple.system-task-ports.control</key>
     <true/>
+    <key>com.apple.private.skip-library-validation</key>
+    <true/>
     <key>com.apple.security.exception.iokit-user-client-class</key>
     <array>
         <string>IOSurfaceRootUserClient</string>
