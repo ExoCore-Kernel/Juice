@@ -5,27 +5,30 @@
  * Darwin Wine normally uses mach_vm_map() to reserve an exact candidate
  * address before MAP_FIXED replaces it. Juice cannot use that macOS-only
  * source path on iOS, while plain mmap(address, ...) is only a hint and can
- * return a different address. Wine's WoW64 low-address allocator requires the
- * requested address to be exact.
+ * return a different address. Wine nevertheless needs a collision-safe way
+ * to test whether an exact address can be used.
  *
  * This header is force-included only for ntdll/unix/virtual.c. Defining a
  * private MAP_TRYFIXED selects Wine's existing try-fixed branch.
  *
- * Normal ARM64 Grape keeps the collision-safe Mach reservation path below.
+ * For normal ARM64 Grape, do not use the private mach_vm_allocate trap as a
+ * preliminary reservation. On iOS that trap can reject otherwise harmless
+ * candidate probes with Mach errors that look like ENOMEM to Wine. The free
+ * area scanner then aborts instead of stepping to its next candidate.
+ *
+ * Instead, request the address as a normal mmap() hint. Darwin will use the
+ * hint when it is available and relocate the mapping when it is not. Accept
+ * the mapping only when the returned address exactly matches the requested
+ * address; otherwise unmap the relocated mapping and report EEXIST so Wine's
+ * scanner safely continues. This never overwrites an existing native mapping.
+ *
  * Grape-X64 is different: its loader has already removed the executable's
  * __PAGEZERO mapping from [0x10000, 4 GiB), specifically so Wine can own that
- * address range. iPhoneOS still rejects the preliminary mach_vm_allocate trap
- * in that former __PAGEZERO range even after deallocation, so for the
- * explicitly enabled experimental x64 runtime map that released low range
- * directly with MAP_FIXED. Before the loader release there cannot have been
- * unrelated mappings there because __PAGEZERO covered the whole range.
- *
- * Do not include <mach/mach.h> here. Some iPhoneOS Mach header combinations
- * expose a function named host_page_size(), which collides with Wine's
- * host_page_size variable. Even mach_traps.h can pull that declaration in
- * transitively on some SDKs, so temporarily rename the token while importing
- * the Mach declarations below. virtual.c independently applies the same shield
- * around its own Mach includes.
+ * address range. iPhoneOS can still reject ordinary low-address hint probes in
+ * that former __PAGEZERO range even after deallocation, so for the explicitly
+ * enabled experimental x64 runtime map that released low range directly with
+ * MAP_FIXED. Before the loader release there cannot have been unrelated
+ * mappings there because __PAGEZERO covered the whole range.
  */
 #if defined(__APPLE__) && (defined(__aarch64__) || defined(__arm64__)) && \
     defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
@@ -34,10 +37,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define host_page_size juice_mach_host_page_size
-#include <mach/mach_traps.h>
-#include <mach/vm_statistics.h>
-#undef host_page_size
 #include <sys/mman.h>
 #include <sys/types.h>
 
@@ -69,12 +68,13 @@ static inline void *juice_ios_mmap_tryfixed(
     if (flags & JUICE_MAP_TRYFIXED)
     {
         void *mapped;
+        int mmap_flags = flags & ~JUICE_MAP_TRYFIXED;
 
         /*
          * The x64 loader already deallocated this exact former-__PAGEZERO
-         * range. Going through mach_vm_allocate first is counterproductive on
-         * iPhoneOS: the trap can reject low addresses that mmap(MAP_FIXED) is
-         * able to claim once __PAGEZERO has been removed.
+         * range. Going through a hint mapping first is counterproductive on
+         * iPhoneOS: the kernel may refuse or relocate low addresses that
+         * mmap(MAP_FIXED) can claim once __PAGEZERO has been removed.
          */
         if (juice_ios_x64_low_range(address, size))
         {
@@ -85,7 +85,7 @@ static inline void *juice_ios_mmap_tryfixed(
                 address,
                 size,
                 prot,
-                (flags & ~JUICE_MAP_TRYFIXED) | MAP_FIXED,
+                mmap_flags | MAP_FIXED,
                 fd,
                 offset
             );
@@ -117,35 +117,20 @@ static inline void *juice_ios_mmap_tryfixed(
             return mapped;
         }
 
-        {
-            mach_vm_offset_t reservation = (mach_vm_offset_t)(uintptr_t)address;
-            kern_return_t result;
+        /*
+         * Collision-safe exact-address probe for normal ARM64 Wine.
+         * A non-MAP_FIXED mmap() never destroys an existing mapping. If the
+         * requested hole is unavailable Darwin may return another address;
+         * dispose of that temporary mapping and tell Wine the candidate was
+         * occupied so try_map_free_area() advances instead of aborting.
+         */
+        mapped = mmap(address, size, prot, mmap_flags, fd, offset);
+        if (mapped == MAP_FAILED) return MAP_FAILED;
+        if (mapped == address) return mapped;
 
-            result = _kernelrpc_mach_vm_allocate_trap(
-                task_self_trap(),
-                &reservation,
-                (mach_vm_size_t)size,
-                VM_FLAGS_FIXED
-            );
-            if (result != KERN_SUCCESS)
-            {
-                errno = result == KERN_NO_SPACE ? EEXIST : ENOMEM;
-                return MAP_FAILED;
-            }
-
-            mapped = mmap(
-                address,
-                size,
-                prot,
-                (flags & ~JUICE_MAP_TRYFIXED) | MAP_FIXED,
-                fd,
-                offset
-            );
-            if (mapped == MAP_FAILED)
-                _kernelrpc_mach_vm_deallocate_trap(
-                    task_self_trap(), reservation, (mach_vm_size_t)size );
-            return mapped;
-        }
+        munmap(mapped, size);
+        errno = EEXIST;
+        return MAP_FAILED;
     }
 
     return mmap(address, size, prot, flags, fd, offset);
