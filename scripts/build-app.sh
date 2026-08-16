@@ -44,7 +44,7 @@ mkdir -p "$OUT"
   "$ROOT/app/JuiceApiSetBootstrap.m" "$ROOT/app/JuiceLegacyWin32.m" \
   "$ROOT/app/JuiceLogExport.m" "$ROOT/app/JuiceMultiWindowFix.m" \
   "$ROOT/app/JuiceFramebufferFix.m" "$ROOT/app/JuiceBootProgress.m" \
-  "$ROOT/app/JuiceBootOverlayVisibility.m" \
+  "$ROOT/app/JuiceBootOverlayVisibility.m" "$ROOT/app/JuiceSmokePath.m" \
   -framework UIKit -framework Foundation -framework QuartzCore -framework GameController \
   -framework CoreGraphics -framework Metal -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
