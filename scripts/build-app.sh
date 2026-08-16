@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 OUT="${JUICE_APP_BUILD_DIR:-$ROOT/build/app/Juice.app}"
 MIN_IOS="${JUICE_MIN_IOS:-14.0}"
+APP_ENTITLEMENTS="${JUICE_APP_ENTITLEMENTS:-$ROOT/config/app-entitlements.plist}"
 
 target_flags=()
 if command -v xcrun >/dev/null 2>&1; then
@@ -31,6 +32,7 @@ else
   command -v "$CC" >/dev/null 2>&1 || { echo "Missing clang: $CC" >&2; exit 2; }
 fi
 test -d "$SDK" || { echo "Missing iPhoneOS SDK: $SDK" >&2; exit 2; }
+test -f "$APP_ENTITLEMENTS" || { echo "Missing app entitlements: $APP_ENTITLEMENTS" >&2; exit 2; }
 case "$OUT" in "$ROOT"/build/*) ;; *) test "${JUICE_ALLOW_EXTERNAL_BUILD:-0}" = 1 || {
   echo "Unsafe app build path: $OUT" >&2; exit 2;
 };; esac
@@ -44,7 +46,7 @@ mkdir -p "$OUT"
   "$ROOT/app/JuiceFramebufferFix.m" "$ROOT/app/JuiceBootProgress.m" \
   "$ROOT/app/JuiceBootOverlayVisibility.m" \
   -framework UIKit -framework Foundation -framework QuartzCore -framework GameController \
-  -framework CoreGraphics -lz -o "$OUT/Juice"
+  -framework CoreGraphics -framework Metal -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
 
 # Generate the icon set from the compact canonical grape artwork data on every
@@ -72,9 +74,9 @@ if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/us
 if test -z "$LDID_BIN" && test -n "${JUICE_IOS_TOOLCHAIN:-}" && test -x "$JUICE_IOS_TOOLCHAIN/bin/ldid"; then LDID_BIN="$JUICE_IOS_TOOLCHAIN/bin/ldid"; fi
 if test -z "$LDID_BIN"; then LDID_BIN="$(command -v ldid 2>/dev/null || true)"; fi
 if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
-  "$LDID_BIN" -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$OUT/Juice"
+  "$LDID_BIN" -S"$APP_ENTITLEMENTS" -Cadhoc "$OUT/Juice"
 elif command -v codesign >/dev/null 2>&1; then
-  codesign --force --sign - --entitlements "$ROOT/config/app-entitlements.plist" "$OUT/Juice"
+  codesign --force --sign - --entitlements "$APP_ENTITLEMENTS" "$OUT/Juice"
 fi
 
-echo "JUICE_APP_BUILD_OK path=$OUT/Juice icons=${#app_icons[@]} icon_source=generated-rgb8"
+echo "JUICE_APP_BUILD_OK path=$OUT/Juice icons=${#app_icons[@]} icon_source=generated-rgb8 entitlements=$APP_ENTITLEMENTS"

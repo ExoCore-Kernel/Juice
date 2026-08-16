@@ -1,0 +1,7 @@
+38afacff1ecd65621830ee95607b269daedab6644fb909a964267ff314a1e5a6  /var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/SmokeTests/graphics-arm64/juice-vulkan-smoke.exe
+4a15a270d3577373a1b272dabae1c38a7b0b9dc32830044de3a2d79f760fe747  /var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape/runtime/lib/wine/aarch64-windows/winevulkan.dll
+797c892440f5c43fabedcc69d8eae791896b890b1c37ea102e8926b7b71dad92  /var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape/runtime/lib/wine/aarch64-windows/win32u.so
+05253b707873d3ba0e1da50510e932024f62c23e2b76e287f15697afad34a21c  /var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape/runtime/lib/wine/aarch64-windows/wineios.so
+3c07dcfca8abee797be849d6332e35f65f8f8529f9bcd7c709a90976950c34a4  /var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Frameworks/MoltenVK.framework/MoltenVK
+c95870d99961e2d5c29786807cf4d15841d9b5ab10a7be5c70c7f7989857d197  /var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/proofs/graphics/arm64-vulkan/marker.txt
+bebde2f3a18ac088445ea5e1e544b76119377767e4741957cd443559d62035b3  /var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/proofs/graphics/arm64-vulkan/frame.png

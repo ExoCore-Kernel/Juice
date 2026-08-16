@@ -5832,6 +5832,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
     RECT surface_rect;
     UINT context;
     WND *win;
+    const char *failure_stage = "unknown";
 
     fprintf( stderr, "[JuiceCreate] ex=%08x class=%p version=%p name=%p style=%08x x=%d y=%d cx=%d cy=%d parent=%p menu=%p classinst=%p params=%p flags=%08x inst=%p classptr=%p ansi=%d\n", ex_style, class_name, version, window_name, style, x, y, cx, cy, parent, menu, class_instance, params, flags, instance, class, ansi );
     TRACE( "ex_style %#x, class_name %s, version %s, window_name %s, style %#x, x %u, y %u, cx %u, cy %u, "
@@ -6018,6 +6019,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
     if (!apply_window_pos( hwnd, 0, SWP_NOZORDER | SWP_NOACTIVATE, surface, &new_rects, NULL ))
     {
         if (surface) window_surface_release( surface );
+        failure_stage = "initial-apply-window-pos";
         goto failed;
     }
     if (surface) window_surface_release( surface );
@@ -6028,6 +6030,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
     if (!send_message_timeout( hwnd, WM_NCCREATE, 0, (LPARAM)&cs, SMTO_NORMAL, 0, ansi ))
     {
         WARN( "%p: aborted by WM_NCCREATE\n", hwnd );
+        failure_stage = "wm-nccreate";
         goto failed;
     }
 
@@ -6057,15 +6060,26 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
         apply_window_pos( hwnd, insert_after, SWP_NOACTIVATE, surface, &new_rects, NULL );
         if (surface) window_surface_release( surface );
     }
-    else goto failed;
+    else
+    {
+        failure_stage = "get-window-rect";
+        goto failed;
+    }
 
     /* send WM_CREATE */
     if (send_message_timeout( hwnd, WM_CREATE, 0, (LPARAM)&cs, SMTO_NORMAL, 0, ansi ) == -1)
+    {
+        failure_stage = "wm-create";
         goto failed;
+    }
 
     /* call the driver */
 
-    if (!user_driver->pCreateWindow( hwnd )) goto failed;
+    if (!user_driver->pCreateWindow( hwnd ))
+    {
+        failure_stage = "driver-create-window";
+        goto failed;
+    }
 
     NtUserNotifyWinEvent( EVENT_OBJECT_CREATE, hwnd, OBJID_WINDOW, 0 );
 
@@ -6100,6 +6114,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
     send_parent_notify( hwnd, WM_CREATE );
     if (!is_window( hwnd ))
     {
+        fprintf( stderr, "[JuiceCreate] failed hwnd=%p stage=destroyed-after-parent-notify\n", hwnd );
         set_thread_dpi_awareness_context( context );
         return 0;
     }
@@ -6137,6 +6152,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
     return hwnd;
 
 failed:
+    fprintf( stderr, "[JuiceCreate] failed hwnd=%p stage=%s\n", hwnd, failure_stage );
     destroy_window( hwnd );
     set_thread_dpi_awareness_context( context );
     return 0;

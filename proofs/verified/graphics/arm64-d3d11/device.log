@@ -1,0 +1,1408 @@
+JUICE_HEADLESS_TEST_BEGIN
+EXTERNAL_INPUT_READY keyboard=hardware gamecontroller=xinput-v1 state=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/controller-v1.bin
+DISPLAY_SOCKET path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/j.sock bind=0 listen=0 errno=2
+CONTROL_V1_SOCKET path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/jc1.sock bind=0 listen=0 errno=2
+EXPERIMENTAL_STATE multi_window=1 x86_64=1
+HOST_METAL_DEVICE available=0 name=none
+GUI_READY
+AUTO_LAUNCH_CUSTOM path=/var/mobile/Documents/JuiceData/SmokeTests/graphics-arm64/juice-d3d11-smoke.exe machine=0xaa64
+PE_ARCH_DETECTED machine=0xaa64 arch=ARM64 runtime=Grape path=/var/mobile/Documents/JuiceData/SmokeTests/graphics-arm64/juice-d3d11-smoke.exe
+RUNTIME_SELECTED runtime=Grape prefix=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix
+PREFIX_RUNTIME_LINKS count=0 system32=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix/drive_c/windows/system32
+PREFIX_APISET_READY path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix/drive_c/windows/system32/apisetschema.dll existing=0
+Wine server: 0 pid=18240
+
+GUI launch /var/mobile/Documents/JuiceData/SmokeTests/graphics-arm64/juice-d3d11-smoke.exe: 0 pid=18241
+[JuiceWine parent] bundle libraries path=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Libraries:/var/jb/usr/lib
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=18242
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x32007005 CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=18242 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=18242 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x32007005 CS_DEBUGGED=YES
+[JuiceStage] running controlled wineboot initialization
+[JuiceWine] host-page expanding executable section .text: section=0x140001000 mapping=0x140000000 size=16384
+[JuiceWine] anonymous PE executable section .text at 0x140000000 size=16384
+[JuiceStage] loading Windows ntdll; transfer=0x140001000 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceWine] anonymous PE executable section .text at 0x17fc00000 size=524288
+[JuiceStage] load_ntdll returned; transfer=0x140001000
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x106600000 stack_limit=0x106508000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x17ffd8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x28010fcd0 stack_base=0x106600000 stack_limit=0x106508000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=0 transfer=0x140001000 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x140001000 arg=0x17ffdc000 teb=0x17ffd8000 data=0x280000000 frame=0x28010fcd0 stack_base=0x106600000 stack_limit=0x106508000
+[JuiceStage] calling signal_set_full_context; ctx=0x1065ffc70 target_pc=0x17fc575a0 target_sp=0x106600000 target_x18=0x17ffd8000 LdrInitializeThunk=0x17fc575c0 RtlUserThreadStart=0x17fc575a0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x17fc575a0 frame_sp=0x106600000 frame_x18=0x17ffd8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x17fc575c0 user_sp=0x1065ffc70 x16=0x17fc575c0 x17=0x1065ffc70 x18=0x17ffd8000 restore=00400007
+[JuiceX18] broad #1 pc=0x17fc34344 fault=0x17ee instr=796fde48 x8=0x0 x16=0x17fc575c0 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #2 pc=0x17fc5c3cc fault=0x48 instr=b9404a48 x8=0x17fcb02a0 x16=0x17fc34344 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #3 pc=0x17fc5df3c fault=0x60 instr=f940324c x8=0x0 x16=0x17fc5c3cc x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #4 pc=0x102e2dfe4 fault=0x378 instr=f941be4a x8=0x18 x16=0x102e2dfe0 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #5 pc=0x17fc5e9a4 fault=0x60 instr=f9403248 x8=0x102930090 x16=0x17fc554a4 x17=0x1065ffa40 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #6 pc=0x17fc34460 fault=0x180c instr=b9580e48 x8=0x0 x16=0x17fc554a4 x17=0x1065ffa70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #7 pc=0x17fc277ec fault=0x60 instr=f9403248 x8=0x17fcb2460 x16=0x17fc34460 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #8 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x95 x16=0x5c5c x17=0x1065ff447 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #9 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x9 x16=0x5c5c x17=0x1065ff69b x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #10 pc=0x17fc26c98 fault=0x60 instr=f9403248 x8=0xffffffe3 x16=0x5c5c x17=0x1065ff6ac x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #11 pc=0x17fc26d00 fault=0x60 instr=f9403248 x8=0x1029334a0 x16=0x17fc26c98 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #12 pc=0x17fc26d00 fault=0x60 instr=f9403248 x8=0x10293639c x16=0x17fc26d00 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #13 pc=0x17fc67524 fault=0x60 instr=f9403248 x8=0x102e78330 x16=0x17fc55384 x17=0x1065ffae0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #14 pc=0x102e2dfe4 fault=0x378 instr=f941be4a x8=0x21 x16=0x102e2dfe0 x17=0x1065ff750 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #15 pc=0x102e2dfe4 fault=0x378 instr=f941be4a x8=0x1d x16=0x102e2dfe0 x17=0x1065ff670 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #16 pc=0x17fc26870 fault=0x60 instr=f9403248 x8=0x0 x16=0x17fc55ca4 x17=0x1065ffae0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #17 pc=0x17fc2654c fault=0x60 instr=f9403248 x8=0x102933aca x16=0x17fc554c4 x17=0x1065ffae0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #18 pc=0x17fc38798 fault=0x60 instr=f9403248 x8=0x140001000 x16=0x17fc2654c x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #19 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x62 x16=0x5c5c x17=0x1065ff924 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #20 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x5c x16=0x5c5c x17=0x1065ff91e x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #21 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x10 x16=0x5c5c x17=0x1065ff682 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #22 pc=0x17fc184b0 fault=0x2c8 instr=f9416648 x8=0x17fc8a7d0 x16=0x17fc5dea4 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17fa30000 size=196608
+[JuiceX18] broad #23 pc=0x17fc37c38 fault=0x60 instr=f9403249 x8=0xc x16=0x17fc556a4 x17=0x1065ff960 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #24 pc=0x17fc5c3cc fault=0x48 instr=b9404a48 x8=0x1029300d8 x16=0x17fc37c38 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #25 pc=0x102e2dfe4 fault=0x378 instr=f941be4a x8=0x50 x16=0x102e2dfe0 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #26 pc=0x102e2dfe4 fault=0x378 instr=f941be4a x8=0x50 x16=0x102e2dfe0 x17=0x1065ff890 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #27 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x6 x16=0x17fc55ba4 x17=0x1065ff890 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #28 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x17fa6f190 x16=0x17fc5dea4 x17=0x1065ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #29 pc=0x17fc4e7e8 fault=0x60 instr=f9403248 x8=0x102933d36 x16=0x17fc55804 x17=0x1065fef70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #30 pc=0x17fc5c3cc fault=0x48 instr=b9404a48 x8=0x1029300d8 x16=0x17fc55384 x17=0x1065fef70 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17f650000 size=524288
+[JuiceX18] broad #31 pc=0x102e2dfe4 fault=0x378 instr=f941be4a x8=0x50 x16=0x102e2dfe0 x17=0x1065ff2e0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #32 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x17f6f7a68 x16=0x17fc55ba4 x17=0x1065ff2e0 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17f2f0000 size=262144
+[JuiceWine] anonymous PE executable section .text at 0x17f140000 size=131072
+[JuiceWine] anonymous PE executable section .text at 0x17d9d0000 size=2031616
+[JuiceWine] anonymous PE executable section .text at 0x17d490000 size=655360
+[JuiceWine] anonymous PE executable section .text at 0x17d210000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x17cd00000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x17cc20000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x17c890000 size=655360
+[JuiceWine] anonymous PE executable section .text at 0x17c720000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x17c410000 size=524288
+[JuiceWine] anonymous PE executable section .text at 0x17c320000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x17c230000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x17c160000 size=65536
+DISPLAY_CLIENT_CONNECTED fd=7
+[JuiceInput] display connected path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/j.sock desktop=1024x768 dpi=96
+DISPLAY_EVENT HELLO fd=7 pid=18242 desktop=1024x768 dpi=96
+[JuiceInput] queue fd registered fd=18 tid=0x24
+[JuiceDriver] ios init set driver create=0x10752ce78 client_surface=0x10752d9fc size=1216
+[JuiceDriver] install prev=0x107759348 lazy=0x107759348 null=0x107781f10 candidate=0x103808200 create=0x10752ce78 installed=1
+[JuiceDriver] direct-load status=00000000 driver=0x103808200
+JUICE_MOLTENVK_DRIVER_READY version=48 handle=0x17e440
+[mvk-info] MoltenVK version 1.4.2, supporting Vulkan version 1.4.357.
+	The following 152 Vulkan extensions are supported:
+	VK_KHR_16bit_storage v1
+	VK_KHR_8bit_storage v1
+	VK_KHR_bind_memory2 v1
+	VK_KHR_buffer_device_address v1
+	VK_KHR_calibrated_timestamps v1
+	VK_KHR_copy_commands2 v1
+	VK_KHR_create_renderpass2 v1
+	VK_KHR_dedicated_allocation v3
+	VK_KHR_deferred_host_operations v4
+	VK_KHR_depth_stencil_resolve v1
+	VK_KHR_descriptor_update_template v1
+	VK_KHR_device_group v4
+	VK_KHR_device_group_creation v1
+	VK_KHR_driver_properties v1
+	VK_KHR_dynamic_rendering v1
+	VK_KHR_dynamic_rendering_local_read v1
+	VK_KHR_external_fence v1
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_memory v1
+	VK_KHR_external_memory_capabilities v1
+	VK_KHR_external_semaphore v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_format_feature_flags2 v2
+	VK_KHR_fragment_shader_barycentric v1
+	VK_KHR_get_memory_requirements2 v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_get_surface_capabilities2 v1
+	VK_KHR_global_priority v1
+	VK_KHR_image_format_list v1
+	VK_KHR_imageless_framebuffer v1
+	VK_KHR_incremental_present v2
+	VK_KHR_index_type_uint8 v1
+	VK_KHR_line_rasterization v1
+	VK_KHR_load_store_op_none v1
+	VK_KHR_maintenance1 v2
+	VK_KHR_maintenance2 v1
+	VK_KHR_maintenance3 v1
+	VK_KHR_maintenance4 v2
+	VK_KHR_maintenance5 v1
+	VK_KHR_maintenance6 v1
+	VK_KHR_maintenance7 v1
+	VK_KHR_maintenance8 v1
+	VK_KHR_maintenance9 v1
+	VK_KHR_map_memory2 v1
+	VK_KHR_multiview v1
+	VK_KHR_portability_subset v1
+	VK_KHR_present_id v1
+	VK_KHR_present_id2 v1
+	VK_KHR_present_wait v1
+	VK_KHR_present_wait2 v1
+	VK_KHR_push_descriptor v2
+	VK_KHR_relaxed_block_layout v1
+	VK_KHR_robustness2 v1
+	VK_KHR_sampler_mirror_clamp_to_edge v3
+	VK_KHR_sampler_ycbcr_conversion v14
+	VK_KHR_separate_depth_stencil_layouts v1
+	VK_KHR_shader_draw_parameters v1
+	VK_KHR_shader_expect_assume v1
+	VK_KHR_shader_float_controls v4
+	VK_KHR_shader_float_controls2 v1
+	VK_KHR_shader_float16_int8 v1
+	VK_KHR_shader_fma v1
+	VK_KHR_shader_integer_dot_product v1
+	VK_KHR_shader_maximal_reconvergence v1
+	VK_KHR_shader_non_semantic_info v1
+	VK_KHR_shader_quad_control v1
+	VK_KHR_shader_relaxed_extended_instruction v1
+	VK_KHR_shader_subgroup_extended_types v1
+	VK_KHR_shader_subgroup_rotate v2
+	VK_KHR_shader_subgroup_uniform_control_flow v1
+	VK_KHR_shader_terminate_invocation v1
+	VK_KHR_spirv_1_4 v1
+	VK_KHR_storage_buffer_storage_class v1
+	VK_KHR_surface v25
+	VK_KHR_surface_maintenance1 v1
+	VK_KHR_surface_protected_capabilities v1
+	VK_KHR_swapchain v70
+	VK_KHR_swapchain_maintenance1 v1
+	VK_KHR_swapchain_mutable_format v1
+	VK_KHR_synchronization2 v1
+	VK_KHR_timeline_semaphore v2
+	VK_KHR_uniform_buffer_standard_layout v1
+	VK_KHR_variable_pointers v1
+	VK_KHR_vertex_attribute_divisor v1
+	VK_KHR_vulkan_memory_model v3
+	VK_KHR_zero_initialize_workgroup_memory v1
+	VK_EXT_4444_formats v1
+	VK_EXT_buffer_device_address v2
+	VK_EXT_calibrated_timestamps v2
+	VK_EXT_debug_marker v4
+	VK_EXT_debug_report v10
+	VK_EXT_debug_utils v2
+	VK_EXT_depth_clip_control v1
+	VK_EXT_descriptor_indexing v2
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_external_memory_host v1
+	VK_EXT_external_memory_metal v1
+	VK_EXT_fragment_shader_interlock v1
+	VK_EXT_global_priority v2
+	VK_EXT_global_priority_query v1
+	VK_EXT_headless_surface v1
+	VK_EXT_host_image_copy v1
+	VK_EXT_host_query_reset v1
+	VK_EXT_image_2d_view_of_3d v1
+	VK_EXT_image_robustness v1
+	VK_EXT_index_type_uint8 v1
+	VK_EXT_inline_uniform_block v1
+	VK_EXT_layer_settings v2
+	VK_EXT_legacy_dithering v2
+	VK_EXT_line_rasterization v1
+	VK_EXT_load_store_op_none v1
+	VK_EXT_memory_budget v1
+	VK_EXT_metal_objects v2
+	VK_EXT_metal_surface v1
+	VK_EXT_non_seamless_cube_map v1
+	VK_EXT_pipeline_creation_cache_control v3
+	VK_EXT_pipeline_creation_feedback v1
+	VK_EXT_pipeline_robustness v1
+	VK_EXT_post_depth_coverage v1
+	VK_EXT_primitive_topology_list_restart v1
+	VK_EXT_private_data v1
+	VK_EXT_provoking_vertex v1
+	VK_EXT_robustness2 v1
+	VK_EXT_sample_locations v1
+	VK_EXT_scalar_block_layout v1
+	VK_EXT_separate_stencil_usage v1
+	VK_EXT_shader_atomic_float v1
+	VK_EXT_shader_demote_to_helper_invocation v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_shader_subgroup_ballot v1
+	VK_EXT_shader_subgroup_vote v1
+	VK_EXT_shader_viewport_index_layer v1
+	VK_EXT_subgroup_size_control v2
+	VK_EXT_surface_maintenance1 v1
+	VK_EXT_swapchain_colorspace v5
+	VK_EXT_swapchain_maintenance1 v1
+	VK_EXT_texel_buffer_alignment v1
+	VK_EXT_texture_compression_astc_hdr v1
+	VK_EXT_tooling_info v1
+	VK_EXT_vertex_attribute_divisor v3
+	VK_AMD_gpu_shader_half_float v2
+	VK_AMD_negative_viewport_height v1
+	VK_AMD_shader_image_load_store_lod v1
+	VK_AMD_shader_trinary_minmax v1
+	VK_GOOGLE_display_timing v1
+	VK_IMG_format_pvrtc v1
+	VK_INTEL_shader_integer_functions2 v1
+	VK_MVK_ios_surface v3
+	VK_MVK_moltenvk v37
+	VK_NV_fragment_shader_barycentric v1
+[mvk-info] GPU device:
+	model: Apple A13 GPU
+	type: Integrated
+	vendorID: 0x106b
+	deviceID: 0x10050006
+	pipelineCacheUUID: DB660224-1005-0006-0000-000100000000
+	GPU memory available: 1961 MB
+	GPU memory used: 0 MB
+	Metal Shading Language 3.0
+	supports the following GPU Features:
+		GPU Family Metal 3
+		GPU Family Apple 6
+		Read-Write Texture Tier 2
+[mvk-info] Created VkInstance for Vulkan version 1.0.357, as requested by app, with the following 3 Vulkan extensions enabled:
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_get_physical_device_properties2 v2
+[JuiceWine] anonymous PE executable section .text at 0x17c030000 size=131072
+[JuiceX18] derived #1 pc=0x17fc4e754 fault=0x1258 instr=79000268 base=x19 value=0x1258 fixed=0x17ffd9258 teb=0x17ffd8000
+0024:trace:d3d:wined3d_dll_init Application name juice-d3d11-smoke.exe\Direct3D.
+0024:trace:d3d11:d3d11_create_device adapter 0000000000000000, driver_type D3D_DRIVER_TYPE_HARDWARE, swrast 0000000000000000, flags 0, feature_levels 0000000140002020, levels 4, sdk_version 7, device 00000001065FFFA8, obtained_feature_level 00000001065FFF3C, immediate_context 00000001065FFFA0.
+0024:trace:dxgi:CreateDXGIFactory1 iid {7b7166ec-21c7-44ae-b21a-c9ae321ae369}, factory 00000001065FFDB8.
+0024:trace:d3d:wined3d_init Initialising adapters.
+0024:trace:d3d:wined3d_adapter_vk_init adapter_vk 00000001029378A0, ordinal 0, wined3d_creation_flags 0.
+[JuiceWine] anonymous PE executable section .text at 0x17be40000 size=131072
+0024:trace:d3d:wined3d_init_vulkan Vulkan instance API version 1.4.0.
+0024:trace:d3d:enable_vulkan_instance_extensions Vulkan instance extensions reported:
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_device_group_creation".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_external_fence_capabilities".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_external_memory_capabilities".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_external_semaphore_capabilities".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_get_physical_device_properties2".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_get_surface_capabilities2".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_surface".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_surface_maintenance1".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_EXT_debug_report".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_EXT_debug_utils".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_EXT_layer_settings".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_EXT_surface_maintenance1".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_EXT_swapchain_colorspace".
+0024:trace:d3d:enable_vulkan_instance_extensions     - "VK_KHR_win32_surface".
+0024:trace:d3d:enable_vulkan_instance_extensions Enabling instance extension 'VK_KHR_surface'.
+0024:trace:d3d:enable_vulkan_instance_extensions Enabling instance extension 'VK_KHR_win32_surface'.
+[mvk-info] MoltenVK version 1.4.2, supporting Vulkan version 1.4.357.
+	The following 152 Vulkan extensions are supported:
+	VK_KHR_16bit_storage v1
+	VK_KHR_8bit_storage v1
+	VK_KHR_bind_memory2 v1
+	VK_KHR_buffer_device_address v1
+	VK_KHR_calibrated_timestamps v1
+	VK_KHR_copy_commands2 v1
+	VK_KHR_create_renderpass2 v1
+	VK_KHR_dedicated_allocation v3
+	VK_KHR_deferred_host_operations v4
+	VK_KHR_depth_stencil_resolve v1
+	VK_KHR_descriptor_update_template v1
+	VK_KHR_device_group v4
+	VK_KHR_device_group_creation v1
+	VK_KHR_driver_properties v1
+	VK_KHR_dynamic_rendering v1
+	VK_KHR_dynamic_rendering_local_read v1
+	VK_KHR_external_fence v1
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_memory v1
+	VK_KHR_external_memory_capabilities v1
+	VK_KHR_external_semaphore v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_format_feature_flags2 v2
+	VK_KHR_fragment_shader_barycentric v1
+	VK_KHR_get_memory_requirements2 v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_get_surface_capabilities2 v1
+	VK_KHR_global_priority v1
+	VK_KHR_image_format_list v1
+	VK_KHR_imageless_framebuffer v1
+	VK_KHR_incremental_present v2
+	VK_KHR_index_type_uint8 v1
+	VK_KHR_line_rasterization v1
+	VK_KHR_load_store_op_none v1
+	VK_KHR_maintenance1 v2
+	VK_KHR_maintenance2 v1
+	VK_KHR_maintenance3 v1
+	VK_KHR_maintenance4 v2
+	VK_KHR_maintenance5 v1
+	VK_KHR_maintenance6 v1
+	VK_KHR_maintenance7 v1
+	VK_KHR_maintenance8 v1
+	VK_KHR_maintenance9 v1
+	VK_KHR_map_memory2 v1
+	VK_KHR_multiview v1
+	VK_KHR_portability_subset v1
+	VK_KHR_present_id v1
+	VK_KHR_present_id2 v1
+	VK_KHR_present_wait v1
+	VK_KHR_present_wait2 v1
+	VK_KHR_push_descriptor v2
+	VK_KHR_relaxed_block_layout v1
+	VK_KHR_robustness2 v1
+	VK_KHR_sampler_mirror_clamp_to_edge v3
+	VK_KHR_sampler_ycbcr_conversion v14
+	VK_KHR_separate_depth_stencil_layouts v1
+	VK_KHR_shader_draw_parameters v1
+	VK_KHR_shader_expect_assume v1
+	VK_KHR_shader_float_controls v4
+	VK_KHR_shader_float_controls2 v1
+	VK_KHR_shader_float16_int8 v1
+	VK_KHR_shader_fma v1
+	VK_KHR_shader_integer_dot_product v1
+	VK_KHR_shader_maximal_reconvergence v1
+	VK_KHR_shader_non_semantic_info v1
+	VK_KHR_shader_quad_control v1
+	VK_KHR_shader_relaxed_extended_instruction v1
+	VK_KHR_shader_subgroup_extended_types v1
+	VK_KHR_shader_subgroup_rotate v2
+	VK_KHR_shader_subgroup_uniform_control_flow v1
+	VK_KHR_shader_terminate_invocation v1
+	VK_KHR_spirv_1_4 v1
+	VK_KHR_storage_buffer_storage_class v1
+	VK_KHR_surface v25
+	VK_KHR_surface_maintenance1 v1
+	VK_KHR_surface_protected_capabilities v1
+	VK_KHR_swapchain v70
+	VK_KHR_swapchain_maintenance1 v1
+	VK_KHR_swapchain_mutable_format v1
+	VK_KHR_synchronization2 v1
+	VK_KHR_timeline_semaphore v2
+	VK_KHR_uniform_buffer_standard_layout v1
+	VK_KHR_variable_pointers v1
+	VK_KHR_vertex_attribute_divisor v1
+	VK_KHR_vulkan_memory_model v3
+	VK_KHR_zero_initialize_workgroup_memory v1
+	VK_EXT_4444_formats v1
+	VK_EXT_buffer_device_address v2
+	VK_EXT_calibrated_timestamps v2
+	VK_EXT_debug_marker v4
+	VK_EXT_debug_report v10
+	VK_EXT_debug_utils v2
+	VK_EXT_depth_clip_control v1
+	VK_EXT_descriptor_indexing v2
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_external_memory_host v1
+	VK_EXT_external_memory_metal v1
+	VK_EXT_fragment_shader_interlock v1
+	VK_EXT_global_priority v2
+	VK_EXT_global_priority_query v1
+	VK_EXT_headless_surface v1
+	VK_EXT_host_image_copy v1
+	VK_EXT_host_query_reset v1
+	VK_EXT_image_2d_view_of_3d v1
+	VK_EXT_image_robustness v1
+	VK_EXT_index_type_uint8 v1
+	VK_EXT_inline_uniform_block v1
+	VK_EXT_layer_settings v2
+	VK_EXT_legacy_dithering v2
+	VK_EXT_line_rasterization v1
+	VK_EXT_load_store_op_none v1
+	VK_EXT_memory_budget v1
+	VK_EXT_metal_objects v2
+	VK_EXT_metal_surface v1
+	VK_EXT_non_seamless_cube_map v1
+	VK_EXT_pipeline_creation_cache_control v3
+	VK_EXT_pipeline_creation_feedback v1
+	VK_EXT_pipeline_robustness v1
+	VK_EXT_post_depth_coverage v1
+	VK_EXT_primitive_topology_list_restart v1
+	VK_EXT_private_data v1
+	VK_EXT_provoking_vertex v1
+	VK_EXT_robustness2 v1
+	VK_EXT_sample_locations v1
+	VK_EXT_scalar_block_layout v1
+	VK_EXT_separate_stencil_usage v1
+	VK_EXT_shader_atomic_float v1
+	VK_EXT_shader_demote_to_helper_invocation v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_shader_subgroup_ballot v1
+	VK_EXT_shader_subgroup_vote v1
+	VK_EXT_shader_viewport_index_layer v1
+	VK_EXT_subgroup_size_control v2
+	VK_EXT_surface_maintenance1 v1
+	VK_EXT_swapchain_colorspace v5
+	VK_EXT_swapchain_maintenance1 v1
+	VK_EXT_texel_buffer_alignment v1
+	VK_EXT_texture_compression_astc_hdr v1
+	VK_EXT_tooling_info v1
+	VK_EXT_vertex_attribute_divisor v3
+	VK_AMD_gpu_shader_half_float v2
+	VK_AMD_negative_viewport_height v1
+	VK_AMD_shader_image_load_store_lod v1
+	VK_AMD_shader_trinary_minmax v1
+	VK_GOOGLE_display_timing v1
+	VK_IMG_format_pvrtc v1
+	VK_INTEL_shader_integer_functions2 v1
+	VK_MVK_ios_surface v3
+	VK_MVK_moltenvk v37
+	VK_NV_fragment_shader_barycentric v1
+[mvk-info] GPU device:
+	model: Apple A13 GPU
+	type: Integrated
+	vendorID: 0x106b
+	deviceID: 0x10050006
+	pipelineCacheUUID: DB660224-1005-0006-0000-000100000000
+	GPU memory available: 1961 MB
+	GPU memory used: 0 MB
+	Metal Shading Language 3.0
+	supports the following GPU Features:
+		GPU Family Metal 3
+		GPU Family Apple 6
+		Read-Write Texture Tier 2
+[mvk-info] Created VkInstance for Vulkan version 1.1.357, as requested by app, with the following 4 Vulkan extensions enabled:
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_surface v25
+	VK_EXT_metal_surface v1
+0024:trace:d3d:wined3d_init_vulkan Created Vulkan instance 0000000102938610.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Vulkan device extensions reported:
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_16bit_storage".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_8bit_storage".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_bind_memory2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_buffer_device_address".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_calibrated_timestamps".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_copy_commands2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_create_renderpass2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_dedicated_allocation".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_deferred_host_operations".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_depth_stencil_resolve".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_descriptor_update_template".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_device_group".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_driver_properties".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_dynamic_rendering".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_dynamic_rendering_local_read".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_external_fence".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_external_memory".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_external_semaphore".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_format_feature_flags2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_get_memory_requirements2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_global_priority".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_image_format_list".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_imageless_framebuffer".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_incremental_present".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_index_type_uint8".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_line_rasterization".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_load_store_op_none".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance1".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance3".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance4".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance5".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance6".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance7".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance8".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_maintenance9".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_map_memory2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_multiview".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_present_id".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_present_id2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_present_wait".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_present_wait2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_push_descriptor".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_relaxed_block_layout".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_robustness2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_sampler_ycbcr_conversion".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_separate_depth_stencil_layouts".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_draw_parameters".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_expect_assume".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_float_controls".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_float_controls2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_float16_int8".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_fma".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_integer_dot_product".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_maximal_reconvergence".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_non_semantic_info".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_relaxed_extended_instruction".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_subgroup_extended_types".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_subgroup_rotate".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_subgroup_uniform_control_flow".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_shader_terminate_invocation".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_spirv_1_4".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_storage_buffer_storage_class".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_swapchain".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_swapchain_maintenance1".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_swapchain_mutable_format".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_synchronization2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_timeline_semaphore".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_uniform_buffer_standard_layout".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_variable_pointers".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_vertex_attribute_divisor".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_vulkan_memory_model".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_KHR_zero_initialize_workgroup_memory".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_4444_formats".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_buffer_device_address".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_calibrated_timestamps".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_debug_marker".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_depth_clip_control".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_descriptor_indexing".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_extended_dynamic_state".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_extended_dynamic_state2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_extended_dynamic_state3".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_external_memory_host".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_fragment_shader_interlock".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_global_priority".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_global_priority_query".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_host_image_copy".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_host_query_reset".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_image_2d_view_of_3d".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_image_robustness".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_index_type_uint8".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_inline_uniform_block".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_line_rasterization".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_load_store_op_none".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_memory_budget".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_pipeline_creation_cache_control".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_pipeline_creation_feedback".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_pipeline_robustness".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_post_depth_coverage".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_private_data".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_robustness2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_sample_locations".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_scalar_block_layout".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_separate_stencil_usage".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_shader_atomic_float".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_shader_demote_to_helper_invocation".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_shader_stencil_export".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_shader_subgroup_ballot".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_shader_subgroup_vote".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_shader_viewport_index_layer".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_subgroup_size_control".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_swapchain_maintenance1".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_texel_buffer_alignment".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_texture_compression_astc_hdr".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_tooling_info".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_EXT_vertex_attribute_divisor".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_AMD_gpu_shader_half_float".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_AMD_negative_viewport_height".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_AMD_shader_image_load_store_lod".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_AMD_shader_trinary_minmax".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_IMG_format_pvrtc".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions     - "VK_INTEL_shader_integer_functions2".
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_EXT_extended_dynamic_state'.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_EXT_extended_dynamic_state2'.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_EXT_extended_dynamic_state3'.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_EXT_host_query_reset'.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_EXT_shader_stencil_export'.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_EXT_vertex_attribute_divisor'.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_KHR_swapchain'.
+0024:trace:d3d:wined3d_adapter_vk_init_device_extensions Enabling device extension 'VK_KHR_synchronization2'.
+0024:trace:d3d:wined3d_adapter_init adapter 00000001029378A0 LUID 00000000:000003ed.
+0024:trace:d3d:wined3d_output_init output 00000001029348F0, device_name L"\\\\.\\DISPLAY1".
+0024:trace:d3d:wined3d_adapter_create_output Initialised output L"\\\\.\\DISPLAY1".
+0024:trace:d3d:wined3d_adapter_init Initialised 1 outputs for adapter 00000001029378A0.
+0024:trace:d3d:adapter_vk_init_driver_info Device name: "Apple GPU".
+0024:trace:d3d:adapter_vk_init_driver_info Vendor ID: 0x106b, Device ID: 0x10050006.
+0024:trace:d3d:adapter_vk_init_driver_info Driver version: 0x28a2.
+0024:trace:d3d:adapter_vk_init_driver_info API version: 1.1.357.
+0024:trace:d3d:adapter_vk_init_driver_info Memory heap [0]: flags 0x1, size 0xb7e0c000.
+0024:trace:d3d:adapter_vk_init_driver_info Total device memory: 0xb7e0c000.
+0024:trace:d3d:adapter_vk_init_driver_info Total shared system memory: 0x0.
+0024:trace:d3d:adapter_vk_init_driver_info Memory type [0]: flags 0x1, heap 0.
+0024:trace:d3d:adapter_vk_init_driver_info Memory type [1]: flags 0xf, heap 0.
+0024:trace:d3d:adapter_vk_init_driver_info Memory type [2]: flags 0x11, heap 0.
+0024:fixme:d3d:adapter_vk_init_driver_info Failed to retrieve GPU description for device "Apple GPU" 106b:10050006.
+0024:trace:d3d:wined3d_driver_info_init OS version 6.2.
+0024:trace:d3d:wined3d_driver_info_init GPU maximum feature level 0x9300.
+0024:trace:d3d:get_driver_version_info Looking up version info for driver 0x13, driver_model 0x4.
+0024:trace:d3d:get_driver_version_info Looking up version info for driver 0x13, driver_model 0.
+0024:trace:d3d:get_driver_version_info Found driver "wined3d.dll", subversion 0, build 0.
+0024:trace:d3d:wined3d_adapter_vk_init Reporting (fake) driver version 0x0009000e-0x00000000.
+0024:trace:d3d:wined3d_adapter_vk_init Emulating 0xb7e0c000 bytes of video ram.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B8G8R8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B5G5R5X1_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b413 are supported for format WINED3DFMT_B4G4R4A4_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B2G3R3_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B2G3R3A8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B4G4R4X4_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R8G8B8X8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B10G10R10A2_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_P8_UINT_A8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_P8_UINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_L8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_L8A8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_L4A4_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R5G5_SNORM_L6_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R8G8_SNORM_L8X8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G11B11_SNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G10B10X2_TYPELESS.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G10B10X2_UINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G10B10X2_SNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G10B10_SNORM_A2_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_D16_LOCKABLE.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_D32_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_S1_UINT_D15_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_X8D24_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_S4X4_UINT_D24_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_L16_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_S8_UINT_D24_FLOAT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R8G8_SNORM_Cx.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R32G32B32A32_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R32G32B32A32_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R32G32B32A32_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R32G32B32A32_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R32G32B32_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_R32G32B32_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_R32G32B32_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_R32G32B32_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R16G16B16A16_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16G16B16A16_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16G16B16A16_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R16G16B16A16_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16G16B16A16_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R16G16B16A16_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R32G32_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009415 are supported for format WINED3DFMT_R32G32_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R32G32_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R32G32_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R32G8X24_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009408 are supported for format WINED3DFMT_D32_FLOAT_S8X24_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009408 are supported for format WINED3DFMT_R32_FLOAT_X8X24_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009408 are supported for format WINED3DFMT_X32_TYPELESS_G8X24_UINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G10B10A2_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R10G10B10A2_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G10B10A2_UINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R10G10B10A2_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R11G11B10_FLOAT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R8G8B8A8_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R8G8B8A8_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R8G8B8A8_UNORM_SRGB.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R8G8B8A8_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R8G8B8A8_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R8G8B8A8_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R16G16_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16G16_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16G16_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R16G16_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16G16_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R16G16_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R32_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009408 are supported for format WINED3DFMT_D32_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009415 are supported for format WINED3DFMT_R32_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R32_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R32_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R24G8_TYPELESS.
+0024:warn:d3d:init_vulkan_format_info Mapping VK_FORMAT_D24_UNORM_S8_UINT to VK_FORMAT_D32_SFLOAT_S8_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009408 are supported for format WINED3DFMT_D24_UNORM_S8_UINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R24_UNORM_X8_TYPELESS.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_X24_TYPELESS_G8_UINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R8G8_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R8G8_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R8G8_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R8G8_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R8G8_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R16_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16_FLOAT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00940a are supported for format WINED3DFMT_D16_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R16_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R16_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R16_SINT.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R8_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R8_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R8_UINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R8_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_R8_SINT.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_A8_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_R9G9B9E5_SHAREDEXP.
+0024:trace:d3d:init_vulkan_format_info Caps 0x009414 are supported for format WINED3DFMT_NV12_PLANAR.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_BC1_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC1_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC1_UNORM_SRGB.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_BC2_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC2_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC2_UNORM_SRGB.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_BC3_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC3_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC3_UNORM_SRGB.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_BC4_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC4_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC4_SNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_BC5_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC5_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC5_SNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b413 are supported for format WINED3DFMT_B5G6R5_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b413 are supported for format WINED3DFMT_B5G5R5A1_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_B8G8R8A8_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_B8G8R8X8_UNORM.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B8G8R8A8_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_B8G8R8A8_UNORM_SRGB.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_B8G8R8X8_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 0x00b417 are supported for format WINED3DFMT_B8G8R8X8_UNORM_SRGB.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_BC6H_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC6H_UF16.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC6H_SF16.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_BC7_TYPELESS.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC7_UNORM.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_BC7_UNORM_SRGB.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_UYVY.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_YUY2.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_YV12.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_DXT1.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_DXT2.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_DXT3.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_DXT4.
+0024:trace:d3d:init_vulkan_format_info Caps 00000000 are supported for format WINED3DFMT_DXT5.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_MULTI2_ARGB8.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_G8R8_G8B8.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R8G8_B8G8.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_ATI1N.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_ATI2N.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_INST.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_NVDB.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_NVHU.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_NVHS.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_INTZ.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_RESZ.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_NULL.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_R16.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_AL16.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_NV12.
+0024:warn:d3d:init_vulkan_format_info Unsupported format WINED3DFMT_ATOC.
+0024:trace:d3d:wined3d_adapter_vk_create Created adapter 00000001029378A0.
+0024:trace:d3d:wined3d_create Created wined3d object 0000000102936C70.
+0024:trace:dxgi:dxgi_factory_create Created factory 00000001029370E0.
+0024:trace:dxgi:dxgi_factory_QueryInterface iface 00000001029370E0, iid {7b7166ec-21c7-44ae-b21a-c9ae321ae369}, out 00000001065FFDB8.
+0024:trace:dxgi:dxgi_factory_AddRef 00000001029370E0 increasing refcount to 2.
+0024:trace:dxgi:dxgi_factory_Release 00000001029370E0 decreasing refcount to 1.
+0024:trace:dxgi:dxgi_factory_EnumAdapters iface 00000001029370E0, adapter_idx 0, adapter 00000001065FFE18.
+0024:trace:dxgi:dxgi_factory_EnumAdapters1 iface 00000001029370E0, adapter_idx 0, adapter 00000001065FFE18.
+0024:trace:d3d:wined3d_get_adapter_count wined3d 0000000102936C70, reporting 1 adapters.
+0024:trace:d3d:wined3d_get_adapter wined3d 0000000102936C70, idx 0.
+0024:trace:dxgi:dxgi_factory_AddRef 00000001029370E0 increasing refcount to 2.
+0024:trace:dxgi:dxgi_factory_EnumAdapters1 Returning adapter 0000000102937120.
+0024:trace:d3d11:D3D11CoreCreateDevice factory 00000001029370E0, adapter 0000000102937120, flags 0, feature_levels 0000000140002020, levels 4, device 00000001065FFDB0.
+0024:trace:dxgi:DXGID3D10CreateDevice d3d10core 000000017F2E0000, factory 00000001029370E0, adapter 0000000102937120, flags 0, feature_levels 0000000140002020, level_count 4, device 00000001065FFD38.
+0024:trace:dxgi:dump_feature_levels Feature levels (count = 4):
+0024:trace:dxgi:dump_feature_levels     [0] = D3D_FEATURE_LEVEL_11_0.
+0024:trace:dxgi:dump_feature_levels     [1] = D3D_FEATURE_LEVEL_10_1.
+0024:trace:dxgi:dump_feature_levels     [2] = D3D_FEATURE_LEVEL_10_0.
+0024:trace:dxgi:dump_feature_levels     [3] = D3D_FEATURE_LEVEL_9_3.
+0024:trace:dxgi:DXGID3D10RegisterLayers layers 000000017F331410, layer_count 1
+0024:trace:dxgi:DXGID3D10RegisterLayers layer 0: id 0xffffffff, init 000000017F2F350C, get_size 000000017F2F3598, create 000000017F2F3618
+0024:trace:d3d11:layer_init id 0xffffffff, count 00000001065FFD1C, values 0000000000000000
+0024:trace:d3d11:layer_get_size id 0xffffffff, args 00000001065FFCA8, unknown0 0.
+0024:trace:dxgi:dxgi_factory_QueryInterface iface 00000001029370E0, iid {ea02a0d1-4c95-488a-a82c-6034621e8c4f}, out 00000001065FFB88.
+0024:trace:dxgi:dxgi_factory_AddRef 00000001029370E0 increasing refcount to 3.
+0024:trace:dxgi:dxgi_factory_Release 00000001029370E0 decreasing refcount to 2.
+0024:trace:dxgi:dxgi_adapter_QueryInterface iface 0000000102937120, iid {17399d75-964e-4c03-99f8-9d4fd196dd62}, out 00000001065FFB88.
+0024:trace:dxgi:dxgi_adapter_AddRef 0000000102937120 increasing refcount to 2.
+0024:trace:dxgi:dxgi_adapter_Release 0000000102937120 decreasing refcount to 1.
+0024:trace:d3d11:layer_create id 0xffffffff, layer_base 00000001065FFBB8, unknown0 0, device_object 0000000102938870, riid {00000000-0000-0000-c000-000000000046}, device_layer 0000000102938880.
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 2
+0024:trace:d3d11:d3d11_device_context_Release 0000000102938900 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 1.
+0024:trace:d3d11:layer_create Created d3d10 device at 00000001029388B8
+0024:trace:dxgi:dxgi_device_QueryInterface iface 0000000102938870, riid {f2b918f3-603f-430a-9ccd-55872b6e85df}, object 00000001065FFC58
+0024:trace:dxgi:dxgi_device_QueryInterface Forwarding to child layer 00000001029388B8.
+0024:trace:d3d11:d3d_device_inner_QueryInterface iface 00000001029388B8, riid {f2b918f3-603f-430a-9ccd-55872b6e85df}, out 00000001065FFC58.
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 2
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 1.
+0024:trace:d3d:wined3d_device_create wined3d 0000000102936C70, adapter 00000001029378A0, device_type 0x1, focus_window 0000000000000000, flags 0, surface_alignment 4, feature_levels 0000000140002020, feature_level_count 4, device_parent 0000000102938948, device 00000001029388A0.
+0024:warn:d3d:wined3d_select_vulkan_queue_family Failed to find queue supporting 0x20.
+[mvk-info] Vulkan semaphores using MTLEvent.
+[mvk-info] Descriptor sets binding resources using Metal3 argument buffers.
+[mvk-info] Created VkDevice to run on GPU Apple A13 GPU with the following 8 Vulkan extensions enabled:
+	VK_KHR_swapchain v70
+	VK_KHR_synchronization2 v1
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_host_query_reset v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_vertex_attribute_divisor v3
+0024:trace:d3d:wined3d_incref 0000000102936C70 increasing refcount to 2.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_FOGENABLE) (0x1c) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_SPECULARENABLE) (0x1d) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_COLORKEYENABLE) (0x29) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_RANGEFOGENABLE) (0x30) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_LIGHTING) (0x89) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_COLORVERTEX) (0x8d) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_LOCALVIEWER) (0x8e) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_NORMALIZENORMALS) (0x8f) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_DIFFUSEMATERIALSOURCE) (0x91) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_SPECULARMATERIALSOURCE) (0x92) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_AMBIENTMATERIALSOURCE) (0x93) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_EMISSIVEMATERIALSOURCE) (0x94) should have a representative.
+0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_VERTEXBLEND) (0x97) should have a representative.
+0024:trace:d3d:wined3d_state_create device 000000010A31E7D0, levels 0000000140002020, level_count 4, state 000000010A4E0050.
+0024:trace:d3d:wined3d_state_create Selected feature level WINED3D_FEATURE_LEVEL_9_3.
+0024:trace:d3d:state_init_default state 000000010A322920, d3d_info 00000001029378A4.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 0.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 1.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 2.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 3.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 4.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 5.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 6.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 7.
+0024:trace:d3d:state_init_default state 000000010A4E0058, d3d_info 00000001029378A4.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 0.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 1.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 2.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 3.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 4.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 5.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 6.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 7.
+0024:trace:d3d:wined3d_cs_create Created command stream 000000010A4E0040.
+0024:trace:d3d:wined3d_device_create Created device 000000010A31E7D0.
+0024:trace:d3d11:device_parent_wined3d_device_created device_parent 0000000102938948, wined3d_device 000000010A31E7D0.
+0024:trace:d3d:wined3d_device_incref 000000010A31E7D0 increasing refcount to 2.
+0024:trace:d3d:wined3d_device_get_immediate_context device 000000010A31E7D0.
+0024:trace:d3d:wined3d_device_get_state device 000000010A31E7D0.
+0024:trace:d3d:wined3d_state_get_feature_level state 000000010A322920.
+0024:trace:d3d:wined3d_device_incref 000000010A31E7D0 increasing refcount to 3.
+0024:trace:d3d11:d3d_device_context_state_AddRef 0000000102934980 increasing refcount to 1.
+0024:trace:d3d11:d3d_device_context_state_private_addref 0000000102934980 increasing private refcount to 1.
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 2
+0024:trace:d3d11:d3d_device_context_state_private_addref 0000000102934980 increasing private refcount to 2.
+0024:trace:d3d11:d3d_device_context_state_Release 0000000102934980 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 1.
+0024:trace:d3d11:d3d_device_context_state_private_release 0000000102934980 decreasing private refcount to 1.
+[JuiceCreate] ex=00000000 class=0x1065ff690 version=0x0 name=0x1065ff670 style=08000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x1065ff900 ansi=1
+[JuiceStage] init_syscall_frame entered; entry=0x17da08b50 arg=0x10a4e0040 teb=0x17ffd4000 data=0x10c4f0000 frame=0x10c5ffb00 stack_base=0x10c700000 stack_limit=0x10c608000
+[JuiceStage] calling signal_set_full_context; ctx=0x10c6ffc70 target_pc=0x17fc575a0 target_sp=0x10c700000 target_x18=0x17ffd4000 LdrInitializeThunk=0x17fc575c0 RtlUserThreadStart=0x17fc575a0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x17fc575a0 frame_sp=0x10c700000 frame_x18=0x17ffd4000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x17fc575c0 user_sp=0x10c6ffc70 x16=0x17fc575c0 x17=0x10c6ffc70 x18=0x17ffd4000 restore=00400007
+[JuiceStage] native segv #1; signal=11 code=2 pc=0x1098bf240 instruction=f9091c08 lr=0x102e2e254 sp=0x10c5ffb00 x8=0x10993c000 x16=0x1098bf238 x17=0x10c6ffc70 x18=0x17ffd4000 addr=0x1238 esr=0000000092000046 ec=24 teb=0x17ffd4000 frame=0x10c5ffb00
+0038:trace:d3d:wined3d_cs_run Started.
+[JuiceMonitor] callee hwnd=0x1002c hmon=0x1 info=0x28010f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x1002c min=112,27 maxtrack=1036,780 max=1024,768 pos=-3,-3
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+DISPLAY_EVENT WINDOW pid=18242 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1002c flags=3c ptr=0x28010f620 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x1077644f0 shown=0
+DISPLAY_EVENT WINDOW pid=18242 hwnd=0x10030 rect=0,0 1x1 visible=0
+[JuiceCreate] ex=00000000 class=0x28010f590 version=0x0 name=0x28010f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+[JuiceRect] input hwnd=0x10030 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10030 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10030 flags=3c ptr=0x28010eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1077644f0 shown=0
+DISPLAY_EVENT WINDOW pid=18242 hwnd=0x10030 rect=0,0 1x1 visible=0
+[JuiceRect] input hwnd=0x10030 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10030 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10030 flags=18 ptr=0x28010eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x1077644f0 shown=0
+[JuiceDriver] create-enter hwnd=0x10030
+[JuiceDriver] create-success hwnd=0x10030
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+DISPLAY_EVENT WINDOW pid=18242 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceGeom] changed hwnd=0x1002c flags=18 ptr=0x28010f620 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x1077644f0 shown=0
+[JuiceDriver] create-enter hwnd=0x1002c
+[JuiceDriver] create-success hwnd=0x1002c
+DISPLAY_EVENT WINDOW pid=18242 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1002c flags=181b ptr=0x28010f820 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x1077644f0 shown=0
+0024:trace:dxgi:dxgi_factory_get_device_window Created device window 000000000001002C for factory 00000001029370E0.
+0024:trace:dxgi:dxgi_factory_EnumAdapters iface 00000001029370E0, adapter_idx 0, adapter 00000001065FFAE8.
+0024:trace:dxgi:dxgi_factory_EnumAdapters1 iface 00000001029370E0, adapter_idx 0, adapter 00000001065FFAE8.
+0024:trace:d3d:wined3d_get_adapter_count wined3d 0000000102936C70, reporting 1 adapters.
+0024:trace:d3d:wined3d_get_adapter wined3d 0000000102936C70, idx 0.
+0024:trace:dxgi:dxgi_factory_AddRef 00000001029370E0 increasing refcount to 3.
+0024:trace:dxgi:dxgi_factory_EnumAdapters1 Returning adapter 0000000102937220.
+0024:trace:dxgi:dxgi_adapter_EnumOutputs iface 0000000102937220, output_idx 0, output 00000001065FFAE0.
+0024:trace:d3d:wined3d_adapter_get_output_count adapter 00000001029378A0, reporting 1 outputs.
+0024:trace:d3d:wined3d_adapter_get_output adapter 00000001029378A0, idx 0.
+0024:trace:dxgi:dxgi_adapter_AddRef 0000000102937220 increasing refcount to 2.
+0024:trace:dxgi:dxgi_adapter_EnumOutputs Returning output 0000000102937260.
+0024:trace:dxgi:dxgi_output_GetDesc iface 0000000102937260, desc 00000001065FFAF0.
+0024:trace:d3d:wined3d_output_get_desc output 00000001029348F0, desc 00000001065FFA60.
+0024:trace:d3d:wined3d_output_get_display_mode output 00000001029348F0, display_mode 00000001065FFA48, rotation 00000001065FFA5C.
+0024:trace:d3d:wined3d_output_get_display_mode Returning 1024x768@60 WINED3DFMT_B8G8R8X8_UNORM 0.
+0024:trace:dxgi:dxgi_adapter_Release 0000000102937220 decreasing refcount to 1.
+0024:trace:dxgi:dxgi_output_Release 0000000102937260 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_adapter_Release 0000000102937220 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_factory_Release 00000001029370E0 decreasing refcount to 2.
+0024:trace:d3d:adapter_vk_create_swapchain device 000000010A31E7D0, desc 00000001065FFBC8, state_parent 0000000000000000, parent 0000000000000000, parent_ops 000000017F160AC8, swapchain 00000001065FFB78.
+0024:trace:d3d:wined3d_swapchain_vk_init swapchain_vk 000000010A3142F0, device 000000010A31E7D0, desc 00000001065FFBC8, parent 0000000000000000, parent_ops 000000017F160AC8.
+0024:trace:d3d:wined3d_swapchain_init Using target window 000000000001002C.
+0024:trace:d3d:wined3d_output_get_display_mode output 00000001029348F0, display_mode 000000010A3149C8, rotation 0000000000000000.
+0024:trace:d3d:wined3d_output_get_display_mode Returning 1024x768@60 WINED3DFMT_B8G8R8X8_UNORM 0.
+0024:trace:d3d:wined3d_swapchain_state_init Client rect (0,0)-(106,2).
+0024:trace:d3d:wined3d_swapchain_state_init Updating width to 106.
+0024:trace:d3d:wined3d_swapchain_state_init Updating height to 2.
+0024:trace:d3d:wined3d_swapchain_state_init Updating format to WINED3DFMT_B8G8R8X8_UNORM.
+0024:trace:d3d:wined3d_swapchain_init Creating front buffer.
+0024:trace:d3d:wined3d_texture_create device 000000010A31E7D0, desc 00000001065FF994, layer_count 1, level_count 1, flags 0, data 0000000000000000, parent 0000000000000000, parent_ops 000000017DBE4870, texture 000000010A314320.
+0024:trace:d3d:adapter_vk_create_texture device 000000010A31E7D0, desc 00000001065FF994, layer_count 1, level_count 1, flags 0, parent 0000000000000000, parent_ops 000000017DBE4870, texture 000000010A314320.
+0024:trace:d3d:wined3d_texture_vk_init texture_vk 000000010A314A60, device 000000010A31E7D0, desc 00000001065FF994, layer_count 1, level_count 1, flags 0, parent 0000000000000000, parent_ops 000000017DBE4870.
+0024:trace:d3d:wined3d_texture_init texture 000000010A314A60, resource_type WINED3D_RTYPE_TEXTURE_2D, format WINED3DFMT_B8G8R8X8_UNORM, multisample_type 0, multisample_quality 0, usage 0, bind_flags 0, access WINED3D_RESOURCE_ACCESS_GPU, width 106, height 2, depth 1, layer_count 1, level_count 1, flags 0, device 000000010A31E7D0, parent 0000000000000000, parent_ops 000000017DBE4870, sub_resources 000000010A314C28, texture_ops 000000017DC09B80.
+0024:trace:d3d:wined3d_format_calculate_pitch Returning row pitch 424, slice pitch 848.
+0024:trace:d3d:device_resource_add device 000000010A31E7D0, resource 000000010A314A60.
+0024:trace:d3d11:device_parent_texture_sub_resource_created device_parent 0000000102938948, type 0x3, wined3d_texture 000000010A314A60, sub_resource_idx 0, parent 000000010A314C28, parent_ops 000000010A314C30.
+0024:trace:d3d:wined3d_texture_init parent 0000000000000000, parent_ops 000000017F3326C0.
+0024:trace:d3d:wined3d_texture_init Created sub-resource 0 (level 0, layer 0).
+0024:trace:d3d:adapter_vk_create_texture Created texture 000000010A314A60.
+0024:trace:d3d:wined3d_texture_create Created texture 000000010A314A60.
+0024:trace:d3d:wined3d_texture_validate_location texture 000000010A314A60, sub_resource_idx 0, location WINED3D_LOCATION_DRAWABLE.
+0024:trace:d3d:wined3d_texture_validate_location New locations flags are WINED3D_LOCATION_CLEARED | WINED3D_LOCATION_DRAWABLE.
+0024:trace:d3d:wined3d_texture_invalidate_location texture 000000010A314A60, sub_resource_idx 0, location ~(WINED3D_LOCATION_DRAWABLE).
+0024:trace:d3d:wined3d_texture_invalidate_location New locations flags are WINED3D_LOCATION_DRAWABLE.
+0024:trace:d3d:wined3d_swapchain_get_gamma_ramp swapchain 000000010A3142F0, ramp 000000010A314328.
+0024:trace:d3d:wined3d_swapchain_get_output swapchain 000000010A3142F0.
+0024:trace:d3d:wined3d_output_get_gamma_ramp output 00000001029348F0, ramp 000000010A314328.
+JUICE_MOLTENVK_CLIENT_SURFACE_READY hwnd=0x1002c device=Apple A13 GPU size=106x2
+JUICE_MOLTENVK_SURFACE_CREATE hwnd=0x1002c result=0 host=0x105824c60
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+DISPLAY_EVENT WINDOW pid=18242 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1002c flags=181f ptr=0x28010f970 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x1077644f0 shown=0
+0024:trace:d3d:wined3d_swapchain_vk_select_vk_format Using Vulkan swapchain format 0x2c.
+0024:warn:d3d:wined3d_swapchain_vk_create_vulkan_swapchain Image count 0 is not supported (2-3).
+[mvk-info] Created 2 swapchain images with size (106, 2) and contents scale 1.0 in layer (null) (0x102f29d10) on screen Main Screen.
+0024:trace:d3d:adapter_vk_create_swapchain Created swapchain 000000010A3142F0.
+0024:trace:d3d:wined3d_device_set_implicit_swapchain device 000000010A31E7D0, swapchain 000000010A3142F0.
+0024:trace:d3d:adapter_vk_init_3d device 000000010A31E7D0.
+0024:trace:d3d:wined3d_context_vk_init context_vk 000000010A320DC8, swapchain 000000010A3142F0.
+0024:trace:d3d:device_context_add Adding context 000000010A320DC8.
+0024:trace:d3d:adapter_vk_init_3d Initialised context 000000010A320DC8.
+0024:trace:d3d:wined3d_cpu_blitter_create Created blitter 0000000102936E80.
+0024:trace:d3d:wined3d_vk_blitter_create Created blitter 0000000102936EB0.
+0024:trace:d3d:wined3d_sampler_create device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870, sampler 000000010A320D38.
+0024:trace:d3d:adapter_vk_create_sampler device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870, sampler 000000010A320D38.
+0024:trace:d3d:wined3d_sampler_vk_init sampler_vk 00000001029349F0, device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870.
+0024:trace:d3d:wined3d_sampler_init sampler 00000001029349F0, device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870.
+0024:trace:d3d:wined3d_sampler_init     Address modes: U 0x1, V 0x1, W 0x1.
+0024:trace:d3d:wined3d_sampler_init     Border colour: {0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00}.
+0024:trace:d3d:wined3d_sampler_init     Filters: mag 0x1, min 0x1, mip 0.
+0024:trace:d3d:wined3d_sampler_init     LOD bias: 0.00000000e+00.
+0024:trace:d3d:wined3d_sampler_init     Minimum LOD: -1.00000000e+03.
+0024:trace:d3d:wined3d_sampler_init     Maximum LOD: 1.00000000e+03.
+0024:trace:d3d:wined3d_sampler_init     Base mip level: 0.
+0024:trace:d3d:wined3d_sampler_init     Maximum anisotropy: 1.
+0024:trace:d3d:wined3d_sampler_init     Reduction mode: 0.
+0024:trace:d3d:wined3d_sampler_init     Comparison func: 0x1.
+0024:trace:d3d:wined3d_sampler_init     SRGB decode: 1.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2CF0.
+0024:trace:d3d:adapter_vk_create_sampler Created sampler 00000001029349F0.
+0024:trace:d3d:wined3d_sampler_create device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870, sampler 000000010A320D40.
+0024:trace:d3d:adapter_vk_create_sampler device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870, sampler 000000010A320D40.
+0024:trace:d3d:wined3d_sampler_vk_init sampler_vk 000000010A3255A0, device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870.
+0024:trace:d3d:wined3d_sampler_init sampler 000000010A3255A0, device 000000010A31E7D0, desc 00000001065FFA68, parent 0000000000000000, parent_ops 000000017DBE4870.
+0024:trace:d3d:wined3d_sampler_init     Address modes: U 0x3, V 0x3, W 0x3.
+0024:trace:d3d:wined3d_sampler_init     Border colour: {0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00}.
+0024:trace:d3d:wined3d_sampler_init     Filters: mag 0x2, min 0x2, mip 0x2.
+0024:trace:d3d:wined3d_sampler_init     LOD bias: 0.00000000e+00.
+0024:trace:d3d:wined3d_sampler_init     Minimum LOD: -1.00000000e+03.
+0024:trace:d3d:wined3d_sampler_init     Maximum LOD: 1.00000000e+03.
+0024:trace:d3d:wined3d_sampler_init     Base mip level: 0.
+0024:trace:d3d:wined3d_sampler_init     Maximum anisotropy: 1.
+0024:trace:d3d:wined3d_sampler_init     Reduction mode: 0.
+0024:trace:d3d:wined3d_sampler_init     Comparison func: 0x1.
+0024:trace:d3d:wined3d_sampler_init     SRGB decode: 1.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2D10.
+0024:trace:d3d:adapter_vk_create_sampler Created sampler 000000010A3255A0.
+0024:trace:d3d:wined3d_context_vk_get_command_buffer context_vk 000000010A320DC8.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2CF0.
+0038:trace:d3d:wined3d_sampler_vk_cs_init sampler_vk 00000001029349F0.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_sampler_vk_cs_init Created sampler 0x106411610.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2CF0 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2D10.
+0038:trace:d3d:wined3d_sampler_vk_cs_init sampler_vk 000000010A3255A0.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_sampler_vk_cs_init Created sampler 0x106410f40.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2D10 executed.
+0024:trace:d3d:wined3d_context_vk_get_command_buffer Created new command buffer 0000000102936EE0 with id 0x1.
+0024:trace:d3d:wined3d_context_vk_create_bo Created buffer 0x106412170, memory 0x106412210 for bo 000000010A325680.
+0024:trace:d3d:wined3d_context_vk_create_slab_bo Created new bo slab 000000010A325650.
+0024:trace:d3d:wined3d_context_vk_create_slab_bo Using buffer 0x106412170, memory 0x106412210, offset 0x0 for bo 000000010A322628.
+0024:trace:d3d:wined3d_null_image_vk_init image 000000010A3226B0, context_vk 000000010A320DC8, vk_command_buffer 0000000102936EE0, type 0, layer_count 1, sample_count 1.
+0024:trace:d3d:wined3d_null_image_vk_init Created NULL image 0x106412b20, memory 0x106412210.
+0024:trace:d3d:wined3d_null_image_vk_init image 000000010A3226D0, context_vk 000000010A320DC8, vk_command_buffer 0000000102936EE0, type 0x1, layer_count 6, sample_count 1.
+0024:trace:d3d:wined3d_null_image_vk_init Created NULL image 0x106412f80, memory 0x106412210.
+0024:trace:d3d:wined3d_null_image_vk_init image 000000010A3226F0, context_vk 000000010A320DC8, vk_command_buffer 0000000102936EE0, type 0x1, layer_count 1, sample_count 2.
+0024:trace:d3d:wined3d_null_image_vk_init Created NULL image 0x1064134a0, memory 0x106412210.
+0024:trace:d3d:wined3d_null_image_vk_init image 000000010A322710, context_vk 000000010A320DC8, vk_command_buffer 0000000102936EE0, type 0x2, layer_count 1, sample_count 1.
+0024:trace:d3d:wined3d_null_image_vk_init Created NULL image 0x106413830, memory 0x106412210.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created buffer view 0x106413bc0.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created buffer view 0x106413c60.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created 1D image view 0x106413d00.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created 1D array image view 0x106413e10.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created 2D image view 0x106413f20.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created 2D MSAA image view 0x106414060.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created 3D image view 0x106414170.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created cube image view 0x106414280.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created 2D array image view 0x106414390.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created 2D MSAA array image view 0x1064144a0.
+0024:trace:d3d:wined3d_device_vk_create_null_views Created cube array image view 0x1064145b0.
+0024:trace:d3d:wined3d_device_context_set_rendertarget_views context 000000010A4E0040, start_idx 0, count 8, views 00000001065FFB00, set_viewport 0.
+0024:trace:d3d:wined3d_device_context_set_depth_stencil_view context 000000010A4E0040, view 0000000000000000.
+0024:trace:d3d:wined3d_device_context_set_depth_stencil_view Trying to do a NOP SetRenderTarget operation.
+0024:trace:d3d:wined3d_device_set_implicit_swapchain All defaults now set up.
+0024:trace:dxgi:dxgi_adapter_AddRef 0000000102937120 increasing refcount to 2.
+0024:trace:dxgi:DXGID3D10CreateDevice Created device 0000000102938870.
+0024:trace:dxgi:dxgi_device_QueryInterface iface 0000000102938870, riid {db6f6ddb-ac77-4e88-8253-819df9bbf140}, object 00000001065FFDB0
+0024:trace:dxgi:dxgi_device_QueryInterface Forwarding to child layer 00000001029388B8.
+0024:trace:d3d11:d3d_device_inner_QueryInterface iface 00000001029388B8, riid {db6f6ddb-ac77-4e88-8253-819df9bbf140}, out 00000001065FFDB0.
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 2
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 1.
+0024:trace:dxgi:dxgi_adapter_Release 0000000102937120 decreasing refcount to 1.
+0024:trace:dxgi:dxgi_factory_Release 00000001029370E0 decreasing refcount to 1.
+0024:trace:d3d11:d3d11_create_device Created ID3D11Device 00000001029388C0.
+0024:trace:d3d11:d3d11_device_GetFeatureLevel iface 00000001029388C0.
+0024:trace:d3d11:d3d11_device_GetImmediateContext iface 00000001029388C0, immediate_context 00000001065FFFA0.
+0024:trace:d3d11:d3d11_device_context_AddRef 0000000102938900 increasing refcount to 1.
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 2
+0024:trace:d3d11:d3d11_device_CreateBuffer iface 00000001029388C0, desc 00000001065FFF78, data 00000001065FFF50, buffer 00000001065FFF98.
+0024:trace:d3d:wined3d_buffer_create device 000000010A31E7D0, desc 00000001065FFD78, data 00000001065FFF50, parent 000000010A325B80, parent_ops 000000017F330D08, buffer 000000010A325BA0.
+0024:trace:d3d:adapter_vk_create_buffer device 000000010A31E7D0, desc 00000001065FFD78, data 00000001065FFF50, parent 000000010A325B80, parent_ops 000000017F330D08, buffer 000000010A325BA0.
+0024:trace:d3d:wined3d_buffer_vk_init buffer_vk 000000010A326210, device 000000010A31E7D0, desc 00000001065FFD78, data 00000001065FFF50, parent 000000010A325B80, parent_ops 000000017F330D08.
+0024:trace:d3d:wined3d_buffer_init buffer 000000010A326210, device 000000010A31E7D0, desc byte_width 4096, usage 0, bind_flags 0, access WINED3D_RESOURCE_ACCESS_GPU, data 00000001065FFF50, parent 000000010A325B80, parent_ops 000000017F330D08.
+0024:trace:d3d:device_resource_add device 000000010A31E7D0, resource 000000010A326210.
+0024:trace:d3d:wined3d_buffer_init buffer 000000010A326210, size 0x1000, usage 0, memory @ 0000000000000000.
+0024:trace:d3d:wined3d_format_calculate_pitch Returning row pitch 4096, slice pitch 4096.
+0024:trace:d3d:wined3d_device_context_upload_bo context 000000010A4E0040, resource 000000010A326210, sub_resource_idx 0, box (0, 0, 0)-(4096, 1, 1), bo {0000000000000000:000000010A326380}, flags 0x5, row_pitch 4096, slice_pitch 4096.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_UPDATE_SUB_RESOURCE at 000000010A4E2D30.
+0024:trace:d3d:adapter_vk_create_buffer Created buffer 000000010A326210.
+0024:trace:d3d:wined3d_buffer_get_resource buffer 000000010A326210.
+0024:trace:dxgi:dxgi_device_QueryInterface iface 0000000102938870, riid {3e1ff30b-c951-48c3-b010-0fb49f3dca71}, object 00000001065FFD68
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 3
+0024:trace:dxgi:dxgi_device_create_resource iface 0000000102938870, wined3d_resource 000000010A326210, usage 0, shared_resource 0000000000000000, outer 000000010A325B88, needs_surface 0, resource 000000010A325B98.
+0024:trace:dxgi:dxgi_device_create_resource Created resource 000000010A314E10.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 2.
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 3
+0024:trace:d3d11:d3d_buffer_create Created buffer 000000010A325B80.
+0024:trace:d3d11:d3d11_device_CreateBuffer iface 00000001029388C0, desc 00000001065FFF60, data 0000000000000000, buffer 00000001065FFF90.
+0024:trace:d3d:wined3d_buffer_create device 000000010A31E7D0, desc 00000001065FFD78, data 0000000000000000, parent 000000010A325BD0, parent_ops 000000017F330D08, buffer 000000010A325BF0.
+0024:trace:d3d:adapter_vk_create_buffer device 000000010A31E7D0, desc 00000001065FFD78, data 0000000000000000, parent 000000010A325BD0, parent_ops 000000017F330D08, buffer 000000010A325BF0.
+0024:trace:d3d:wined3d_buffer_vk_init buffer_vk 000000010A327390, device 000000010A31E7D0, desc 00000001065FFD78, data 0000000000000000, parent 000000010A325BD0, parent_ops 000000017F330D08.
+0024:trace:d3d:wined3d_buffer_init buffer 000000010A327390, device 000000010A31E7D0, desc byte_width 4096, usage 0, bind_flags 0, access WINED3D_RESOURCE_ACCESS_CPU | WINED3D_RESOURCE_ACCESS_MAP_R, data 0000000000000000, parent 000000010A325BD0, parent_ops 000000017F330D08.
+0024:trace:d3d:device_resource_add device 000000010A31E7D0, resource 000000010A327390.
+0024:trace:d3d:wined3d_buffer_init buffer 000000010A327390, size 0x1000, usage 0, memory @ 0000000000000000.
+0024:trace:d3d:adapter_vk_create_buffer Created buffer 000000010A327390.
+0024:trace:d3d:wined3d_buffer_get_resource buffer 000000010A327390.
+0024:trace:dxgi:dxgi_device_QueryInterface iface 0000000102938870, riid {3e1ff30b-c951-48c3-b010-0fb49f3dca71}, object 00000001065FFD68
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 4
+0024:trace:dxgi:dxgi_device_create_resource iface 0000000102938870, wined3d_resource 000000010A327390, usage 0, shared_resource 0000000000000000, outer 000000010A325BD8, needs_surface 0, resource 000000010A325BE8.
+0024:trace:dxgi:dxgi_device_create_resource Created resource 000000010A328520.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 3.
+0024:trace:dxgi:dxgi_device_AddRef 0000000102938870 increasing refcount to 4
+0024:trace:d3d11:d3d_buffer_create Created buffer 000000010A325BD0.
+0024:trace:d3d11:d3d11_device_context_CopyResource iface 0000000102938900, dst_resource 000000010A325BD0, src_resource 000000010A325B80.
+0024:trace:d3d11:d3d11_buffer_GetType iface 000000010A325BD0, resource_dimension 00000001065FFDEC.
+0024:trace:d3d:wined3d_buffer_get_resource buffer 000000010A327390.
+0024:trace:d3d11:d3d11_buffer_GetType iface 000000010A325B80, resource_dimension 00000001065FFDEC.
+0024:trace:d3d:wined3d_buffer_get_resource buffer 000000010A326210.
+0024:trace:d3d:wined3d_device_context_copy_resource context 000000010A4E0040, dst_resource 000000010A327390, src_resource 000000010A326210.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_BLT_SUB_RESOURCE at 000000010A4E2D88.
+0024:trace:d3d11:d3d11_device_context_Flush iface 0000000102938900.
+0024:trace:d3d:wined3d_device_context_flush context 000000010A4E0040.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_FLUSH at 000000010A4E2E08.
+0024:trace:d3d11:d3d11_device_context_Map iface 0000000102938900, resource 000000010A325BD0, subresource_idx 0, map_type 1, map_flags 0, mapped_subresource 00000001065FFF40.
+0024:trace:d3d11:d3d11_buffer_GetType iface 000000010A325BD0, resource_dimension 00000001065FFDAC.
+0024:trace:d3d:wined3d_buffer_get_resource buffer 000000010A327390.
+0024:trace:d3d:wined3d_device_context_map context 000000010A4E0040, resource 000000010A327390, sub_resource_idx 0, map_desc 00000001065FFDD0, box (null), flags 0x80000000.
+0024:trace:d3d:wined3d_resource_get_sub_resource_desc resource 000000010A327390, sub_resource_idx 0, desc 00000001065FFD48.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_UPDATE_SUB_RESOURCE at 000000010A4E2D30.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:wined3d_buffer_get_memory buffer 000000010A326210, context 000000010A320DC8, data 000000010C6FFEB0, locations WINED3D_LOCATION_CLEARED.
+0038:trace:d3d:wined3d_buffer_load_location buffer 000000010A326210, context 000000010A320DC8, location WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:wined3d_buffer_load_location Current buffer location WINED3D_LOCATION_CLEARED.
+0038:trace:d3d:wined3d_context_vk_create_bo Created buffer 0x1064146c0, memory 0x106412210 for bo 000000010A328590.
+0038:trace:d3d:wined3d_context_vk_create_bo Created buffer 0x106414760, memory 0x106414800 for bo 000000010C6FFD60.
+0038:trace:d3d:wined3d_allocator_chunk_vk_map chunk 000000010A329630, memory 0x106414800, map_ptr 0000000000000000.
+0038:trace:d3d:adapter_adjust_mapped_memory Adjusted mapped adapter memory by 67108864 to 67108864.
+0038:trace:d3d:wined3d_bo_vk_unmap Not unmapping BO 000000010C6FFD60.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer context_vk 000000010A320DC8.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer Returning existing command buffer 0000000102936EE0 with id 0x1.
+0038:trace:d3d:wined3d_context_vk_destroy_bo context_vk 000000010A320DC8, bo 000000010C6FFD60.
+0038:trace:d3d:wined3d_allocator_chunk_vk_unmap chunk_vk 000000010A329630, context_vk 000000010A320DC8.
+0038:trace:d3d:adapter_adjust_mapped_memory Adjusted mapped adapter memory by -67108864 to 0.
+0038:trace:d3d:wined3d_buffer_validate_location buffer 000000010A326210, location WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:wined3d_buffer_validate_location New locations flags are WINED3D_LOCATION_CLEARED | WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:wined3d_buffer_evict_sysmem Evicting system memory for buffer 000000010A326210.
+0038:trace:d3d:wined3d_buffer_invalidate_range buffer 000000010A326210, location WINED3D_LOCATION_SYSMEM, offset 0, size 0.
+0038:trace:d3d:wined3d_buffer_invalidate_range New locations flags are WINED3D_LOCATION_CLEARED | WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:wined3d_context_vk_create_bo Created buffer 0x106415090, memory 0x106414800 for bo 000000010C6FFDE0.
+0038:trace:d3d:wined3d_allocator_chunk_vk_map chunk 000000010A329630, memory 0x106414800, map_ptr 0000000000000000.
+0038:trace:d3d:adapter_adjust_mapped_memory Adjusted mapped adapter memory by 67108864 to 67108864.
+0038:trace:d3d:wined3d_bo_vk_unmap Not unmapping BO 000000010C6FFDE0.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer context_vk 000000010A320DC8.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer Returning existing command buffer 0000000102936EE0 with id 0x1.
+0038:trace:d3d:wined3d_context_vk_destroy_bo context_vk 000000010A320DC8, bo 000000010C6FFDE0.
+0038:trace:d3d:wined3d_allocator_chunk_vk_unmap chunk_vk 000000010A329630, context_vk 000000010A320DC8.
+0038:trace:d3d:adapter_adjust_mapped_memory Adjusted mapped adapter memory by -67108864 to 0.
+0038:trace:d3d:wined3d_buffer_invalidate_range buffer 000000010A326210, location ~(WINED3D_LOCATION_BUFFER), offset 0, size 4096.
+0038:trace:d3d:wined3d_buffer_invalidate_range New locations flags are WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_UPDATE_SUB_RESOURCE at 000000010A4E2D30 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_BLT_SUB_RESOURCE at 000000010A4E2D88.
+0038:trace:d3d:wined3d_buffer_copy dst_buffer 000000010A327390, dst_offset 0, src_buffer 000000010A326210, src_offset 0, size 4096.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:wined3d_buffer_get_memory buffer 000000010A326210, context 000000010A320DC8, data 000000010C6FFED0, locations WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:wined3d_buffer_get_memory buffer 000000010A327390, context 000000010A320DC8, data 000000010C6FFEE0, locations WINED3D_LOCATION_CLEARED.
+0038:trace:d3d:wined3d_buffer_load_location buffer 000000010A327390, context 000000010A320DC8, location WINED3D_LOCATION_SYSMEM.
+0038:trace:d3d:wined3d_buffer_load_location Current buffer location WINED3D_LOCATION_CLEARED.
+0038:trace:d3d:wined3d_buffer_validate_location buffer 000000010A327390, location WINED3D_LOCATION_SYSMEM.
+0038:trace:d3d:wined3d_buffer_validate_location New locations flags are WINED3D_LOCATION_SYSMEM | WINED3D_LOCATION_CLEARED.
+0038:trace:d3d:wined3d_context_vk_create_bo Created buffer 0x106415480, memory 0x106414800 for bo 000000010C6FFDF0.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer context_vk 000000010A320DC8.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer Returning existing command buffer 0000000102936EE0 with id 0x1.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer context_vk 000000010A320DC8.
+0038:trace:d3d:wined3d_context_vk_get_command_buffer Returning existing command buffer 0000000102936EE0 with id 0x1.
+0038:trace:d3d:wined3d_context_vk_submit_command_buffer context_vk 000000010A320DC8, wait_semaphore_count 0, wait_semaphores 0000000000000000, wait_stages 0000000000000000,signal_semaphore_count 0, signal_semaphores 0000000000000000.
+0038:trace:d3d:wined3d_context_vk_submit_command_buffer Submitting command buffer 0000000102936EE0 with id 0x1.
+MULTI_WINDOW_VIEWPORT rect=0,0 1024x768 desktop=1024x768 locked=0
+[JuiceX18] trampoline #1 retry=0x17fc2bc90 restored_x17=0x10c5ffb00 teb=0x17ffd4000
+0038:trace:d3d:wined3d_allocator_chunk_vk_map chunk 000000010A329630, memory 0x106414800, map_ptr 0000000000000000.
+0038:trace:d3d:adapter_adjust_mapped_memory Adjusted mapped adapter memory by 67108864 to 67108864.
+0038:trace:d3d:wined3d_bo_vk_unmap Not unmapping BO 000000010C6FFDF0.
+0038:trace:d3d:wined3d_context_vk_destroy_bo context_vk 000000010A320DC8, bo 000000010C6FFDF0.
+0038:trace:d3d:wined3d_context_vk_destroy_vk_buffer Destroyed buffer 0x106415480.
+0038:trace:d3d:wined3d_allocator_chunk_vk_unmap chunk_vk 000000010A329630, context_vk 000000010A320DC8.
+0038:trace:d3d:adapter_adjust_mapped_memory Adjusted mapped adapter memory by -67108864 to 0.
+0038:trace:d3d:wined3d_context_vk_destroy_allocator_block Freed block 000000010A32A090.
+0038:trace:d3d:wined3d_buffer_invalidate_range buffer 000000010A327390, location ~(WINED3D_LOCATION_SYSMEM), offset 0, size 4096.
+0038:trace:d3d:wined3d_buffer_invalidate_range New locations flags are WINED3D_LOCATION_SYSMEM.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_BLT_SUB_RESOURCE at 000000010A4E2D88 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_FLUSH at 000000010A4E2E08.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:adapter_vk_flush_context context_vk 000000010A320DC8.
+0038:trace:d3d:wined3d_context_vk_submit_command_buffer context_vk 000000010A320DC8, wait_semaphore_count 0, wait_semaphores 0000000000000000, wait_stages 0000000000000000,signal_semaphore_count 0, signal_semaphores 0000000000000000.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_FLUSH at 000000010A4E2E08 executed.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_MAP at 000000010B4E2CF8.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_MAP at 000000010B4E2CF8.
+0038:trace:d3d:buffer_resource_sub_resource_map resource 000000010A327390, sub_resource_idx 0, map_ptr 00000001065FFDD8, box (0, 0, 0)-(4096, 1, 1), flags 0x80000000.
+0038:trace:d3d:buffer_resource_sub_resource_map Returning memory at 000000010A327510 (base 000000010A327510, offset 0).
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_MAP at 000000010B4E2CF8 executed.
+0024:trace:d3d11:d3d11_device_context_Unmap iface 0000000102938900, resource 000000010A325BD0, subresource_idx 0.
+0024:trace:d3d11:d3d11_buffer_GetType iface 000000010A325BD0, resource_dimension 00000001065FFDEC.
+0024:trace:d3d:wined3d_buffer_get_resource buffer 000000010A327390.
+0024:trace:d3d:wined3d_device_context_unmap context 000000010A4E0040, resource 000000010A327390, sub_resource_idx 0.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_UNMAP at 000000010B4E2D38.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_UNMAP at 000000010B4E2D38.
+0038:trace:d3d:buffer_resource_sub_resource_unmap resource 000000010A327390, sub_resource_idx 0.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_UNMAP at 000000010B4E2D38 executed.
+0024:trace:d3d11:d3d11_buffer_Release 000000010A325BD0 decreasing refcount to 0.
+0024:trace:d3d:wined3d_buffer_decref 000000010A327390 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_resource_inner_Release 000000010A328520 decreasing refcount to 0.
+0024:trace:d3d:adapter_vk_destroy_buffer buffer_vk 000000010A327390.
+0024:trace:d3d:wined3d_device_incref 000000010A31E7D0 increasing refcount to 4.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E18.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E18.
+0038:trace:d3d:wined3d_buffer_destroy_object buffer 000000010A327390.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2E18 executed.
+0024:trace:d3d:resource_cleanup Cleaning up resource 000000010A327390.
+0024:trace:d3d:device_resource_released device 000000010A31E7D0, resource 000000010A327390, type WINED3D_RTYPE_BUFFER.
+0024:trace:d3d:device_resource_remove device 000000010A31E7D0, resource 000000010A327390.
+0024:trace:d3d:device_resource_released Resource released.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E38.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E58.
+0024:trace:d3d:wined3d_device_decref 000000010A31E7D0 decreasing refcount to 3.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 3.
+0024:trace:d3d11:d3d11_buffer_Release 000000010A325B80 decreasing refcount to 0.
+0024:trace:d3d:wined3d_buffer_decref 000000010A326210 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_resource_inner_Release 000000010A314E10 decreasing refcount to 0.
+0024:trace:d3d:adapter_vk_destroy_buffer buffer_vk 000000010A326210.
+0024:trace:d3d:wined3d_device_incref 000000010A31E7D0 increasing refcount to 4.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E78.
+0024:trace:d3d:resource_cleanup Cleaning up resource 000000010A326210.
+0024:trace:d3d:device_resource_released device 000000010A31E7D0, resource 000000010A326210, type WINED3D_RTYPE_BUFFER.
+0024:trace:d3d:device_resource_remove device 000000010A31E7D0, resource 000000010A326210.
+0024:trace:d3d:device_resource_released Resource released.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E98.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2EB8.
+0024:trace:d3d:wined3d_device_decref 000000010A31E7D0 decreasing refcount to 3.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 2.
+0024:trace:d3d11:d3d11_device_context_Release 0000000102938900 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 1.
+0024:trace:dxgi:dxgi_device_Release 0000000102938870 decreasing refcount to 0.
+0024:trace:d3d11:d3d_device_inner_Release 00000001029388B8 decreasing refcount to 0.
+0024:trace:d3d11:d3d_device_context_state_private_release 0000000102934980 decreasing private refcount to 0.
+0024:trace:d3d:wined3d_device_get_state device 000000010A31E7D0.
+0024:trace:d3d:wined3d_device_decref 000000010A31E7D0 decreasing refcount to 2.
+0024:trace:d3d:wined3d_device_decref 000000010A31E7D0 decreasing refcount to 1.
+0024:trace:d3d:wined3d_swapchain_decref 000000010A3142F0 decreasing refcount to 0.
+0024:trace:d3d:wined3d_device_uninit_3d device 000000010A31E7D0.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E38.
+0038:trace:d3d:wined3d_resource_destroy_object resource 000000010A327390.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2E38 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E58.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2E58 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E78.
+0038:trace:d3d:wined3d_buffer_destroy_object buffer 000000010A326210.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:wined3d_buffer_vk_unload_location buffer 000000010A326210, context 000000010A320DC8, location WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:wined3d_context_vk_destroy_bo context_vk 000000010A320DC8, bo 000000010A328590.
+0038:trace:d3d:wined3d_context_vk_destroy_vk_buffer Destroyed buffer 0x1064146c0.
+0038:trace:d3d:wined3d_context_vk_destroy_allocator_block Freed block 000000010A325B30.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2E78 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2E98.
+0038:trace:d3d:wined3d_resource_destroy_object resource 000000010A326210.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2E98 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2EB8.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2EB8 executed.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_RESET_STATE at 000000010A4E2ED8.
+0024:trace:d3d:wined3d_device_uninit_3d Unloading resource 000000010A314A60.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_UNLOAD_RESOURCE at 000000010A4E2EE8.
+0024:trace:d3d:adapter_vk_uninit_3d device 000000010A31E7D0.
+0024:trace:d3d:wined3d_sampler_decref 00000001029349F0 decreasing refcount to 0.
+0024:trace:d3d:adapter_vk_destroy_sampler sampler_vk 00000001029349F0.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F00.
+0024:trace:d3d:wined3d_sampler_decref 000000010A3255A0 decreasing refcount to 0.
+0024:trace:d3d:adapter_vk_destroy_sampler sampler_vk 000000010A3255A0.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F20.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F40.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_RESET_STATE at 000000010A4E2ED8.
+0038:trace:d3d:state_init_default state 000000010A4E0058, d3d_info 00000001029378A4.
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 0.
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 1.
+[JuiceX18] derived #2 pc=0x17fc58c94 fault=0x3404 instr=3800152b base=x9 value=0x3404 fixed=0x17ffd7404 teb=0x17ffd4000
+[JuiceX18] derived #3 pc=0x17fc58c94 fault=0x3405 instr=3800152b base=x9 value=0x3405 fixed=0x17ffd7405 teb=0x17ffd4000
+[JuiceX18] derived #4 pc=0x17fc58c94 fault=0x3406 instr=3800152b base=x9 value=0x3406 fixed=0x17ffd7406 teb=0x17ffd4000
+[JuiceX18] derived #5 pc=0x17fc58c94 fault=0x3408 instr=3800152b base=x9 value=0x3408 fixed=0x17ffd7408 teb=0x17ffd4000
+[JuiceX18] derived #6 pc=0x17fc42f88 fault=0x3409 instr=38286a7f base=x19 value=0x3404 fixed=0x17ffd7404 teb=0x17ffd4000
+[JuiceX18] derived #7 pc=0x17fc58c94 fault=0x3409 instr=3800152b base=x9 value=0x3409 fixed=0x17ffd7409 teb=0x17ffd4000
+[JuiceX18] derived #8 pc=0x17fc58c94 fault=0x340e instr=3800152b base=x9 value=0x340e fixed=0x17ffd740e teb=0x17ffd4000
+[JuiceX18] derived #9 pc=0x17fc58c94 fault=0x340f instr=3800152b base=x9 value=0x340f fixed=0x17ffd740f teb=0x17ffd4000
+[JuiceX18] derived #10 pc=0x17fc58c94 fault=0x3412 instr=3800152b base=x9 value=0x3412 fixed=0x17ffd7412 teb=0x17ffd4000
+[JuiceX18] derived #11 pc=0x17fc58c4c fault=0x3413 instr=fc0085c0 base=x14 value=0x3413 fixed=0x17ffd7413 teb=0x17ffd4000
+[JuiceX18] derived #12 pc=0x17fc58c94 fault=0x3423 instr=3800152b base=x9 value=0x3423 fixed=0x17ffd7423 teb=0x17ffd4000
+[JuiceX18] derived #13 pc=0x17fc58c94 fault=0x3425 instr=3800152b base=x9 value=0x3425 fixed=0x17ffd7425 teb=0x17ffd4000
+[JuiceX18] derived #14 pc=0x17fc42f88 fault=0x3426 instr=38286a7f base=x19 value=0x3409 fixed=0x17ffd7409 teb=0x17ffd4000
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 2.
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 3.
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 4.
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 5.
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 6.
+0038:trace:d3d:state_init_default Setting up default texture states for texture Stage 7.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_RESET_STATE at 000000010A4E2ED8 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_UNLOAD_RESOURCE at 000000010A4E2EE8.
+0038:trace:d3d:texture_resource_unload resource 000000010A314A60.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:wined3d_texture_validate_location texture 000000010A314A60, sub_resource_idx 0, location WINED3D_LOCATION_DISCARDED.
+0038:trace:d3d:wined3d_texture_validate_location New locations flags are WINED3D_LOCATION_DISCARDED | WINED3D_LOCATION_DRAWABLE.
+0038:trace:d3d:wined3d_texture_invalidate_location texture 000000010A314A60, sub_resource_idx 0, location ~(WINED3D_LOCATION_DISCARDED).
+0038:trace:d3d:wined3d_texture_invalidate_location New locations flags are WINED3D_LOCATION_DISCARDED.
+0038:trace:d3d:wined3d_texture_vk_unload_location texture 000000010A314A60, context 000000010A320DC8, location WINED3D_LOCATION_BUFFER.
+0038:trace:d3d:wined3d_texture_vk_unload_location texture 000000010A314A60, context 000000010A320DC8, location WINED3D_LOCATION_TEXTURE_RGB.
+0038:trace:d3d:wined3d_texture_vk_unload_location texture 000000010A314A60, context 000000010A320DC8, location WINED3D_LOCATION_TEXTURE_SRGB.
+0038:trace:d3d:wined3d_texture_vk_unload_location texture 000000010A314A60, context 000000010A320DC8, location WINED3D_LOCATION_RB_MULTISAMPLE.
+0038:trace:d3d:wined3d_texture_vk_unload_location texture 000000010A314A60, context 000000010A320DC8, location WINED3D_LOCATION_RB_RESOLVED.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_texture_invalidate_location texture 000000010A314A60, sub_resource_idx 0, location WINED3D_LOCATION_TEXTURE_RGB | WINED3D_LOCATION_TEXTURE_SRGB.
+0038:trace:d3d:wined3d_texture_invalidate_location New locations flags are WINED3D_LOCATION_DISCARDED.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_UNLOAD_RESOURCE at 000000010A4E2EE8 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F00.
+0038:trace:d3d:wined3d_sampler_vk_destroy_object sampler_vk 00000001029349F0.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:wined3d_context_vk_destroy_vk_sampler Destroyed sampler 0x106411610.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2F00 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F20.
+0038:trace:d3d:wined3d_sampler_vk_destroy_object sampler_vk 000000010A3255A0.
+0038:trace:d3d:adapter_vk_acquire_context device 000000010A31E7D0, texture 0000000000000000, sub_resource_idx 0.
+0038:trace:d3d:wined3d_context_vk_destroy_vk_sampler Destroyed sampler 0x106410f40.
+0038:trace:d3d:adapter_vk_release_context context 000000010A320DC8.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2F20 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F40.
+0038:trace:d3d:adapter_vk_uninit_3d_cs device_vk 000000010A31E7D0.
+0038:trace:d3d:vk_blitter_destroy blitter 0000000102936EB0, context 0000000000000000.
+0038:trace:d3d:wined3d_context_vk_destroy_bo context_vk 000000010A320DC8, bo 000000010A322628.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2F40 executed.
+0024:trace:d3d:device_context_remove Removing context 000000010A320DC8.
+0024:trace:d3d:wined3d_bo_slab_vk_free_slice slab 000000010A325650, idx 0, context_vk 000000010A320DC8.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroying block 000000010A325950.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image 0x106412b20.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroying block 000000010A3259A0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image 0x106412f80.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroying block 000000010A3259F0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image 0x1064134a0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroying block 000000010A325AE0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image 0x106413830.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed buffer view 0x106413bc0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed buffer view 0x106413c60.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x106413d00.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x106413e10.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x106413f20.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x106414060.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x106414170.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x106414280.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x106414390.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x1064144a0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed image view 0x1064145b0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroying block 000000010A32A040.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed buffer 0x106415090.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroying block 000000010A329FF0.
+0024:trace:d3d:wined3d_context_vk_cleanup_resources Destroyed buffer 0x106414760.
+0024:trace:d3d:wined3d_context_vk_destroy_bo context_vk 000000010A320DC8, bo 000000010A325680.
+0024:trace:d3d:wined3d_context_vk_destroy_vk_buffer Destroyed buffer 0x106412170.
+0024:trace:d3d:wined3d_context_vk_destroy_allocator_block Freed block 000000010A325900.
+0024:trace:d3d:state_init_default state 000000010A322920, d3d_info 00000001029378A4.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 0.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 1.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 2.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 3.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 4.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 5.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 6.
+0024:trace:d3d:state_init_default Setting up default texture states for texture Stage 7.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F60.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F60.
+0038:trace:d3d:wined3d_swapchain_vk_destroy_vulkan_swapchain swapchain_vk 000000010A3142F0.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2F60 executed.
+0024:trace:d3d:wined3d_swapchain_cleanup Destroying swapchain 000000010A3142F0.
+0024:trace:d3d:wined3d_swapchain_set_gamma_ramp swapchain 000000010A3142F0, flags 0, ramp 000000010A314328.
+0024:trace:d3d:wined3d_swapchain_get_output swapchain 000000010A3142F0.
+0024:trace:d3d:wined3d_output_set_gamma_ramp output 00000001029348F0, ramp 000000010A314328.
+0024:trace:d3d:wined3d_texture_decref texture 000000010A314A60, swapchain 0000000000000000.
+0024:trace:d3d:wined3d_texture_decref 000000010A314A60 decreasing refcount to 0.
+0024:trace:d3d:adapter_vk_destroy_texture texture_vk 000000010A314A60.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F80.
+0024:trace:d3d:resource_cleanup Cleaning up resource 000000010A314A60.
+0024:trace:d3d:device_resource_released device 000000010A31E7D0, resource 000000010A314A60, type WINED3D_RTYPE_TEXTURE_2D.
+0024:trace:d3d:device_resource_remove device 000000010A31E7D0, resource 000000010A314A60.
+0024:trace:d3d:device_resource_released Resource released.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2FA0.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_CALLBACK at 000000010A4E2FC0.
+0024:trace:d3d:wined3d_device_decref 000000010A31E7D0 decreasing refcount to 0.
+0024:trace:d3d:wined3d_incref 0000000102936C70 increasing refcount to 3.
+0024:trace:d3d:wined3d_cs_queue_submit Queuing op WINED3D_CS_OP_STOP at 000000010A4E2FE0.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2F80.
+0038:trace:d3d:wined3d_texture_destroy_object texture 000000010A314A60.
+0038:trace:d3d:texture_resource_unload resource 000000010A314A60.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2F80 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2FA0.
+0038:trace:d3d:wined3d_resource_destroy_object resource 000000010A314A60.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2FA0 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_CALLBACK at 000000010A4E2FC0.
+0038:trace:d3d:wined3d_cs_execute_next op WINED3D_CS_OP_CALLBACK at 000000010A4E2FC0 executed.
+0038:trace:d3d:wined3d_cs_execute_next Executing op WINED3D_CS_OP_STOP at 000000010A4E2FE0.
+0038:trace:d3d:wined3d_cs_run Stopped.
+0024:trace:d3d:wined3d_state_destroy state 000000010A322920.
+0024:trace:d3d:wined3d_decref 0000000102936C70 decreasing refcount to 2.
+0024:trace:d3d:wined3d_allocator_vk_destroy_chunk chunk 000000010A325710.
+0024:trace:d3d:wined3d_allocator_vk_destroy_chunk Freed memory 0x106412210.
+0024:trace:d3d:wined3d_allocator_vk_destroy_chunk chunk 000000010A329630.
+0024:trace:d3d:wined3d_allocator_vk_destroy_chunk Freed memory 0x106414800.
+[mvk-info] Destroyed VkDevice on GPU Apple A13 GPU with 8 Vulkan extensions enabled.
+0024:trace:d3d:wined3d_decref 0000000102936C70 decreasing refcount to 1.
+0024:trace:d3d:wined3d_device_decref Destroyed device 000000010A31E7D0.
+0024:trace:dxgi:dxgi_adapter_Release 0000000102937120 decreasing refcount to 0.
+0024:trace:dxgi:dxgi_factory_Release 00000001029370E0 decreasing refcount to 0.
+DISPLAY_EVENT DESTROY pid=18242 hwnd=0x10030
+DISPLAY_EVENT DESTROY pid=18242 hwnd=0x1002c
+0024:trace:d3d:wined3d_decref 0000000102936C70 decreasing refcount to 0.
+[mvk-info] Destroyed VkPhysicalDevice for GPU Apple A13 GPU with 2 MB of GPU memory still allocated.
+[mvk-info] Destroying VkInstance for Vulkan version 1.1.357 with 4 Vulkan extensions enabled.
+0024:trace:d3d:wined3d_output_cleanup output 00000001029348F0.
+DISPLAY_CLIENT_CLOSED fd=7 pid=18242
+[JuiceWine parent] child exited with 0

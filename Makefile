@@ -4,7 +4,7 @@ REUSE_X64 ?= auto
 
 .DEFAULT_GOAL := all
 
-.PHONY: all verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa reuse reuse-install verify-fex linux-x86_64 linux-x86_64-x64 linux-x86_64-deps linux-x86_64-sdk linux-x86_64-freetype linux-x86_64-preflight linux-x86_64-ios-toolchain linux-x86_64-toolchain linux-x86_64-host-tools linux-x86_64-configure linux-x86_64-configure-pe linux-x86_64-build
+.PHONY: all verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build input-smoke-build input-smoke-device graphics-smokes moltenvk x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa reuse reuse-install verify-fex linux-x86_64 linux-x86_64-x64 linux-x86_64-deps linux-x86_64-sdk linux-x86_64-freetype linux-x86_64-preflight linux-x86_64-ios-toolchain linux-x86_64-toolchain linux-x86_64-host-tools linux-x86_64-configure linux-x86_64-configure-pe linux-x86_64-build
 
 # Primary build: complete Juice TIPA from an x86_64 Linux host.
 all: linux-x86_64-x64
@@ -25,6 +25,10 @@ device: ; $(BASH) scripts/build-all-device.sh
 source-archive: ; $(BASH) scripts/source-archive.sh
 installer-smokes: ; $(BASH) scripts/build-installer-smokes-device.sh
 arm64-smoke-build: ; $(BASH) scripts/build-arm64-smoke-linux.sh
+input-smoke-build: ; $(BASH) scripts/build-input-smoke-linux.sh
+input-smoke-device: ; $(BASH) scripts/run-input-smoke-device.sh
+graphics-smokes: moltenvk linux-x86_64-toolchain ; $(BASH) scripts/build-graphics-smokes-linux.sh
+moltenvk: ; $(BASH) scripts/fetch-moltenvk-linux.sh
 x64-components: ; $(BASH) scripts/build-experimental-x86_64-linux.sh
 x64-runtime: ; $(BASH) scripts/assemble-x86_64-runtime.sh
 x64-tipa: ; JUICE_X64_RUNTIME_STAGE="$(ROOT)/build/x86_64-runtime-stage" $(BASH) scripts/package-tipa.sh
@@ -45,7 +49,7 @@ verify-fex: ; $(BASH) scripts/fetch-fex-linux.sh && $(BASH) scripts/verify-fex-p
 linux-x86_64-sdk: ; $(BASH) scripts/fetch-ios-sdk-linux.sh
 linux-x86_64-freetype:
 	@if test "$${JUICE_WITHOUT_FREETYPE:-0}" != 1; then $(BASH) scripts/fetch-freetype-linux.sh; fi
-linux-x86_64-deps: linux-x86_64-sdk linux-x86_64-freetype
+linux-x86_64-deps: linux-x86_64-sdk linux-x86_64-freetype moltenvk
 linux-x86_64-ios-toolchain: linux-x86_64-sdk
 	@v="$${JUICE_IOS_SDK_VERSION:-16.5}"; \
 	 IOS_SDK="$${IOS_SDK:-$(ROOT)/build/deps/theos-sdks/iPhoneOS$$v.sdk}" \

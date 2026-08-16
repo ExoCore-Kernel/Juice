@@ -1120,6 +1120,7 @@ static volatile sig_atomic_t juice_x18_recovery_count;
 static volatile sig_atomic_t juice_tls_recovery_count;
 static volatile sig_atomic_t juice_trampoline_recovery_count;
 static volatile sig_atomic_t juice_derived_teb_recovery_count;
+static volatile sig_atomic_t juice_multibase_teb_recovery_count;
 
 __ASM_GLOBAL_FUNC( juice_ios_restore_x18_and_retry,
                    "mov x18, x17\n\t"
@@ -1129,6 +1130,7 @@ __ASM_GLOBAL_FUNC( juice_ios_restore_x18_and_retry,
                    "1:\tbr x16" )
 #endif
 
+static volatile sig_atomic_t juice_segv_count;
 
 /**********************************************************************
  *		segv_handler
@@ -1142,6 +1144,7 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
     CONTEXT context;
     EXCEPTION_RECORD rec = { .ExceptionAddress = (void *)PC_sig(sigcontext) };
     DWORD64 esr = get_fault_esr( sigcontext );
+    sig_atomic_t juice_number;
 
 #ifdef __APPLE__
     /*
@@ -1211,7 +1214,18 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
             return;
         }
     }
-    if ((ULONG_PTR)siginfo->si_addr == 0 && data->teb &&
+    /*
+     * A single ARM64EC basic block can copy x18 into more than one temporary
+     * before dereferencing either one.  If Darwin cleared physical x18, the
+     * first low-address fault may repair a different derived register while
+     * a later load/store still uses a zero temporary.  Match the exact
+     * ``mov x<base>, x18`` which produced that zero base and replay from it
+     * through the x18 trampoline.  The load/store and 16-KiB bounds keep
+     * ordinary application null dereferences on the normal exception path.
+     */
+    if (data->teb && (ULONG_PTR)siginfo->si_addr < 0x4000 &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
         !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 0x20)
     {
         ULONG_PTR retry;
@@ -1223,20 +1237,38 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
          * register a few instructions before dereferencing it. Darwin can
          * clear x18 across the native setjmp helper used by Wine builtins.
          */
-        for (retry = PC_sig(sigcontext) - 4;
-             retry >= PC_sig(sigcontext) - 0x20;
-             retry -= 4)
+        if ((fault_instruction & 0x0a000000) == 0x08000000 &&
+            base_register <= 28 && !REGn_sig(base_register, sigcontext))
         {
-            ULONG instruction = *(const ULONG *)retry;
-
-            if ((instruction & 0xffffffe0) == 0xaa1203e0 &&
-                (instruction & 0x1f) == base_register)
+            for (retry = PC_sig(sigcontext) - 4;
+                 retry >= PC_sig(sigcontext) - 0x20;
+                 retry -= 4)
             {
-                REGn_sig(16, sigcontext) = retry;
-                REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
-                PC_sig(sigcontext) =
-                    (ULONG_PTR)juice_ios_restore_x18_and_retry;
-                return;
+                ULONG instruction = *(const ULONG *)retry;
+
+                if ((instruction & 0xffffffe0) == 0xaa1203e0 &&
+                    (instruction & 0x1f) == base_register)
+                {
+                    sig_atomic_t number =
+                        ++juice_multibase_teb_recovery_count;
+
+                    if (number <= 32)
+                    {
+                        fprintf( stderr,
+                                 "[JuiceX18] multibase #%d pc=%p fault=%p "
+                                 "instr=%08x base=x%u replay=%p teb=%p\n",
+                                 (int)number,
+                                 (void *)(ULONG_PTR)PC_sig(sigcontext),
+                                 siginfo->si_addr, fault_instruction,
+                                 base_register, (void *)retry, data->teb );
+                        fflush( stderr );
+                    }
+                    REGn_sig(16, sigcontext) = retry;
+                    REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
+                    PC_sig(sigcontext) =
+                        (ULONG_PTR)juice_ios_restore_x18_and_retry;
+                    return;
+                }
             }
         }
     }
@@ -1329,8 +1361,42 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
         {
             ULONG_PTR base = REGn_sig(base_register, sigcontext);
             ULONG_PTR fault = (ULONG_PTR)siginfo->si_addr;
+            ULONG_PTR scan;
+            BOOL derived_from_x18 = FALSE;
 
-            if (fault >= base && fault - base < 0x1000)
+            /*
+             * A small base is not by itself evidence of a lost x18: a null
+             * object plus a field offset has exactly the same shape.  Only
+             * repair it when this basic block actually materialised that
+             * base from x18.  This keeps allocator failures and ordinary
+             * application null dereferences on the normal exception path.
+             */
+            if (PC_sig(sigcontext) >= 0x20)
+            {
+                for (scan = PC_sig(sigcontext) - 4;
+                     scan >= PC_sig(sigcontext) - 0x20;
+                     scan -= 4)
+                {
+                    ULONG producer = *(const ULONG *)scan;
+
+                    /* mov x<base>, x18 (ORR alias). */
+                    if ((producer & 0xffffffe0) == 0xaa1203e0 &&
+                        (producer & 0x1f) == base_register)
+                    {
+                        derived_from_x18 = TRUE;
+                        break;
+                    }
+                    /* add x<base>, x18, #imm{, lsl #12}. */
+                    if ((producer & 0xff0003e0) == 0x91000240 &&
+                        (producer & 0x1f) == base_register)
+                    {
+                        derived_from_x18 = TRUE;
+                        break;
+                    }
+                }
+            }
+
+            if (derived_from_x18 && fault >= base && fault - base < 0x1000)
             {
                 sig_atomic_t number = ++juice_derived_teb_recovery_count;
 
@@ -1448,15 +1514,14 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
         return;
     }
 #endif
-    static volatile sig_atomic_t juice_segv_count;
-    sig_atomic_t juice_number = ++juice_segv_count;
+    juice_number = ++juice_segv_count;
 
     if (juice_number <= 16)
     {
         fprintf(
             stderr,
             "[JuiceStage] native segv #%d; "
-            "signal=%d code=%d pc=%p lr=%p "
+            "signal=%d code=%d pc=%p instruction=%08x lr=%p "
             "sp=%p x8=%p x16=%p x17=%p x18=%p "
             "addr=%p esr=%016llx ec=%02llx "
             "teb=%p frame=%p\n",
@@ -1464,6 +1529,7 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
             signal,
             siginfo->si_code,
             (void *)(ULONG_PTR)PC_sig(sigcontext),
+            !(PC_sig(sigcontext) & 3) ? *(const ULONG *)PC_sig(sigcontext) : 0,
             (void *)(ULONG_PTR)LR_sig(sigcontext),
             (void *)(ULONG_PTR)SP_sig(sigcontext),
             (void *)(ULONG_PTR)
@@ -1481,6 +1547,40 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
             data->teb,
             get_syscall_frame( data )
         );
+        fprintf(
+            stderr,
+            "[JuiceStage] native regs x0=%p x1=%p x2=%p x3=%p "
+            "x4=%p x5=%p x6=%p x7=%p x9=%p x10=%p x11=%p "
+            "x12=%p x13=%p x14=%p x15=%p\n",
+            (void *)(ULONG_PTR)REGn_sig(0, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(1, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(2, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(3, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(4, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(5, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(6, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(7, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(9, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(10, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(11, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(12, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(13, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(14, sigcontext),
+            (void *)(ULONG_PTR)REGn_sig(15, sigcontext)
+        );
+        if (!(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 0x20)
+        {
+            const ULONG *pc = (const ULONG *)PC_sig(sigcontext);
+
+            fprintf(
+                stderr,
+                "[JuiceStage] native code -20=%08x -1c=%08x -18=%08x "
+                "-14=%08x -10=%08x -0c=%08x -08=%08x -04=%08x "
+                "+00=%08x +04=%08x +08=%08x +0c=%08x\n",
+                pc[-8], pc[-7], pc[-6], pc[-5], pc[-4], pc[-3],
+                pc[-2], pc[-1], pc[0], pc[1], pc[2], pc[3]
+            );
+        }
         fflush( stderr );
     }
 
@@ -1913,6 +2013,8 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
     struct syscall_frame *frame = get_syscall_frame( data );
     CONTEXT *ctx, context = { CONTEXT_ALL };
     NTSTATUS juice_context_status;
+    I386_CONTEXT *i386_context;
+    ARM_CONTEXT *arm_context;
 
     fprintf(
         stderr,
@@ -1928,9 +2030,6 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
         teb->Tib.StackLimit
     );
     fflush( stderr );
-    I386_CONTEXT *i386_context;
-    ARM_CONTEXT *arm_context;
-
     context.X0  = (DWORD64)entry;
     context.X1  = (DWORD64)arg;
     context.X18 = (DWORD64)teb;

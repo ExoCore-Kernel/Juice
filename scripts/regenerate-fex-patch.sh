@@ -5,7 +5,7 @@ ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
 SOURCE="${JUICE_FEX_SOURCE:-$ROOT/build/fex-source}"
 PATCH="$ROOT/patches/fex-juice-ios.patch"
-EXPECTED=$'FEXCore/Source/Interface/Core/CPUBackend.cpp\nFEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp\nFEXCore/Source/Interface/Core/JIT/JIT.cpp\nFEXCore/Source/Interface/Core/LookupCache.cpp\nFEXCore/include/FEXCore/Utils/AllocatorHooks.h\nSource/Windows/ARM64EC/Module.cpp\nSource/Windows/Common/Allocator.cpp\nSource/Windows/Common/Priv.h\nSource/Windows/Common/SHMStats.cpp\nSource/Windows/Defs/ntdll.def'
+EXPECTED=$'FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.cpp\nFEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.h\nFEXCore/Source/Interface/Core/CPUBackend.cpp\nFEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp\nFEXCore/Source/Interface/Core/Frontend.cpp\nFEXCore/Source/Interface/Core/JIT/BranchOps.cpp\nFEXCore/Source/Interface/Core/JIT/JIT.cpp\nFEXCore/Source/Interface/Core/JIT/MemoryOps.cpp\nFEXCore/Source/Interface/Core/JuiceIOSArm64EC.h\nFEXCore/Source/Interface/Core/LookupCache.cpp\nFEXCore/Source/Interface/Core/OpcodeDispatcher.cpp\nFEXCore/Source/Utils/AllocatorHooks.cpp\nFEXCore/include/FEXCore/Utils/AllocatorHooks.h\nSource/Windows/ARM64EC/Module.cpp\nSource/Windows/Common/Allocator.cpp\nSource/Windows/Common/CallRetStack.h\nSource/Windows/Common/Priv.h\nSource/Windows/Common/SHMStats.cpp\nSource/Windows/Common/WinAPI/Alloc.cpp\nSource/Windows/Defs/ntdll.def'
 
 test -d "$SOURCE/.git" || { echo "Run scripts/fetch-fex-linux.sh first." >&2; exit 2; }
 test "$(git -C "$SOURCE" rev-parse HEAD)" = "$JUICE_FEX_REVISION" || {

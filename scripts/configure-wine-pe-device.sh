@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/graphics-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 SOURCE="$ROOT/wine"
 BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
@@ -38,6 +39,7 @@ export wine_cv_recent_bison=yes ac_cv_func_pthread_create=yes
 export JUICE_PE_BUILD_DIR="$BUILD"
 export JUICE_INCBIN_PACKER="$ROOT/toolchain/juice-pack-incbins.py"
 export JUICE_PYTHON="$JBROOT/usr/bin/python3"
+export ac_cv_lib_soname_MoltenVK="$JUICE_MOLTENVK_RUNTIME_NAME"
 
 set +e
 "$SHELL_BIN" "$SOURCE/configure" \
@@ -51,7 +53,7 @@ set +e
   --without-krb5 --without-netapi --without-opencl --without-opengl \
   --without-oss --without-pcap --without-pcsclite --without-pulse \
   --without-sane --without-sdl --without-udev --without-usb --without-v4l2 \
-  --without-vulkan 2>&1 | tee configure.log
+  --with-vulkan 2>&1 | tee configure.log
 status=${PIPESTATUS[0]}
 set -e
 if test -f config.status; then
@@ -74,4 +76,7 @@ grep -Fq "aarch64_CC = $PE_CLANG" Makefile || {
   echo "PE configure did not select the resource-aware Clang wrapper." >&2
   exit 4
 }
-echo "JUICE_PE_CONFIGURE_OK path=$BUILD compiler=$PE_CLANG archs=$PE_ARCHS"
+grep -Fq 'dlls/vulkan-1/aarch64-windows/vulkan-1.dll:' Makefile || {
+  echo "PE configure did not enable Vulkan." >&2; exit 4;
+}
+echo "JUICE_PE_CONFIGURE_OK path=$BUILD compiler=$PE_CLANG archs=$PE_ARCHS vulkan=moltenvk dx12=wine-vkd3d"

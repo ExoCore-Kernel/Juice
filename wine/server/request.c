@@ -597,6 +597,7 @@ static void create_dir( const char *name, struct stat *st )
 static char *create_server_dir( int force )
 {
     const char *prefix = getenv( "WINEPREFIX" );
+    const char *server_root = getenv( "JUICE_WINESERVER_ROOT" );
     char *p, *config_dir, *base_dir;
     struct stat st, st2;
 
@@ -640,13 +641,24 @@ static char *create_server_dir( int force )
 
     /* create the base directory if needed */
 
+    if (server_root && server_root[0])
+    {
+        if (server_root[0] != '/')
+            fatal_error( "invalid directory %s in JUICE_WINESERVER_ROOT: not an absolute path\n", server_root );
+        create_dir( server_root, &st2 );
+        if (asprintf( &base_dir, "%s/.wine-%u", server_root, getuid() ) == -1)
+            fatal_error( "out of memory\n" );
+    }
+    else
+    {
 #ifdef __ANDROID__  /* there's no /tmp dir on Android */
-    if (asprintf( &base_dir, "%s/.wineserver", config_dir ) == -1)
-        fatal_error( "out of memory\n" );
+        if (asprintf( &base_dir, "%s/.wineserver", config_dir ) == -1)
+            fatal_error( "out of memory\n" );
 #else
-    if (asprintf( &base_dir, "/tmp/.wine-%u", getuid() ) == -1)
-        fatal_error( "out of memory\n" );
+        if (asprintf( &base_dir, "/tmp/.wine-%u", getuid() ) == -1)
+            fatal_error( "out of memory\n" );
 #endif
+    }
     create_dir( base_dir, &st2 );
 
     /* now create the server directory */

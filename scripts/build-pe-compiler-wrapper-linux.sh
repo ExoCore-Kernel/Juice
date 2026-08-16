@@ -21,8 +21,9 @@ case "$OUTPUT" in
 esac
 
 case "$(uname -m)" in
-  x86_64|amd64) ;;
-  *) echo "The Linux PE compiler wrapper currently targets an x86_64 host." >&2; exit 2 ;;
+  x86_64|amd64) host_file_pattern='ELF 64-bit.*x86-64' ;;
+  aarch64|arm64) host_file_pattern='ELF 64-bit.*ARM aarch64' ;;
+  *) echo "The Linux PE compiler wrapper requires a 64-bit x86 or ARM host." >&2; exit 2 ;;
 esac
 
 test -f "$SOURCE" || { echo "Missing PE wrapper source: $SOURCE" >&2; exit 2; }
@@ -34,7 +35,7 @@ command -v "$HOST_CC" >/dev/null 2>&1 || { echo "Missing host C compiler: $HOST_
 verify_output()
 {
   test -x "$OUTPUT" || { echo "Linux PE compiler wrapper was not built." >&2; exit 3; }
-  file "$OUTPUT" | grep -Eq 'ELF 64-bit.*x86-64' || {
+  file "$OUTPUT" | grep -Eq "$host_file_pattern" || {
     echo "Unexpected Linux PE compiler wrapper output: $OUTPUT" >&2
     file "$OUTPUT" >&2 || true
     exit 3

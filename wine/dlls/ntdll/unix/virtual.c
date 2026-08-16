@@ -33,6 +33,9 @@
     !defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
 # define JUICE_MACOS_MACH_VM 1
 #endif
+#if defined(__APPLE__)
+# define JUICE_MACH_VM_QUERY 1
+#endif
 
 
 #include <assert.h>
@@ -83,6 +86,7 @@
 # include <mach/task.h>
 # include <mach/thread_state.h>
 # include <mach/vm_map.h>
+# include <libkern/OSCacheControl.h>
 #undef host_page_size
 #endif
 
@@ -690,7 +694,7 @@ static void reserve_area( void *addr, void *end )
         mach_vm_address_t hole_address = address;
         kern_return_t ret;
         mach_vm_size_t size;
-        vm_region_basic_info_data_64_t info;
+        vm_region_basic_info_data_64_t info = {0};
         mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
         mach_port_t dummy_object_name = MACH_PORT_NULL;
 
@@ -2179,6 +2183,56 @@ static void *find_reserved_free_area_outside_preloader( void *start, void *end, 
     return find_reserved_free_area( start, end, size, top_down, align_mask );
 }
 
+#ifdef JUICE_MACH_VM_QUERY
+/***********************************************************************
+ *           reserved_area_is_still_empty
+ *
+ * Wine reserves large address ranges early in process startup and later
+ * replaces pieces of those PROT_NONE mappings with Win32 allocations.  On
+ * Darwin, pthread stacks and other native mappings can be installed inside
+ * one of those ranges without updating Wine's reserved-area bookkeeping.
+ * Replacing such a range with MAP_FIXED destroys the native mapping.
+ *
+ * Confirm that every live Mach region covered by the candidate is still a
+ * no-access reservation before allowing the destructive replacement.  A
+ * changed mapping is left alone; map_free_area() will subsequently probe the
+ * live VM map with anon_mmap_tryfixed() and choose a genuinely free address.
+ */
+static BOOL reserved_area_is_still_empty( void *base, size_t size )
+{
+    static unsigned int changed_mapping_count;
+    vm_address_t cursor = (vm_address_t)base;
+    const vm_address_t end = cursor + size;
+
+    while (cursor < end)
+    {
+        vm_address_t region = cursor;
+        vm_size_t region_size = 0;
+        vm_region_basic_info_data_64_t info;
+        mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
+        mach_port_t object_name = MACH_PORT_NULL;
+        kern_return_t ret;
+
+        ret = vm_region_64( mach_task_self(), &region, &region_size,
+                            VM_REGION_BASIC_INFO_64, (vm_region_info_t)&info,
+                            &count, &object_name );
+        if (object_name != MACH_PORT_NULL)
+            mach_port_deallocate( mach_task_self(), object_name );
+        if (ret != KERN_SUCCESS || !region_size || region > cursor ||
+            region + region_size <= cursor || info.protection != VM_PROT_NONE)
+        {
+            if (changed_mapping_count++ < 16)
+                fprintf( stderr, "[JuiceVM] preserved live native mapping candidate=%p-%p cursor=%p region=%p-%p prot=%x status=%x\n",
+                         base, (char *)base + size, (void *)cursor, (void *)region,
+                         (char *)region + region_size, info.protection, ret );
+            return FALSE;
+        }
+        cursor = min( region + region_size, end );
+    }
+    return TRUE;
+}
+#endif
+
 /***********************************************************************
  *           map_reserved_area
  *
@@ -2221,7 +2275,13 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size, 
             if (ptr) break;
         }
     }
-    if (ptr && anon_mmap_fixed( ptr, size, unix_prot, mmap_flags ) != ptr) ptr = NULL;
+    if (ptr)
+    {
+#ifdef JUICE_MACH_VM_QUERY
+        if (!reserved_area_is_still_empty( ptr, size )) ptr = NULL;
+#endif
+        if (ptr && anon_mmap_fixed( ptr, size, unix_prot, mmap_flags ) != ptr) ptr = NULL;
+    }
     return ptr;
 }
 
@@ -7337,6 +7397,24 @@ NTSTATUS WINAPI NtFlushInstructionCache( HANDLE handle, const void *addr, SIZE_T
 {
 #if defined(__x86_64__) || defined(__i386__)
     /* no-op */
+#elif defined(__APPLE__)
+    /*
+     * Clang provides __builtin___clear_cache() on Darwin, but Wine's
+     * configure probe does not currently expose it as __clear_cache when
+     * cross-compiling for iOS.  FEX relies on this syscall after publishing
+     * translated ARM64EC code, so silently treating it as a no-op leaves the
+     * CPU free to execute stale instruction-cache lines.  Use Darwin's
+     * public cache-control API directly on Apple ARM targets.
+     */
+    if (handle == GetCurrentProcess())
+    {
+        sys_icache_invalidate( (void *)addr, size );
+    }
+    else
+    {
+        static int once;
+        if (!once++) FIXME( "%p %p %ld other process not supported\n", handle, addr, size );
+    }
 #elif defined(HAVE___CLEAR_CACHE)
     if (handle == GetCurrentProcess())
     {

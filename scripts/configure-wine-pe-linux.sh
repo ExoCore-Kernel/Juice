@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
+source "$ROOT/config/graphics-build.env"
 SOURCE="$ROOT/wine"
 BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 TOOLS="${JUICE_WINE_TOOLS_BUILD:-$ROOT/build/wine-tools-linux}"
@@ -63,6 +64,7 @@ export JUICE_REAL_PE_CLANG="$REAL_PE_CLANG"
 export JUICE_PE_BUILD_DIR="$BUILD"
 export JUICE_INCBIN_PACKER="$PE_PACKER"
 export JUICE_PYTHON="$PE_PYTHON"
+export ac_cv_lib_soname_MoltenVK="$JUICE_MOLTENVK_RUNTIME_NAME"
 
 # Wine's configure test keys off __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8. Apple/iOS
 # Clang does not reliably define that GCC compatibility macro for AArch64 even
@@ -85,7 +87,7 @@ set +e
   --without-krb5 --without-netapi --without-opencl --without-opengl \
   --without-oss --without-pcap --without-pcsclite --without-pulse \
   --without-sane --without-sdl --without-udev --without-usb --without-v4l2 \
-  --without-vulkan 2>&1 | tee configure.log
+  --with-vulkan 2>&1 | tee configure.log
 status=${PIPESTATUS[0]}
 set -e
 test "$status" -eq 0 || exit "$status"
@@ -104,5 +106,7 @@ case "$pe_cc_line" in
     ;;
 esac
 grep -Fq "toolsdir = $TOOLS" Makefile || { echo "PE Linux cross-configure did not use the native Linux Wine tools tree." >&2; exit 4; }
+grep -Fq 'dlls/vulkan-1/aarch64-windows/vulkan-1.dll:' Makefile || { echo "PE build is missing Vulkan." >&2; exit 4; }
+grep -Fq 'dlls/d3d12/aarch64-windows/d3d12.dll:' Makefile || { echo "PE build is missing Direct3D 12." >&2; exit 4; }
 
-echo "JUICE_PE_LINUX_CONFIGURE_OK path=$BUILD compiler=$PE_WRAPPER real=$REAL_PE_CLANG archs=$PE_ARCHS toolchain=$IOS_TOOLCHAIN"
+echo "JUICE_PE_LINUX_CONFIGURE_OK path=$BUILD compiler=$PE_WRAPPER real=$REAL_PE_CLANG archs=$PE_ARCHS toolchain=$IOS_TOOLCHAIN vulkan=moltenvk dx12=wine-vkd3d"

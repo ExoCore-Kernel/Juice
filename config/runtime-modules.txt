@@ -1,6 +1,6 @@
 # Grape ARM64 runtime. These are Make targets relative to the PE build.
 # The list deliberately includes installer plumbing (MSI/Cabinet/RPC/OLE,
-# services, registry and shell) but does not add Vulkan or DirectX work.
+# services, registry and shell) plus the experimental MoltenVK and D3D12 path.
 dlls/advapi32/aarch64-windows/advapi32.dll
 dlls/advpack/aarch64-windows/advpack.dll
 dlls/apisetschema/aarch64-windows/apisetschema.dll
@@ -18,6 +18,8 @@ dlls/d2d1/aarch64-windows/d2d1.dll
 dlls/d3d10_1/aarch64-windows/d3d10_1.dll
 dlls/d3d10core/aarch64-windows/d3d10core.dll
 dlls/d3d11/aarch64-windows/d3d11.dll
+dlls/d3d12/aarch64-windows/d3d12.dll
+dlls/d3d12core/aarch64-windows/d3d12core.dll
 dlls/d3dcompiler_47/aarch64-windows/d3dcompiler_47.dll
 dlls/dhcpcsvc/aarch64-windows/dhcpcsvc.dll
 dlls/dwrite/aarch64-windows/dwrite.dll
@@ -57,11 +59,13 @@ dlls/user32/aarch64-windows/user32.dll
 dlls/userenv/aarch64-windows/userenv.dll
 dlls/uxtheme/aarch64-windows/uxtheme.dll
 dlls/version/aarch64-windows/version.dll
+dlls/vulkan-1/aarch64-windows/vulkan-1.dll
 dlls/win32u/aarch64-windows/win32u.dll
 dlls/wined3d/aarch64-windows/wined3d.dll
 dlls/wininet/aarch64-windows/wininet.dll
 dlls/wineios.drv/aarch64-windows/wineios.drv
 dlls/wintrust/aarch64-windows/wintrust.dll
+dlls/winevulkan/aarch64-windows/winevulkan.dll
 dlls/ws2_32/aarch64-windows/ws2_32.dll
 dlls/xinput1_1/aarch64-windows/xinput1_1.dll
 dlls/xinput1_2/aarch64-windows/xinput1_2.dll

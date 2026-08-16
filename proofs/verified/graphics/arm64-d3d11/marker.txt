@@ -1,0 +1,1 @@
+JUICE_D3D11_SMOKE_OK bytes=4096 feature_level=0x00009300 backend=wined3d-vulkan-moltenvk

@@ -1036,8 +1036,28 @@ static BOOL load_desktop_driver( HWND hwnd )
 
 static void load_display_driver(void)
 {
+    static const WCHAR wineiosW[] = {'w','i','n','e','i','o','s','.','d','r','v',0};
     USEROBJECTFLAGS flags;
     HWINSTA winstation;
+
+    /*
+     * A normal Wine desktop records its graphics driver beneath the dynamic
+     * video-device GUID before win32u asks for it.  Juice can intentionally
+     * start a Windows application against a persistent prefix without first
+     * launching explorer, so that GUID is not guaranteed to exist yet.  The
+     * UIKit socket is an explicit host contract; use it to load the iOS driver
+     * directly instead of silently installing the null driver.
+     */
+    if (getenv( "JUICE_IOS_SOCKET" ))
+    {
+        void *ret_ptr;
+        ULONG ret_len;
+        NTSTATUS status = KeUserModeCallback( NtUserLoadDriver, wineiosW, sizeof(wineiosW),
+                                              &ret_ptr, &ret_len );
+
+        fprintf( stderr, "[JuiceDriver] direct-load status=%08x driver=%p\n", status, user_driver );
+        if (!status && user_driver != &lazy_load_driver) return;
+    }
 
     if (is_service_process() || !load_desktop_driver( get_desktop_window() ) || user_driver == &lazy_load_driver)
     {
@@ -1443,13 +1463,18 @@ void __wine_set_user_driver( const struct user_driver_funcs *funcs, UINT version
     SET_USER_FUNC(ThreadDetach);
 #undef SET_USER_FUNC
 
-    prev = InterlockedExchangePointer( (void **)&user_driver, driver );
-    fprintf( stderr, "[JuiceDriver] install prev=%p lazy=%p null=%p new=%p create=%p\n", prev, &lazy_load_driver, &null_user_driver, driver, driver->pCreateWindow );
+    prev = InterlockedCompareExchangePointer( (void **)&user_driver, driver,
+                                              (void *)&lazy_load_driver );
+    if (prev == &null_user_driver)
+        prev = InterlockedCompareExchangePointer( (void **)&user_driver, driver,
+                                                  (void *)&null_user_driver );
+    fprintf( stderr, "[JuiceDriver] install prev=%p lazy=%p null=%p candidate=%p create=%p installed=%d\n",
+             prev, &lazy_load_driver, &null_user_driver, driver, driver->pCreateWindow,
+             prev == &lazy_load_driver || prev == &null_user_driver );
     if (prev != &lazy_load_driver && prev != &null_user_driver)
     {
         /* another thread beat us to it */
         free( driver );
-        driver = prev;
     }
 }
 

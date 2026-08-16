@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/graphics-build.env"
 SOURCE="$ROOT/wine"
 BUILD="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
 TOOLS="${JUICE_WINE_TOOLS_BUILD:-$ROOT/build/wine-tools-linux}"
@@ -46,6 +47,7 @@ export AR="$AR_BIN" RANLIB="$RANLIB_BIN" OTOOL="$OTOOL_BIN"
 export BISON="${BISON:-bison}" YACC="${YACC:-bison -y}" M4="${M4:-m4}"
 export CFLAGS="${CFLAGS:--O2}" CXXFLAGS="${CXXFLAGS:--O2}"
 export wine_cv_recent_bison=yes ac_cv_func_pthread_create=yes JUICE_IOS_DEVICE=1
+export ac_cv_lib_soname_MoltenVK="$JUICE_MOLTENVK_RUNTIME_NAME"
 
 # Wine's configure test keys off __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8. Apple/iOS
 # Clang does not reliably define that GCC compatibility macro for AArch64 even
@@ -91,7 +93,7 @@ set +e
   --without-gstreamer --without-krb5 --without-netapi --without-opencl \
   --without-opengl --without-oss --without-pcap --without-pcsclite \
   --without-pulse --without-sane --without-sdl --without-udev --without-usb \
-  --without-v4l2 --without-vulkan 2>&1 | tee configure.log
+  --without-v4l2 --with-vulkan 2>&1 | tee configure.log
 status=${PIPESTATUS[0]}
 set -e
 test "$status" -eq 0 || exit "$status"
@@ -99,6 +101,10 @@ test -f Makefile || { echo "Wine Linux cross-configure did not create a Makefile
 
 grep -Fq "toolsdir = $TOOLS" Makefile || { echo "Wine cross-configure did not bind the x86_64 Linux Wine tools tree." >&2; exit 4; }
 grep -Eq '^HOST_ARCH = +aarch64$' Makefile || { echo "Wine cross-configure did not select the arm64 Darwin host." >&2; exit 4; }
+grep -Fq "#define SONAME_LIBVULKAN \"$JUICE_MOLTENVK_RUNTIME_NAME\"" include/config.h || {
+  echo "Wine Linux cross-configure did not enable the bundled MoltenVK runtime." >&2
+  exit 5
+}
 
 freetype_status=enabled
 if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
@@ -111,4 +117,4 @@ else
   freetype_status=disabled
 fi
 
-echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status${freetype_runtime_name:+ freetype_soname=$freetype_runtime_name}"
+echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status vulkan=moltenvk${freetype_runtime_name:+ freetype_soname=$freetype_runtime_name}"

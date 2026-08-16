@@ -54,8 +54,9 @@ export HOME=/var/mobile
 export TMPDIR=/var/mobile/Documents/JuiceData/tmp
 export WINEPREFIX="$PREFIX"
 export WINELOADER="$GRAPE/tools/grape-nested-wrapper"
+export WINELOADERNOEXEC=1
 export WINESERVER="$SERVER"
-export WINEDLLPATH="$PE:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/win32u:$NATIVE/ws2_32"
+export WINEDLLPATH="$PE:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/winevulkan:$NATIVE/win32u:$NATIVE/ws2_32"
 export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH:-/var/jb/usr/lib}"
 export JUICE_IOS_SOCKET="$SOCKET"
 # This runner verifies the translator, not prefix initialization.  Keep the
@@ -63,6 +64,9 @@ export JUICE_IOS_SOCKET="$SOCKET"
 # JUICE_SKIP_WINEBOOT=0, while the normal smoke reaches the x86-64 payload
 # directly against the checked-in prefix template.
 export JUICE_SKIP_WINEBOOT="${JUICE_SKIP_WINEBOOT:-1}"
+export JUICE_WINESERVER_ROOT="${JUICE_WINESERVER_ROOT:-/var/mobile/Documents/JuiceData/wineserver}"
+mkdir -p "$JUICE_WINESERVER_ROOT"
+chmod 700 "$JUICE_WINESERVER_ROOT"
 export JUICE_EXPERIMENTAL_X64=1
 if test "${JUICE_X64_SMOKE_HEADLESS:-1}" = 1; then
   export JUICE_X64_SMOKE_HEADLESS=1

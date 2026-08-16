@@ -1,0 +1,1294 @@
+JUICE_HEADLESS_TEST_BEGIN
+EXTERNAL_INPUT_READY keyboard=hardware gamecontroller=xinput-v1 state=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/controller-v1.bin
+DISPLAY_SOCKET path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/j.sock bind=0 listen=0 errno=2
+CONTROL_V1_SOCKET path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/jc1.sock bind=0 listen=0 errno=2
+EXPERIMENTAL_STATE multi_window=1 x86_64=1
+HOST_METAL_DEVICE available=0 name=none
+GUI_READY
+EXPERIMENTAL_X86_64 enabled=1
+AUTO_LAUNCH_CUSTOM path=/var/mobile/Documents/JuiceData/SmokeTests/graphics-x86_64/juice-d3d11-smoke.exe machine=0x8664
+PE_ARCH_DETECTED machine=0x8664 arch=x86_64 runtime=Grape-X64 path=/var/mobile/Documents/JuiceData/SmokeTests/graphics-x86_64/juice-d3d11-smoke.exe
+RUNTIME_SELECTED runtime=Grape-X64 prefix=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix-x86_64
+PREFIX_RUNTIME_LINKS count=0 system32=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix-x86_64/drive_c/windows/system32
+PREFIX_APISET_READY path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix-x86_64/drive_c/windows/system32/apisetschema.dll existing=0
+Wine server: 0 pid=21073
+
+GUI launch /var/mobile/Documents/JuiceData/SmokeTests/graphics-x86_64/juice-d3d11-smoke.exe: 0 pid=21074
+[JuiceWine parent] bundle libraries path=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Libraries:/var/jb/usr/lib
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=21075
+[JuiceWine] iOS low-VA release start=0x10000 end=0x100000000 status=0 OK
+[JuiceLowVA] MAP_FIXED failed count=1 start=0x10000 size=0x67ff0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=2 start=0x10000 size=0x33ff0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=3 start=0x10000 size=0x19ff0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=4 start=0x10000 size=0xcff0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=5 start=0x10000 size=0x67f0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=6 start=0x10000 size=0x33f0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=7 start=0x10000 size=0x19f0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=8 start=0x10000 size=0xcf0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=9 start=0x10000 size=0x670000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=10 start=0x10000 size=0x330000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=11 start=0x10000 size=0x190000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=12 start=0x10000 size=0xc0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=13 start=0x10000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=14 start=0x10000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=15 start=0x10000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=16 start=0x20000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=17 start=0x20000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=18 start=0x30000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=19 start=0x40000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=20 start=0x40000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=21 start=0x50000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=22 start=0x50000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=23 start=0x60000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=24 start=0x70000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=25 start=0x70000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=26 start=0x70000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=27 start=0x80000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=28 start=0x80000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=29 start=0x90000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=30 start=0xa0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=31 start=0xa0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=32 start=0xb0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] suppressing repeated MAP_FIXED failures; sampling every 256 probes
+[JuiceLowVA] MAP_FIXED failed count=256 start=0x7b0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=512 start=0xfc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=768 start=0x17c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=1024 start=0x1fc0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=1280 start=0x27c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=1536 start=0x2fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=1792 start=0x37b0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=2048 start=0x3fc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=2304 start=0x47c0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=2560 start=0x4fb0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=2816 start=0x57c0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=3072 start=0x5fe0000 size=0x1a0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=3328 start=0x67e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=3584 start=0x6fc0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=3840 start=0x77d0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=4096 start=0x7fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=4352 start=0x87c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=4608 start=0x8fd0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=4864 start=0x97d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=5120 start=0x9fc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=5376 start=0xa7d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=5632 start=0xafc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=5888 start=0xb7c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=6144 start=0xbfc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=6400 start=0xc7e0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=6656 start=0xcff0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=6912 start=0xd7c0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=7168 start=0xdfd0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=7424 start=0xe7d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=7680 start=0xefc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=7936 start=0xf7d0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=8192 start=0xffd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=8448 start=0x107c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=8704 start=0x10fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=8960 start=0x117c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=9216 start=0x11fc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=9472 start=0x127c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=9728 start=0x12fe0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=9984 start=0x137f0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=10240 start=0x13fc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=10496 start=0x147d0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=10752 start=0x14fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=11008 start=0x157d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=11264 start=0x15fd0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=11520 start=0x167e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=11776 start=0x16fd0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=12032 start=0x177d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=12288 start=0x17fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=12544 start=0x187d0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=12800 start=0x18fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=13056 start=0x197e0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=13312 start=0x1a000000 size=0x1a000000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=13568 start=0x1a7c0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=13824 start=0x1afd0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=14080 start=0x1b7d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=14336 start=0x1bfc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=14592 start=0x1c7d0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=14848 start=0x1cfd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=15104 start=0x1d7c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=15360 start=0x1dfd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=15616 start=0x1e7c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=15872 start=0x1efc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=16128 start=0x1f7c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=16384 start=0x1ffe0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=16640 start=0x207f0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=16896 start=0x20fc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=17152 start=0x217d0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=17408 start=0x21fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=17664 start=0x227d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=17920 start=0x22fd0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=18176 start=0x237e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=18432 start=0x23fd0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=18688 start=0x247d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=18944 start=0x24fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=19200 start=0x257d0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=19456 start=0x25fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=19712 start=0x267e0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=19968 start=0x27000000 size=0xd000000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=20224 start=0x277c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=20480 start=0x27fd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=20736 start=0x287d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=20992 start=0x28fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=21248 start=0x297d0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=21504 start=0x29fe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=21760 start=0x2a7d0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=22016 start=0x2afd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=22272 start=0x2b7d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=22528 start=0x2bfd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=22784 start=0x2c7d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=23040 start=0x2cfe0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=23296 start=0x2d800000 size=0x6800000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=23552 start=0x2dfd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=23808 start=0x2e7d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=24064 start=0x2efe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=24320 start=0x2f7e0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=24576 start=0x2ffd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=24832 start=0x307f0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=25088 start=0x30fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=25344 start=0x317e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=25600 start=0x31fe0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=25856 start=0x327d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=26112 start=0x32fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=26368 start=0x337e0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=26624 start=0x34000000 size=0x1a000000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=26880 start=0x347c0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=27136 start=0x34fd0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=27392 start=0x357d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=27648 start=0x35fc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=27904 start=0x367d0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=28160 start=0x36fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=28416 start=0x377c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=28672 start=0x37fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=28928 start=0x387c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=29184 start=0x38fc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=29440 start=0x397c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=29696 start=0x39fe0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=29952 start=0x3a7f0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=30208 start=0x3afc0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=30464 start=0x3b7d0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=30720 start=0x3bfd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=30976 start=0x3c7d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=31232 start=0x3cfd0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=31488 start=0x3d7e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=31744 start=0x3dfd0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=32000 start=0x3e7d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=32256 start=0x3efd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=32512 start=0x3f7d0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=32768 start=0x3ffd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=33024 start=0x407e0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=33280 start=0x41000000 size=0xd000000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=33536 start=0x417c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=33792 start=0x41fd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=34048 start=0x427d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=34304 start=0x42fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=34560 start=0x437d0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=34816 start=0x43fe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=35072 start=0x447d0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=35328 start=0x44fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=35584 start=0x457d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=35840 start=0x45fd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=36096 start=0x467d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=36352 start=0x46fe0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=36608 start=0x47800000 size=0x6800000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=36864 start=0x47fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=37120 start=0x487d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=37376 start=0x48fe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=37632 start=0x497e0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=37888 start=0x49fd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=38144 start=0x4a7f0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=38400 start=0x4afd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=38656 start=0x4b7e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=38912 start=0x4bfe0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=39168 start=0x4c7d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=39424 start=0x4cfd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=39680 start=0x4d7e0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=39936 start=0x4e000000 size=0xd000000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=40192 start=0x4e7c0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=40448 start=0x4efd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=40704 start=0x4f7d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=40960 start=0x4ffd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=41216 start=0x507d0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=41472 start=0x50fe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=41728 start=0x517d0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=41984 start=0x51fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=42240 start=0x527d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=42496 start=0x52fd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=42752 start=0x537d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=43008 start=0x53fe0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=43264 start=0x54800000 size=0x6800000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=43520 start=0x54fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=43776 start=0x557d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=44032 start=0x55fe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=44288 start=0x567e0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=44544 start=0x56fd0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=44800 start=0x577f0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=45056 start=0x57fd0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=45312 start=0x587e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=45568 start=0x58fe0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=45824 start=0x597d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=46080 start=0x59fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=46336 start=0x5a7e0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=46592 start=0x5b000000 size=0x6800000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=46848 start=0x5b7d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=47104 start=0x5bfd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=47360 start=0x5c7e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=47616 start=0x5cfe0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=47872 start=0x5d7d0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=48128 start=0x5dff0000 size=0xd0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=48384 start=0x5e7d0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=48640 start=0x5efe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=48896 start=0x5f7e0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=49152 start=0x5ffd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=49408 start=0x607d0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=49664 start=0x60fe0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=49920 start=0x61800000 size=0x3400000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=50176 start=0x61fe0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=50432 start=0x627e0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=50688 start=0x62ff0000 size=0x70000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=50944 start=0x637e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=51200 start=0x63fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=51456 start=0x647f0000 size=0x60000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=51712 start=0x64fd0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=51968 start=0x657f0000 size=0x40000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=52224 start=0x65fe0000 size=0x30000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=52480 start=0x667e0000 size=0x20000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=52736 start=0x66fe0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=52992 start=0x677e0000 size=0x10000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=53248 start=0x7f000000 size=0x3f0000 prot=0 errno=12
+[JuiceLowVA] MAP_FIXED failed count=53504 start=0x7f7f0000 size=0x80000 prot=0 errno=12
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x32007005 CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=21075 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=21075 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x32007005 CS_DEBUGGED=YES
+[JuiceStage] running controlled wineboot initialization
+[JuiceWine] host-page expanding executable section .text: section=0x140001000 mapping=0x140000000 size=16384
+[JuiceWine] anonymous PE executable section .text at 0x140000000 size=16384
+[JuiceStage] loading Windows ntdll; transfer=0x140001000 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll machine=8664 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x17f8e0000 size=983040
+[JuiceWine] anonymous PE executable section .hexpthk at 0x17f9d0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll status=40000003 module=0x17f8d0000 size=690000
+[JuiceStage] load_ntdll returned; transfer=0x140001000
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x105e00000 stack_limit=0x105d08000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x17ffd8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x28010fcd0 stack_base=0x105e00000 stack_limit=0x105d08000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=0 transfer=0x140001000 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x140001000 arg=0x17ffdc000 teb=0x17ffd8000 data=0x280000000 frame=0x28010fcd0 stack_base=0x105e00000 stack_limit=0x105d08000
+[JuiceStage] calling signal_set_full_context; ctx=0x105dffc70 target_pc=0x17f99bd48 target_sp=0x105e00000 target_x18=0x17ffd8000 LdrInitializeThunk=0x17f99bd7c RtlUserThreadStart=0x17f99bd48
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x17f99bd48 frame_sp=0x105e00000 frame_x18=0x17ffd8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x17f99bd7c user_sp=0x105dffc70 x16=0x17f99bd7c x17=0x105dffc70 x18=0x17ffd8000 restore=00400007
+[JuiceX18] broad #1 pc=0x17f972f98 fault=0x17ee instr=796fde48 x8=0x0 x16=0x2b002b x17=0x100 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #2 pc=0x17f9a1a7c fault=0x60 instr=f940324c x8=0x0 x16=0x17f972f98 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #3 pc=0x17f998158 fault=0x1788 instr=f94bc648 x8=0x17f99c024 x16=0x17f9a1a7c x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #4 pc=0x17f9a250c fault=0x60 instr=f9403248 x8=0x105440090 x16=0x105440108 x17=0x105440888 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #5 pc=0x17f9730bc fault=0x180c instr=b9580e48 x8=0x0 x16=0x17f998334 x17=0x105dfefc0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #6 pc=0x17f965b54 fault=0x60 instr=f9403248 x8=0x17fa36850 x16=0x0 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #7 pc=0x17f9a19e4 fault=0x3000 instr=b9700248 x8=0x96 x16=0x725c x17=0x225c x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #8 pc=0x105191d94 fault=0x378 instr=f941be4a x8=0x33 x16=0x105191d90 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #9 pc=0x105191d94 fault=0x378 instr=f941be4a x8=0x49 x16=0x105191d90 x17=0x105dff250 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #10 pc=0x17f9a19e4 fault=0x3000 instr=b9700248 x8=0x9 x16=0x725c x17=0x225c x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #11 pc=0x17f964fc8 fault=0x60 instr=f9403248 x8=0xffffffe3 x16=0x17ffdb0bf x17=0x225c x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #12 pc=0x17f99fd9c fault=0x48 instr=b9404a48 x8=0x1054400d8 x16=0x17f964fc8 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #13 pc=0x17f964fc8 fault=0x60 instr=f9403248 x8=0x1c x16=0x105442fb4 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #14 pc=0x17f96503c fault=0x60 instr=f9403248 x8=0x1054434b8 x16=0x105446390 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #15 pc=0x17f964fc8 fault=0x60 instr=f9403248 x8=0x2f x16=0x105dff398 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #16 pc=0x17f96503c fault=0x60 instr=f9403248 x8=0x1054463d4 x16=0x105448ad0 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #17 pc=0x17f986960 fault=0x60 instr=f9403248 x8=0x80000005 x16=0x105dfef7e x17=0x105dff0f0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #18 pc=0x17f964a44 fault=0x60 instr=f9403248 x8=0x0 x16=0x105443d58 x17=0x105dff590 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #19 pc=0x17f964b2c fault=0x60 instr=f9403248 x8=0x1054484ea x16=0x17f964a44 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #20 pc=0x17f9778bc fault=0x60 instr=f9403248 x8=0x4550 x16=0x17f9975c0 x17=0x105dff590 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #21 pc=0x17f9a19e4 fault=0x3000 instr=b9700248 x8=0x63 x16=0x725c x17=0x225c x18=0x0 teb=0x17ffd8000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/libarm64ecfex/aarch64-windows/libarm64ecfex.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/libarm64ecfex.dll/aarch64-windows/libarm64ecfex.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/libarm64ecfex.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll machine=0000 status=00000000
+[JuiceWine] host-page expanding executable section .text: section=0x17f491000 mapping=0x17f490000 size=2080768
+[JuiceWine] anonymous PE executable section .text at 0x17f490000 size=2080768
+[JuiceWine] host-page expanding executable section .hexpthk: section=0x17f689000 mapping=0x17f688000 size=16384
+[JuiceWine] anonymous PE executable section .hexpthk at 0x17f688000 size=16384
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll status=40000003 module=0x17f490000 size=3bd000
+[JuiceX18] broad #22 pc=0x17f999320 fault=0x1788 instr=f94bc654 x8=0x0 x16=0x17f999370 x17=0x105dfeee0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #23 pc=0x17f99648c fault=0x1788 instr=f94bc648 x8=0x17f99c024 x16=0xc40 x17=0xffffffffbff00000 x18=0x0 teb=0x17ffd8000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=000000017F490000 slot=36c540 exit=0000000000000000
+[JuiceX18] broad #24 pc=0x17f99648c fault=0x1788 instr=f94bc648 x8=0x17f99c024 x16=0x105dfedb0 x17=0x17f9a1eec x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #25 pc=0x17f9a19e4 fault=0x3000 instr=b9700248 x8=0xd x16=0x725c x17=0x225c x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #26 pc=0x17f955cac fault=0x2c8 instr=f9416648 x8=0x105dff0d0 x16=0x17ffdb195 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #27 pc=0x17f99648c fault=0x1788 instr=f94bc648 x8=0x17f99c024 x16=0x17f9994e4 x17=0x105dfea90 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #28 pc=0x17f99fd9c fault=0x48 instr=b9404a48 x8=0x1054400d8 x16=0x17f996964 x17=0x105dff410 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #29 pc=0x17f9856a8 fault=0x60 instr=f9403240 x8=0x105444350 x16=0x17f99fd9c x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #30 pc=0x17f9a1e94 fault=0x3004 instr=b9700656 x8=0x105dfec89 x16=0x105dfec87 x17=0x105dffc70 x18=0x0 teb=0x17ffd8000
+0024:err:seh:arm64ec_process_init [JuiceHybrid] process dispatch module=000000017F490000 exit=000000017F497B60 jump=000000017F497B30 ret=000000017F497B38
+[JuiceX18] broad #31 pc=0x17f995a80 fault=0x60 instr=f9403250 x8=0x17f99c030 x16=0x17f995a80 x17=0x105dfbff0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #32 pc=0x17f995a80 fault=0x60 instr=f9403250 x8=0x105191d90 x16=0x17f995a80 x17=0xccccfff9ea2e0000 x18=0x0 teb=0x17ffd8000
+starting FEX based libarm64ecfex.dll
+[JuiceFEX] profiler ready
+[JuiceFEX] handlers ready
+[JuiceFEX] allocator hooks ready
+[JuiceFEX] host features ready
+[JuiceFEX] context created
+[JuiceFEX] core initialized
+[JuiceFEX] trackers ready
+[JuiceFEX] images and CPU features ready
+[JuiceFEX] x64 return thunk ready
+[JuiceFEX] process init complete
+[JuiceFEX] call-ret live allocation=0x16e010000-0x16e430000 committed=0x16e020000 default=0x16e120000 state=0x16e120000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/kernel32/aarch64-windows/kernel32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/kernel32.dll/aarch64-windows/kernel32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/kernel32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernel32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x16dcf0000 size=393216
+[JuiceWine] anonymous PE executable section .hexpthk at 0x16dd50000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernel32.dll status=40000003 module=0x16dce0000 size=330000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=000000016DCE0000 slot=b0740 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=000000016DD90740 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/kernelbase/aarch64-windows/kernelbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/kernelbase.dll/aarch64-windows/kernelbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/kernelbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernelbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x16d600000 size=983040
+[JuiceWine] anonymous PE executable section .hexpthk at 0x16d6f0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernelbase.dll status=40000003 module=0x16d5f0000 size=6f0000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=000000016D5F0000 slot=188788 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=000000016D778788 value=000000017F497B60
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE load-library"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE load-library"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=000000000000001F
+0024:trace:seh:dispatch_exception  info[1]=0000000140002060
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=00000000000000cb rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=0000000000000000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=000000014000207e
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000000000000 mxcsr=00001fa0 cs=0000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=000000000000001f
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002060
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa0 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=00000000000000cb rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=0000000000000000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000000000000 mxcsr=00001fa0 cs=0000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa0 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/d3d11/aarch64-windows/d3d11.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/d3d11.dll/aarch64-windows/d3d11.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/d3d11.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/d3d11.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x16b7b0000 size=458752
+[JuiceWine] anonymous PE executable section .hexpthk at 0x16b820000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/d3d11.dll status=40000003 module=0x16b7a0000 size=640000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=000000016B7A0000 slot=e0350 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=000000016B880350 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/dxgi/aarch64-windows/dxgi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/dxgi.dll/aarch64-windows/dxgi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/dxgi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/dxgi.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x16b4d0000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x16b500000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/dxgi.dll status=40000003 module=0x16b4c0000 size=2e0000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=000000016B4C0000 slot=90330 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=000000016B550330 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/wined3d/aarch64-windows/wined3d.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/wined3d.dll/aarch64-windows/wined3d.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/wined3d.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wined3d.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x167fd0000 size=4325376
+[JuiceWine] anonymous PE executable section .hexpthk at 0x1683f0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wined3d.dll status=40000003 module=0x167fc0000 size=2ee0000
+[JuiceX18] trampoline #1 retry=0x17f99926c restored_x17=0x28010fcd0 teb=0x17ffd8000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000167FC0000 slot=5e1400 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=00000001685A1400 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/opengl32/aarch64-windows/opengl32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/opengl32.dll/aarch64-windows/opengl32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/opengl32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/opengl32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x1675c0000 size=1310720
+[JuiceWine] anonymous PE executable section .hexpthk at 0x167700000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/opengl32.dll status=40000003 module=0x1675b0000 size=a10000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=00000001675B0000 slot=26b098 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=000000016781B098 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/gdi32/aarch64-windows/gdi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/gdi32.dll/aarch64-windows/gdi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/gdi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/gdi32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x167150000 size=655360
+[JuiceWine] anonymous PE executable section .hexpthk at 0x1671f0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/gdi32.dll status=40000003 module=0x167140000 size=470000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000167140000 slot=1112e0 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=00000001672512E0 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/user32/aarch64-windows/user32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/user32.dll/aarch64-windows/user32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/user32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/user32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x166860000 size=1179648
+[JuiceWine] anonymous PE executable section .hexpthk at 0x166980000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/user32.dll status=40000003 module=0x166850000 size=8f0000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000166850000 slot=1b1f70 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=0000000166A01F70 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/sechost/aarch64-windows/sechost.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/sechost.dll/aarch64-windows/sechost.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/sechost.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/sechost.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x16b380000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x16b3a0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/sechost.dll status=40000003 module=0x16b370000 size=150000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=000000016B370000 slot=60470 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=000000016B3D0470 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/ucrtbase/aarch64-windows/ucrtbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/ucrtbase.dll/aarch64-windows/ucrtbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/ucrtbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ucrtbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x1661d0000 size=1179648
+[JuiceWine] anonymous PE executable section .hexpthk at 0x1662f0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ucrtbase.dll status=40000003 module=0x1661c0000 size=690000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=00000001661C0000 slot=197128 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=0000000166357128 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/advapi32/aarch64-windows/advapi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/advapi32.dll/aarch64-windows/advapi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/advapi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/advapi32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x16b120000 size=327680
+[JuiceWine] anonymous PE executable section .hexpthk at 0x16b170000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/advapi32.dll status=40000003 module=0x16b110000 size=260000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=000000016B110000 slot=a04c0 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=000000016B1B04C0 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/msvcrt/aarch64-windows/msvcrt.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/msvcrt.dll/aarch64-windows/msvcrt.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/msvcrt.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msvcrt.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x165c30000 size=983040
+[JuiceWine] anonymous PE executable section .hexpthk at 0x165d20000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msvcrt.dll status=40000003 module=0x165c20000 size=5a0000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000165C20000 slot=145ee8 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=0000000165D65EE8 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/win32u/aarch64-windows/win32u.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/win32u.dll/aarch64-windows/win32u.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/win32u.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/win32u.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x165b00000 size=262144
+[JuiceWine] anonymous PE executable section .hexpthk at 0x165b40000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/win32u.dll status=40000003 module=0x165af0000 size=130000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000165AF0000 slot=90088 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=0000000165B80088 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/imm32/aarch64-windows/imm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/imm32.dll/aarch64-windows/imm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/imm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/imm32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x165990000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x1659c0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/imm32.dll status=40000003 module=0x165980000 size=170000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000165980000 slot=60450 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=00000001659E0450 value=000000017F497B60
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/wineios.drv/aarch64-windows/wineios.drv machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/wineios.drv/aarch64-windows/wineios.drv machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/wineios.drv machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wineios.drv machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x1658a0000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x1658b0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wineios.drv status=40000003 module=0x165890000 size=f0000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000165890000 slot=40068 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=00000001658D0068 value=000000017F497B60
+DISPLAY_CLIENT_CONNECTED fd=7
+[JuiceInput] display connected path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/j.sock desktop=1024x768 dpi=96
+DISPLAY_EVENT HELLO fd=7 pid=21075 desktop=1024x768 dpi=96
+[JuiceInput] queue fd registered fd=19 tid=0x24
+[JuiceDriver] ios init set driver create=0x129b8ce78 client_surface=0x129b8d9fc size=1216
+[JuiceDriver] install prev=0x127b49348 lazy=0x127b49348 null=0x127b71f10 candidate=0x12e808200 create=0x129b8ce78 installed=1
+[JuiceDriver] direct-load status=00000000 driver=0x12e808200
+JUICE_MOLTENVK_DRIVER_READY version=48 handle=0x1e16440
+[mvk-info] MoltenVK version 1.4.2, supporting Vulkan version 1.4.357.
+	The following 152 Vulkan extensions are supported:
+	VK_KHR_16bit_storage v1
+	VK_KHR_8bit_storage v1
+	VK_KHR_bind_memory2 v1
+	VK_KHR_buffer_device_address v1
+	VK_KHR_calibrated_timestamps v1
+	VK_KHR_copy_commands2 v1
+	VK_KHR_create_renderpass2 v1
+	VK_KHR_dedicated_allocation v3
+	VK_KHR_deferred_host_operations v4
+	VK_KHR_depth_stencil_resolve v1
+	VK_KHR_descriptor_update_template v1
+	VK_KHR_device_group v4
+	VK_KHR_device_group_creation v1
+	VK_KHR_driver_properties v1
+	VK_KHR_dynamic_rendering v1
+	VK_KHR_dynamic_rendering_local_read v1
+	VK_KHR_external_fence v1
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_memory v1
+	VK_KHR_external_memory_capabilities v1
+	VK_KHR_external_semaphore v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_format_feature_flags2 v2
+	VK_KHR_fragment_shader_barycentric v1
+	VK_KHR_get_memory_requirements2 v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_get_surface_capabilities2 v1
+	VK_KHR_global_priority v1
+	VK_KHR_image_format_list v1
+	VK_KHR_imageless_framebuffer v1
+	VK_KHR_incremental_present v2
+	VK_KHR_index_type_uint8 v1
+	VK_KHR_line_rasterization v1
+	VK_KHR_load_store_op_none v1
+	VK_KHR_maintenance1 v2
+	VK_KHR_maintenance2 v1
+	VK_KHR_maintenance3 v1
+	VK_KHR_maintenance4 v2
+	VK_KHR_maintenance5 v1
+	VK_KHR_maintenance6 v1
+	VK_KHR_maintenance7 v1
+	VK_KHR_maintenance8 v1
+	VK_KHR_maintenance9 v1
+	VK_KHR_map_memory2 v1
+	VK_KHR_multiview v1
+	VK_KHR_portability_subset v1
+	VK_KHR_present_id v1
+	VK_KHR_present_id2 v1
+	VK_KHR_present_wait v1
+	VK_KHR_present_wait2 v1
+	VK_KHR_push_descriptor v2
+	VK_KHR_relaxed_block_layout v1
+	VK_KHR_robustness2 v1
+	VK_KHR_sampler_mirror_clamp_to_edge v3
+	VK_KHR_sampler_ycbcr_conversion v14
+	VK_KHR_separate_depth_stencil_layouts v1
+	VK_KHR_shader_draw_parameters v1
+	VK_KHR_shader_expect_assume v1
+	VK_KHR_shader_float_controls v4
+	VK_KHR_shader_float_controls2 v1
+	VK_KHR_shader_float16_int8 v1
+	VK_KHR_shader_fma v1
+	VK_KHR_shader_integer_dot_product v1
+	VK_KHR_shader_maximal_reconvergence v1
+	VK_KHR_shader_non_semantic_info v1
+	VK_KHR_shader_quad_control v1
+	VK_KHR_shader_relaxed_extended_instruction v1
+	VK_KHR_shader_subgroup_extended_types v1
+	VK_KHR_shader_subgroup_rotate v2
+	VK_KHR_shader_subgroup_uniform_control_flow v1
+	VK_KHR_shader_terminate_invocation v1
+	VK_KHR_spirv_1_4 v1
+	VK_KHR_storage_buffer_storage_class v1
+	VK_KHR_surface v25
+	VK_KHR_surface_maintenance1 v1
+	VK_KHR_surface_protected_capabilities v1
+	VK_KHR_swapchain v70
+	VK_KHR_swapchain_maintenance1 v1
+	VK_KHR_swapchain_mutable_format v1
+	VK_KHR_synchronization2 v1
+	VK_KHR_timeline_semaphore v2
+	VK_KHR_uniform_buffer_standard_layout v1
+	VK_KHR_variable_pointers v1
+	VK_KHR_vertex_attribute_divisor v1
+	VK_KHR_vulkan_memory_model v3
+	VK_KHR_zero_initialize_workgroup_memory v1
+	VK_EXT_4444_formats v1
+	VK_EXT_buffer_device_address v2
+	VK_EXT_calibrated_timestamps v2
+	VK_EXT_debug_marker v4
+	VK_EXT_debug_report v10
+	VK_EXT_debug_utils v2
+	VK_EXT_depth_clip_control v1
+	VK_EXT_descriptor_indexing v2
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_external_memory_host v1
+	VK_EXT_external_memory_metal v1
+	VK_EXT_fragment_shader_interlock v1
+	VK_EXT_global_priority v2
+	VK_EXT_global_priority_query v1
+	VK_EXT_headless_surface v1
+	VK_EXT_host_image_copy v1
+	VK_EXT_host_query_reset v1
+	VK_EXT_image_2d_view_of_3d v1
+	VK_EXT_image_robustness v1
+	VK_EXT_index_type_uint8 v1
+	VK_EXT_inline_uniform_block v1
+	VK_EXT_layer_settings v2
+	VK_EXT_legacy_dithering v2
+	VK_EXT_line_rasterization v1
+	VK_EXT_load_store_op_none v1
+	VK_EXT_memory_budget v1
+	VK_EXT_metal_objects v2
+	VK_EXT_metal_surface v1
+	VK_EXT_non_seamless_cube_map v1
+	VK_EXT_pipeline_creation_cache_control v3
+	VK_EXT_pipeline_creation_feedback v1
+	VK_EXT_pipeline_robustness v1
+	VK_EXT_post_depth_coverage v1
+	VK_EXT_primitive_topology_list_restart v1
+	VK_EXT_private_data v1
+	VK_EXT_provoking_vertex v1
+	VK_EXT_robustness2 v1
+	VK_EXT_sample_locations v1
+	VK_EXT_scalar_block_layout v1
+	VK_EXT_separate_stencil_usage v1
+	VK_EXT_shader_atomic_float v1
+	VK_EXT_shader_demote_to_helper_invocation v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_shader_subgroup_ballot v1
+	VK_EXT_shader_subgroup_vote v1
+	VK_EXT_shader_viewport_index_layer v1
+	VK_EXT_subgroup_size_control v2
+	VK_EXT_surface_maintenance1 v1
+	VK_EXT_swapchain_colorspace v5
+	VK_EXT_swapchain_maintenance1 v1
+	VK_EXT_texel_buffer_alignment v1
+	VK_EXT_texture_compression_astc_hdr v1
+	VK_EXT_tooling_info v1
+	VK_EXT_vertex_attribute_divisor v3
+	VK_AMD_gpu_shader_half_float v2
+	VK_AMD_negative_viewport_height v1
+	VK_AMD_shader_image_load_store_lod v1
+	VK_AMD_shader_trinary_minmax v1
+	VK_GOOGLE_display_timing v1
+	VK_IMG_format_pvrtc v1
+	VK_INTEL_shader_integer_functions2 v1
+	VK_MVK_ios_surface v3
+	VK_MVK_moltenvk v37
+	VK_NV_fragment_shader_barycentric v1
+[mvk-info] GPU device:
+	model: Apple A13 GPU
+	type: Integrated
+	vendorID: 0x106b
+	deviceID: 0x10050006
+	pipelineCacheUUID: DB660224-1005-0006-0000-000100000000
+	GPU memory available: 1961 MB
+	GPU memory used: 0 MB
+	Metal Shading Language 3.0
+	supports the following GPU Features:
+		GPU Family Metal 3
+		GPU Family Apple 6
+		Read-Write Texture Tier 2
+[mvk-info] Created VkInstance for Vulkan version 1.0.357, as requested by app, with the following 3 Vulkan extensions enabled:
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_get_physical_device_properties2 v2
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/uxtheme/aarch64-windows/uxtheme.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/uxtheme.dll/aarch64-windows/uxtheme.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/uxtheme.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/uxtheme.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x1656d0000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x165700000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/uxtheme.dll status=40000003 module=0x1656c0000 size=1d0000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=00000001656C0000 slot=90a00 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=0000000165750A00 value=000000017F497B60
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE create-device-enter"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE create-device-enter"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000026
+0024:trace:seh:dispatch_exception  info[1]=00000001400020D0
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000000 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=00000001400020f5
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000000000000 mxcsr=00001fa0 cs=b8f0 ss=0544
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000026
+0024:trace:seh:RtlUnwindEx  info[1]=00000001400020d0
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa0 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000000 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000000000000 mxcsr=00001fa0 cs=b8f0 ss=0544
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa0 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/dlls/winevulkan/aarch64-windows/winevulkan.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/build/wine-ios/programs/winevulkan.dll/aarch64-windows/winevulkan.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/aarch64-windows/winevulkan.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/winevulkan.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x165370000 size=262144
+[JuiceWine] anonymous PE executable section .hexpthk at 0x1653b0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/winevulkan.dll status=40000003 module=0x165360000 size=370000
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata module=0000000165360000 slot=90268 exit=000000017F497B60
+0024:err:seh:arm64ec_update_hybrid_metadata [JuiceHybrid] metadata stored address=00000001653F0268 value=000000017F497B60
+[mvk-info] MoltenVK version 1.4.2, supporting Vulkan version 1.4.357.
+	The following 152 Vulkan extensions are supported:
+	VK_KHR_16bit_storage v1
+	VK_KHR_8bit_storage v1
+	VK_KHR_bind_memory2 v1
+	VK_KHR_buffer_device_address v1
+	VK_KHR_calibrated_timestamps v1
+	VK_KHR_copy_commands2 v1
+	VK_KHR_create_renderpass2 v1
+	VK_KHR_dedicated_allocation v3
+	VK_KHR_deferred_host_operations v4
+	VK_KHR_depth_stencil_resolve v1
+	VK_KHR_descriptor_update_template v1
+	VK_KHR_device_group v4
+	VK_KHR_device_group_creation v1
+	VK_KHR_driver_properties v1
+	VK_KHR_dynamic_rendering v1
+	VK_KHR_dynamic_rendering_local_read v1
+	VK_KHR_external_fence v1
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_memory v1
+	VK_KHR_external_memory_capabilities v1
+	VK_KHR_external_semaphore v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_format_feature_flags2 v2
+	VK_KHR_fragment_shader_barycentric v1
+	VK_KHR_get_memory_requirements2 v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_get_surface_capabilities2 v1
+	VK_KHR_global_priority v1
+	VK_KHR_image_format_list v1
+	VK_KHR_imageless_framebuffer v1
+	VK_KHR_incremental_present v2
+	VK_KHR_index_type_uint8 v1
+	VK_KHR_line_rasterization v1
+	VK_KHR_load_store_op_none v1
+	VK_KHR_maintenance1 v2
+	VK_KHR_maintenance2 v1
+	VK_KHR_maintenance3 v1
+	VK_KHR_maintenance4 v2
+	VK_KHR_maintenance5 v1
+	VK_KHR_maintenance6 v1
+	VK_KHR_maintenance7 v1
+	VK_KHR_maintenance8 v1
+	VK_KHR_maintenance9 v1
+	VK_KHR_map_memory2 v1
+	VK_KHR_multiview v1
+	VK_KHR_portability_subset v1
+	VK_KHR_present_id v1
+	VK_KHR_present_id2 v1
+	VK_KHR_present_wait v1
+	VK_KHR_present_wait2 v1
+	VK_KHR_push_descriptor v2
+	VK_KHR_relaxed_block_layout v1
+	VK_KHR_robustness2 v1
+	VK_KHR_sampler_mirror_clamp_to_edge v3
+	VK_KHR_sampler_ycbcr_conversion v14
+	VK_KHR_separate_depth_stencil_layouts v1
+	VK_KHR_shader_draw_parameters v1
+	VK_KHR_shader_expect_assume v1
+	VK_KHR_shader_float_controls v4
+	VK_KHR_shader_float_controls2 v1
+	VK_KHR_shader_float16_int8 v1
+	VK_KHR_shader_fma v1
+	VK_KHR_shader_integer_dot_product v1
+	VK_KHR_shader_maximal_reconvergence v1
+	VK_KHR_shader_non_semantic_info v1
+	VK_KHR_shader_quad_control v1
+	VK_KHR_shader_relaxed_extended_instruction v1
+	VK_KHR_shader_subgroup_extended_types v1
+	VK_KHR_shader_subgroup_rotate v2
+	VK_KHR_shader_subgroup_uniform_control_flow v1
+	VK_KHR_shader_terminate_invocation v1
+	VK_KHR_spirv_1_4 v1
+	VK_KHR_storage_buffer_storage_class v1
+	VK_KHR_surface v25
+	VK_KHR_surface_maintenance1 v1
+	VK_KHR_surface_protected_capabilities v1
+	VK_KHR_swapchain v70
+	VK_KHR_swapchain_maintenance1 v1
+	VK_KHR_swapchain_mutable_format v1
+	VK_KHR_synchronization2 v1
+	VK_KHR_timeline_semaphore v2
+	VK_KHR_uniform_buffer_standard_layout v1
+	VK_KHR_variable_pointers v1
+	VK_KHR_vertex_attribute_divisor v1
+	VK_KHR_vulkan_memory_model v3
+	VK_KHR_zero_initialize_workgroup_memory v1
+	VK_EXT_4444_formats v1
+	VK_EXT_buffer_device_address v2
+	VK_EXT_calibrated_timestamps v2
+	VK_EXT_debug_marker v4
+	VK_EXT_debug_report v10
+	VK_EXT_debug_utils v2
+	VK_EXT_depth_clip_control v1
+	VK_EXT_descriptor_indexing v2
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_external_memory_host v1
+	VK_EXT_external_memory_metal v1
+	VK_EXT_fragment_shader_interlock v1
+	VK_EXT_global_priority v2
+	VK_EXT_global_priority_query v1
+	VK_EXT_headless_surface v1
+	VK_EXT_host_image_copy v1
+	VK_EXT_host_query_reset v1
+	VK_EXT_image_2d_view_of_3d v1
+	VK_EXT_image_robustness v1
+	VK_EXT_index_type_uint8 v1
+	VK_EXT_inline_uniform_block v1
+	VK_EXT_layer_settings v2
+	VK_EXT_legacy_dithering v2
+	VK_EXT_line_rasterization v1
+	VK_EXT_load_store_op_none v1
+	VK_EXT_memory_budget v1
+	VK_EXT_metal_objects v2
+	VK_EXT_metal_surface v1
+	VK_EXT_non_seamless_cube_map v1
+	VK_EXT_pipeline_creation_cache_control v3
+	VK_EXT_pipeline_creation_feedback v1
+	VK_EXT_pipeline_robustness v1
+	VK_EXT_post_depth_coverage v1
+	VK_EXT_primitive_topology_list_restart v1
+	VK_EXT_private_data v1
+	VK_EXT_provoking_vertex v1
+	VK_EXT_robustness2 v1
+	VK_EXT_sample_locations v1
+	VK_EXT_scalar_block_layout v1
+	VK_EXT_separate_stencil_usage v1
+	VK_EXT_shader_atomic_float v1
+	VK_EXT_shader_demote_to_helper_invocation v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_shader_subgroup_ballot v1
+	VK_EXT_shader_subgroup_vote v1
+	VK_EXT_shader_viewport_index_layer v1
+	VK_EXT_subgroup_size_control v2
+	VK_EXT_surface_maintenance1 v1
+	VK_EXT_swapchain_colorspace v5
+	VK_EXT_swapchain_maintenance1 v1
+	VK_EXT_texel_buffer_alignment v1
+	VK_EXT_texture_compression_astc_hdr v1
+	VK_EXT_tooling_info v1
+	VK_EXT_vertex_attribute_divisor v3
+	VK_AMD_gpu_shader_half_float v2
+	VK_AMD_negative_viewport_height v1
+	VK_AMD_shader_image_load_store_lod v1
+	VK_AMD_shader_trinary_minmax v1
+	VK_GOOGLE_display_timing v1
+	VK_IMG_format_pvrtc v1
+	VK_INTEL_shader_integer_functions2 v1
+	VK_MVK_ios_surface v3
+	VK_MVK_moltenvk v37
+	VK_NV_fragment_shader_barycentric v1
+[mvk-info] GPU device:
+	model: Apple A13 GPU
+	type: Integrated
+	vendorID: 0x106b
+	deviceID: 0x10050006
+	pipelineCacheUUID: DB660224-1005-0006-0000-000100000000
+	GPU memory available: 1961 MB
+	GPU memory used: 0 MB
+	Metal Shading Language 3.0
+	supports the following GPU Features:
+		GPU Family Metal 3
+		GPU Family Apple 6
+		Read-Write Texture Tier 2
+[mvk-info] Created VkInstance for Vulkan version 1.1.357, as requested by app, with the following 4 Vulkan extensions enabled:
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_surface v25
+	VK_EXT_metal_surface v1
+[mvk-info] Vulkan semaphores using MTLEvent.
+[mvk-info] Descriptor sets binding resources using Metal3 argument buffers.
+[mvk-info] Created VkDevice to run on GPU Apple A13 GPU with the following 8 Vulkan extensions enabled:
+	VK_KHR_swapchain v70
+	VK_KHR_synchronization2 v1
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_host_query_reset v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_vertex_attribute_divisor v3
+[JuiceStage] init_syscall_frame entered; entry=0x1681f97b8 arg=0x12ac30040 teb=0x17ffd4000 data=0x12a520000 frame=0x12a62fb00 stack_base=0x12cd40000 stack_limit=0x12cc48000
+[JuiceStage] calling signal_set_full_context; ctx=0x12cd3fc70 target_pc=0x17f99bd48 target_sp=0x12cd40000 target_x18=0x17ffd4000 LdrInitializeThunk=0x17f99bd7c RtlUserThreadStart=0x17f99bd48
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x17f99bd48 frame_sp=0x12cd40000 frame_x18=0x17ffd4000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x17f99bd7c user_sp=0x12cd3fc70 x16=0x17f99bd7c x17=0x12cd3fc70 x18=0x17ffd4000 restore=00400007
+[JuiceCreate] ex=00000000 class=0x105dff500 version=0x0 name=0x105dff4e0 style=08000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x105dff750 ansi=1
+[JuiceFEX] call-ret live allocation=0x164f40000-0x165360000 committed=0x164f50000 default=0x165050000 state=0x165050000
+[JuiceMonitor] callee hwnd=0x1002c hmon=0x1 info=0x28010f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+DISPLAY_EVENT WINDOW pid=21075 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceMinMax] hwnd=0x1002c min=112,27 maxtrack=1036,780 max=1024,768 pos=-3,-3
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1002c flags=3c ptr=0x28010f620 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x127b544f0 shown=0
+[JuiceCreate] ex=00000000 class=0x28010f590 version=0x0 name=0x28010f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+[JuiceRect] input hwnd=0x10030 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10030 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+DISPLAY_EVENT WINDOW pid=21075 hwnd=0x10030 rect=0,0 1x1 visible=0
+[JuiceGeom] changed hwnd=0x10030 flags=3c ptr=0x28010eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x127b544f0 shown=0
+[JuiceRect] input hwnd=0x10030 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+DISPLAY_EVENT WINDOW pid=21075 hwnd=0x10030 rect=0,0 1x1 visible=0
+[JuiceRect] mapped hwnd=0x10030 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10030 flags=18 ptr=0x28010eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x127b544f0 shown=0
+[JuiceDriver] create-enter hwnd=0x10030
+[JuiceDriver] create-success hwnd=0x10030
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+DISPLAY_EVENT WINDOW pid=21075 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1002c flags=18 ptr=0x28010f620 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x127b544f0 shown=0
+[JuiceDriver] create-enter hwnd=0x1002c
+[JuiceDriver] create-success hwnd=0x1002c
+DISPLAY_EVENT WINDOW pid=21075 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1002c flags=181b ptr=0x28010f820 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x127b544f0 shown=0
+JUICE_MOLTENVK_CLIENT_SURFACE_READY hwnd=0x1002c device=Apple A13 GPU size=106x2
+JUICE_MOLTENVK_SURFACE_CREATE hwnd=0x1002c result=0 host=0x12dd16650
+DISPLAY_EVENT WINDOW pid=21075 hwnd=0x1002c rect=0,0 112x27 visible=0
+[JuiceRect] input hwnd=0x1002c dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x1002c win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x1002c flags=181f ptr=0x28010f970 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x127b544f0 shown=0
+[mvk-info] Created 2 swapchain images with size (106, 2) and contents scale 1.0 in layer (null) (0x12dd14440) on screen Main Screen.
+MULTI_WINDOW_VIEWPORT rect=0,0 1024x768 desktop=1024x768 locked=0
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE create-device-complete"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE create-device-complete"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000029
+0024:trace:seh:dispatch_exception  info[1]=00000001400020F6
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=000000014000211e
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000000000000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000029
+0024:trace:seh:RtlUnwindEx  info[1]=00000001400020f6
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000000000000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE create-gpu-buffer"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE create-gpu-buffer"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000024
+0024:trace:seh:dispatch_exception  info[1]=000000014000211F
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002142
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000024
+0024:trace:seh:RtlUnwindEx  info[1]=000000014000211f
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE create-readback-buffer"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE create-readback-buffer"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000029
+0024:trace:seh:dispatch_exception  info[1]=0000000140002153
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=000000014000217b
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000029
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002153
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE gpu-copy-enter"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE gpu-copy-enter"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000021
+0024:trace:seh:dispatch_exception  info[1]=0000000140002191
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=00000001400021b1
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000021
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002191
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE gpu-copy-complete"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE gpu-copy-complete"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000024
+0024:trace:seh:dispatch_exception  info[1]=00000001400021BE
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=00000001400021e1
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000024
+0024:trace:seh:RtlUnwindEx  info[1]=00000001400021be
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000578 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=6000 ss=0000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+0024:warn:debugstr:OutputDebugStringA "JUICE_D3D11_STAGE marker-written"
+0024:warn:seh:dispatch_exception "JUICE_D3D11_STAGE marker-written"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000021
+0024:trace:seh:dispatch_exception  info[1]=0000000140002246
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa60 rbp=0000000105dffc88 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb28 rbx=0000000000000000 rcx=0000000105dffa70 rdx=0000000105dffb18
+0024:trace:seh:dispatch_exception rsi=000000016dd513b0 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb18
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb10 r13=0000000140002266
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=a90c ss=4000
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFA70, frame=105dffcb0 context=0000000105DFF590, dispatch=0000000105DFF1B8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCB0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000021
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002246
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe4e0 rbp=0000000105dffc88 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfece0 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffa70  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfece0 r11=0000000105dff210 r12=0000000105dff1b8 r13=0000000105dffa70
+0024:trace:seh:RtlUnwindEx r14=0000000105dfece0 r15=0000000105dffcb0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFA70, frame=105dfeca0 context=0000000105DFECE0, dispatch=0000000105DFEA38)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFA70, frame=105dffcb0 context=0000000105DFECE0, dispatch=0000000105DFEA38)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB10
+0024:warn:debugstr:OutputDebugStringA "\n"
+0024:warn:seh:dispatch_exception "\n"
+0024:trace:seh:dispatch_exception code=40010006 (DBG_PRINTEXCEPTION_C) flags=0 addr=000000016D67D124
+0024:trace:seh:dispatch_exception  info[0]=0000000000000002
+0024:trace:seh:dispatch_exception  info[1]=0000000140002267
+0024:trace:seh:dispatch_exception rip=000000016d67d124 rsp=0000000105dffa90 rbp=0000000105dffcb8 eflags=00000242
+0024:trace:seh:dispatch_exception rax=0000000105dffb58 rbx=0000000000000000 rcx=0000000105dffaa0 rdx=0000000105dffb48
+0024:trace:seh:dispatch_exception rsi=000000016b7a0000 rdi=000000016dd39760  r8=0000000000000010  r9=0000000105dffb48
+0024:trace:seh:dispatch_exception r10=000000016d67d0e4 r11=000000000000000f r12=0000000105dffb40 r13=0000000140002268
+0024:trace:seh:dispatch_exception r14=000000016dd513b0 r15=0000000140004000 mxcsr=00001fa1 cs=b404 ss=7ffd
+0024:trace:seh:call_seh_handlers calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFF5C0, dispatch=0000000105DFF1E8)
+0024:trace:seh:RtlUnwindEx code=40010006 flags=2 end_frame=0000000105DFFCE0 target_ip=000000016DD21508
+0024:trace:seh:RtlUnwindEx  info[0]=0000000000000002
+0024:trace:seh:RtlUnwindEx  info[1]=0000000140002267
+0024:trace:seh:RtlUnwindEx rip=000000017f99b33c rsp=0000000105dfe510 rbp=0000000105dffcb8 eflags=00000282
+0024:trace:seh:RtlUnwindEx rax=ffffffffc0000000 rbx=000000016dd21708 rcx=0000000105dfed10 rdx=000000016dd21508
+0024:trace:seh:RtlUnwindEx rsi=000000016dce0000 rdi=0000000000000000  r8=0000000105dffaa0  r9=0000000040010006
+0024:trace:seh:RtlUnwindEx r10=0000000105dfed10 r11=0000000105dff240 r12=0000000105dff1e8 r13=0000000105dffaa0
+0024:trace:seh:RtlUnwindEx r14=0000000105dfed10 r15=0000000105dffce0 mxcsr=00001fa1 cs=0033 ss=002b
+0024:trace:seh:RtlUnwindEx calling handler 000000017F99A26C (rec=0000000105DFFAA0, frame=105dfecd0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000017F99A26C returned 1
+0024:trace:seh:RtlUnwindEx calling handler 000000016DD39634 (rec=0000000105DFFAA0, frame=105dffce0 context=0000000105DFED10, dispatch=0000000105DFEA68)
+0024:trace:seh:RtlUnwindEx handler 000000016DD39634 returned 1
+0024:trace:seh:RtlRestoreContext returning to 000000016DD21508 stack 0000000105DFFB40
+[mvk-info] Destroyed VkDevice on GPU Apple A13 GPU with 8 Vulkan extensions enabled.
+DISPLAY_EVENT DESTROY pid=21075 hwnd=0x10030
+DISPLAY_EVENT DESTROY pid=21075 hwnd=0x1002c
+[mvk-info] Destroyed VkPhysicalDevice for GPU Apple A13 GPU with 2 MB of GPU memory still allocated.
+[mvk-info] Destroying VkInstance for Vulkan version 1.1.357 with 4 Vulkan extensions enabled.
+DISPLAY_CLIENT_CLOSED fd=7 pid=21075
+[JuiceWine parent] child exited with 0

@@ -12,8 +12,8 @@ missing=()
 
 test "$(uname -s)" = Linux || { echo "The x86_64 Linux build must run on Linux." >&2; exit 2; }
 case "$(uname -m)" in
-  x86_64|amd64) ;;
-  *) echo "This target is for an x86_64 Linux build host; found $(uname -m)." >&2; exit 2;;
+  x86_64|amd64|aarch64|arm64) ;;
+  *) echo "This target requires a 64-bit x86 or ARM Linux host; found $(uname -m)." >&2; exit 2;;
 esac
 
 for tool in bash bison cmake curl file flex git make m4 python3 rsync sha256sum tar xz zip clang; do

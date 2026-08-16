@@ -18,8 +18,10 @@ mkdir -p "$GRAPE/build/wine-ios/server" "$GRAPE/build/wine-ios/loader" \
   "$GRAPE/build/wine-ios/dlls/crypt32" \
   "$GRAPE/build/wine-ios/dlls/dwrite" \
   "$GRAPE/build/wine-ios/dlls/mountmgr.sys" \
+  "$GRAPE/build/wine-ios/dlls/opengl32" \
   "$GRAPE/build/wine-ios/dlls/win32u" \
-  "$GRAPE/build/wine-ios/dlls/wineios.drv" "$GRAPE/build/wine-ios/dlls/ws2_32" \
+  "$GRAPE/build/wine-ios/dlls/wineios.drv" "$GRAPE/build/wine-ios/dlls/winevulkan" \
+  "$GRAPE/build/wine-ios/dlls/ws2_32" \
   "$GRAPE/build/wine-ios/include" "$GRAPE/build/wine-ios/nls" \
   "$GRAPE/runtime/lib/wine/aarch64-windows" \
   "$GRAPE/tools"
@@ -41,8 +43,10 @@ if test -s "$NATIVE/dlls/dwrite/dwrite.so"; then
   dwrite_unixlib=1
 fi
 cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$GRAPE/build/wine-ios/dlls/mountmgr.sys/"
+cp "$NATIVE/dlls/opengl32/opengl32.so" "$GRAPE/build/wine-ios/dlls/opengl32/"
 cp "$NATIVE/dlls/win32u/win32u.so" "$GRAPE/build/wine-ios/dlls/win32u/"
 cp "$NATIVE/dlls/wineios.drv/wineios.so" "$GRAPE/build/wine-ios/dlls/wineios.drv/"
+cp "$NATIVE/dlls/winevulkan/winevulkan.so" "$GRAPE/build/wine-ios/dlls/winevulkan/"
 cp "$NATIVE/dlls/ws2_32/ws2_32.so" "$GRAPE/build/wine-ios/dlls/ws2_32/"
 for winmd in windows.applicationmodel windows.globalization windows.graphics \
   windows.media windows.networking windows.perception windows.storage \
@@ -56,12 +60,14 @@ done
 
 # Wine may resolve a Unix side beside either the build tree or its PE module.
 cp "$NATIVE/dlls/wineios.drv/wineios.so" "$GRAPE/runtime/lib/wine/aarch64-windows/wineios.so"
+cp "$NATIVE/dlls/winevulkan/winevulkan.so" "$GRAPE/runtime/lib/wine/aarch64-windows/winevulkan.so"
 cp "$NATIVE/dlls/ws2_32/ws2_32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/ws2_32.so"
 cp "$NATIVE/dlls/crypt32/crypt32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/crypt32.so"
 if test "$dwrite_unixlib" = 1; then
   cp "$NATIVE/dlls/dwrite/dwrite.so" "$GRAPE/runtime/lib/wine/aarch64-windows/dwrite.so"
 fi
 cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$GRAPE/runtime/lib/wine/aarch64-windows/mountmgr.so"
+cp "$NATIVE/dlls/opengl32/opengl32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/opengl32.so"
 cp "$NATIVE/dlls/win32u/win32u.so" "$GRAPE/runtime/lib/wine/aarch64-windows/win32u.so"
 
 mapfile -t pe_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
@@ -75,6 +81,19 @@ for target in "${pe_targets[@]}"; do
   fi
   cp "$module" "$destination"
 done
+
+WINEVULKAN_JSON="$PEBUILD/dlls/winevulkan/winevulkan.json"
+if test ! -s "$WINEVULKAN_JSON"; then
+  # winevulkan.json is compiled into winevulkan.dll as a resource, so the PE
+  # build does not always leave a loose copy in its object directory.
+  WINEVULKAN_JSON="$ROOT/wine/dlls/winevulkan/winevulkan.json"
+fi
+test -s "$WINEVULKAN_JSON" || {
+  echo "Missing Wine Vulkan ICD manifest: $WINEVULKAN_JSON" >&2
+  exit 3
+}
+cp "$WINEVULKAN_JSON" \
+  "$GRAPE/runtime/lib/wine/aarch64-windows/winevulkan.json"
 
 if test "${JUICE_INCLUDE_ALL_BUILT_PE:-0}" = 1; then
   while IFS= read -r -d '' module; do

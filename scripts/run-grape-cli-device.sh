@@ -9,6 +9,7 @@ SERVER="$GRAPE/build/wine-ios/server/wineserver"
 TRACER="$GRAPE/tools/grape-trace-parent"
 NATIVE="$GRAPE/build/wine-ios/dlls"
 PE="$GRAPE/runtime/lib/wine/aarch64-windows"
+DATA_ROOT="${JUICE_DATA_ROOT:-/var/mobile/Documents/JuiceData}"
 
 test -x "$LOADER" || { echo "Missing Grape loader: $LOADER" >&2; exit 2; }
 test -x "$SERVER" || { echo "Missing Grape wineserver: $SERVER" >&2; exit 2; }
@@ -61,13 +62,17 @@ fi
 export TMPDIR="${TMPDIR:-/tmp}"
 export WINEPREFIX="$PREFIX"
 export WINELOADER="$GRAPE/tools/grape-nested-wrapper"
+export WINELOADERNOEXEC=1
 export WINESERVER="$SERVER"
-export WINEDLLPATH="$PE:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/win32u:$NATIVE/ws2_32"
+export WINEDLLPATH="$PE:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/winevulkan:$NATIVE/win32u:$NATIVE/ws2_32"
 export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH:-/var/jb/usr/lib}"
 export WINEARCH=win64
 export WINEDEBUG="${WINEDEBUG:--all}"
 export JUICE_SKIP_WINEBOOT="$effective_skip_wineboot"
+export JUICE_WINESERVER_ROOT="${JUICE_WINESERVER_ROOT:-$DATA_ROOT/wineserver}"
 export PATH="/usr/bin:/bin:${PATH:-}"
+mkdir -p "$JUICE_WINESERVER_ROOT"
+chmod 700 "$JUICE_WINESERVER_ROOT"
 
 "$SERVER" -f &
 server_pid=$!

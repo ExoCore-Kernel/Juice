@@ -46,11 +46,20 @@ static BOOL JuiceDirectoryContainsManifest(NSString *directory)
     return NO;
 }
 
+static NSString *JuicePrefixDataRoot(void)
+{
+    NSArray<NSString *> *paths = NSSearchPathForDirectoriesInDomains(
+        NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documents = paths.firstObject ?:
+        [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+    return [documents stringByAppendingPathComponent:@"JuiceData"];
+}
+
 static void JuiceRepairPrefixIfNeeded(id self)
 {
     BOOL usingX64 = [JuiceValue(self, @"usingX64") boolValue];
     NSString *prefixName = usingX64 ? @"GrapePrefix-x86_64" : @"GrapePrefix";
-    NSString *prefix = [@"/var/mobile/Documents/JuiceData" stringByAppendingPathComponent:prefixName];
+    NSString *prefix = [JuicePrefixDataRoot() stringByAppendingPathComponent:prefixName];
     NSString *ready = [prefix stringByAppendingPathComponent:@".juice-prefix-ready"];
     NSString *manifests = [prefix stringByAppendingPathComponent:@"drive_c/windows/winsxs/manifests"];
     NSFileManager *files = NSFileManager.defaultManager;

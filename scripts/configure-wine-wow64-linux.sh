@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
+source "$ROOT/config/graphics-build.env"
 CACHE="${JUICE_X64_CACHE:-$ROOT/build/x86_64-cache}"
 TOOLCHAIN="$CACHE/$JUICE_LLVM_MINGW_DIRNAME"
 BUILD="${JUICE_WOW64_PE_BUILD:-$ROOT/build/wine-wow64-pe}"
@@ -43,7 +44,7 @@ BUILD_TRIPLET="${JUICE_BUILD_TRIPLET:-$($CONFIG_GUESS)}"
   env \
     -u CPP -u CPPFLAGS -u CFLAGS -u CXXFLAGS -u LDFLAGS \
     -u AR -u AS -u LD -u NM -u OBJCOPY -u OBJDUMP -u RANLIB -u STRIP \
-    CC="$HOST_CC" CXX="$HOST_CXX" \
+    CC="$HOST_CC" CXX="$HOST_CXX" ac_cv_lib_soname_MoltenVK="$JUICE_MOLTENVK_RUNTIME_NAME" \
     "$ROOT/wine/configure" \
       --build="$BUILD_TRIPLET" \
       --prefix=/usr/local \
@@ -56,7 +57,7 @@ BUILD_TRIPLET="${JUICE_BUILD_TRIPLET:-$($CONFIG_GUESS)}"
       --without-gstreamer --without-krb5 --without-netapi --without-opencl \
       --without-opengl --without-oss --without-pcap --without-pcsclite \
       --without-pulse --without-sane --without-sdl --without-udev \
-      --without-usb --without-v4l2 --without-vulkan
+      --without-usb --without-v4l2 --with-vulkan
 )
 
 pe_archs="$(sed -n 's/^PE_ARCHS = *//p' "$BUILD/Makefile" | head -1)"

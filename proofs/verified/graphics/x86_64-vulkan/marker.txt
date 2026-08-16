@@ -1,0 +1,1 @@
+JUICE_VULKAN_SMOKE_OK frames=120 width=712 height=433 format=44

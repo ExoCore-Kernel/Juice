@@ -49,11 +49,14 @@ export USER=mobile LOGNAME=mobile
 export PATH="/var/jb/usr/bin:/usr/bin:/bin"
 export TMPDIR="$OUTPUT/tmp"
 export WINEPREFIX="$PREFIX" WINEARCH=win64
-export WINELOADER="$NESTED" WINESERVER="$SERVER"
-export WINEDLLPATH="$PE:$GRAPE/build/wine-ios/dlls/crypt32:$GRAPE/build/wine-ios/dlls/wineios.drv:$GRAPE/build/wine-ios/dlls/win32u:$GRAPE/build/wine-ios/dlls/ws2_32"
+export WINELOADER="$NESTED" WINELOADERNOEXEC=1 WINESERVER="$SERVER"
+export WINEDLLPATH="$PE:$GRAPE/build/wine-ios/dlls/crypt32:$GRAPE/build/wine-ios/dlls/wineios.drv:$GRAPE/build/wine-ios/dlls/winevulkan:$GRAPE/build/wine-ios/dlls/win32u:$GRAPE/build/wine-ios/dlls/ws2_32"
 export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH:-/var/jb/usr/lib}"
 export JUICE_SKIP_WINEBOOT=1
+export JUICE_WINESERVER_ROOT="${JUICE_WINESERVER_ROOT:-/var/mobile/Documents/JuiceData/wineserver}"
 export WINEDEBUG="${WINEDEBUG:-+iosdrv,+xinput}"
+mkdir -p "$JUICE_WINESERVER_ROOT"
+chmod 700 "$JUICE_WINESERVER_ROOT"
 
 "$SERVER" -f >>"$OUTPUT/wineserver.log" 2>&1 &
 server_pid=$!

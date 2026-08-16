@@ -1,0 +1,1522 @@
+JUICE_HEADLESS_TEST_BEGIN
+EXTERNAL_INPUT_READY keyboard=hardware gamecontroller=xinput-v1 state=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/controller-v1.bin
+DISPLAY_SOCKET path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/j.sock bind=0 listen=0 errno=2
+CONTROL_V1_SOCKET path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/jc1.sock bind=0 listen=0 errno=2
+EXPERIMENTAL_STATE multi_window=1 x86_64=1
+HOST_METAL_DEVICE available=0 name=none
+GUI_READY
+AUTO_LAUNCH_CUSTOM path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/SmokeTests/graphics-arm64/juice-vulkan-smoke.exe machine=0xaa64
+PE_ARCH_DETECTED machine=0xaa64 arch=ARM64 runtime=Grape path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/SmokeTests/graphics-arm64/juice-vulkan-smoke.exe
+RUNTIME_SELECTED runtime=Grape prefix=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix
+PREFIX_RUNTIME_LINKS count=0 system32=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix/drive_c/windows/system32
+PREFIX_APISET_READY path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/GrapePrefix/drive_c/windows/system32/apisetschema.dll existing=0
+Wine server: 0 pid=17566
+
+GUI launch /var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/JuiceData/SmokeTests/graphics-arm64/juice-vulkan-smoke.exe: 0 pid=17567
+[JuiceWine parent] bundle libraries path=/private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Libraries:/var/jb/usr/lib
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/759209CC-173D-43CB-81B8-59B62280B5A0/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=17568
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x32007005 CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=17568 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=17568 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x32007005 CS_DEBUGGED=YES
+[JuiceStage] running controlled wineboot initialization
+[JuiceWine] host-page expanding executable section .text: section=0x140001000 mapping=0x140000000 size=16384
+[JuiceWine] anonymous PE executable section .text at 0x140000000 size=16384
+[JuiceStage] loading Windows ntdll; transfer=0x140001000 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceWine] anonymous PE executable section .text at 0x17fc00000 size=524288
+[JuiceStage] load_ntdll returned; transfer=0x140001000
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x103300000 stack_limit=0x103208000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x17ffd8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x28010fcd0 stack_base=0x103300000 stack_limit=0x103208000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=0 transfer=0x140001000 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x140001000 arg=0x17ffdc000 teb=0x17ffd8000 data=0x280000000 frame=0x28010fcd0 stack_base=0x103300000 stack_limit=0x103208000
+[JuiceStage] calling signal_set_full_context; ctx=0x1032ffc70 target_pc=0x17fc575a0 target_sp=0x103300000 target_x18=0x17ffd8000 LdrInitializeThunk=0x17fc575c0 RtlUserThreadStart=0x17fc575a0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x17fc575a0 frame_sp=0x103300000 frame_x18=0x17ffd8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x17fc575c0 user_sp=0x1032ffc70 x16=0x17fc575c0 x17=0x1032ffc70 x18=0x17ffd8000 restore=00400007
+[JuiceX18] broad #1 pc=0x17fc34344 fault=0x17ee instr=796fde48 x8=0x0 x16=0x17fc575c0 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #2 pc=0x17fc5c3cc fault=0x48 instr=b9404a48 x8=0x17fcb02a0 x16=0x17fc34344 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #3 pc=0x17fc5df3c fault=0x60 instr=f940324c x8=0x0 x16=0x17fc5c3cc x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #4 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x18 x16=0x10269dfe0 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #5 pc=0x17fc5e9a4 fault=0x60 instr=f9403248 x8=0x1024e0090 x16=0x17fc554a4 x17=0x1032ffa40 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #6 pc=0x17fc34460 fault=0x180c instr=b9580e48 x8=0x0 x16=0x17fc554a4 x17=0x1032ffa70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #7 pc=0x17fc277ec fault=0x60 instr=f9403248 x8=0x17fcb2460 x16=0x17fc34460 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #8 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x95 x16=0x5c5c x17=0x1032ff447 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #9 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x9 x16=0x5c5c x17=0x1032ff69b x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #10 pc=0x17fc26c98 fault=0x60 instr=f9403248 x8=0xffffffe3 x16=0x5c5c x17=0x1032ff6ac x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #11 pc=0x17fc26d00 fault=0x60 instr=f9403248 x8=0x1024e348c x16=0x17fc26c98 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #12 pc=0x17fc26d00 fault=0x60 instr=f9403248 x8=0x1024e6508 x16=0x17fc26d00 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #13 pc=0x17fc67524 fault=0x60 instr=f9403248 x8=0x1026e8330 x16=0x17fc55384 x17=0x1032ffae0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #14 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x21 x16=0x10269dfe0 x17=0x1032ff750 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #15 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x1d x16=0x10269dfe0 x17=0x1032ff670 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #16 pc=0x17fc26870 fault=0x60 instr=f9403248 x8=0x0 x16=0x17fc55ca4 x17=0x1032ffae0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #17 pc=0x17fc26870 fault=0x60 instr=f9403248 x8=0x1024e8500 x16=0x17fc26870 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #18 pc=0x17fc26558 fault=0x60 instr=f9403248 x8=0x126 x16=0x17fc554c4 x17=0x1032ffae0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #19 pc=0x17fc38798 fault=0x60 instr=f9403248 x8=0x140001000 x16=0x17fc26558 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #20 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0xa8 x16=0x5c5c x17=0x1032ff96a x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #21 pc=0x17fc38540 fault=0x60 instr=f9403248 x8=0x0 x16=0x17fc55604 x17=0x1032ffa90 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #22 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x10 x16=0x5c5c x17=0x1032ff682 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #23 pc=0x17fc184b0 fault=0x2c8 instr=f9416648 x8=0x17fc8a7d0 x16=0x17fc5dea4 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17fa30000 size=196608
+[JuiceX18] broad #24 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x50 x16=0x10269dfe0 x17=0x1032ff890 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #25 pc=0x17fc38798 fault=0x60 instr=f9403248 x8=0x17fa5ad34 x16=0x17fc55ba4 x17=0x1032ff890 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #26 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x6 x16=0x17fc38798 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #27 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x17fa6f190 x16=0x17fc5dea4 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #28 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x28 x16=0x10269dfe0 x17=0x1032fef70 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17f650000 size=524288
+[JuiceX18] broad #29 pc=0x17fc3199c fault=0x60 instr=f9403248 x8=0x0 x16=0x17fc556a4 x17=0x1032ff3b0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #30 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x72 x16=0x10269dfe0 x17=0x1032ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #31 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x50 x16=0x10269dfe0 x17=0x1032ff2e0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #32 pc=0x10269dfe4 fault=0x378 instr=f941be4a x8=0x50 x16=0x10269dfe0 x17=0x1032ff2e0 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17f140000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x17eec0000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x17ed50000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x17ec70000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x17e8e0000 size=655360
+[JuiceWine] anonymous PE executable section .text at 0x17e5d0000 size=524288
+[JuiceWine] anonymous PE executable section .text at 0x17e4e0000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x17e3f0000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x17e320000 size=65536
+DISPLAY_CLIENT_CONNECTED fd=7
+[JuiceInput] display connected path=/var/mobile/Containers/Data/Application/31FD36ED-09D6-4C6D-B8F7-CD64EFFB7022/Documents/j.sock desktop=1024x768 dpi=96
+DISPLAY_EVENT HELLO fd=7 pid=17568 desktop=1024x768 dpi=96
+[JuiceInput] queue fd registered fd=18 tid=0x24
+[JuiceDriver] ios init set driver create=0x1039a0e78 client_surface=0x1039a19fc size=1216
+[JuiceDriver] install prev=0x103c29348 lazy=0x103c29348 null=0x103c51f10 candidate=0x13380b000 create=0x1039a0e78 installed=1
+[JuiceDriver] direct-load status=00000000 driver=0x13380b000
+0024:trace:vulkan:vulkan_init_once Host instance extensions:
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_device_group_creation
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_external_fence_capabilities
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_external_memory_capabilities
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_external_semaphore_capabilities
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_get_physical_device_properties2
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_get_surface_capabilities2
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_surface
+0024:trace:vulkan:vulkan_init_once   - VK_KHR_surface_maintenance1
+0024:warn:vulkan:vulkan_init_once Extension "VK_KHR_surface_protected_capabilities" is not supported.
+0024:trace:vulkan:vulkan_init_once   - VK_EXT_debug_report
+0024:trace:vulkan:vulkan_init_once   - VK_EXT_debug_utils
+0024:trace:vulkan:vulkan_init_once   - VK_EXT_headless_surface
+0024:trace:vulkan:vulkan_init_once   - VK_EXT_layer_settings
+0024:trace:vulkan:vulkan_init_once   - VK_EXT_metal_surface
+0024:trace:vulkan:vulkan_init_once   - VK_EXT_surface_maintenance1
+0024:trace:vulkan:vulkan_init_once   - VK_EXT_swapchain_colorspace
+0024:warn:vulkan:vulkan_init_once Extension "VK_MVK_ios_surface" is not supported.
+0024:warn:vulkan:vulkan_init_once Extension "VK_MVK_moltenvk" is not supported.
+JUICE_MOLTENVK_DRIVER_READY version=48 handle=0x69e300
+0024:trace:vulkan:convert_instance_create_info Enabling 3 host instance extensions
+0024:trace:vulkan:convert_instance_create_info   - "VK_KHR_external_fence_capabilities"
+0024:trace:vulkan:convert_instance_create_info   - "VK_KHR_external_semaphore_capabilities"
+0024:trace:vulkan:convert_instance_create_info   - "VK_KHR_get_physical_device_properties2"
+[mvk-info] MoltenVK version 1.4.2, supporting Vulkan version 1.4.357.
+	The following 152 Vulkan extensions are supported:
+	VK_KHR_16bit_storage v1
+	VK_KHR_8bit_storage v1
+	VK_KHR_bind_memory2 v1
+	VK_KHR_buffer_device_address v1
+	VK_KHR_calibrated_timestamps v1
+	VK_KHR_copy_commands2 v1
+	VK_KHR_create_renderpass2 v1
+	VK_KHR_dedicated_allocation v3
+	VK_KHR_deferred_host_operations v4
+	VK_KHR_depth_stencil_resolve v1
+	VK_KHR_descriptor_update_template v1
+	VK_KHR_device_group v4
+	VK_KHR_device_group_creation v1
+	VK_KHR_driver_properties v1
+	VK_KHR_dynamic_rendering v1
+	VK_KHR_dynamic_rendering_local_read v1
+	VK_KHR_external_fence v1
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_memory v1
+	VK_KHR_external_memory_capabilities v1
+	VK_KHR_external_semaphore v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_format_feature_flags2 v2
+	VK_KHR_fragment_shader_barycentric v1
+	VK_KHR_get_memory_requirements2 v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_get_surface_capabilities2 v1
+	VK_KHR_global_priority v1
+	VK_KHR_image_format_list v1
+	VK_KHR_imageless_framebuffer v1
+	VK_KHR_incremental_present v2
+	VK_KHR_index_type_uint8 v1
+	VK_KHR_line_rasterization v1
+	VK_KHR_load_store_op_none v1
+	VK_KHR_maintenance1 v2
+	VK_KHR_maintenance2 v1
+	VK_KHR_maintenance3 v1
+	VK_KHR_maintenance4 v2
+	VK_KHR_maintenance5 v1
+	VK_KHR_maintenance6 v1
+	VK_KHR_maintenance7 v1
+	VK_KHR_maintenance8 v1
+	VK_KHR_maintenance9 v1
+	VK_KHR_map_memory2 v1
+	VK_KHR_multiview v1
+	VK_KHR_portability_subset v1
+	VK_KHR_present_id v1
+	VK_KHR_present_id2 v1
+	VK_KHR_present_wait v1
+	VK_KHR_present_wait2 v1
+	VK_KHR_push_descriptor v2
+	VK_KHR_relaxed_block_layout v1
+	VK_KHR_robustness2 v1
+	VK_KHR_sampler_mirror_clamp_to_edge v3
+	VK_KHR_sampler_ycbcr_conversion v14
+	VK_KHR_separate_depth_stencil_layouts v1
+	VK_KHR_shader_draw_parameters v1
+	VK_KHR_shader_expect_assume v1
+	VK_KHR_shader_float_controls v4
+	VK_KHR_shader_float_controls2 v1
+	VK_KHR_shader_float16_int8 v1
+	VK_KHR_shader_fma v1
+	VK_KHR_shader_integer_dot_product v1
+	VK_KHR_shader_maximal_reconvergence v1
+	VK_KHR_shader_non_semantic_info v1
+	VK_KHR_shader_quad_control v1
+	VK_KHR_shader_relaxed_extended_instruction v1
+	VK_KHR_shader_subgroup_extended_types v1
+	VK_KHR_shader_subgroup_rotate v2
+	VK_KHR_shader_subgroup_uniform_control_flow v1
+	VK_KHR_shader_terminate_invocation v1
+	VK_KHR_spirv_1_4 v1
+	VK_KHR_storage_buffer_storage_class v1
+	VK_KHR_surface v25
+	VK_KHR_surface_maintenance1 v1
+	VK_KHR_surface_protected_capabilities v1
+	VK_KHR_swapchain v70
+	VK_KHR_swapchain_maintenance1 v1
+	VK_KHR_swapchain_mutable_format v1
+	VK_KHR_synchronization2 v1
+	VK_KHR_timeline_semaphore v2
+	VK_KHR_uniform_buffer_standard_layout v1
+	VK_KHR_variable_pointers v1
+	VK_KHR_vertex_attribute_divisor v1
+	VK_KHR_vulkan_memory_model v3
+	VK_KHR_zero_initialize_workgroup_memory v1
+	VK_EXT_4444_formats v1
+	VK_EXT_buffer_device_address v2
+	VK_EXT_calibrated_timestamps v2
+	VK_EXT_debug_marker v4
+	VK_EXT_debug_report v10
+	VK_EXT_debug_utils v2
+	VK_EXT_depth_clip_control v1
+	VK_EXT_descriptor_indexing v2
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_external_memory_host v1
+	VK_EXT_external_memory_metal v1
+	VK_EXT_fragment_shader_interlock v1
+	VK_EXT_global_priority v2
+	VK_EXT_global_priority_query v1
+	VK_EXT_headless_surface v1
+	VK_EXT_host_image_copy v1
+	VK_EXT_host_query_reset v1
+	VK_EXT_image_2d_view_of_3d v1
+	VK_EXT_image_robustness v1
+	VK_EXT_index_type_uint8 v1
+	VK_EXT_inline_uniform_block v1
+	VK_EXT_layer_settings v2
+	VK_EXT_legacy_dithering v2
+	VK_EXT_line_rasterization v1
+	VK_EXT_load_store_op_none v1
+	VK_EXT_memory_budget v1
+	VK_EXT_metal_objects v2
+	VK_EXT_metal_surface v1
+	VK_EXT_non_seamless_cube_map v1
+	VK_EXT_pipeline_creation_cache_control v3
+	VK_EXT_pipeline_creation_feedback v1
+	VK_EXT_pipeline_robustness v1
+	VK_EXT_post_depth_coverage v1
+	VK_EXT_primitive_topology_list_restart v1
+	VK_EXT_private_data v1
+	VK_EXT_provoking_vertex v1
+	VK_EXT_robustness2 v1
+	VK_EXT_sample_locations v1
+	VK_EXT_scalar_block_layout v1
+	VK_EXT_separate_stencil_usage v1
+	VK_EXT_shader_atomic_float v1
+	VK_EXT_shader_demote_to_helper_invocation v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_shader_subgroup_ballot v1
+	VK_EXT_shader_subgroup_vote v1
+	VK_EXT_shader_viewport_index_layer v1
+	VK_EXT_subgroup_size_control v2
+	VK_EXT_surface_maintenance1 v1
+	VK_EXT_swapchain_colorspace v5
+	VK_EXT_swapchain_maintenance1 v1
+	VK_EXT_texel_buffer_alignment v1
+	VK_EXT_texture_compression_astc_hdr v1
+	VK_EXT_tooling_info v1
+	VK_EXT_vertex_attribute_divisor v3
+	VK_AMD_gpu_shader_half_float v2
+	VK_AMD_negative_viewport_height v1
+	VK_AMD_shader_image_load_store_lod v1
+	VK_AMD_shader_trinary_minmax v1
+	VK_GOOGLE_display_timing v1
+	VK_IMG_format_pvrtc v1
+	VK_INTEL_shader_integer_functions2 v1
+	VK_MVK_ios_surface v3
+	VK_MVK_moltenvk v37
+	VK_NV_fragment_shader_barycentric v1
+[mvk-info] GPU device:
+	model: Apple A13 GPU
+	type: Integrated
+	vendorID: 0x106b
+	deviceID: 0x10050006
+	pipelineCacheUUID: DB660224-1005-0006-0000-000100000000
+	GPU memory available: 1961 MB
+	GPU memory used: 0 MB
+	Metal Shading Language 3.0
+	supports the following GPU Features:
+		GPU Family Metal 3
+		GPU Family Apple 6
+		Read-Write Texture Tier 2
+[mvk-info] Created VkInstance for Vulkan version 1.0.357, as requested by app, with the following 3 Vulkan extensions enabled:
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_get_physical_device_properties2 v2
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateDebugReportCallbackEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateDebugUtilsMessengerEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateHeadlessSurfaceEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateMacOSSurfaceMVK not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateMetalSurfaceEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateWaylandSurfaceKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateWin32SurfaceKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateXlibSurfaceKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkDebugReportMessageEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkDestroyDebugReportCallbackEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkDestroyDebugUtilsMessengerEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkDestroySurfaceKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceGroups not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceGroupsKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeMatrixPropertiesNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeVectorPropertiesNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceDescriptorSizeEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalBufferProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalBufferPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalFenceProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalSemaphoreProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalTensorPropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceFeatures2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceFormatProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceFragmentShadingRatesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceImageFormatProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceMemoryProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceOpticalFlowImageFormatsNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDevicePresentRectanglesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSparseImageFormatProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfaceCapabilities2KHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfaceCapabilitiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfaceFormats2KHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfaceFormatsKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfacePresentModesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfaceSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceToolProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceVideoCapabilitiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceVideoFormatPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceWaylandPresentationSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceWin32PresentationSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceXlibPresentationSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkSubmitDebugUtilsMessageEXT not found.
+0024:trace:vulkan:init_physical_device Host physical device extensions:
+0024:trace:vulkan:init_physical_device   - VK_KHR_16bit_storage
+0024:trace:vulkan:init_physical_device   - VK_KHR_8bit_storage
+0024:trace:vulkan:init_physical_device   - VK_KHR_bind_memory2
+0024:trace:vulkan:init_physical_device   - VK_KHR_buffer_device_address
+0024:trace:vulkan:init_physical_device   - VK_KHR_calibrated_timestamps
+0024:trace:vulkan:init_physical_device   - VK_KHR_copy_commands2
+0024:trace:vulkan:init_physical_device   - VK_KHR_create_renderpass2
+0024:trace:vulkan:init_physical_device   - VK_KHR_dedicated_allocation
+0024:trace:vulkan:init_physical_device   - VK_KHR_deferred_host_operations
+0024:trace:vulkan:init_physical_device   - VK_KHR_depth_stencil_resolve
+0024:trace:vulkan:init_physical_device   - VK_KHR_descriptor_update_template
+0024:trace:vulkan:init_physical_device   - VK_KHR_device_group
+0024:trace:vulkan:init_physical_device   - VK_KHR_driver_properties
+0024:trace:vulkan:init_physical_device   - VK_KHR_dynamic_rendering
+0024:trace:vulkan:init_physical_device   - VK_KHR_dynamic_rendering_local_read
+0024:trace:vulkan:init_physical_device   - VK_KHR_external_fence
+0024:trace:vulkan:init_physical_device   - VK_KHR_external_memory
+0024:trace:vulkan:init_physical_device   - VK_KHR_external_semaphore
+0024:trace:vulkan:init_physical_device   - VK_KHR_format_feature_flags2
+0024:trace:vulkan:init_physical_device   - VK_KHR_get_memory_requirements2
+0024:trace:vulkan:init_physical_device   - VK_KHR_global_priority
+0024:trace:vulkan:init_physical_device   - VK_KHR_image_format_list
+0024:trace:vulkan:init_physical_device   - VK_KHR_imageless_framebuffer
+0024:trace:vulkan:init_physical_device   - VK_KHR_incremental_present
+0024:trace:vulkan:init_physical_device   - VK_KHR_index_type_uint8
+0024:trace:vulkan:init_physical_device   - VK_KHR_line_rasterization
+0024:trace:vulkan:init_physical_device   - VK_KHR_load_store_op_none
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance1
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance2
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance3
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance4
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance5
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance6
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance7
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance8
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance9
+0024:trace:vulkan:init_physical_device   - VK_KHR_map_memory2
+0024:trace:vulkan:init_physical_device   - VK_KHR_multiview
+0024:warn:vulkan:init_physical_device Extension "VK_KHR_portability_subset" is not supported.
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_id
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_id2
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_wait
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_wait2
+0024:trace:vulkan:init_physical_device   - VK_KHR_push_descriptor
+0024:trace:vulkan:init_physical_device   - VK_KHR_relaxed_block_layout
+0024:trace:vulkan:init_physical_device   - VK_KHR_robustness2
+0024:trace:vulkan:init_physical_device   - VK_KHR_sampler_ycbcr_conversion
+0024:trace:vulkan:init_physical_device   - VK_KHR_separate_depth_stencil_layouts
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_draw_parameters
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_expect_assume
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_float_controls
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_float_controls2
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_float16_int8
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_fma
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_integer_dot_product
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_maximal_reconvergence
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_non_semantic_info
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_relaxed_extended_instruction
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_subgroup_extended_types
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_subgroup_rotate
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_subgroup_uniform_control_flow
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_terminate_invocation
+0024:trace:vulkan:init_physical_device   - VK_KHR_spirv_1_4
+0024:trace:vulkan:init_physical_device   - VK_KHR_storage_buffer_storage_class
+0024:trace:vulkan:init_physical_device   - VK_KHR_swapchain
+0024:trace:vulkan:init_physical_device   - VK_KHR_swapchain_maintenance1
+0024:trace:vulkan:init_physical_device   - VK_KHR_swapchain_mutable_format
+0024:trace:vulkan:init_physical_device   - VK_KHR_synchronization2
+0024:trace:vulkan:init_physical_device   - VK_KHR_timeline_semaphore
+0024:trace:vulkan:init_physical_device   - VK_KHR_uniform_buffer_standard_layout
+0024:trace:vulkan:init_physical_device   - VK_KHR_variable_pointers
+0024:trace:vulkan:init_physical_device   - VK_KHR_vertex_attribute_divisor
+0024:trace:vulkan:init_physical_device   - VK_KHR_vulkan_memory_model
+0024:trace:vulkan:init_physical_device   - VK_KHR_zero_initialize_workgroup_memory
+0024:trace:vulkan:init_physical_device   - VK_EXT_4444_formats
+0024:trace:vulkan:init_physical_device   - VK_EXT_buffer_device_address
+0024:trace:vulkan:init_physical_device   - VK_EXT_calibrated_timestamps
+0024:trace:vulkan:init_physical_device   - VK_EXT_debug_marker
+0024:trace:vulkan:init_physical_device   - VK_EXT_depth_clip_control
+0024:trace:vulkan:init_physical_device   - VK_EXT_descriptor_indexing
+0024:trace:vulkan:init_physical_device   - VK_EXT_extended_dynamic_state
+0024:trace:vulkan:init_physical_device   - VK_EXT_extended_dynamic_state2
+0024:trace:vulkan:init_physical_device   - VK_EXT_extended_dynamic_state3
+0024:trace:vulkan:init_physical_device   - VK_EXT_external_memory_host
+0024:trace:vulkan:init_physical_device   - VK_EXT_external_memory_metal
+0024:trace:vulkan:init_physical_device   - VK_EXT_fragment_shader_interlock
+0024:trace:vulkan:init_physical_device   - VK_EXT_global_priority
+0024:trace:vulkan:init_physical_device   - VK_EXT_global_priority_query
+0024:trace:vulkan:init_physical_device   - VK_EXT_host_image_copy
+0024:trace:vulkan:init_physical_device   - VK_EXT_host_query_reset
+0024:trace:vulkan:init_physical_device   - VK_EXT_image_2d_view_of_3d
+0024:trace:vulkan:init_physical_device   - VK_EXT_image_robustness
+0024:trace:vulkan:init_physical_device   - VK_EXT_index_type_uint8
+0024:trace:vulkan:init_physical_device   - VK_EXT_inline_uniform_block
+0024:trace:vulkan:init_physical_device   - VK_EXT_line_rasterization
+0024:trace:vulkan:init_physical_device   - VK_EXT_load_store_op_none
+0024:trace:vulkan:init_physical_device   - VK_EXT_memory_budget
+0024:warn:vulkan:init_physical_device Extension "VK_EXT_metal_objects" is not supported.
+0024:trace:vulkan:init_physical_device   - VK_EXT_pipeline_creation_cache_control
+0024:trace:vulkan:init_physical_device   - VK_EXT_pipeline_creation_feedback
+0024:trace:vulkan:init_physical_device   - VK_EXT_pipeline_robustness
+0024:trace:vulkan:init_physical_device   - VK_EXT_post_depth_coverage
+0024:trace:vulkan:init_physical_device   - VK_EXT_private_data
+0024:trace:vulkan:init_physical_device   - VK_EXT_robustness2
+0024:trace:vulkan:init_physical_device   - VK_EXT_sample_locations
+0024:trace:vulkan:init_physical_device   - VK_EXT_scalar_block_layout
+0024:trace:vulkan:init_physical_device   - VK_EXT_separate_stencil_usage
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_atomic_float
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_demote_to_helper_invocation
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_stencil_export
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_subgroup_ballot
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_subgroup_vote
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_viewport_index_layer
+0024:trace:vulkan:init_physical_device   - VK_EXT_subgroup_size_control
+0024:trace:vulkan:init_physical_device   - VK_EXT_swapchain_maintenance1
+0024:trace:vulkan:init_physical_device   - VK_EXT_texel_buffer_alignment
+0024:trace:vulkan:init_physical_device   - VK_EXT_texture_compression_astc_hdr
+0024:trace:vulkan:init_physical_device   - VK_EXT_tooling_info
+0024:trace:vulkan:init_physical_device   - VK_EXT_vertex_attribute_divisor
+0024:trace:vulkan:init_physical_device   - VK_AMD_gpu_shader_half_float
+0024:trace:vulkan:init_physical_device   - VK_AMD_negative_viewport_height
+0024:trace:vulkan:init_physical_device   - VK_AMD_shader_image_load_store_lod
+0024:trace:vulkan:init_physical_device   - VK_AMD_shader_trinary_minmax
+0024:warn:vulkan:init_physical_device Extension "VK_GOOGLE_display_timing" is not supported.
+0024:trace:vulkan:init_physical_device   - VK_IMG_format_pvrtc
+0024:trace:vulkan:init_physical_device   - VK_INTEL_shader_integer_functions2
+0024:trace:vulkan:win32u_vkCreateInstance Created instance 0x134811e00, host_instance 0x134813618.
+[JuiceWine] anonymous PE executable section .text at 0x17e1f0000 size=131072
+[JuiceCreate] ex=00000000 class=0x1032ff1e0 version=0x0 name=0x1032ff1c0 style=10cf0000 x=60 y=60 cx=720 cy=460 parent=0x0 menu=0x0 classinst=0x140000000 params=0x0 flags=00000000 inst=0x140000000 classptr=0x1400030f0 ansi=0
+[JuiceMonitor] callee hwnd=0x10028 hmon=0x1 info=0x28010f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10028 min=112,27 maxtrack=1036,780 max=1024,768 pos=-4,-4
+[JuiceRect] input hwnd=0x10028 dpi=96/1 raw=96/1 win=60,60,780,520 client=60,60,780,520 visible=60,60,780,520
+[JuiceRect] mapped hwnd=0x10028 win=60,60,780,520 client=60,60,780,520 visible=60,60,780,520
+[JuiceGeom] changed hwnd=0x10028 flags=4000003c ptr=0x28010f620 window=60,60,780,520 client=60,60,780,520 visible=60,60,780,520 surface=0x103c344f0 shown=0
+DISPLAY_EVENT WINDOW pid=17568 hwnd=0x10028 rect=60,60 720x460 visible=0
+[JuiceCreate] ex=00000000 class=0x28010f590 version=0x0 name=0x28010f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+[JuiceRect] input hwnd=0x10030 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10030 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10030 flags=3c ptr=0x28010eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x103c344f0 shown=0
+DISPLAY_EVENT WINDOW pid=17568 hwnd=0x10030 rect=0,0 1x1 visible=0
+[JuiceRect] input hwnd=0x10030 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10030 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10030 flags=18 ptr=0x28010eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x103c344f0 shown=0
+DISPLAY_EVENT WINDOW pid=17568 hwnd=0x10030 rect=0,0 1x1 visible=0
+[JuiceDriver] create-enter hwnd=0x10030
+[JuiceDriver] create-success hwnd=0x10030
+[JuiceRect] input hwnd=0x10028 dpi=96/1 raw=96/1 win=60,60,780,520 client=64,83,776,516 visible=60,60,780,520
+[JuiceRect] mapped hwnd=0x10028 win=60,60,780,520 client=64,83,776,516 visible=60,60,780,520
+[JuiceGeom] changed hwnd=0x10028 flags=40000018 ptr=0x28010f620 window=60,60,780,520 client=64,83,776,516 visible=60,60,780,520 surface=0x103c344f0 shown=0
+DISPLAY_EVENT WINDOW pid=17568 hwnd=0x10028 rect=60,60 720x460 visible=0
+[JuiceDriver] create-enter hwnd=0x10028
+[JuiceDriver] create-success hwnd=0x10028
+[JuiceGeom] surface hwnd=0x10028 rect=0,0,768,512 size=768x512 previous=0x103c344f0
+[JuiceRect] input hwnd=0x10028 dpi=96/1 raw=96/1 win=60,60,780,520 client=64,83,776,516 visible=60,60,780,520
+[JuiceRect] mapped hwnd=0x10028 win=60,60,780,520 client=64,83,776,516 visible=60,60,780,520
+[JuiceGeom] changed hwnd=0x10028 flags=4000193f ptr=0x28010f3f0 window=60,60,780,520 client=64,83,776,516 visible=60,60,780,520 surface=0x131f368a0 shown=1
+DISPLAY_EVENT WINDOW pid=17568 hwnd=0x10028 rect=60,60 720x460 visible=1
+MULTI_WINDOW_VIEWPORT rect=0,0 1024x768 desktop=1024x768 locked=0
+[JuiceWine] anonymous PE executable section .text at 0x17e260000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x17e000000 size=131072
+0024:trace:vulkan:DllMain 000000017DFF0000, 1, 0000000000000000
+0024:trace:vulkan:vkGetInstanceProcAddr 0000000000000000, "vkCreateInstance"
+0024:trace:vulkan:wine_vk_get_global_proc_addr Found name="vkCreateInstance" in global table
+0024:trace:vulkan:vkCreateInstance create_info 00000001032FFE90, allocator 0000000000000000, instance 00000001032FFE88
+0024:trace:vulkan:vkCreateInstance Application name "Juice Vulkan smoke", application version 0x1.
+0024:trace:vulkan:vkCreateInstance Engine name "Juice", engine version 0x1.
+0024:trace:vulkan:vkCreateInstance API version 0x400000.
+0024:trace:vulkan:vkCreateInstance Enabling 2 client instance extensions
+0024:trace:vulkan:vkCreateInstance   - VK_KHR_surface
+0024:trace:vulkan:vkCreateInstance   - VK_KHR_win32_surface
+0024:trace:vulkan:thunk64_vkCreateInstance 0x1032ffe90, 0x0, 0x1032ffe88
+0024:trace:vulkan:convert_instance_create_info Enabling 4 host instance extensions
+0024:trace:vulkan:convert_instance_create_info   - "VK_KHR_external_semaphore_capabilities"
+0024:trace:vulkan:convert_instance_create_info   - "VK_KHR_get_physical_device_properties2"
+0024:trace:vulkan:convert_instance_create_info   - "VK_KHR_surface"
+0024:trace:vulkan:convert_instance_create_info   - "VK_EXT_metal_surface"
+[mvk-info] MoltenVK version 1.4.2, supporting Vulkan version 1.4.357.
+	The following 152 Vulkan extensions are supported:
+	VK_KHR_16bit_storage v1
+	VK_KHR_8bit_storage v1
+	VK_KHR_bind_memory2 v1
+	VK_KHR_buffer_device_address v1
+	VK_KHR_calibrated_timestamps v1
+	VK_KHR_copy_commands2 v1
+	VK_KHR_create_renderpass2 v1
+	VK_KHR_dedicated_allocation v3
+	VK_KHR_deferred_host_operations v4
+	VK_KHR_depth_stencil_resolve v1
+	VK_KHR_descriptor_update_template v1
+	VK_KHR_device_group v4
+	VK_KHR_device_group_creation v1
+	VK_KHR_driver_properties v1
+	VK_KHR_dynamic_rendering v1
+	VK_KHR_dynamic_rendering_local_read v1
+	VK_KHR_external_fence v1
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_memory v1
+	VK_KHR_external_memory_capabilities v1
+	VK_KHR_external_semaphore v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_format_feature_flags2 v2
+	VK_KHR_fragment_shader_barycentric v1
+	VK_KHR_get_memory_requirements2 v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_get_surface_capabilities2 v1
+	VK_KHR_global_priority v1
+	VK_KHR_image_format_list v1
+	VK_KHR_imageless_framebuffer v1
+	VK_KHR_incremental_present v2
+	VK_KHR_index_type_uint8 v1
+	VK_KHR_line_rasterization v1
+	VK_KHR_load_store_op_none v1
+	VK_KHR_maintenance1 v2
+	VK_KHR_maintenance2 v1
+	VK_KHR_maintenance3 v1
+	VK_KHR_maintenance4 v2
+	VK_KHR_maintenance5 v1
+	VK_KHR_maintenance6 v1
+	VK_KHR_maintenance7 v1
+	VK_KHR_maintenance8 v1
+	VK_KHR_maintenance9 v1
+	VK_KHR_map_memory2 v1
+	VK_KHR_multiview v1
+	VK_KHR_portability_subset v1
+	VK_KHR_present_id v1
+	VK_KHR_present_id2 v1
+	VK_KHR_present_wait v1
+	VK_KHR_present_wait2 v1
+	VK_KHR_push_descriptor v2
+	VK_KHR_relaxed_block_layout v1
+	VK_KHR_robustness2 v1
+	VK_KHR_sampler_mirror_clamp_to_edge v3
+	VK_KHR_sampler_ycbcr_conversion v14
+	VK_KHR_separate_depth_stencil_layouts v1
+	VK_KHR_shader_draw_parameters v1
+	VK_KHR_shader_expect_assume v1
+	VK_KHR_shader_float_controls v4
+	VK_KHR_shader_float_controls2 v1
+	VK_KHR_shader_float16_int8 v1
+	VK_KHR_shader_fma v1
+	VK_KHR_shader_integer_dot_product v1
+	VK_KHR_shader_maximal_reconvergence v1
+	VK_KHR_shader_non_semantic_info v1
+	VK_KHR_shader_quad_control v1
+	VK_KHR_shader_relaxed_extended_instruction v1
+	VK_KHR_shader_subgroup_extended_types v1
+	VK_KHR_shader_subgroup_rotate v2
+	VK_KHR_shader_subgroup_uniform_control_flow v1
+	VK_KHR_shader_terminate_invocation v1
+	VK_KHR_spirv_1_4 v1
+	VK_KHR_storage_buffer_storage_class v1
+	VK_KHR_surface v25
+	VK_KHR_surface_maintenance1 v1
+	VK_KHR_surface_protected_capabilities v1
+	VK_KHR_swapchain v70
+	VK_KHR_swapchain_maintenance1 v1
+	VK_KHR_swapchain_mutable_format v1
+	VK_KHR_synchronization2 v1
+	VK_KHR_timeline_semaphore v2
+	VK_KHR_uniform_buffer_standard_layout v1
+	VK_KHR_variable_pointers v1
+	VK_KHR_vertex_attribute_divisor v1
+	VK_KHR_vulkan_memory_model v3
+	VK_KHR_zero_initialize_workgroup_memory v1
+	VK_EXT_4444_formats v1
+	VK_EXT_buffer_device_address v2
+	VK_EXT_calibrated_timestamps v2
+	VK_EXT_debug_marker v4
+	VK_EXT_debug_report v10
+	VK_EXT_debug_utils v2
+	VK_EXT_depth_clip_control v1
+	VK_EXT_descriptor_indexing v2
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_external_memory_host v1
+	VK_EXT_external_memory_metal v1
+	VK_EXT_fragment_shader_interlock v1
+	VK_EXT_global_priority v2
+	VK_EXT_global_priority_query v1
+	VK_EXT_headless_surface v1
+	VK_EXT_host_image_copy v1
+	VK_EXT_host_query_reset v1
+	VK_EXT_image_2d_view_of_3d v1
+	VK_EXT_image_robustness v1
+	VK_EXT_index_type_uint8 v1
+	VK_EXT_inline_uniform_block v1
+	VK_EXT_layer_settings v2
+	VK_EXT_legacy_dithering v2
+	VK_EXT_line_rasterization v1
+	VK_EXT_load_store_op_none v1
+	VK_EXT_memory_budget v1
+	VK_EXT_metal_objects v2
+	VK_EXT_metal_surface v1
+	VK_EXT_non_seamless_cube_map v1
+	VK_EXT_pipeline_creation_cache_control v3
+	VK_EXT_pipeline_creation_feedback v1
+	VK_EXT_pipeline_robustness v1
+	VK_EXT_post_depth_coverage v1
+	VK_EXT_primitive_topology_list_restart v1
+	VK_EXT_private_data v1
+	VK_EXT_provoking_vertex v1
+	VK_EXT_robustness2 v1
+	VK_EXT_sample_locations v1
+	VK_EXT_scalar_block_layout v1
+	VK_EXT_separate_stencil_usage v1
+	VK_EXT_shader_atomic_float v1
+	VK_EXT_shader_demote_to_helper_invocation v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_shader_subgroup_ballot v1
+	VK_EXT_shader_subgroup_vote v1
+	VK_EXT_shader_viewport_index_layer v1
+	VK_EXT_subgroup_size_control v2
+	VK_EXT_surface_maintenance1 v1
+	VK_EXT_swapchain_colorspace v5
+	VK_EXT_swapchain_maintenance1 v1
+	VK_EXT_texel_buffer_alignment v1
+	VK_EXT_texture_compression_astc_hdr v1
+	VK_EXT_tooling_info v1
+	VK_EXT_vertex_attribute_divisor v3
+	VK_AMD_gpu_shader_half_float v2
+	VK_AMD_negative_viewport_height v1
+	VK_AMD_shader_image_load_store_lod v1
+	VK_AMD_shader_trinary_minmax v1
+	VK_GOOGLE_display_timing v1
+	VK_IMG_format_pvrtc v1
+	VK_INTEL_shader_integer_functions2 v1
+	VK_MVK_ios_surface v3
+	VK_MVK_moltenvk v37
+	VK_NV_fragment_shader_barycentric v1
+[mvk-info] GPU device:
+	model: Apple A13 GPU
+	type: Integrated
+	vendorID: 0x106b
+	deviceID: 0x10050006
+	pipelineCacheUUID: DB660224-1005-0006-0000-000100000000
+	GPU memory available: 1961 MB
+	GPU memory used: 0 MB
+	Metal Shading Language 3.0
+	supports the following GPU Features:
+		GPU Family Metal 3
+		GPU Family Apple 6
+		Read-Write Texture Tier 2
+[mvk-info] Created VkInstance for Vulkan version 1.0.357, as requested by app, with the following 4 Vulkan extensions enabled:
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_surface v25
+	VK_EXT_metal_surface v1
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateDebugReportCallbackEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateDebugUtilsMessengerEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateHeadlessSurfaceEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateMacOSSurfaceMVK not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateWaylandSurfaceKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateWin32SurfaceKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkCreateXlibSurfaceKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkDebugReportMessageEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkDestroyDebugReportCallbackEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkDestroyDebugUtilsMessengerEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceGroups not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceGroupsKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeMatrixPropertiesNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceCooperativeVectorPropertiesNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceDescriptorSizeEXT not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalBufferProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalBufferPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalFenceProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalFencePropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalSemaphoreProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceExternalTensorPropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceFeatures2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceFormatProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceFragmentShadingRatesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceImageFormatProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceMemoryProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceOpticalFlowImageFormatsNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDevicePresentRectanglesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceQueueFamilyProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSparseImageFormatProperties2 not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfaceCapabilities2KHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceSurfaceFormats2KHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceToolProperties not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceVideoCapabilitiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceVideoFormatPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceWaylandPresentationSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceWin32PresentationSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkGetPhysicalDeviceXlibPresentationSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateInstance Instance proc vkSubmitDebugUtilsMessageEXT not found.
+0024:trace:vulkan:init_physical_device Host physical device extensions:
+0024:trace:vulkan:init_physical_device   - VK_KHR_16bit_storage
+0024:trace:vulkan:init_physical_device   - VK_KHR_8bit_storage
+0024:trace:vulkan:init_physical_device   - VK_KHR_bind_memory2
+0024:trace:vulkan:init_physical_device   - VK_KHR_buffer_device_address
+0024:trace:vulkan:init_physical_device   - VK_KHR_calibrated_timestamps
+0024:trace:vulkan:init_physical_device   - VK_KHR_copy_commands2
+0024:trace:vulkan:init_physical_device   - VK_KHR_create_renderpass2
+0024:trace:vulkan:init_physical_device   - VK_KHR_dedicated_allocation
+0024:trace:vulkan:init_physical_device   - VK_KHR_deferred_host_operations
+0024:trace:vulkan:init_physical_device   - VK_KHR_depth_stencil_resolve
+0024:trace:vulkan:init_physical_device   - VK_KHR_descriptor_update_template
+0024:trace:vulkan:init_physical_device   - VK_KHR_device_group
+0024:trace:vulkan:init_physical_device   - VK_KHR_driver_properties
+0024:trace:vulkan:init_physical_device   - VK_KHR_dynamic_rendering
+0024:trace:vulkan:init_physical_device   - VK_KHR_dynamic_rendering_local_read
+0024:trace:vulkan:init_physical_device   - VK_KHR_external_fence
+0024:trace:vulkan:init_physical_device   - VK_KHR_external_memory
+0024:trace:vulkan:init_physical_device   - VK_KHR_external_semaphore
+0024:trace:vulkan:init_physical_device   - VK_KHR_format_feature_flags2
+0024:trace:vulkan:init_physical_device   - VK_KHR_get_memory_requirements2
+0024:trace:vulkan:init_physical_device   - VK_KHR_global_priority
+0024:trace:vulkan:init_physical_device   - VK_KHR_image_format_list
+0024:trace:vulkan:init_physical_device   - VK_KHR_imageless_framebuffer
+0024:trace:vulkan:init_physical_device   - VK_KHR_incremental_present
+0024:trace:vulkan:init_physical_device   - VK_KHR_index_type_uint8
+0024:trace:vulkan:init_physical_device   - VK_KHR_line_rasterization
+0024:trace:vulkan:init_physical_device   - VK_KHR_load_store_op_none
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance1
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance2
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance3
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance4
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance5
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance6
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance7
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance8
+0024:trace:vulkan:init_physical_device   - VK_KHR_maintenance9
+0024:trace:vulkan:init_physical_device   - VK_KHR_map_memory2
+0024:trace:vulkan:init_physical_device   - VK_KHR_multiview
+0024:warn:vulkan:init_physical_device Extension "VK_KHR_portability_subset" is not supported.
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_id
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_id2
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_wait
+0024:trace:vulkan:init_physical_device   - VK_KHR_present_wait2
+0024:trace:vulkan:init_physical_device   - VK_KHR_push_descriptor
+0024:trace:vulkan:init_physical_device   - VK_KHR_relaxed_block_layout
+0024:trace:vulkan:init_physical_device   - VK_KHR_robustness2
+0024:trace:vulkan:init_physical_device   - VK_KHR_sampler_ycbcr_conversion
+0024:trace:vulkan:init_physical_device   - VK_KHR_separate_depth_stencil_layouts
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_draw_parameters
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_expect_assume
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_float_controls
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_float_controls2
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_float16_int8
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_fma
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_integer_dot_product
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_maximal_reconvergence
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_non_semantic_info
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_relaxed_extended_instruction
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_subgroup_extended_types
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_subgroup_rotate
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_subgroup_uniform_control_flow
+0024:trace:vulkan:init_physical_device   - VK_KHR_shader_terminate_invocation
+0024:trace:vulkan:init_physical_device   - VK_KHR_spirv_1_4
+0024:trace:vulkan:init_physical_device   - VK_KHR_storage_buffer_storage_class
+0024:trace:vulkan:init_physical_device   - VK_KHR_swapchain
+0024:trace:vulkan:init_physical_device   - VK_KHR_swapchain_maintenance1
+0024:trace:vulkan:init_physical_device   - VK_KHR_swapchain_mutable_format
+0024:trace:vulkan:init_physical_device   - VK_KHR_synchronization2
+0024:trace:vulkan:init_physical_device   - VK_KHR_timeline_semaphore
+0024:trace:vulkan:init_physical_device   - VK_KHR_uniform_buffer_standard_layout
+0024:trace:vulkan:init_physical_device   - VK_KHR_variable_pointers
+0024:trace:vulkan:init_physical_device   - VK_KHR_vertex_attribute_divisor
+0024:trace:vulkan:init_physical_device   - VK_KHR_vulkan_memory_model
+0024:trace:vulkan:init_physical_device   - VK_KHR_zero_initialize_workgroup_memory
+0024:trace:vulkan:init_physical_device   - VK_EXT_4444_formats
+0024:trace:vulkan:init_physical_device   - VK_EXT_buffer_device_address
+0024:trace:vulkan:init_physical_device   - VK_EXT_calibrated_timestamps
+0024:trace:vulkan:init_physical_device   - VK_EXT_debug_marker
+0024:trace:vulkan:init_physical_device   - VK_EXT_depth_clip_control
+0024:trace:vulkan:init_physical_device   - VK_EXT_descriptor_indexing
+0024:trace:vulkan:init_physical_device   - VK_EXT_extended_dynamic_state
+0024:trace:vulkan:init_physical_device   - VK_EXT_extended_dynamic_state2
+0024:trace:vulkan:init_physical_device   - VK_EXT_extended_dynamic_state3
+0024:trace:vulkan:init_physical_device   - VK_EXT_external_memory_host
+0024:trace:vulkan:init_physical_device   - VK_EXT_external_memory_metal
+0024:trace:vulkan:init_physical_device   - VK_EXT_fragment_shader_interlock
+0024:trace:vulkan:init_physical_device   - VK_EXT_global_priority
+0024:trace:vulkan:init_physical_device   - VK_EXT_global_priority_query
+0024:trace:vulkan:init_physical_device   - VK_EXT_host_image_copy
+0024:trace:vulkan:init_physical_device   - VK_EXT_host_query_reset
+0024:trace:vulkan:init_physical_device   - VK_EXT_image_2d_view_of_3d
+0024:trace:vulkan:init_physical_device   - VK_EXT_image_robustness
+0024:trace:vulkan:init_physical_device   - VK_EXT_index_type_uint8
+0024:trace:vulkan:init_physical_device   - VK_EXT_inline_uniform_block
+0024:trace:vulkan:init_physical_device   - VK_EXT_line_rasterization
+0024:trace:vulkan:init_physical_device   - VK_EXT_load_store_op_none
+0024:trace:vulkan:init_physical_device   - VK_EXT_memory_budget
+0024:warn:vulkan:init_physical_device Extension "VK_EXT_metal_objects" is not supported.
+0024:trace:vulkan:init_physical_device   - VK_EXT_pipeline_creation_cache_control
+0024:trace:vulkan:init_physical_device   - VK_EXT_pipeline_creation_feedback
+0024:trace:vulkan:init_physical_device   - VK_EXT_pipeline_robustness
+0024:trace:vulkan:init_physical_device   - VK_EXT_post_depth_coverage
+0024:trace:vulkan:init_physical_device   - VK_EXT_private_data
+0024:trace:vulkan:init_physical_device   - VK_EXT_robustness2
+0024:trace:vulkan:init_physical_device   - VK_EXT_sample_locations
+0024:trace:vulkan:init_physical_device   - VK_EXT_scalar_block_layout
+0024:trace:vulkan:init_physical_device   - VK_EXT_separate_stencil_usage
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_atomic_float
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_demote_to_helper_invocation
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_stencil_export
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_subgroup_ballot
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_subgroup_vote
+0024:trace:vulkan:init_physical_device   - VK_EXT_shader_viewport_index_layer
+0024:trace:vulkan:init_physical_device   - VK_EXT_subgroup_size_control
+0024:trace:vulkan:init_physical_device   - VK_EXT_swapchain_maintenance1
+0024:trace:vulkan:init_physical_device   - VK_EXT_texel_buffer_alignment
+0024:trace:vulkan:init_physical_device   - VK_EXT_texture_compression_astc_hdr
+0024:trace:vulkan:init_physical_device   - VK_EXT_tooling_info
+0024:trace:vulkan:init_physical_device   - VK_EXT_vertex_attribute_divisor
+0024:trace:vulkan:init_physical_device   - VK_AMD_gpu_shader_half_float
+0024:trace:vulkan:init_physical_device   - VK_AMD_negative_viewport_height
+0024:trace:vulkan:init_physical_device   - VK_AMD_shader_image_load_store_lod
+0024:trace:vulkan:init_physical_device   - VK_AMD_shader_trinary_minmax
+0024:warn:vulkan:init_physical_device Extension "VK_GOOGLE_display_timing" is not supported.
+0024:trace:vulkan:init_physical_device   - VK_IMG_format_pvrtc
+0024:trace:vulkan:init_physical_device   - VK_INTEL_shader_integer_functions2
+0024:trace:vulkan:win32u_vkCreateInstance Created instance 0x135015400, host_instance 0x135010c18.
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkDestroyInstance"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkDestroyInstance" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkCreateWin32SurfaceKHR"
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkDestroySurfaceKHR"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkDestroySurfaceKHR" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkEnumeratePhysicalDevices"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkEnumeratePhysicalDevices" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkGetPhysicalDeviceQueueFamilyProperties"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkGetPhysicalDeviceQueueFamilyProperties" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkGetPhysicalDeviceSurfaceSupportKHR"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkGetPhysicalDeviceSurfaceSupportKHR" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkGetPhysicalDeviceSurfaceCapabilitiesKHR" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkGetPhysicalDeviceSurfaceFormatsKHR"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkGetPhysicalDeviceSurfaceFormatsKHR" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkCreateDevice"
+0024:trace:vulkan:wine_vk_get_instance_proc_addr Found name="vkCreateDevice" in instance table
+0024:trace:vulkan:vkGetInstanceProcAddr 00000001024EECC0, "vkGetDeviceProcAddr"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkGetDeviceProcAddr" in device table
+0024:trace:vulkan:thunk64_vkCreateWin32SurfaceKHR 0x1024eecc0, 0x1032ffe60, 0x0, 0x1032ffe58
+0024:trace:vulkan:win32u_vkCreateWin32SurfaceKHR client_instance 0x1024eecc0, create_info 0x1032ffe60, allocator 0x0, ret 0x1032ffe58
+0024:trace:vulkan:iosdrv_client_surface_update resized 0x10028/0x134322680 Metal surface to 712x433
+JUICE_MOLTENVK_CLIENT_SURFACE_READY hwnd=0x10028 device=Apple A13 GPU size=712x433
+JUICE_MOLTENVK_SURFACE_CREATE hwnd=0x10028 result=0 host=0x131d1b3e0
+[JuiceGeom] surface hwnd=0x10028 rect=0,0,768,512 size=768x512 previous=0x131f368a0
+[JuiceRect] input hwnd=0x10028 dpi=96/1 raw=96/1 win=60,60,780,520 client=64,83,776,516 visible=60,60,780,520
+[JuiceRect] mapped hwnd=0x10028 win=60,60,780,520 client=64,83,776,516 visible=60,60,780,520
+[JuiceGeom] changed hwnd=0x10028 flags=4000181f ptr=0x28010f970 window=60,60,780,520 client=64,83,776,516 visible=60,60,780,520 surface=0x131f368a0 shown=1
+DISPLAY_EVENT WINDOW pid=17568 hwnd=0x10028 rect=60,60 720x460 visible=1
+0024:trace:vulkan:thunk64_vkEnumeratePhysicalDevices 0x1024eecc0, 0x1032ffe14, 0x1032ffe18
+0024:trace:vulkan:wine_vkEnumeratePhysicalDevices Returning 1 devices.
+0024:trace:vulkan:thunk64_vkGetPhysicalDeviceQueueFamilyProperties 0x1024eecd8, 0x1032ffe10, 0x1032ffb10
+0024:trace:vulkan:thunk64_vkGetPhysicalDeviceSurfaceSupportKHR 0x1024eecd8, 0, 0x134322610, 0x1032ff948
+0024:trace:vulkan:vkCreateDevice Enabling 1 client device extensions
+0024:trace:vulkan:vkCreateDevice   - VK_KHR_swapchain
+0024:trace:vulkan:thunk64_vkCreateDevice 0x1024eecd8, 0x1032ffa90, 0x0, 0x1032ffa88
+0024:trace:vulkan:win32u_vkCreateDevice Device name: "Apple A13 GPU".
+0024:trace:vulkan:win32u_vkCreateDevice Vendor ID: 0x106b, Device ID: 0x10050006.
+0024:trace:vulkan:win32u_vkCreateDevice Driver version: 0x28a2.
+0024:trace:vulkan:convert_device_create_info Enabling 1 host device extensions
+0024:trace:vulkan:convert_device_create_info   - "VK_KHR_swapchain"
+[mvk-info] Vulkan semaphores using MTLEvent.
+[mvk-info] Descriptor sets binding resources using Metal3 argument buffers.
+[mvk-info] Created VkDevice to run on GPU Apple A13 GPU with the following 1 Vulkan extensions enabled:
+	VK_KHR_swapchain v70
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkAcquireNextImage2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkAcquirePerformanceConfigurationINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkAcquireProfilingLockKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkAntiLagUpdateAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindAccelerationStructureMemoryNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindBufferMemory2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindBufferMemory2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindDataGraphPipelineSessionMemoryARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindImageMemory2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindImageMemory2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindOpticalFlowSessionImageNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindTensorMemoryARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBindVideoSessionMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBuildAccelerationStructuresKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkBuildMicromapsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkClearShaderInstrumentationMetricsARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginConditionalRendering2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginConditionalRenderingEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginCustomResolveEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginDebugUtilsLabelEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginGpaSampleAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginGpaSessionAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginPerTileExecutionQCOM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginQueryIndexedEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginRenderPass2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginRenderPass2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginRendering not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginRenderingKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginShaderInstrumentationARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginTransformFeedback2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginTransformFeedbackEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBeginVideoCodingKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindDescriptorBufferEmbeddedSamplers2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindDescriptorBufferEmbeddedSamplersEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindDescriptorBuffersEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindDescriptorSets2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindDescriptorSets2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindIndexBuffer2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindIndexBuffer2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindIndexBuffer3KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindInvocationMaskHUAWEI not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindPipelineShaderGroupNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindResourceHeapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindSamplerHeapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindShadersEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindShadingRateImageNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindTileMemoryQCOM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindTransformFeedbackBuffers2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindTransformFeedbackBuffersEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindVertexBuffers2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindVertexBuffers2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBindVertexBuffers3KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBlitImage2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBlitImage2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBuildAccelerationStructureNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBuildAccelerationStructuresIndirectKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBuildAccelerationStructuresKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBuildClusterAccelerationStructureIndirectNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBuildMicromapsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdBuildPartitionedAccelerationStructuresNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdControlVideoCodingKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdConvertCooperativeVectorMatrixNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyAccelerationStructureKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyAccelerationStructureNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyAccelerationStructureToMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyBuffer2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyBuffer2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyBufferToImage2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyBufferToImage2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyGpaSessionResultsAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyImage2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyImage2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyImageToBuffer2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyImageToBuffer2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyImageToMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryIndirectKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryIndirectNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryToAccelerationStructureKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryToImageIndirectKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryToImageIndirectNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryToImageKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMemoryToMicromapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMicromapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyMicromapToMemoryEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyQueryPoolResultsToMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCopyTensorARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdCuLaunchKernelNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDebugMarkerBeginEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDebugMarkerEndEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDebugMarkerInsertEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDecodeVideoKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDecompressMemoryEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDecompressMemoryIndirectCountEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDecompressMemoryIndirectCountNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDecompressMemoryNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDispatchBase not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDispatchBaseKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDispatchDataGraphARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDispatchIndirect2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDispatchTileQCOM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawClusterHUAWEI not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawClusterIndirectHUAWEI not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndexedIndirect2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndexedIndirectCount not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndexedIndirectCount2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndexedIndirectCountAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndexedIndirectCountKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndirect2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndirectByteCount2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndirectByteCountEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndirectCount not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndirectCount2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndirectCountAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawIndirectCountKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksIndirect2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksIndirectCount2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksIndirectCountEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksIndirectCountNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksIndirectEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksIndirectNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMeshTasksNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMultiEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdDrawMultiIndexedEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEncodeVideoKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndConditionalRenderingEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndDebugUtilsLabelEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndGpaSampleAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndGpaSessionAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndPerTileExecutionQCOM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndQueryIndexedEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndRenderPass2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndRenderPass2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndRendering not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndRendering2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndRendering2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndRenderingKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndShaderInstrumentationARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndTransformFeedback2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndTransformFeedbackEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdEndVideoCodingKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdExecuteGeneratedCommandsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdExecuteGeneratedCommandsNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdFillMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdInsertDebugUtilsLabelEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdNextSubpass2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdNextSubpass2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdOpticalFlowExecuteNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPipelineBarrier2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPipelineBarrier2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPreprocessGeneratedCommandsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPreprocessGeneratedCommandsNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushConstants2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushConstants2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSet not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSet2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSet2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSetKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSetWithTemplate not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSetWithTemplate2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSetWithTemplate2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdPushDescriptorSetWithTemplateKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdResetEvent2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdResetEvent2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdResolveImage2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdResolveImage2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetAlphaToCoverageEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetAlphaToOneEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetAttachmentFeedbackLoopEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCheckpointNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCoarseSampleOrderNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetColorBlendAdvancedEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetColorBlendEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetColorBlendEquationEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetColorWriteEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetColorWriteMaskEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetComputeOccupancyPriorityNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetConservativeRasterizationModeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCoverageModulationModeNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCoverageModulationTableEnableNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCoverageModulationTableNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCoverageReductionModeNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCoverageToColorEnableNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCoverageToColorLocationNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCullMode not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetCullModeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthBias2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthBiasEnable not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthBiasEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthBoundsTestEnable not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthBoundsTestEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthClampEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthClampRangeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthClipEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthClipNegativeOneToOneEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthCompareOp not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthCompareOpEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthTestEnable not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthTestEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthWriteEnable not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDepthWriteEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDescriptorBufferOffsets2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDescriptorBufferOffsetsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDeviceMask not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDeviceMaskKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDiscardRectangleEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDiscardRectangleEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDiscardRectangleModeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetDispatchParametersARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetEvent2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetEvent2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetExclusiveScissorEnableNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetExclusiveScissorNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetExtraPrimitiveOverestimationSizeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetFragmentShadingRateEnumNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetFragmentShadingRateKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetFrontFace not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetFrontFaceEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetLineRasterizationModeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetLineStipple not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetLineStippleEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetLineStippleEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetLineStippleKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetLogicOpEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetLogicOpEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPatchControlPointsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPerformanceMarkerINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPerformanceOverrideINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPerformanceStreamMarkerINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPolygonModeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPrimitiveRestartEnable not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPrimitiveRestartEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPrimitiveRestartIndexEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPrimitiveTopology not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetPrimitiveTopologyEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetProvokingVertexModeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRasterizationSamplesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRasterizationStreamEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRasterizerDiscardEnable not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRasterizerDiscardEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRayTracingPipelineStackSizeKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRenderingAttachmentLocations not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRenderingAttachmentLocationsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRenderingInputAttachmentIndices not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRenderingInputAttachmentIndicesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetRepresentativeFragmentTestEnableNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetSampleLocationsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetSampleLocationsEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetSampleMaskEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetScissorWithCount not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetScissorWithCountEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetShadingRateImageEnableNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetStencilOp not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetStencilOpEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetStencilTestEnable not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetStencilTestEnableEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetTessellationDomainOriginEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetVertexInputEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetViewportShadingRatePaletteNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetViewportSwizzleNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetViewportWScalingEnableNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetViewportWScalingNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetViewportWithCount not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSetViewportWithCountEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdSubpassShadingHUAWEI not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdTraceRaysIndirect2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdTraceRaysIndirectKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdTraceRaysKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdTraceRaysNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdUpdateMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdUpdatePipelineIndirectBufferNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWaitEvents2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWaitEvents2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteAccelerationStructuresPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteAccelerationStructuresPropertiesNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteBufferMarker2AMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteBufferMarkerAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteMarkerToMemoryAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteMicromapsPropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteTimestamp2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCmdWriteTimestamp2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCompileDeferredNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkConvertCooperativeVectorMatrixNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyAccelerationStructureKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyAccelerationStructureToMemoryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyImageToImage not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyImageToImageEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyImageToMemory not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyImageToMemoryEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyMemoryToAccelerationStructureKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyMemoryToImage not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyMemoryToImageEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyMemoryToMicromapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyMicromapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCopyMicromapToMemoryEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateAccelerationStructure2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateAccelerationStructureKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateAccelerationStructureNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateCuFunctionNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateCuModuleNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateDataGraphPipelineSessionARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateDataGraphPipelinesARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateDeferredOperationKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateDescriptorUpdateTemplate not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateDescriptorUpdateTemplateKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateGpaSessionAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateIndirectCommandsLayoutEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateIndirectCommandsLayoutNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateIndirectExecutionSetEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateMicromapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateOpticalFlowSessionNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreatePipelineBinariesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreatePrivateDataSlot not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreatePrivateDataSlotEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateRayTracingPipelinesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateRayTracingPipelinesNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateRenderPass2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateRenderPass2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateSamplerYcbcrConversion not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateSamplerYcbcrConversionKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateShaderInstrumentationARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateShadersEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateTensorARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateTensorViewARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateValidationCacheEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateVideoSessionKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkCreateVideoSessionParametersKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDebugMarkerSetObjectNameEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDebugMarkerSetObjectTagEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDeferredOperationJoinKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyAccelerationStructureKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyAccelerationStructureNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyCuFunctionNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyCuModuleNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyDataGraphPipelineSessionARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyDeferredOperationKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyDescriptorUpdateTemplate not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyDescriptorUpdateTemplateKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyGpaSessionAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyIndirectCommandsLayoutEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyIndirectCommandsLayoutNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyIndirectExecutionSetEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyMicromapEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyOpticalFlowSessionNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyPipelineBinaryKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyPrivateDataSlot not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyPrivateDataSlotEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroySamplerYcbcrConversion not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroySamplerYcbcrConversionKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyShaderEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyShaderInstrumentationARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyTensorARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyTensorViewARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyValidationCacheEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyVideoSessionKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkDestroyVideoSessionParametersKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetAccelerationStructureBuildSizesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetAccelerationStructureDeviceAddressKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetAccelerationStructureHandleNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetAccelerationStructureMemoryRequirementsNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferDeviceAddress not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferDeviceAddressEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferDeviceAddressKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferMemoryRequirements2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferMemoryRequirements2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferOpaqueCaptureAddress not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferOpaqueCaptureAddressKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetBufferOpaqueCaptureDescriptorDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetCalibratedTimestampsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetCalibratedTimestampsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetClusterAccelerationStructureBuildSizesNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDataGraphPipelineAvailablePropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDataGraphPipelinePropertiesARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDataGraphPipelineSessionBindPointRequirementsARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDataGraphPipelineSessionMemoryRequirementsARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeferredOperationMaxConcurrencyKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeferredOperationResultKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDescriptorEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDescriptorSetHostMappingVALVE not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDescriptorSetLayoutBindingOffsetEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDescriptorSetLayoutHostMappingInfoVALVE not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDescriptorSetLayoutSizeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDescriptorSetLayoutSupport not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDescriptorSetLayoutSupportKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceAccelerationStructureCompatibilityKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceBufferMemoryRequirements not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceBufferMemoryRequirementsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceCombinedImageSamplerIndexNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceFaultDebugInfoKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceFaultInfoEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceFaultReportsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceGroupPeerMemoryFeatures not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceGroupPeerMemoryFeaturesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceGroupPresentCapabilitiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceGroupSurfacePresentModesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceImageMemoryRequirements not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceImageMemoryRequirementsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceImageSparseMemoryRequirements not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceImageSparseMemoryRequirementsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceImageSubresourceLayout not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceImageSubresourceLayoutKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceMemoryOpaqueCaptureAddress not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceMemoryOpaqueCaptureAddressKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceMicromapCompatibilityEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceQueue2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDeviceTensorMemoryRequirementsARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetDynamicRenderingTilePropertiesQCOM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetEncodedVideoSessionParametersKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetFenceFdKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetFenceWin32HandleKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetFramebufferTilePropertiesQCOM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetGeneratedCommandsMemoryRequirementsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetGeneratedCommandsMemoryRequirementsNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetGpaDeviceClockInfoAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetGpaSessionResultsAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetGpaSessionStatusAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageDrmFormatModifierPropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageMemoryRequirements2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageMemoryRequirements2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageOpaqueCaptureDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageOpaqueCaptureDescriptorDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageSparseMemoryRequirements2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageSparseMemoryRequirements2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageSubresourceLayout2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageSubresourceLayout2EXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageSubresourceLayout2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageViewAddressNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageViewHandle64NVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageViewHandleNVX not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetImageViewOpaqueCaptureDescriptorDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetLatencyTimingsNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMemoryFdKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMemoryFdPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMemoryHostPointerPropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMemoryMetalHandleEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMemoryMetalHandlePropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMemoryWin32HandleKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMemoryWin32HandlePropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetMicromapBuildSizesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPartitionedAccelerationStructuresBuildSizesNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPastPresentationTimingEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPerformanceParameterINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelineBinaryDataKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelineExecutableInternalRepresentationsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelineExecutablePropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelineExecutableStatisticsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelineIndirectDeviceAddressNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelineIndirectMemoryRequirementsNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelineKeyKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPipelinePropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPrivateData not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetPrivateDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetQueueCheckpointData2NV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetQueueCheckpointDataNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetRayTracingCaptureReplayShaderGroupHandlesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetRayTracingShaderGroupHandlesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetRayTracingShaderGroupHandlesNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetRayTracingShaderGroupStackSizeKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetRenderingAreaGranularity not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetRenderingAreaGranularityKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetSamplerOpaqueCaptureDescriptorDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetSemaphoreCounterValue not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetSemaphoreCounterValueKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetSemaphoreFdKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetSemaphoreWin32HandleKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetShaderBinaryDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetShaderInfoAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetShaderInstrumentationValuesARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetShaderModuleCreateInfoIdentifierEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetShaderModuleIdentifierEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetSwapchainTimeDomainPropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetSwapchainTimingPropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetTensorMemoryRequirementsARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetTensorOpaqueCaptureDataARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetTensorOpaqueCaptureDescriptorDataARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetTensorViewOpaqueCaptureDescriptorDataARM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetValidationCacheDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkGetVideoSessionMemoryRequirementsKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkImportFenceFdKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkImportFenceWin32HandleKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkImportSemaphoreFdKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkImportSemaphoreWin32HandleKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkInitializePerformanceApiINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkLatencySleepNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkMapMemory2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkMapMemory2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkMergeValidationCachesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueBeginDebugUtilsLabelEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueEndDebugUtilsLabelEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueInsertDebugUtilsLabelEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueNotifyOutOfBandNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueSetPerfHintQCOM not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueSetPerformanceConfigurationINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueSubmit2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkQueueSubmit2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkRegisterCustomBorderColorEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkReleaseCapturedPipelineDataKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkReleasePerformanceConfigurationINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkReleaseProfilingLockKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkReleaseSwapchainImagesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkReleaseSwapchainImagesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkResetGpaSessionAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkResetQueryPool not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkResetQueryPoolEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetDebugUtilsObjectNameEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetDebugUtilsObjectTagEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetDeviceMemoryPriorityEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetGpaDeviceClockModeAMD not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetHdrMetadataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetLatencyMarkerNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetLatencySleepModeNV not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetPrivateData not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetPrivateDataEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSetSwapchainPresentTimingQueueSizeEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSignalSemaphore not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkSignalSemaphoreKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkTransitionImageLayout not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkTransitionImageLayoutEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkTrimCommandPool not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkTrimCommandPoolKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUninitializePerformanceApiINTEL not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUnmapMemory2 not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUnmapMemory2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUnregisterCustomBorderColorEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUpdateDescriptorSetWithTemplate not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUpdateDescriptorSetWithTemplateKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUpdateIndirectExecutionSetPipelineEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUpdateIndirectExecutionSetShaderEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkUpdateVideoSessionParametersKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWaitForPresent2KHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWaitForPresentKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWaitSemaphores not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWaitSemaphoresKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWriteAccelerationStructuresPropertiesKHR not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWriteMicromapsPropertiesEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWriteResourceDescriptorsEXT not found.
+0024:trace:vulkan:win32u_vkCreateDevice Device proc vkWriteSamplerDescriptorsEXT not found.
+0024:trace:vulkan:init_device_queues Queue family index 0, queue count 1.
+0024:trace:vulkan:init_device_queues Got device 0x13480aa00 queue 0x13480bf48, host_queue 0x1340192c8.
+0024:trace:vulkan:win32u_vkCreateDevice Created device 0x13480aa00, host_device 0x134815218.
+[JuiceX18] derived #1 pc=0x17fc58c94 fault=0x3404 instr=3800152b base=x9 value=0x3404 fixed=0x17ffdb404 teb=0x17ffd8000
+[JuiceX18] derived #2 pc=0x17fc58c94 fault=0x3405 instr=3800152b base=x9 value=0x3405 fixed=0x17ffdb405 teb=0x17ffd8000
+[JuiceX18] derived #3 pc=0x17fc58c94 fault=0x3406 instr=3800152b base=x9 value=0x3406 fixed=0x17ffdb406 teb=0x17ffd8000
+[JuiceX18] derived #4 pc=0x17fc58c94 fault=0x3408 instr=3800152b base=x9 value=0x3408 fixed=0x17ffdb408 teb=0x17ffd8000
+[JuiceX18] derived #5 pc=0x17fc42f88 fault=0x3409 instr=38286a7f base=x19 value=0x3404 fixed=0x17ffdb404 teb=0x17ffd8000
+[JuiceX18] derived #6 pc=0x17fc58c94 fault=0x3409 instr=3800152b base=x9 value=0x3409 fixed=0x17ffdb409 teb=0x17ffd8000
+[JuiceX18] derived #7 pc=0x17fc58c94 fault=0x340e instr=3800152b base=x9 value=0x340e fixed=0x17ffdb40e teb=0x17ffd8000
+[JuiceX18] derived #8 pc=0x17fc58c94 fault=0x340f instr=3800152b base=x9 value=0x340f fixed=0x17ffdb40f teb=0x17ffd8000
+[JuiceX18] derived #9 pc=0x17fc58c94 fault=0x3415 instr=3800152b base=x9 value=0x3415 fixed=0x17ffdb415 teb=0x17ffd8000
+[JuiceX18] derived #10 pc=0x17fc58c4c fault=0x3416 instr=fc0085c0 base=x14 value=0x3416 fixed=0x17ffdb416 teb=0x17ffd8000
+[JuiceX18] derived #11 pc=0x17fc58c94 fault=0x3426 instr=3800152b base=x9 value=0x3426 fixed=0x17ffdb426 teb=0x17ffd8000
+[JuiceX18] derived #12 pc=0x17fc58c94 fault=0x3429 instr=3800152b base=x9 value=0x3429 fixed=0x17ffdb429 teb=0x17ffd8000
+[JuiceX18] derived #13 pc=0x17fc42f88 fault=0x342a instr=38286a7f base=x19 value=0x3409 fixed=0x17ffdb409 teb=0x17ffd8000
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkDestroyDevice"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkDestroyDevice" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkGetDeviceQueue"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkGetDeviceQueue" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkCreateSwapchainKHR"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkCreateSwapchainKHR" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkDestroySwapchainKHR"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkDestroySwapchainKHR" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkGetSwapchainImagesKHR"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkGetSwapchainImagesKHR" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkCreateCommandPool"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkCreateCommandPool" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkDestroyCommandPool"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkDestroyCommandPool" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkAllocateCommandBuffers"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkAllocateCommandBuffers" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkResetCommandBuffer"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkResetCommandBuffer" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkBeginCommandBuffer"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkBeginCommandBuffer" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkCmdPipelineBarrier"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkCmdPipelineBarrier" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkCmdClearColorImage"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkCmdClearColorImage" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkEndCommandBuffer"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkEndCommandBuffer" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkCreateSemaphore"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkCreateSemaphore" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkDestroySemaphore"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkDestroySemaphore" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkAcquireNextImageKHR"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkAcquireNextImageKHR" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkQueueSubmit"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkQueueSubmit" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkQueuePresentKHR"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkQueuePresentKHR" in device table
+0024:trace:vulkan:vkGetDeviceProcAddr 00000001024EE180, "vkQueueWaitIdle"
+0024:trace:vulkan:wine_vk_get_device_proc_addr Found name="vkQueueWaitIdle" in device table
+0024:trace:vulkan:thunk64_vkGetDeviceQueue 0x1024ee180, 0, 0, 0x1032ffa80
+0024:trace:vulkan:thunk64_vkGetPhysicalDeviceSurfaceCapabilitiesKHR 0x1024eecd8, 0x134322610, 0x1032ffa4c
+0024:trace:vulkan:thunk64_vkGetPhysicalDeviceSurfaceFormatsKHR 0x1024eecd8, 0x134322610, 0x1032ff944, 0x1032ff948
+JUICE_VULKAN_SMOKE_FAIL stage=surface-formats result=5
+0024:trace:vulkan:DllMain 000000017DFF0000, 0, 0000000000000001
+DISPLAY_CLIENT_CLOSED fd=7 pid=17568
+[JuiceWine parent] child exited with 1

@@ -62,10 +62,15 @@ host_tools=(
   "$BUILD/tools/wrc/wrc"
   "$BUILD/tools/wmc/wmc"
 )
+case "$(uname -m)" in
+  x86_64|amd64) host_file_pattern='ELF 64-bit.*x86-64' ;;
+  aarch64|arm64) host_file_pattern='ELF 64-bit.*ARM aarch64' ;;
+  *) echo "Unsupported Linux host architecture: $(uname -m)" >&2; exit 2 ;;
+esac
 for tool in "${host_tools[@]}"; do
   test -x "$tool" || { echo "Missing Linux Wine build tool: $tool" >&2; exit 3; }
-  file "$tool" | grep -Eq 'ELF 64-bit.*x86-64' || {
-    echo "Wine build tool is not an x86_64 Linux executable: $tool" >&2
+  file "$tool" | grep -Eq "$host_file_pattern" || {
+    echo "Wine build tool does not match the current Linux host: $tool" >&2
     file "$tool" >&2
     exit 3
   }

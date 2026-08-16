@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/graphics-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 SOURCE="$ROOT/wine"
 BUILD="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
@@ -36,6 +37,7 @@ export PKG_CONFIG_PATH="$JBROOT/usr/lib/pkgconfig:$JBROOT/usr/share/pkgconfig${P
 export CFLAGS="${CFLAGS:--O2}" CXXFLAGS="${CXXFLAGS:--O2}"
 export wine_cv_recent_bison=yes ac_cv_func_pthread_create=yes
 export JUICE_IOS_DEVICE=1
+export ac_cv_lib_soname_MoltenVK="$JUICE_MOLTENVK_RUNTIME_NAME"
 
 freetype_args=()
 if test "${JUICE_WITHOUT_FREETYPE:-0}" = 1; then
@@ -63,7 +65,7 @@ set +e
   --without-gstreamer --without-krb5 --without-netapi --without-opencl \
   --without-opengl --without-oss --without-pcap --without-pcsclite \
   --without-pulse --without-sane --without-sdl --without-udev --without-usb \
-  --without-v4l2 --without-vulkan 2>&1 | tee configure.log
+  --without-v4l2 --with-vulkan 2>&1 | tee configure.log
 status=${PIPESTATUS[0]}
 set -e
 if test -f config.status; then
@@ -88,4 +90,7 @@ if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
 else
   freetype_status=disabled
 fi
-echo "JUICE_WINE_CONFIGURE_OK path=$BUILD freetype=$freetype_status"
+grep -Fq "#define SONAME_LIBVULKAN \"$JUICE_MOLTENVK_RUNTIME_NAME\"" include/config.h || {
+  echo "Wine configure did not enable bundled MoltenVK." >&2; exit 5;
+}
+echo "JUICE_WINE_CONFIGURE_OK path=$BUILD freetype=$freetype_status vulkan=moltenvk"

@@ -21,7 +21,10 @@ CACHE_SHIM_SOURCE="$ROOT/scripts/ios-clear-cache-shim.c"
 CACHE_SHIM_DIR="$ROOT/build/ios-shims"
 CACHE_SHIM_OBJ="$CACHE_SHIM_DIR/clear-cache.o"
 
-case "$(uname -m)" in x86_64|amd64) ;; *) echo "build-wine-linux.sh currently targets an x86_64 Linux host." >&2; exit 2;; esac
+case "$(uname -m)" in
+  x86_64|amd64|aarch64|arm64) ;;
+  *) echo "build-wine-linux.sh requires a 64-bit x86 or ARM Linux host." >&2; exit 2;;
+esac
 
 test -f "$NATIVE/Makefile" || "$ROOT/scripts/configure-wine-linux.sh"
 test -f "$PEBUILD/Makefile" || "$ROOT/scripts/configure-wine-pe-linux.sh"
@@ -156,8 +159,10 @@ native_targets=(
   server/wineserver
   dlls/ntdll/ntdll.so
   dlls/crypt32/crypt32.so
+  dlls/opengl32/opengl32.so
   dlls/win32u/win32u.so
   dlls/wineios.drv/wineios.so
+  dlls/winevulkan/winevulkan.so
   dlls/ws2_32/ws2_32.so
 )
 native_data_targets=(

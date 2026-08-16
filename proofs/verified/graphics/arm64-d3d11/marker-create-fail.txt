@@ -1,0 +1,1 @@
+JUICE_D3D11_SMOKE_FAIL stage=D3D11CreateDevice hr=0x80004005

@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <GameController/GameController.h>
+#import <Metal/Metal.h>
 #import "JuiceZip.h"
 #import "../wine/dlls/wineios.drv/control_protocol.h"
 #import "../wine/include/juiceinput.h"
@@ -46,6 +47,16 @@ static BOOL WriteAll(int fd,const void *p,size_t n){const char *b=p;while(n){ssi
 static char **CopyStrings(NSArray<NSString *> *a){char **v=calloc(a.count+1,sizeof(char *));for(NSUInteger i=0;i<a.count;i++)v[i]=strdup(a[i].UTF8String);return v;}
 static void FreeStrings(char **v){if(!v)return;for(size_t i=0;v[i];i++)free(v[i]);free(v);}
 static void CopyControlString(char *destination,size_t capacity,NSString *value){if(!capacity)return;destination[0]=0;if(value.length) [value getCString:destination maxLength:capacity encoding:NSUTF8StringEncoding];}
+static NSString *JuiceDocumentsRoot(void)
+{
+ NSArray<NSString *> *paths=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
+ return paths.firstObject?:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+}
+static NSString *JuiceDataRoot(void){return [JuiceDocumentsRoot() stringByAppendingPathComponent:@"JuiceData"];}
+static NSString *JuiceWindowsPath(NSString *unixPath)
+{
+ return [@"Z:" stringByAppendingString:[unixPath stringByReplacingOccurrencesOfString:@"/" withString:@"\\"]];
+}
 static int16_t JuiceControllerAxis(float value){if(value<=-1.f)return INT16_MIN;if(value>=1.f)return INT16_MAX;return (int16_t)(value*(value<0?32768.f:32767.f));}
 static uint8_t JuiceControllerTrigger(float value){if(value<=0.f)return 0;if(value>=1.f)return UINT8_MAX;return (uint8_t)(value*255.f+.5f);}
 static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
@@ -221,17 +232,21 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
  self.listenFD=self.activeClient=self.controlListenFD=self.controlPickerFD=-1;
  self.child=self.server=-1;
  self.childInput=self.gamepadFD=-1;
- self.persistentLogPath=@"/var/mobile/Documents/Juice-GUI-Headless.log";
+ NSString *dataRoot=JuiceDataRoot();
+ [NSFileManager.defaultManager createDirectoryAtPath:dataRoot
+  withIntermediateDirectories:YES attributes:nil error:nil];
+ self.persistentLogPath=[JuiceDocumentsRoot() stringByAppendingPathComponent:@"Juice-GUI-Headless.log"];
  [@"JUICE_HEADLESS_TEST_BEGIN\n" writeToFile:self.persistentLogPath atomically:YES
   encoding:NSUTF8StringEncoding error:nil];
- [NSFileManager.defaultManager createDirectoryAtPath:@"/var/mobile/Documents/JuiceData"
-  withIntermediateDirectories:YES attributes:nil error:nil];
  [self buildUI];
  [self setupExternalInput];
  [self startDisplayServer];
  [self startControlServer];
  [self append:[NSString stringWithFormat:@"EXPERIMENTAL_STATE multi_window=%d x86_64=%d\n",
   self.experimentalMultiWindow,self.experimentalX64]];
+ id<MTLDevice> hostMetal=MTLCreateSystemDefaultDevice();
+ [self append:[NSString stringWithFormat:@"HOST_METAL_DEVICE available=%d name=%@\n",
+  hostMetal!=nil,hostMetal.name?:@"none"]];
  [self append:@"GUI_READY\n"];
 }
 -(void)viewDidAppear:(BOOL)animated
@@ -239,10 +254,31 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
  [super viewDidAppear:animated];
  if(self.didAutoLaunch)return;
  self.didAutoLaunch=YES;
- NSString *base=@"/var/mobile/Documents/JuiceData";
+ NSString *base=JuiceDataRoot();
+ NSString *autoPathFile=[base stringByAppendingPathComponent:@"AutoLaunchPath"];
  NSString *x64Flag=[base stringByAppendingPathComponent:@"RunX64Smoke"];
  NSString *arm64Flag=[base stringByAppendingPathComponent:@"RunARM64Smoke"];
- if([NSFileManager.defaultManager fileExistsAtPath:x64Flag])
+ NSString *autoPath=[[NSString stringWithContentsOfFile:autoPathFile
+  encoding:NSUTF8StringEncoding error:nil]
+  stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+ if(autoPath.length)
+ {
+  [NSFileManager.defaultManager removeItemAtPath:autoPathFile error:nil];
+  NSString *argsFile=[base stringByAppendingPathComponent:@"AutoLaunchArgs"];
+  NSString *debugFile=[base stringByAppendingPathComponent:@"AutoLaunchDebug"];
+  NSString *arguments=[NSString stringWithContentsOfFile:argsFile encoding:NSUTF8StringEncoding error:nil];
+  NSString *debug=[NSString stringWithContentsOfFile:debugFile encoding:NSUTF8StringEncoding error:nil];
+  [NSFileManager.defaultManager removeItemAtPath:argsFile error:nil];
+  [NSFileManager.defaultManager removeItemAtPath:debugFile error:nil];
+  self.exeField.text=autoPath;
+  self.argsField.text=[arguments stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet]?:@"";
+  if(debug.length)self.debugField.text=[debug stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+  JuicePEMachine machine=[self machineForExecutableAtPath:autoPath];
+  if(machine==JuicePEMachineAMD64||machine==JuicePEMachineARM64EC)
+   [self applyExperimentalX64Enabled:YES];
+  [self append:[NSString stringWithFormat:@"AUTO_LAUNCH_CUSTOM path=%@ machine=0x%04x\n",autoPath,machine]];
+ }
+ else if([NSFileManager.defaultManager fileExistsAtPath:x64Flag])
  {
   [NSFileManager.defaultManager removeItemAtPath:x64Flag error:nil];
   [self applyExperimentalX64Enabled:YES];
@@ -607,7 +643,14 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
   if(gamepad.rightThumbstickButton.isPressed)state->buttons|=0x0080;
   if(gamepad.leftShoulder.isPressed)state->buttons|=0x0100;
   if(gamepad.rightShoulder.isPressed)state->buttons|=0x0200;
-  if(@available(iOS 14.5,*)){if(gamepad.buttonHome.isPressed)state->buttons|=0x0400;}
+  /* The Linux-hosted iOS linker does not provide clang's
+   * __isPlatformVersionAtLeast helper. Probe the optional 14.5 controller
+   * element dynamically, which also keeps the iOS 14.0 deployment target. */
+  if([gamepad respondsToSelector:@selector(buttonHome)])
+  {
+   GCControllerButtonInput *homeButton=[gamepad valueForKey:@"buttonHome"];
+   if(homeButton.isPressed)state->buttons|=0x0400;
+  }
   if(gamepad.buttonA.isPressed)state->buttons|=0x1000;
   if(gamepad.buttonB.isPressed)state->buttons|=0x2000;
   if(gamepad.buttonX.isPressed)state->buttons|=0x4000;
@@ -647,7 +690,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
 }
 -(void)setupExternalInput
 {
- NSString *path=@"/var/mobile/Documents/JuiceData/controller-v1.bin";
+ NSString *path=[JuiceDataRoot() stringByAppendingPathComponent:@"controller-v1.bin"];
  self.gamepadFD=open(path.fileSystemRepresentation,O_RDWR|O_CREAT,0600);
  if(self.gamepadFD<0||ftruncate(self.gamepadFD,JUICE_GAMEPAD_SHARED_SIZE)<0)
  {
@@ -739,7 +782,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
 -(void)sendEnter{[self sendVirtualKey:0x0d name:@"enter"];}
 -(void)append:(NSString *)s{if(!s)return;NSLog(@"JUICE_GUI %@",[s stringByTrimmingCharactersInSet:NSCharacterSet.newlineCharacterSet]);@synchronized(self){NSFileHandle *h=[NSFileHandle fileHandleForWritingAtPath:self.persistentLogPath];if(h){[h seekToEndOfFile];[h writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];[h closeFile];}}dispatch_async(dispatch_get_main_queue(),^{self.log.text=[(self.log.text?:@"") stringByAppendingString:s];[self.log scrollRangeToVisible:NSMakeRange(self.log.text.length,0)];});}
 -(void)startDisplayServer{
- self.socketPath=@"/var/mobile/Documents/JuiceData/juice.sock";unlink(self.socketPath.fileSystemRepresentation);self.listenFD=socket(AF_UNIX,SOCK_STREAM,0);struct sockaddr_un a={0};a.sun_family=AF_UNIX;strncpy(a.sun_path,self.socketPath.fileSystemRepresentation,sizeof(a.sun_path)-1);int br=bind(self.listenFD,(void *)&a,sizeof(a));int lr=br?-1:listen(self.listenFD,8);[self append:[NSString stringWithFormat:@"DISPLAY_SOCKET path=%@ bind=%d listen=%d errno=%d\n",self.socketPath,br,lr,errno]];
+ self.socketPath=[JuiceDocumentsRoot() stringByAppendingPathComponent:@"j.sock"];unlink(self.socketPath.fileSystemRepresentation);self.listenFD=socket(AF_UNIX,SOCK_STREAM,0);struct sockaddr_un a={0};a.sun_family=AF_UNIX;strncpy(a.sun_path,self.socketPath.fileSystemRepresentation,sizeof(a.sun_path)-1);int br=bind(self.listenFD,(void *)&a,sizeof(a));int lr=br?-1:listen(self.listenFD,8);[self append:[NSString stringWithFormat:@"DISPLAY_SOCKET path=%@ bind=%d listen=%d errno=%d\n",self.socketPath,br,lr,errno]];
  dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0),^{while(1){int fd=accept(self.listenFD,NULL,NULL);if(fd<0)break;@synchronized(self.clients){[self.clients addObject:@(fd)];}[self append:[NSString stringWithFormat:@"DISPLAY_CLIENT_CONNECTED fd=%d\n",fd]];dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0),^{[self readClient:fd];});}});
 }
 -(void)sendControlResponseToFD:(int)fd request:(uint32_t)request status:(int32_t)status
@@ -832,7 +875,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
 }
 -(void)startControlServer
 {
- self.controlSocketPath=@"/var/mobile/Documents/JuiceData/juice-control-v1.sock";
+ self.controlSocketPath=[JuiceDocumentsRoot() stringByAppendingPathComponent:@"jc1.sock"];
  unlink(self.controlSocketPath.fileSystemRepresentation);
  self.controlListenFD=socket(AF_UNIX,SOCK_STREAM,0);
  struct sockaddr_un address={0};
@@ -868,7 +911,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
 }
 -(void)importPortableZipFromLocalPath:(NSString *)source
 {
- NSString *imports=@"/var/mobile/Documents/JuiceData/Imported";
+ NSString *imports=[JuiceDataRoot() stringByAppendingPathComponent:@"Imported"];
  NSString *folder=[NSString stringWithFormat:@"%@-%@",source.lastPathComponent.stringByDeletingPathExtension,
                    NSUUID.UUID.UUIDString];
  NSString *destination=[imports stringByAppendingPathComponent:folder];
@@ -955,7 +998,8 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
  }
  if(first)
  {
-  NSString *path=[NSString stringWithFormat:@"/var/mobile/Documents/Juice-frame-%d.png",peerPID];
+  NSString *path=[JuiceDocumentsRoot() stringByAppendingPathComponent:
+   [NSString stringWithFormat:@"Juice-frame-%d.png",peerPID]];
   [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
   [self append:[NSString stringWithFormat:@"JUICE_GUI_FRAME_RECEIVED pid=%d hwnd=0x%llx frame=%dx%d path=%@\n",
    peerPID,(unsigned long long)message.hwnd,message.width,message.height,path]];
@@ -1097,8 +1141,8 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
  }
  NSString *runtimeName=experimental?@"Grape-X64":@"Grape";
  NSString *runtime=[NSBundle.mainBundle.bundlePath stringByAppendingPathComponent:runtimeName];
- if(![NSFileManager.defaultManager isExecutableFileAtPath:
-      [runtime stringByAppendingPathComponent:@"build/wine-ios/loader/wine"]])
+ NSString *loaderPath=[runtime stringByAppendingPathComponent:@"build/wine-ios/loader/wine"];
+ if(![NSFileManager.defaultManager fileExistsAtPath:loaderPath])
  {
   [self rejectLaunch:[NSString stringWithFormat:@"%@ is not installed in this build.",runtimeName]];
   return;
@@ -1181,7 +1225,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
     detail:@"Juice accepts .msi, .exe, and .zip files for installation."];
    return;
   }
-  NSString *imports=@"/var/mobile/Documents/JuiceData/Imported";
+  NSString *imports=[JuiceDataRoot() stringByAppendingPathComponent:@"Imported"];
   NSError *error=nil;
   [NSFileManager.defaultManager createDirectoryAtPath:imports withIntermediateDirectories:YES
    attributes:nil error:&error];
@@ -1214,7 +1258,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
  NSString *name=url.lastPathComponent.length?url.lastPathComponent:@"program.exe";
  NSString *extension=name.pathExtension.lowercaseString;
  NSFileManager *files=NSFileManager.defaultManager;
- NSString *imports=@"/var/mobile/Documents/JuiceData/Imported";
+ NSString *imports=[JuiceDataRoot() stringByAppendingPathComponent:@"Imported"];
  NSError *directoryError=nil;
  [files createDirectoryAtPath:imports withIntermediateDirectories:YES attributes:nil error:&directoryError];
  if(directoryError)
@@ -1284,7 +1328,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
  NSString *runtimeName=self.usingX64?@"Grape-X64":@"Grape";
  NSString *prefixName=self.usingX64?@"GrapePrefix-x86_64":@"GrapePrefix";
  self.grape=[NSBundle.mainBundle.bundlePath stringByAppendingPathComponent:runtimeName];
- NSString *base=@"/var/mobile/Documents/JuiceData";
+ NSString *base=JuiceDataRoot();
  self.prefix=[base stringByAppendingPathComponent:prefixName];
  NSFileManager *f=NSFileManager.defaultManager;
  [f createDirectoryAtPath:base withIntermediateDirectories:YES attributes:nil error:nil];
@@ -1342,14 +1386,18 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
   [@"TMPDIR=" stringByAppendingString:NSTemporaryDirectory()],
   [@"WINEPREFIX=" stringByAppendingString:self.prefix],
   [@"WINELOADER=" stringByAppendingString:[self.grape stringByAppendingPathComponent:@"tools/grape-nested-wrapper"]],
+  @"WINELOADERNOEXEC=1",
   [@"WINESERVER=" stringByAppendingString:[b stringByAppendingPathComponent:@"server/wineserver"]],
-  [@"WINEDLLPATH=" stringByAppendingString:[NSString stringWithFormat:@"%@:/var/mobile/Documents/JuiceData/native:%@:%@:%@:%@",pe,[b stringByAppendingPathComponent:@"dlls/crypt32"],[b stringByAppendingPathComponent:@"dlls/wineios.drv"],[b stringByAppendingPathComponent:@"dlls/win32u"],[b stringByAppendingPathComponent:@"dlls/ws2_32"]]],
+  [@"WINEDLLPATH=" stringByAppendingString:[NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@:%@",pe,[JuiceDataRoot() stringByAppendingPathComponent:@"native"],[b stringByAppendingPathComponent:@"dlls/crypt32"],[b stringByAppendingPathComponent:@"dlls/wineios.drv"],[b stringByAppendingPathComponent:@"dlls/winevulkan"],[b stringByAppendingPathComponent:@"dlls/win32u"],[b stringByAppendingPathComponent:@"dlls/ws2_32"]]],
   @"DYLD_LIBRARY_PATH=/var/jb/usr/lib",
   [@"JUICE_IOS_SOCKET=" stringByAppendingString:self.socketPath],
   [@"JUICE_IOS_CONTROL_SOCKET=" stringByAppendingString:self.controlSocketPath],
-  [@"JUICE_GAMEPAD_STATE=" stringByAppendingString:@JUICE_GAMEPAD_WINDOWS_PATH],
+  [@"JUICE_GAMEPAD_STATE=" stringByAppendingString:JuiceWindowsPath([JuiceDataRoot() stringByAppendingPathComponent:@"controller-v1.bin"])],
+  [@"JUICE_DATA_ROOT=" stringByAppendingString:JuiceDataRoot()],
+  [@"JUICE_WINESERVER_ROOT=" stringByAppendingString:[JuiceDataRoot() stringByAppendingPathComponent:@"wineserver"]],
   [NSString stringWithFormat:@"JUICE_SKIP_WINEBOOT=%d",self.winebootSwitch.on&&!self.prefixNeedsInitialization],
   [@"WINEDEBUG=" stringByAppendingString:(self.debugField.text.length?self.debugField.text:@"-all")],
+  @"WINE_D3D_CONFIG=renderer=vulkan",
   @"WINEARCH=win64",@"PATH=/usr/bin:/bin",@"LANG=C"
  ]];
  if(self.usingX64)[variables addObjectsFromArray:@[@"HODLL64=libarm64ecfex.dll",@"JUICE_EXPERIMENTAL_X64=1"]];

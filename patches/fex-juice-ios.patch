@@ -1,5 +1,84 @@
+diff --git a/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.cpp b/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.cpp
+index 47a08d597..fa9993bbc 100644
+--- a/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.cpp
++++ b/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.cpp
+@@ -679,6 +679,38 @@ void Arm64Emitter::FillSpecialRegs(ARMEmitter::Register TmpReg, ARMEmitter::Regi
+   }
+ }
+ 
++void Arm64Emitter::ValidateCallRetStack(ARMEmitter::Register TmpReg) {
++#if defined(ARCHITECTURE_arm64ec) && defined(FEX_JUICE_IOS)
++  LOGMAN_THROW_A_FMT(TmpReg != REG_CALLRET_SP, "Call-ret validation needs a temporary register");
++
++  ARMEmitter::ForwardLabel ResetWithBase;
++  ARMEmitter::ForwardLabel Valid;
++
++  // Native ARM64EC transitions are allowed to clobber x17. FEX also pins x17
++  // as its call-ret shadow-stack pointer, so reject a native value before it
++  // can be persisted into CPUState or dereferenced on the next JIT entry.
++  ldr(TmpReg.X(), ARMEmitter::XReg::x18, TEB_CPU_AREA_OFFSET);
++  ldr(TmpReg.X(), TmpReg.X(), CPU_AREA_THREAD_STATE_OFFSET);
++  ldr(TmpReg.X(), TmpReg.X(), offsetof(FEXCore::Core::InternalThreadState, CallRetStackBase));
++
++  cmp(ARMEmitter::Size::i64Bit, REG_CALLRET_SP, TmpReg);
++  (void)b(ARMEmitter::Condition::CC_CC, &ResetWithBase);
++
++  add(ARMEmitter::Size::i64Bit, TmpReg, TmpReg, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE);
++  cmp(ARMEmitter::Size::i64Bit, REG_CALLRET_SP, TmpReg);
++  (void)b(ARMEmitter::Condition::CC_CC, &Valid);
++
++  sub(ARMEmitter::Size::i64Bit, TmpReg, TmpReg, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE);
++  (void)Bind(&ResetWithBase);
++  add(ARMEmitter::Size::i64Bit, REG_CALLRET_SP, TmpReg, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE / 4);
++  str(REG_CALLRET_SP, STATE.R(), offsetof(FEXCore::Core::CpuStateFrame, State.callret_sp));
++
++  (void)Bind(&Valid);
++#else
++  (void)TmpReg;
++#endif
++}
++
+ void Arm64Emitter::SpillStaticRegs(ARMEmitter::Register TmpReg, SpillStaticRegOptions Options) {
+ #ifndef VIXL_SIMULATOR
+   if (EmitterCTX->HostFeatures.SupportsAFP) {
+@@ -715,6 +747,7 @@ void Arm64Emitter::SpillStaticRegs(ARMEmitter::Register TmpReg, SpillStaticRegOp
+   unsigned PFAFSpillMask = Options.GPRSpillMask & PFAFMask;
+   Options.GPRSpillMask &= ~PFAFSpillMask;
+ 
++  ValidateCallRetStack(TmpReg);
+   str(REG_CALLRET_SP, STATE.R(), offsetof(FEXCore::Core::CpuStateFrame, State.callret_sp));
+ 
+   for (size_t i = 0; i < StaticRegisters.size(); i += 2) {
+@@ -813,6 +846,7 @@ void Arm64Emitter::FillStaticRegs(FillStaticRegOptions Options) {
+ #endif
+ 
+   ldr(REG_CALLRET_SP, STATE.R(), offsetof(FEXCore::Core::CpuStateFrame, State.callret_sp));
++  ValidateCallRetStack(TmpReg);
+ 
+   if (Options.NZCV) {
+     // Regardless of what GPRs/FPRs we're filling, we need to fill NZCV since it
+diff --git a/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.h b/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.h
+index 5d1a61ee8..de47c7c4f 100644
+--- a/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.h
++++ b/FEXCore/Source/Interface/Core/ArchHelpers/Arm64Emitter.h
+@@ -85,6 +85,7 @@ constexpr size_t PEB_EC_CODE_BITMAP_OFFSET = 0x368;
+ constexpr size_t CPU_AREA_IN_SYSCALL_CALLBACK_OFFSET = 0x1;
+ constexpr size_t CPU_AREA_EMULATOR_STACK_BASE_OFFSET = 0x8;
+ constexpr size_t CPU_AREA_EMULATOR_DATA_OFFSET = 0x30;
++constexpr size_t CPU_AREA_THREAD_STATE_OFFSET = 0x38;
+ 
+ constexpr uint64_t EC_CODE_BITMAP_MAX_ADDRESS = 1ULL << 47;
+ #endif
+@@ -130,6 +131,7 @@ protected:
+   uint32_t PairRegisters = 0;
+ 
+   void FillSpecialRegs(ARMEmitter::Register TmpReg, ARMEmitter::Register TmpReg2, bool SetFIZ, bool SetPredRegs);
++  void ValidateCallRetStack(ARMEmitter::Register TmpReg);
+ 
+   // Correlate an ARM register back to an x86 register index.
+   // Returning REG_INVALID if there was no mapping.
 diff --git a/FEXCore/Source/Interface/Core/CPUBackend.cpp b/FEXCore/Source/Interface/Core/CPUBackend.cpp
-index 1b1fc105d..96c822f9d 100644
+index 1b1fc105d..0cc061a65 100644
 --- a/FEXCore/Source/Interface/Core/CPUBackend.cpp
 +++ b/FEXCore/Source/Interface/Core/CPUBackend.cpp
 @@ -350,7 +350,13 @@ namespace CPU {
@@ -9,7 +88,7 @@ index 1b1fc105d..96c822f9d 100644
 +#ifdef FEX_JUICE_IOS
 +    /* iOS leaves anonymous mappings created RWX hardware-NX.  JIT.cpp
 +     * publishes generated blocks with an explicit RW -> RX transition. */
-+    Ptr = static_cast<uint8_t*>(FEXCore::Allocator::VirtualAlloc(Size, false));
++    Ptr = static_cast<uint8_t*>(FEXCore::Allocator::VirtualAllocECCode(Size, false));
 +#else
      Ptr = static_cast<uint8_t*>(FEXCore::Allocator::VirtualAlloc(Size, true));
 +#endif
@@ -17,7 +96,7 @@ index 1b1fc105d..96c822f9d 100644
  
      // Protect the last page of the allocated buffer to trigger SIGSEGV on write access
 diff --git a/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp b/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp
-index 005d75230..c0c862182 100644
+index 005d75230..f955a4049 100644
 --- a/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp
 +++ b/FEXCore/Source/Interface/Core/Dispatcher/Dispatcher.cpp
 @@ -36,11 +36,25 @@ static void SleepThread(FEXCore::Context::ContextImpl* CTX, FEXCore::Core::CpuSt
@@ -28,7 +107,7 @@ index 005d75230..c0c862182 100644
 +#ifdef FEX_JUICE_IOS
 +  /* iOS accepts the RW -> RX transition but leaves a mapping created RWX
 +   * hardware-NX, even though mmap itself succeeds. */
-+  return FEXCore::Allocator::VirtualAlloc(MAX_DISPATCHER_CODE_SIZE, false);
++  return FEXCore::Allocator::VirtualAllocECCode(MAX_DISPATCHER_CODE_SIZE, false);
 +#else
 +  return FEXCore::Allocator::VirtualAlloc(MAX_DISPATCHER_CODE_SIZE, true);
 +#endif
@@ -47,11 +126,176 @@ index 005d75230..c0c862182 100644
    FEXCore::Allocator::VirtualName("FEXMem_Misc", reinterpret_cast<void*>(GetBufferBase()), MAX_DISPATCHER_CODE_SIZE);
  }
  
+@@ -120,6 +134,7 @@ void Dispatcher::EmitDispatcher() {
+   add(ARMEmitter::Size::i64Bit, ARMEmitter::Reg::rsp, TMP1, 0);
+ 
+   ldr(REG_CALLRET_SP, STATE_PTR(CpuStateFrame, State.callret_sp));
++  ValidateCallRetStack(TMP1);
+ 
+   FillSpecialRegs(TMP1, TMP2, false, true);
+ 
+@@ -160,6 +175,7 @@ void Dispatcher::EmitDispatcher() {
+   lsrv(ARMEmitter::Size::i64Bit, TMP1, TMP1, TMP2);
+   (void)tbz(TMP1, 0, &l_NotECCode);
+ 
++  ValidateCallRetStack(TMP1);
+   str(REG_CALLRET_SP, STATE_PTR(CpuStateFrame, State.callret_sp));
+ 
+   add(ARMEmitter::Size::i64Bit, ARMEmitter::Reg::rsp, StaticRegisters[X86State::REG_RSP], 0);
+diff --git a/FEXCore/Source/Interface/Core/Frontend.cpp b/FEXCore/Source/Interface/Core/Frontend.cpp
+index a265ab22e..2f4dcaa39 100644
+--- a/FEXCore/Source/Interface/Core/Frontend.cpp
++++ b/FEXCore/Source/Interface/Core/Frontend.cpp
+@@ -8,6 +8,10 @@ $end_info$
+ 
+ #include "Interface/Context/Context.h"
+ #include "Interface/Core/Frontend.h"
++
++#ifdef FEX_JUICE_IOS
++#include "Interface/Core/JuiceIOSArm64EC.h"
++#endif
+ #include "Interface/Core/X86Tables/X86Tables.h"
+ #include "Interface/Core/LookupCache.h"
+ 
+@@ -1174,7 +1178,12 @@ void Decoder::BranchTargetInMultiblockRange() {
+   bool ValidMultiblockMember = TargetRIP >= EntryPoint && TargetRIP < std::min(InstEnd + MAX_FORWARD_BRANCH_DIST, SectionMaxAddress);
+ 
+ #ifdef ARCHITECTURE_arm64ec
+-  ValidMultiblockMember = ValidMultiblockMember && !RtlIsEcCode(TargetRIP);
++  ValidMultiblockMember = ValidMultiblockMember &&
++#ifdef FEX_JUICE_IOS
++                          !JuiceIsEcCode(TargetRIP);
++#else
++                          !RtlIsEcCode(TargetRIP);
++#endif
+ #endif
+ 
+   if (ValidMultiblockMember) {
+diff --git a/FEXCore/Source/Interface/Core/JIT/BranchOps.cpp b/FEXCore/Source/Interface/Core/JIT/BranchOps.cpp
+index fd8fd6bac..1117b0637 100644
+--- a/FEXCore/Source/Interface/Core/JIT/BranchOps.cpp
++++ b/FEXCore/Source/Interface/Core/JIT/BranchOps.cpp
+@@ -11,6 +11,10 @@ $end_info$
+ 
+ #include "Interface/Core/JIT/JITClass.h"
+ 
++#ifdef FEX_JUICE_IOS
++#include "Interface/Core/JuiceIOSArm64EC.h"
++#endif
++
+ #include <FEXCore/Core/Thunks.h>
+ #include <FEXCore/Core/X86Enums.h>
+ #include <FEXCore/Debug/InternalThreadState.h>
+@@ -57,7 +61,17 @@ DEF_OP(ExitFunction) {
+ 
+   if (IsInlineConstant(Op->NewRIP, &NewRIP) || IsInlineEntrypointOffset(Op->NewRIP, &NewRIP)) {
+ #ifdef ARCHITECTURE_arm64ec
+-    if (NewRIP < EC_CODE_BITMAP_MAX_ADDRESS && RtlIsEcCode(NewRIP)) {
++#ifdef FEX_JUICE_IOS
++    const bool IsECCode = NewRIP < EC_CODE_BITMAP_MAX_ADDRESS && JuiceIsEcCode(NewRIP);
++    if ((NewRIP & 0xfffff) == 0xba50c) {
++      LogMan::Msg::EFmt("[JuiceFEX] GetEnvironmentVariableW native target=0x{:x} ec={}", NewRIP, IsECCode);
++    }
++    if (IsECCode
++#else
++    if (NewRIP < EC_CODE_BITMAP_MAX_ADDRESS && RtlIsEcCode(NewRIP)
++#endif
++    ) {
++      ValidateCallRetStack(TMP1);
+       str(REG_CALLRET_SP, STATE_PTR(CpuStateFrame, State.callret_sp));
+       add(ARMEmitter::Size::i64Bit, ARMEmitter::Reg::rsp, StaticRegisters[X86State::REG_RSP], 0);
+       InsertGuestRIPMove(EC_CALL_CHECKER_PC_REG, NewRIP);
 diff --git a/FEXCore/Source/Interface/Core/JIT/JIT.cpp b/FEXCore/Source/Interface/Core/JIT/JIT.cpp
-index dd9c27e29..65f704307 100644
+index dd9c27e29..720bfdca9 100644
 --- a/FEXCore/Source/Interface/Core/JIT/JIT.cpp
 +++ b/FEXCore/Source/Interface/Core/JIT/JIT.cpp
-@@ -1077,6 +1077,10 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+@@ -497,6 +497,23 @@ void Arm64JITCore::Op_Unhandled(const IR::IROp_Header* IROp, IR::Ref Node) {
+   }
+ }
+ 
++#ifdef FEX_JUICE_IOS
++static void JuiceSetLinkPatchProtection(uintptr_t Begin, uintptr_t End, bool Writable) {
++  constexpr uintptr_t HostPageSize = 0x4000;
++  constexpr uintptr_t HostPageMask = HostPageSize - 1;
++  const uintptr_t ProtectStart = Begin & ~HostPageMask;
++  const uintptr_t ProtectEnd = (End + HostPageMask) & ~HostPageMask;
++  const auto Protection = Writable ?
++    (FEXCore::Allocator::ProtectOptions::Read | FEXCore::Allocator::ProtectOptions::Write) :
++    (FEXCore::Allocator::ProtectOptions::Read | FEXCore::Allocator::ProtectOptions::Exec);
++
++  LOGMAN_THROW_A_FMT(
++    End > Begin && FEXCore::Allocator::VirtualProtect(reinterpret_cast<void*>(ProtectStart), ProtectEnd - ProtectStart, Protection),
++    "Couldn't switch iOS JIT link patch interval 0x{:x}-0x{:x} to {}",
++    ProtectStart, ProtectEnd, Writable ? "RW" : "RX");
++}
++#endif
++
+ static void DirectBlockDelinker(FEXCore::Context::ExitFunctionLinkData* Record, bool Call) {
+   uintptr_t JumpThunkStartAddress = reinterpret_cast<uintptr_t>(Record) - 0x10;
+   uintptr_t CallerAddress = JumpThunkStartAddress + Record->CallerOffset;
+@@ -511,8 +528,14 @@ static void DirectBlockDelinker(FEXCore::Context::ExitFunctionLinkData* Record,
+     BranchEmit.b(BranchOffset);
+   }
+ 
++#ifdef FEX_JUICE_IOS
++  JuiceSetLinkPatchProtection(CallerAddress, CallerAddress + sizeof(uint32_t), true);
++#endif
+   std::atomic_ref<uint32_t>(*reinterpret_cast<uint32_t*>(CallerAddress)).store(BranchInst, std::memory_order::relaxed);
+   ARMEmitter::Emitter::ClearICache(reinterpret_cast<void*>(CallerAddress), 4);
++#ifdef FEX_JUICE_IOS
++  JuiceSetLinkPatchProtection(CallerAddress, CallerAddress + sizeof(uint32_t), false);
++#endif
+ }
+ 
+ static void IndirectBlockDelinker(FEXCore::Context::ExitFunctionLinkData* Record) {
+@@ -522,8 +545,14 @@ static void IndirectBlockDelinker(FEXCore::Context::ExitFunctionLinkData* Record
+   // Restore branch +2 instructions to jump to the linker block
+   BranchEmit.b(0x2);
+ 
++#ifdef FEX_JUICE_IOS
++  JuiceSetLinkPatchProtection(JumpThunkStartAddress, JumpThunkStartAddress + sizeof(uint32_t), true);
++#endif
+   std::atomic_ref<uint32_t>(*reinterpret_cast<uint32_t*>(JumpThunkStartAddress)).store(BranchInst, std::memory_order::relaxed);
+   ARMEmitter::Emitter::ClearICache(reinterpret_cast<void*>(JumpThunkStartAddress), 4);
++#ifdef FEX_JUICE_IOS
++  JuiceSetLinkPatchProtection(JumpThunkStartAddress, JumpThunkStartAddress + sizeof(uint32_t), false);
++#endif
+ 
+   // No need to reset HostCode here as the exit linker pointer is stored separately, and if the block is relinked it will be updated.
+ }
+@@ -589,10 +618,20 @@ uint64_t Arm64JITCore::ExitFunctionLink(FEXCore::Core::CpuStateFrame* Frame, FEX
+         GuestRip, Record, [](FEXCore::Context::ExitFunctionLinkData* Record) { DirectBlockDelinker(Record, false); }, lk);
+     }
+ 
++#ifdef FEX_JUICE_IOS
++    JuiceSetLinkPatchProtection(CallerAddress, CallerAddress + sizeof(uint32_t), true);
++#endif
+     std::atomic_ref<uint32_t>(*reinterpret_cast<uint32_t*>(CallerAddress)).store(BranchInst, std::memory_order::relaxed);
+     ARMEmitter::Emitter::ClearICache(reinterpret_cast<void*>(CallerAddress), 4);
++#ifdef FEX_JUICE_IOS
++    JuiceSetLinkPatchProtection(CallerAddress, CallerAddress + sizeof(uint32_t), false);
++#endif
+   } else {
+     // This case is common between calls and jumps as the thunk callsite can be left untouched.
++#ifdef FEX_JUICE_IOS
++    JuiceSetLinkPatchProtection(JumpThunkStartAddress,
++                                reinterpret_cast<uintptr_t>(Record) + sizeof(Record->HostCode), true);
++#endif
+     std::atomic_ref<uint64_t>(Record->HostCode).store(HostCode, std::memory_order::seq_cst);
+ #ifdef ARCHITECTURE_arm64
+     // Make memory write visible to other threads reading the same location
+@@ -604,6 +643,10 @@ uint64_t Arm64JITCore::ExitFunctionLink(FEXCore::Core::CpuStateFrame* Frame, FEX
+     LdrEmit.ldr(TMP1, reinterpret_cast<uint64_t>(&Record->HostCode) - JumpThunkStartAddress);
+     std::atomic_ref<uint32_t>(*reinterpret_cast<uint32_t*>(JumpThunkStartAddress)).store(LdrInst, std::memory_order::relaxed);
+     ARMEmitter::Emitter::ClearICache(reinterpret_cast<void*>(JumpThunkStartAddress), 4);
++#ifdef FEX_JUICE_IOS
++    JuiceSetLinkPatchProtection(JumpThunkStartAddress,
++                                reinterpret_cast<uintptr_t>(Record) + sizeof(Record->HostCode), false);
++#endif
+ 
+     Thread->LookupCache->AddBlockLink(GuestRip, Record, IndirectBlockDelinker, lk);
+   }
+@@ -1077,6 +1120,10 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
  
      // Query size of generated code
      const auto TempSize = GetCursorOffset();
@@ -62,7 +306,7 @@ index dd9c27e29..65f704307 100644
  
      // Bring CodeBuffer up to date
      {
-@@ -1088,14 +1092,35 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+@@ -1088,14 +1135,35 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
          ThreadState->LookupCache->ChangeGuestToHostMapping(*Prev, *CurrentCodeBuffer->LookupCache, lk);
        }
  
@@ -102,7 +346,7 @@ index dd9c27e29..65f704307 100644
        CodeBuffers.LatestOffset = GetCursorOffset();
      }
  
-@@ -1112,7 +1137,26 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+@@ -1112,7 +1180,26 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
      }
  
      // Copy over CodeBuffer contents
@@ -130,6 +374,217 @@ index dd9c27e29..65f704307 100644
      SetCursorOffset(CodeBuffers.LatestOffset + TempSize);
  
      CodeBuffers.LatestOffset = GetCursorOffset();
+diff --git a/FEXCore/Source/Interface/Core/JIT/MemoryOps.cpp b/FEXCore/Source/Interface/Core/JIT/MemoryOps.cpp
+index 1c9b4c22d..89fecbcf4 100644
+--- a/FEXCore/Source/Interface/Core/JIT/MemoryOps.cpp
++++ b/FEXCore/Source/Interface/Core/JIT/MemoryOps.cpp
+@@ -776,6 +776,81 @@ DEF_OP(LoadMemTSO) {
+     LOGMAN_THROW_A_FMT(Op->OffsetType == IR::MemOffsetType::SXTX, "unexpected offset type");
+   }
+ 
++#ifdef FEX_JUICE_IOS
++  if (Op->Class == IR::RegClass::GPR) {
++    /*
++     * Normal x86 loads may be unaligned.  Upstream FEX emits an acquire load
++     * followed by a NOP and repairs an alignment exception by rewriting that
++     * pair to LDR+DMB.  That is a good adaptive strategy on an RWX JIT, but an
++     * iOS JIT page is RX while it executes: the repair path faults while
++     * taking the block-tail lock and again while changing the instructions.
++     *
++     * Select the same two implementations before the access instead.  The
++     * aligned path retains the atomic acquire load.  The unaligned path uses
++     * an ordinary (unaligned-capable) load and the half barrier that FEX would
++     * otherwise back-patch.  TB(N)Z does not alter NZCV, so guest flags remain
++     * live across this test.
++     */
++    auto EffectiveAddr = MemReg;
++    if (!Op->Offset.IsInvalid()) {
++      uint64_t Offset {};
++      const bool IsInline = IsInlineConstant(Op->Offset, &Offset);
++      LOGMAN_THROW_A_FMT(IsInline, "expected immediate");
++      const auto SignedOffset = static_cast<int64_t>(Offset);
++      if (SignedOffset > 0) {
++        add(ARMEmitter::Size::i64Bit, TMP1, MemReg, static_cast<uint64_t>(SignedOffset));
++        EffectiveAddr = TMP1;
++      } else if (SignedOffset < 0) {
++        sub(ARMEmitter::Size::i64Bit, TMP1, MemReg, static_cast<uint64_t>(-SignedOffset));
++        EffectiveAddr = TMP1;
++      }
++    }
++
++    const auto Dst = GetReg(Node);
++    if (OpSize == IR::OpSize::i8Bit) {
++      ldarb(Dst, EffectiveAddr);
++      return;
++    }
++
++    ARMEmitter::ForwardLabel Unaligned {};
++    ARMEmitter::ForwardLabel Done {};
++    switch (OpSize) {
++    case IR::OpSize::i16Bit:
++      (void)tbnz(EffectiveAddr, 0, &Unaligned);
++      break;
++    case IR::OpSize::i32Bit:
++      (void)tbnz(EffectiveAddr, 0, &Unaligned);
++      (void)tbnz(EffectiveAddr, 1, &Unaligned);
++      break;
++    case IR::OpSize::i64Bit:
++      (void)tbnz(EffectiveAddr, 0, &Unaligned);
++      (void)tbnz(EffectiveAddr, 1, &Unaligned);
++      (void)tbnz(EffectiveAddr, 2, &Unaligned);
++      break;
++    default: LOGMAN_MSG_A_FMT("Unhandled LoadMemTSO size: {}", OpSize); return;
++    }
++
++    switch (OpSize) {
++    case IR::OpSize::i16Bit: ldarh(Dst, EffectiveAddr); break;
++    case IR::OpSize::i32Bit: ldar(Dst.W(), EffectiveAddr); break;
++    case IR::OpSize::i64Bit: ldar(Dst.X(), EffectiveAddr); break;
++    default: FEX_UNREACHABLE;
++    }
++    (void)b(&Done);
++
++    (void)Bind(&Unaligned);
++    switch (OpSize) {
++    case IR::OpSize::i16Bit: ldrh(Dst, EffectiveAddr); break;
++    case IR::OpSize::i32Bit: ldr(Dst.W(), EffectiveAddr); break;
++    case IR::OpSize::i64Bit: ldr(Dst.X(), EffectiveAddr); break;
++    default: FEX_UNREACHABLE;
++    }
++    dmb(ARMEmitter::BarrierScope::ISHLD);
++    (void)Bind(&Done);
++    return;
++  }
++#endif
++
+   if (CTX->HostFeatures.SupportsTSOImm9 && Op->Class == IR::RegClass::GPR) {
+     const auto Dst = GetReg(Node);
+     uint64_t Offset = 0;
+@@ -1787,6 +1862,70 @@ DEF_OP(StoreMemTSO) {
+     LOGMAN_THROW_A_FMT(Op->OffsetType == IR::MemOffsetType::SXTX, "unexpected offset type");
+   }
+ 
++#ifdef FEX_JUICE_IOS
++  if (Op->Class == IR::RegClass::GPR) {
++    /* See LoadMemTSO above.  Avoid fault-driven RX code rewriting on iOS,
++     * while preserving the fast atomic release store for aligned addresses. */
++    auto EffectiveAddr = MemReg;
++    if (!Op->Offset.IsInvalid()) {
++      uint64_t Offset {};
++      const bool IsInline = IsInlineConstant(Op->Offset, &Offset);
++      LOGMAN_THROW_A_FMT(IsInline, "expected immediate");
++      const auto SignedOffset = static_cast<int64_t>(Offset);
++      if (SignedOffset > 0) {
++        add(ARMEmitter::Size::i64Bit, TMP1, MemReg, static_cast<uint64_t>(SignedOffset));
++        EffectiveAddr = TMP1;
++      } else if (SignedOffset < 0) {
++        sub(ARMEmitter::Size::i64Bit, TMP1, MemReg, static_cast<uint64_t>(-SignedOffset));
++        EffectiveAddr = TMP1;
++      }
++    }
++
++    const auto Src = GetZeroableReg(Op->Value);
++    if (OpSize == IR::OpSize::i8Bit) {
++      stlrb(Src, EffectiveAddr);
++      return;
++    }
++
++    ARMEmitter::ForwardLabel Unaligned {};
++    ARMEmitter::ForwardLabel Done {};
++    switch (OpSize) {
++    case IR::OpSize::i16Bit:
++      (void)tbnz(EffectiveAddr, 0, &Unaligned);
++      break;
++    case IR::OpSize::i32Bit:
++      (void)tbnz(EffectiveAddr, 0, &Unaligned);
++      (void)tbnz(EffectiveAddr, 1, &Unaligned);
++      break;
++    case IR::OpSize::i64Bit:
++      (void)tbnz(EffectiveAddr, 0, &Unaligned);
++      (void)tbnz(EffectiveAddr, 1, &Unaligned);
++      (void)tbnz(EffectiveAddr, 2, &Unaligned);
++      break;
++    default: LOGMAN_MSG_A_FMT("Unhandled StoreMemTSO size: {}", OpSize); return;
++    }
++
++    switch (OpSize) {
++    case IR::OpSize::i16Bit: stlrh(Src, EffectiveAddr); break;
++    case IR::OpSize::i32Bit: stlr(Src.W(), EffectiveAddr); break;
++    case IR::OpSize::i64Bit: stlr(Src.X(), EffectiveAddr); break;
++    default: FEX_UNREACHABLE;
++    }
++    (void)b(&Done);
++
++    (void)Bind(&Unaligned);
++    dmb(ARMEmitter::BarrierScope::ISH);
++    switch (OpSize) {
++    case IR::OpSize::i16Bit: strh(Src, EffectiveAddr); break;
++    case IR::OpSize::i32Bit: str(Src.W(), EffectiveAddr); break;
++    case IR::OpSize::i64Bit: str(Src.X(), EffectiveAddr); break;
++    default: FEX_UNREACHABLE;
++    }
++    (void)Bind(&Done);
++    return;
++  }
++#endif
++
+   if (CTX->HostFeatures.SupportsTSOImm9 && Op->Class == IR::RegClass::GPR) {
+     const auto Src = GetZeroableReg(Op->Value);
+     uint64_t Offset = 0;
+diff --git a/FEXCore/Source/Interface/Core/JuiceIOSArm64EC.h b/FEXCore/Source/Interface/Core/JuiceIOSArm64EC.h
+new file mode 100644
+index 000000000..38791f11b
+--- /dev/null
++++ b/FEXCore/Source/Interface/Core/JuiceIOSArm64EC.h
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: MIT
++#pragma once
++
++#include <cstdint>
++
++#ifdef FEX_JUICE_IOS
++extern "C" long __stdcall NtWineGetCurrentTebAccessor(void** Accessor);
++
++/*
++ * FEXCore deliberately has no dependency on FEX's private Windows structure
++ * definitions.  Use the stable ARM64EC TEB/PEB offsets directly here: these
++ * are the same offsets emitted by Dispatcher.cpp and Module.S.
++ */
++static inline bool JuiceIsEcCode(uint64_t Address) {
++  constexpr uint64_t WindowsPageShift = 12;
++  constexpr uintptr_t TebPebOffset = 0x60;
++  constexpr uintptr_t PebEcCodeBitmapOffset = 0x368;
++  using TebAccessor = void* (*)();
++  static TebAccessor Accessor {};
++
++  if (!Accessor) {
++    void* AccessorAddress {};
++    if (NtWineGetCurrentTebAccessor(&AccessorAddress) || !AccessorAddress) {
++      return false;
++    }
++    Accessor = reinterpret_cast<TebAccessor>(AccessorAddress);
++  }
++
++  auto* Teb = static_cast<uint8_t*>(Accessor());
++  if (!Teb) {
++    return false;
++  }
++#if defined(__aarch64__)
++  asm volatile("mov x18, %0" : : "r"(Teb) : "x18");
++#endif
++  auto* Peb = *reinterpret_cast<uint8_t**>(Teb + TebPebOffset);
++  if (!Peb) {
++    return false;
++  }
++  const auto* Map = *reinterpret_cast<const uint64_t**>(Peb + PebEcCodeBitmapOffset);
++  if (!Map) {
++    return false;
++  }
++
++  const uint64_t Page = Address >> WindowsPageShift;
++  return (Map[Page / 64] >> (Page & 63)) & 1;
++}
++#endif
 diff --git a/FEXCore/Source/Interface/Core/LookupCache.cpp b/FEXCore/Source/Interface/Core/LookupCache.cpp
 index aaa0c2424..d334aaf63 100644
 --- a/FEXCore/Source/Interface/Core/LookupCache.cpp
@@ -183,11 +638,86 @@ index aaa0c2424..d334aaf63 100644
    CachedCodePages.clear();
  }
  
+diff --git a/FEXCore/Source/Interface/Core/OpcodeDispatcher.cpp b/FEXCore/Source/Interface/Core/OpcodeDispatcher.cpp
+index 688d974df..4894939c1 100644
+--- a/FEXCore/Source/Interface/Core/OpcodeDispatcher.cpp
++++ b/FEXCore/Source/Interface/Core/OpcodeDispatcher.cpp
+@@ -4989,6 +4989,10 @@ void OpDispatchBuilder::BreakOp(OpcodeArgs, FEXCore::IR::BreakDefinition BreakDe
+ }
+ 
+ void OpDispatchBuilder::UnimplementedOp(OpcodeArgs) {
++#ifdef FEX_JUICE_IOS
++  LogMan::Msg::EFmt("[JuiceFEX] unimplemented guest instruction pc=0x{:x} op=0x{:x} raw=0x{:x} size={} name={}", Op->PC, Op->OP,
++                    Op->OPRaw, Op->InstSize, Op->TableInfo && Op->TableInfo->Name ? Op->TableInfo->Name : "UND");
++#endif
+   BreakOp(Op, FEXCore::IR::BreakDefinition {
+                 .ErrorRegister = 0,
+                 .Signal = SIGILL,
+@@ -5007,6 +5011,10 @@ void OpDispatchBuilder::PermissionRestrictedOp(OpcodeArgs) {
+ }
+ 
+ void OpDispatchBuilder::InvalidOp(OpcodeArgs) {
++#ifdef FEX_JUICE_IOS
++  LogMan::Msg::EFmt("[JuiceFEX] invalid guest instruction pc=0x{:x} op=0x{:x} raw=0x{:x} size={} name={}", Op->PC, Op->OP,
++                    Op->OPRaw, Op->InstSize, Op->TableInfo && Op->TableInfo->Name ? Op->TableInfo->Name : "UND");
++#endif
+   BreakOp(Op, FEXCore::IR::BreakDefinition {
+                 .ErrorRegister = 0,
+                 .Signal = SIGILL,
+diff --git a/FEXCore/Source/Utils/AllocatorHooks.cpp b/FEXCore/Source/Utils/AllocatorHooks.cpp
+index fd6947fdf..5e58a28ae 100644
+--- a/FEXCore/Source/Utils/AllocatorHooks.cpp
++++ b/FEXCore/Source/Utils/AllocatorHooks.cpp
+@@ -71,7 +71,14 @@ size_t malloc_usable_size(void* ptr) {
+   return ::rpmalloc_usable_size(ptr);
+ }
+ void* aligned_alloc(size_t a, size_t s) {
+-  return ::rpaligned_alloc(a, s);
++  void* Result = ::rpaligned_alloc(a, s);
++#ifdef FEX_JUICE_IOS
++  if (!Result) {
++    fprintf(stderr, "[JuiceFEX] aligned_alloc failed alignment=%zu size=%zu\n", a, s);
++    fflush(stderr);
++  }
++#endif
++  return Result;
+ }
+ void aligned_free(void* ptr) {
+   return ::rpfree(ptr);
 diff --git a/FEXCore/include/FEXCore/Utils/AllocatorHooks.h b/FEXCore/include/FEXCore/Utils/AllocatorHooks.h
-index 48bbe5e3e..9944bf4d5 100644
+index 48bbe5e3e..3f070a496 100644
 --- a/FEXCore/include/FEXCore/Utils/AllocatorHooks.h
 +++ b/FEXCore/include/FEXCore/Utils/AllocatorHooks.h
-@@ -97,7 +97,8 @@ inline bool VirtualProtect(void* Ptr, size_t Size, ProtectOptions options) {
+@@ -66,6 +66,28 @@ inline void* VirtualAlloc(size_t Size, bool Execute = false, bool Commit = true)
+   return VirtualAlloc(nullptr, Size, Execute, Commit);
+ }
+ 
++/*
++ * Allocate memory that contains native ARM64EC code without requiring it to
++ * start life writable+executable.  iOS requires a strict RW -> RX transition,
++ * while the ARM64EC process bitmap still has to distinguish FEX's generated
++ * host code from the x86-64 guest address space.
++ */
++inline void* VirtualAllocECCode(void* Base, size_t Size, bool Execute = false, bool Commit = true) {
++#ifdef ARCHITECTURE_arm64ec
++  DWORD Flags = (Commit ? MEM_COMMIT : 0) | MEM_RESERVE | MEM_TOP_DOWN;
++  MEM_EXTENDED_PARAMETER Parameter {};
++  Parameter.Type = MemExtendedParameterAttributeFlags;
++  Parameter.ULong64 = MEM_EXTENDED_PARAMETER_EC_CODE;
++  return ::VirtualAlloc2(nullptr, Base, Size, Flags, Execute ? PAGE_EXECUTE_READWRITE : PAGE_READWRITE, &Parameter, 1);
++#else
++  return VirtualAlloc(Base, Size, Execute, Commit);
++#endif
++}
++
++inline void* VirtualAllocECCode(size_t Size, bool Execute = false, bool Commit = true) {
++  return VirtualAllocECCode(nullptr, Size, Execute, Commit);
++}
++
+ inline void VirtualFree(void* Ptr, size_t Size) {
+   ::VirtualFree(Ptr, 0, MEM_RELEASE);
+ }
+@@ -97,7 +119,8 @@ inline bool VirtualProtect(void* Ptr, size_t Size, ProtectOptions options) {
      LOGMAN_MSG_A_FMT("Unknown VirtualProtect options combination");
    }
  
@@ -198,7 +728,7 @@ index 48bbe5e3e..9944bf4d5 100644
  
  FEX_DEFAULT_VISIBILITY extern VirtualNamePtr VirtualName;
 diff --git a/Source/Windows/ARM64EC/Module.cpp b/Source/Windows/ARM64EC/Module.cpp
-index 8e5416709..6e484af9a 100644
+index 8e5416709..10ffd3255 100644
 --- a/Source/Windows/ARM64EC/Module.cpp
 +++ b/Source/Windows/ARM64EC/Module.cpp
 @@ -29,6 +29,7 @@ $end_info$
@@ -239,7 +769,7 @@ index 8e5416709..6e484af9a 100644
  
    const auto NtDll = GetModuleHandle("ntdll.dll");
    const bool IsWine = !!GetProcAddress(NtDll, "wine_get_version");
-@@ -601,30 +604,37 @@ NTSTATUS ProcessInit() {
+@@ -601,30 +604,38 @@ NTSTATUS ProcessInit() {
    FEX::Windows::SetupEnvironmentVariableValues(NtDll);
  
    FEX::Windows::Allocator::SetupHooks(NtDll);
@@ -270,7 +800,9 @@ index 8e5416709..6e484af9a 100644
    CPUFeatures.emplace(*CTX);
 +  __wine_dbg_output("[JuiceFEX] images and CPU features ready\n");
  
-   X64ReturnInstr = ::VirtualAlloc(nullptr, FEXCore::Utils::FEX_PAGE_SIZE, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+-  X64ReturnInstr = ::VirtualAlloc(nullptr, FEXCore::Utils::FEX_PAGE_SIZE, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
++  X64ReturnInstr =
++    ::VirtualAlloc(nullptr, FEXCore::Utils::FEX_PAGE_SIZE, MEM_COMMIT | MEM_TOP_DOWN, PAGE_EXECUTE_READWRITE);
    InvalidationTracker->HandleMemoryProtectionNotification(reinterpret_cast<uint64_t>(X64ReturnInstr), FEXCore::Utils::FEX_PAGE_SIZE,
                                                            PAGE_EXECUTE_READ);
    *reinterpret_cast<uint8_t*>(X64ReturnInstr) = 0xc3;
@@ -278,7 +810,7 @@ index 8e5416709..6e484af9a 100644
  
    const uintptr_t KiUserExceptionDispatcherFFS = reinterpret_cast<uintptr_t>(GetProcAddress(NtDll, "KiUserExceptionDispatcher"));
    Exception::KiUserExceptionDispatcher = NtDllRedirectionLUT[KiUserExceptionDispatcherFFS - NtDllBase] + NtDllBase;
-@@ -638,19 +648,24 @@ NTSTATUS ProcessInit() {
+@@ -638,19 +649,24 @@ NTSTATUS ProcessInit() {
      }
    }
  
@@ -302,6 +834,49 @@ index 8e5416709..6e484af9a 100644
 +  __wine_dbg_output("[JuiceFEX] process init complete\n");
    return STATUS_SUCCESS;
  }
+ 
+@@ -677,6 +693,12 @@ bool ResetToConsistentStateImpl(const ThreadCPUArea CPUArea, EXCEPTION_RECORD* E
+   auto Thread = CPUArea.ThreadState();
+   FEXCORE_PROFILE_ACCUMULATION(Thread, AccumulatedSignalTime);
+   LogMan::Msg::DFmt("Exception: Code: {:X} Address: {:X}", Exception->ExceptionCode, reinterpret_cast<uintptr_t>(Exception->ExceptionAddress));
++#ifdef FEX_JUICE_IOS
++  if (Exception->ExceptionCode == EXCEPTION_ILLEGAL_INSTRUCTION && !(NativeContext->Pc & 3)) {
++    LogMan::Msg::EFmt("[JuiceFEX] native SIGILL pc=0x{:x} instruction=0x{:08x}", NativeContext->Pc,
++                      *reinterpret_cast<const uint32_t*>(NativeContext->Pc));
++  }
++#endif
+ 
+   if (NativeContext->Pc == reinterpret_cast<uint64_t>(&ExitFunctionSuspendPoint)) {
+     // A suspend interrupt can occur in ExitFunctionEC before InSimulation is unset and set SuspendDoorbell. If this
+@@ -921,7 +943,8 @@ NTSTATUS ThreadInit() {
+   const auto CPUArea = GetCPUArea();
+ 
+   static constexpr size_t EmulatorStackSize = 0x40000;
+-  const uint64_t EmulatorStack = reinterpret_cast<uint64_t>(::VirtualAlloc(nullptr, EmulatorStackSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
++  const uint64_t EmulatorStack = reinterpret_cast<uint64_t>(
++    ::VirtualAlloc(nullptr, EmulatorStackSize, MEM_COMMIT | MEM_RESERVE | MEM_TOP_DOWN, PAGE_READWRITE));
+   CPUArea.EmulatorStackLimit() = EmulatorStack;
+   CPUArea.EmulatorStackBase() = EmulatorStack + EmulatorStackSize;
+ 
+@@ -946,6 +969,19 @@ NTSTATUS ThreadInit() {
+   Frame->State.cs_cached = FEXCore::Core::CPUState::CalculateGDTBase(GDT);
+ 
+   FEX::Windows::CallRetStack::InitializeThread(Thread);
++#ifdef FEX_JUICE_IOS
++  {
++    const auto CallRet = FEX::Windows::CallRetStack::GetInfoThread(Thread);
++    char Message[256];
++    std::snprintf(Message, sizeof(Message),
++                  "[JuiceFEX] call-ret live allocation=0x%llx-0x%llx committed=0x%llx default=0x%llx state=0x%llx\n",
++                  static_cast<unsigned long long>(CallRet.AllocationBase), static_cast<unsigned long long>(CallRet.AllocationEnd),
++                  static_cast<unsigned long long>(reinterpret_cast<uintptr_t>(Thread->CallRetStackBase)),
++                  static_cast<unsigned long long>(CallRet.DefaultLocation),
++                  static_cast<unsigned long long>(Thread->CurrentFrame->State.callret_sp));
++    __wine_dbg_output(Message);
++  }
++#endif
+   Thread->CurrentFrame->Pointers.ExitFunctionEC = reinterpret_cast<uintptr_t>(&ExitFunctionEC);
+   CPUArea.StateFrame() = Thread->CurrentFrame;
  
 diff --git a/Source/Windows/Common/Allocator.cpp b/Source/Windows/Common/Allocator.cpp
 index 0643e062f..c0dac1cc2 100644
@@ -339,6 +914,69 @@ index 0643e062f..c0dac1cc2 100644
 +#endif
  }
  } // namespace FEX::Windows::Allocator
+diff --git a/Source/Windows/Common/CallRetStack.h b/Source/Windows/Common/CallRetStack.h
+index d2ddee3e0..37c0845be 100644
+--- a/Source/Windows/Common/CallRetStack.h
++++ b/Source/Windows/Common/CallRetStack.h
+@@ -7,6 +7,16 @@
+ #include <FEXCore/Debug/InternalThreadState.h>
+ 
+ namespace FEX::Windows::CallRetStack {
++#ifdef FEX_JUICE_IOS
++// iOS arm64 uses 16 KiB hardware pages, while Wine reserves VirtualAlloc
++// regions on 64 KiB boundaries.  A 4 KiB guard is rounded into the adjacent
++// commit by that host-page adapter.  Keep the committed shadow stack itself
++// 64 KiB-aligned so both guard regions remain genuinely inaccessible.
++static constexpr uint64_t CallRetGuardSize = 0x10000;
++#else
++static constexpr uint64_t CallRetGuardSize = FEXCore::Utils::FEX_PAGE_SIZE;
++#endif
++
+ struct CallRetStackInfo {
+   uint64_t AllocationBase;
+   uint64_t AllocationEnd;
+@@ -16,24 +26,34 @@ struct CallRetStackInfo {
+ CallRetStackInfo GetInfoThread(FEXCore::Core::InternalThreadState* Thread) {
+   uint64_t Base = reinterpret_cast<uint64_t>(Thread->CallRetStackBase);
+   // Leave some room from the base for the default location to allow for underflows without constant exceptions
+-  return {Base - FEXCore::Utils::FEX_PAGE_SIZE, Base + FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + FEXCore::Utils::FEX_PAGE_SIZE,
++  return {Base - CallRetGuardSize, Base + FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + CallRetGuardSize,
+           Base + FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE / 4};
+ }
+ 
+ void InitializeThread(FEXCore::Core::InternalThreadState* Thread) {
+   // Allocate the call-ret stack with guard pages on both sides
+-  const void* CallRetStackAlloc = ::VirtualAlloc(
+-    nullptr, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + 2 * FEXCore::Utils::FEX_PAGE_SIZE, MEM_RESERVE, PAGE_NOACCESS);
++  const void* CallRetStackAlloc = ::VirtualAlloc(nullptr, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + 2 * CallRetGuardSize,
++                                                 MEM_RESERVE | MEM_TOP_DOWN, PAGE_NOACCESS);
++  LOGMAN_THROW_A_FMT(CallRetStackAlloc != nullptr, "Failed to reserve the call-ret stack");
+ 
+   FEXCore::Allocator::VirtualName("FEXMem_CallRetStacks", CallRetStackAlloc,
+-                                  FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + 2 * FEXCore::Utils::FEX_PAGE_SIZE);
+-  FEXCore::Allocator::VirtualTHPControl(CallRetStackAlloc, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + 2 * FEXCore::Utils::FEX_PAGE_SIZE,
++                                  FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + 2 * CallRetGuardSize);
++  FEXCore::Allocator::VirtualTHPControl(CallRetStackAlloc, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE + 2 * CallRetGuardSize,
+                                         FEXCore::Allocator::THPControl::Disable);
+ 
+-  Thread->CallRetStackBase = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(CallRetStackAlloc) + FEXCore::Utils::FEX_PAGE_SIZE);
+-  ::VirtualAlloc(Thread->CallRetStackBase, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE, MEM_COMMIT, PAGE_READWRITE);
++  Thread->CallRetStackBase = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(CallRetStackAlloc) + CallRetGuardSize);
++  void* Committed =
++    ::VirtualAlloc(Thread->CallRetStackBase, FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE, MEM_COMMIT, PAGE_READWRITE);
++  LOGMAN_THROW_A_FMT(Committed == Thread->CallRetStackBase, "Failed to commit the call-ret stack at {:p}", Thread->CallRetStackBase);
+ 
+   Thread->CurrentFrame->State.callret_sp = GetInfoThread(Thread).DefaultLocation;
++#ifdef FEX_JUICE_IOS
++  const auto Info = GetInfoThread(Thread);
++  LogMan::Msg::EFmt("[JuiceFEX] call-ret stack allocation=0x{:x}-0x{:x} committed=0x{:x}-0x{:x} default=0x{:x}",
++                    Info.AllocationBase, Info.AllocationEnd, reinterpret_cast<uint64_t>(Thread->CallRetStackBase),
++                    reinterpret_cast<uint64_t>(Thread->CallRetStackBase) + FEXCore::Core::InternalThreadState::CALLRET_STACK_SIZE,
++                    Info.DefaultLocation);
++#endif
+ }
+ 
+ void DestroyThread(FEXCore::Core::InternalThreadState* Thread) {
 diff --git a/Source/Windows/Common/Priv.h b/Source/Windows/Common/Priv.h
 index ea702b400..eb813c4ca 100644
 --- a/Source/Windows/Common/Priv.h
@@ -408,6 +1046,24 @@ index 9d844b3a3..5e4d7f297 100644
  
  uint32_t StatAlloc::FrontendAllocateSlots(uint32_t NewSize) {
    if (CurrentSize == MAX_STATS_SIZE || !UsingNTQueryPath) {
+diff --git a/Source/Windows/Common/WinAPI/Alloc.cpp b/Source/Windows/Common/WinAPI/Alloc.cpp
+index ded646b0c..2a48f9507 100644
+--- a/Source/Windows/Common/WinAPI/Alloc.cpp
++++ b/Source/Windows/Common/WinAPI/Alloc.cpp
+@@ -49,6 +49,13 @@ DLLEXPORT_FUNC(void*, VirtualAlloc, (void* lpAddress, SIZE_T dwSize, DWORD flAll
+   }
+ #endif
+   if (Status) {
++#ifdef FEX_JUICE_IOS
++    fprintf(stderr,
++            "[JuiceFEX] VirtualAlloc failed base=%p size=0x%zx type=0x%lx protect=0x%lx status=0x%08lx\n",
++            lpAddress, static_cast<size_t>(dwSize), static_cast<unsigned long>(flAllocationType),
++            static_cast<unsigned long>(flProtect), static_cast<unsigned long>(Status));
++    fflush(stderr);
++#endif
+     SetLastError(RtlNtStatusToDosError(Status));
+     return nullptr;
+   }
 diff --git a/Source/Windows/Defs/ntdll.def b/Source/Windows/Defs/ntdll.def
 index 807d6a842..9e4cf363f 100644
 --- a/Source/Windows/Defs/ntdll.def

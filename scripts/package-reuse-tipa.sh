@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/graphics-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 export PATH="$JBROOT/usr/bin:$JBROOT/usr/sbin:/usr/bin:/bin:$PATH"
 
@@ -12,6 +13,8 @@ APP="$PACKAGE/Payload/Juice.app"
 OUTPUT="${1:-$ROOT/dist/Juice-Reuse-$(date +%Y%m%d-%H%M%S).tipa}"
 KEEP_STAGE="${JUICE_KEEP_REUSE_STAGE:-0}"
 ALLOW_COPY="${JUICE_REUSE_ALLOW_COPY:-0}"
+MOLTENVK_ROOT="${JUICE_GRAPHICS_DEPS:-$ROOT/build/deps}/moltenvk-$JUICE_MOLTENVK_VERSION"
+MOLTENVK_FRAMEWORK="${JUICE_MOLTENVK_FRAMEWORK:-$MOLTENVK_ROOT/MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework/ios-arm64/MoltenVK.framework}"
 
 usage()
 {
@@ -160,6 +163,15 @@ app_icons=("$ROOT/build/app/Juice.app"/AppIcon*.png)
 shopt -u nullglob
 test "${#app_icons[@]}" -gt 0 || { echo "Built Juice.app has no app icons." >&2; exit 3; }
 cp "${app_icons[@]}" "$APP/"
+if test ! -s "$MOLTENVK_FRAMEWORK/MoltenVK"; then
+  bash "$ROOT/scripts/fetch-moltenvk-linux.sh"
+fi
+test -s "$MOLTENVK_FRAMEWORK/MoltenVK" || {
+  echo "Missing pinned MoltenVK iOS framework: $MOLTENVK_FRAMEWORK" >&2
+  exit 3
+}
+mkdir -p "$APP/Frameworks"
+cp -a "$MOLTENVK_FRAMEWORK" "$APP/Frameworks/"
 
 stage_runtime()
 {
@@ -173,7 +185,7 @@ stage_runtime()
 }
 
 stage_runtime "$RUNTIME" "$APP/Grape"
-runtime_roots=("$APP/Grape")
+runtime_roots=("$APP/Grape" "$APP/Frameworks")
 if test -n "$X64_RUNTIME"; then
   stage_runtime "$X64_RUNTIME" "$APP/Grape-X64"
   runtime_roots+=("$APP/Grape-X64")

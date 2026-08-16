@@ -1,0 +1,1 @@
+JUICE_VULKAN_SMOKE_FAIL stage=surface-formats result=5

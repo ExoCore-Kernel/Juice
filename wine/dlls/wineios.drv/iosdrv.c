@@ -65,7 +65,15 @@ static UINT ios_UpdateDisplayDevices(const struct gdi_device_manager *manager,vo
 }
 static BOOL ios_CreateDesktop(const WCHAR *name,UINT width,UINT height){init_metrics();return TRUE;}
 static void ios_SetDesktopWindow(HWND hwnd){}
-static BOOL ios_CreateWindow(HWND hwnd){init_metrics();ios_ipc_register_queue();TRACE("create %p\n",hwnd);return TRUE;}
+static BOOL ios_CreateWindow(HWND hwnd)
+{
+    fprintf(stderr,"[JuiceDriver] create-enter hwnd=%p\n",hwnd);
+    init_metrics();
+    ios_ipc_register_queue();
+    TRACE("create %p\n",hwnd);
+    fprintf(stderr,"[JuiceDriver] create-success hwnd=%p\n",hwnd);
+    return TRUE;
+}
 static void ios_DestroyWindow(HWND hwnd){if(host_window_destroyed)host_window_destroyed(HandleToUlong(hwnd));ios_ipc_destroy(hwnd);}
 static UINT ios_ShowWindow(HWND hwnd,INT cmd,RECT *rect,UINT swp)
 {
@@ -74,6 +82,14 @@ static UINT ios_ShowWindow(HWND hwnd,INT cmd,RECT *rect,UINT swp)
     ios_ipc_window(hwnd,rect,cmd!=SW_HIDE); return swp;
 }
 static BOOL ios_WindowPosChanging(HWND hwnd,UINT flags,BOOL shaped,const struct window_rects *rects){return TRUE;}
+static BOOL ios_SystemParametersInfo(UINT action,UINT val,void *ptr,UINT winini)
+{
+    (void)action;
+    (void)val;
+    (void)ptr;
+    (void)winini;
+    return FALSE; /* Let win32u supply its registry-backed defaults. */
+}
 static void ios_WindowPosChanged(HWND hwnd,HWND after,HWND owner,UINT flags,const struct window_rects *rects,struct window_surface *surface)
 {
     BOOL visible;
@@ -154,8 +170,6 @@ static BOOL ios_CreateWindowSurface(HWND hwnd,BOOL layered,const RECT *rect,stru
 }
 static UINT ios_OpenGLInit(UINT version,const struct opengl_funcs *funcs,const struct opengl_driver_funcs **driver)
 {FIXME("OpenGL unavailable; Metal translation backend required\n");return STATUS_NOT_SUPPORTED;}
-static UINT ios_VulkanInit(UINT version,void *handle,const struct vulkan_driver_funcs **driver)
-{FIXME("Vulkan unavailable until a MoltenVK bridge is provided\n");return STATUS_NOT_SUPPORTED;}
 static struct user_driver_funcs iosdrv_funcs={
     .dc_funcs.pCreateCompatibleDC=ios_CreateCompatibleDC,.dc_funcs.pCreateDC=ios_CreateDC,
     .dc_funcs.pDeleteDC=ios_DeleteDC,.dc_funcs.pGetDeviceCaps=ios_GetDeviceCaps,.dc_funcs.priority=GDI_PRIORITY_GRAPHICS_DRV,
@@ -164,7 +178,9 @@ static struct user_driver_funcs iosdrv_funcs={
     .pDesktopWindowProc=ios_DesktopWindowProc,.pDestroyWindow=ios_DestroyWindow,.pProcessEvents=ios_ProcessEvents,
     .pSetCapture=ios_SetCapture,.pSetParent=ios_SetParent,.pShowWindow=ios_ShowWindow,.pWindowMessage=ios_WindowMessage,
     .pWindowPosChanging=ios_WindowPosChanging,.pCreateWindowSurface=ios_CreateWindowSurface,
-    .pWindowPosChanged=ios_WindowPosChanged,.pOpenGLInit=ios_OpenGLInit,.pVulkanInit=ios_VulkanInit};
+    .pCreateClientSurface=iosdrv_CreateClientSurface,
+    .pWindowPosChanged=ios_WindowPosChanged,.pSystemParametersInfo=ios_SystemParametersInfo,
+    .pOpenGLInit=ios_OpenGLInit,.pVulkanInit=iosdrv_VulkanInit};
 NTSTATUS iosdrv_unix_init(void *args)
 {(void)args;host_desktop_changed=dlsym(RTLD_DEFAULT,"wineios_host_desktop_changed");host_window_changed=dlsym(RTLD_DEFAULT,"wineios_host_window_changed");host_window_destroyed=dlsym(RTLD_DEFAULT,"wineios_host_window_destroyed");host_present_bgra=dlsym(RTLD_DEFAULT,"wineios_host_present_bgra");
-init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p size=%zu\n",iosdrv_funcs.pCreateWindow,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;}
+init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;iosdrv_funcs.pCreateClientSurface=iosdrv_CreateClientSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p client_surface=%p size=%zu\n",iosdrv_funcs.pCreateWindow,iosdrv_funcs.pCreateClientSurface,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;}

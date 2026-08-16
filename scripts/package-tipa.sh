@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/graphics-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 export PATH="$JBROOT/usr/bin:$JBROOT/usr/sbin:/usr/bin:/bin:$PATH"
 RUNTIME="${JUICE_RUNTIME_STAGE:-$ROOT/build/runtime-stage}/Grape"
@@ -12,9 +13,18 @@ fi
 ROOTLESS="${JUICE_IOS_ROOTLESS_SYSROOT:-$ROOT/build/deps/rootless-sysroot}"
 PACKAGE="$ROOT/build/package"
 APP="$PACKAGE/Payload/Juice.app"
+MOLTENVK_ROOT="${JUICE_GRAPHICS_DEPS:-$ROOT/build/deps}/moltenvk-$JUICE_MOLTENVK_VERSION"
+MOLTENVK_FRAMEWORK="${JUICE_MOLTENVK_FRAMEWORK:-$MOLTENVK_ROOT/MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework/ios-arm64/MoltenVK.framework}"
 OUTPUT="${1:-$ROOT/dist/Juice-$(date +%Y%m%d-%H%M%S).tipa}"
+APP_ENTITLEMENTS="${JUICE_APP_ENTITLEMENTS:-$ROOT/config/app-entitlements.plist}"
+CHILD_ENTITLEMENTS="${JUICE_CHILD_ENTITLEMENTS:-$ROOT/config/child-entitlements.plist}"
+X64_LOADER_ENTITLEMENTS="${JUICE_X64_LOADER_ENTITLEMENTS:-$ROOT/config/cli-allow-jit-entitlements.plist}"
+LOWVA_ENTITLEMENTS="${JUICE_LOWVA_ENTITLEMENTS:-$ROOT/config/lowva-helper-entitlements.plist}"
 
 test -d "$RUNTIME" || { echo "Run assemble-runtime.sh first." >&2; exit 2; }
+for entitlements in "$APP_ENTITLEMENTS" "$CHILD_ENTITLEMENTS" "$X64_LOADER_ENTITLEMENTS" "$LOWVA_ENTITLEMENTS"; do
+  test -f "$entitlements" || { echo "Missing package entitlements: $entitlements" >&2; exit 2; }
+done
 if test -n "$X64_RUNTIME"; then
   test -d "$X64_RUNTIME" || { echo "Experimental runtime not found: $X64_RUNTIME" >&2; exit 2; }
 fi
@@ -35,8 +45,17 @@ app_icons=("$ROOT/build/app/Juice.app"/AppIcon*.png)
 shopt -u nullglob
 test "${#app_icons[@]}" -gt 0 || { echo "Built Juice.app has no app icons." >&2; exit 3; }
 cp "${app_icons[@]}" "$APP/"
+if test ! -s "$MOLTENVK_FRAMEWORK/MoltenVK"; then
+  bash "$ROOT/scripts/fetch-moltenvk-linux.sh"
+fi
+test -s "$MOLTENVK_FRAMEWORK/MoltenVK" || {
+  echo "Missing pinned MoltenVK iOS framework: $MOLTENVK_FRAMEWORK" >&2
+  exit 3
+}
+mkdir -p "$APP/Frameworks"
+cp -a "$MOLTENVK_FRAMEWORK" "$APP/Frameworks/"
 rsync -a "$RUNTIME/" "$APP/Grape/"
-runtime_roots=("$APP/Grape")
+runtime_roots=("$APP/Grape" "$APP/Frameworks")
 if test -n "$X64_RUNTIME"; then
   rsync -a "$X64_RUNTIME/" "$APP/Grape-X64/"
   runtime_roots+=("$APP/Grape-X64")
@@ -113,26 +132,30 @@ fi
 if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
   while IFS= read -r -d '' candidate; do
     if file "$candidate" | grep -q 'Mach-O'; then
-      "$LDID_BIN" -S"$ROOT/config/child-entitlements.plist" -Cadhoc "$candidate"
+      "$LDID_BIN" -S"$CHILD_ENTITLEMENTS" -Cadhoc "$candidate"
     fi
   done < <(find "${runtime_roots[@]}" -type f -print0)
   if test -n "$X64_RUNTIME"; then
-    "$LDID_BIN" -S"$ROOT/config/cli-allow-jit-entitlements.plist" -Cadhoc \
+    "$LDID_BIN" -S"$X64_LOADER_ENTITLEMENTS" -Cadhoc \
       "$APP/Grape-X64/build/wine-ios/loader/wine"
   fi
   for runtime_root in "${runtime_roots[@]}"; do
     lowva_helper="$runtime_root/tools/juice-lowva-helper"
     if test -f "$lowva_helper" && file "$lowva_helper" | grep -q 'Mach-O'; then
-      "$LDID_BIN" -S"$ROOT/config/lowva-helper-entitlements.plist" -Cadhoc "$lowva_helper"
+      "$LDID_BIN" -S"$LOWVA_ENTITLEMENTS" -Cadhoc "$lowva_helper"
       helper_entitlements="$($LDID_BIN -e "$lowva_helper" 2>/dev/null || true)"
-      printf '%s' "$helper_entitlements" | grep -q 'IOSurfaceRootUserClient' || {
-        echo "Packaged low-VA helper is missing IOSurfaceRootUserClient: $lowva_helper" >&2
-        exit 3
-      }
-      echo "JUICE_LOWVA_HELPER_SIGNED path=$lowva_helper iosurface_entitlement=1"
+      if grep -q 'IOSurfaceRootUserClient' "$LOWVA_ENTITLEMENTS"; then
+        printf '%s' "$helper_entitlements" | grep -q 'IOSurfaceRootUserClient' || {
+          echo "Packaged low-VA helper is missing IOSurfaceRootUserClient: $lowva_helper" >&2
+          exit 3
+        }
+        echo "JUICE_LOWVA_HELPER_SIGNED path=$lowva_helper iosurface_entitlement=1"
+      else
+        echo "JUICE_LOWVA_HELPER_SIGNED path=$lowva_helper iosurface_entitlement=0"
+      fi
     fi
   done
-  "$LDID_BIN" -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$APP/Juice"
+  "$LDID_BIN" -S"$APP_ENTITLEMENTS" -Cadhoc "$APP/Juice"
 fi
 
 forbidden="$(find "$APP" \( -type d -name .git -o \

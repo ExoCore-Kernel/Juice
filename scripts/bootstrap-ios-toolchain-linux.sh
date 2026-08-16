@@ -10,7 +10,10 @@ DEST="${JUICE_IOS_TOOLCHAIN:-$ROOT/build/ios-toolchain}"
 WORK="$ROOT/build/ios-toolchain-input"
 JOBS="${JOBS:-${JUICE_JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 2)}}"
 
-case "$(uname -s):$(uname -m)" in Linux:x86_64|Linux:amd64) ;; *) echo "This bootstrap target requires x86_64 Linux." >&2; exit 2;; esac
+case "$(uname -s):$(uname -m)" in
+  Linux:x86_64|Linux:amd64|Linux:aarch64|Linux:arm64) ;;
+  *) echo "This bootstrap target requires a 64-bit x86 or ARM Linux host." >&2; exit 2;;
+esac
 test -d "$SDK" || {
   echo "Set IOS_SDK to an iPhoneOS device SDK directory before bootstrapping cctools-port." >&2
   exit 2
@@ -56,17 +59,32 @@ test -n "$sdk_version" || {
 }
 
 archive="$WORK/iPhoneOS${sdk_version}.sdk.tar.xz"
-rm -f "$archive"
 # cctools-port expects the SDK directory itself as the archive's top-level item.
-tar -C "$(dirname "$SDK")" -cJf "$archive" "$(basename "$SDK")"
+# Keep a completed input archive when the SDK has not changed; compressing the
+# SDK is otherwise a substantial fraction of bootstrap time on ARM build hosts.
+if test ! -s "$archive" || test -n "$(find "$SDK" -type f -newer "$archive" -print -quit)"; then
+  temporary_archive="$archive.new.$$"
+  trap 'rm -f "$temporary_archive"' EXIT INT TERM
+  tar -C "$(dirname "$SDK")" -cJf "$temporary_archive" "$(basename "$SDK")"
+  mv "$temporary_archive" "$archive"
+  trap - EXIT INT TERM
+fi
 
 example="$SOURCE/usage_examples/ios_toolchain"
 test -x "$example/build.sh" || chmod +x "$example/build.sh"
 rm -rf "$example/target"
+# The upstream example extracts the SDK version from its argv path. Passing an
+# absolute checkout path containing strings such as "x86_64" makes it mistake
+# that directory component for the iOS version. A version-only symlink keeps
+# the upstream parser deterministic regardless of the checkout name.
+example_archive="$example/iPhoneOS${sdk_version}.sdk.tar.xz"
+ln -sfn "$archive" "$example_archive"
 (
   cd "$example"
-  JOBS="$JOBS" ./build.sh "$archive" arm64
+  # build.sh changes into target/SDK before extracting the argv path.
+  JOBS="$JOBS" ./build.sh "../../$(basename "$example_archive")" arm64
 )
+rm -f "$example_archive"
 
 test -x "$example/target/bin/arm-apple-darwin11-clang" || {
   echo "cctools-port finished without the expected arm64 iOS compiler." >&2
