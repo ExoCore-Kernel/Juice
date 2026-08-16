@@ -50,6 +50,7 @@ export IPHONEOS_DEPLOYMENT_TARGET="$MIN_IOS"
 # vm_map minimum before Wine starts allocating its WoW64 address space.
 extra_args=()
 link_extra_args=()
+cache_shim_source="$ROOT/scripts/ios-clear-cache-shim.c"
 cache_shim_obj="$ROOT/build/ios-shims/clear-cache.o"
 ntdll_link=0
 cache_shim_present=0
@@ -80,14 +81,22 @@ done
 # Linux-hosted cctools toolchain, so make the compiler wrapper itself guarantee
 # that the compatibility object is present on the native ntdll.so link.
 #
-# Keep the outer LDFLAGS injection as a fast path, but never add the object a
-# second time; this makes both cached and freshly generated Wine Makefiles safe.
+# A clean build may reach ntdll.so indirectly while preparing another Unixlib
+# (notably the static-FreeType DirectWrite path) before build-wine-linux.sh has
+# created the shim. Build it lazily here with the underlying compiler. Using
+# REAL_COMPILER avoids recursing back through this wrapper, while the SDK and
+# deployment-target environment above is identical to an ordinary wrapper
+# compile. This makes every generated Wine dependency path self-contained.
 if test "$ntdll_link" = 1 && test "$cache_shim_present" = 0; then
-  test -f "$cache_shim_obj" || {
-    echo "Missing iOS clear-cache shim for ntdll link: $cache_shim_obj" >&2
-    echo "Run scripts/build-wine-linux.sh so the shim is built before ntdll.so." >&2
+  test -f "$cache_shim_source" || {
+    echo "Missing iOS clear-cache shim source: $cache_shim_source" >&2
     exit 3
   }
+  if test ! -f "$cache_shim_obj" || test "$cache_shim_source" -nt "$cache_shim_obj"; then
+    mkdir -p "$(dirname "$cache_shim_obj")"
+    echo "JUICE_IOS_CACHE_SHIM_AUTOBUILD output=$cache_shim_obj" >&2
+    "$REAL_COMPILER" -c "$cache_shim_source" -o "$cache_shim_obj"
+  fi
   link_extra_args+=("$cache_shim_obj")
   echo "JUICE_IOS_CACHE_SHIM_LINK target=dlls/ntdll/ntdll.so object=$cache_shim_obj" >&2
 fi
