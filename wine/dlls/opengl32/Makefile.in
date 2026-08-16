@@ -16,5 +16,5 @@ VER_LEGALCOPYRIGHT_STR  = "Copyright (c) 1993-2026 the Wine project. Not Microso
 SOURCES = \
 	thunks.c \
 	unix_thunks.c \
-	unix_wgl.c \
+	unix_wgl_juice.c \
 	wgl.c
