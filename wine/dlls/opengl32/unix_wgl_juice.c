@@ -15,6 +15,11 @@
  * LGPL-2.1-or-later, matching the included Wine source.
  */
 
+/* Wine's makedep requires config.h to be a literal top-level include in each
+ * translation unit; the include inside unix_wgl.c is not sufficient when that
+ * source is compiled through this wrapper. */
+#include "config.h"
+
 #define thread_attach juice_opengl_thread_attach_impl
 #include "unix_wgl.c"
 #undef thread_attach
