@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/graphics-build.env"
+source "$ROOT/config/network-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 SOURCE="$ROOT/wine"
 BUILD="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
@@ -53,6 +54,21 @@ else
   export FREETYPE_LIBS="${FREETYPE_LIBS:--L$JBROOT/usr/lib -lfreetype}"
 fi
 
+gnutls_args=()
+gnutls_status=enabled
+if test "${JUICE_WITHOUT_GNUTLS:-0}" = 1; then
+  gnutls_args+=(--without-gnutls)
+  gnutls_status=disabled
+else
+  test -f "$JBROOT/usr/include/gnutls/gnutls.h" && test -e "$JBROOT/usr/lib/libgnutls.dylib" || {
+    echo "GnuTLS development files are missing; run scripts/preflight-device.sh." >&2; exit 3;
+  }
+  export GNUTLS_CFLAGS="${GNUTLS_CFLAGS:--I$JBROOT/usr/include}"
+  export GNUTLS_LIBS="${GNUTLS_LIBS:--L$JBROOT/usr/lib -lgnutls}"
+  export ac_cv_lib_soname_gnutls="$JUICE_GNUTLS_RUNTIME_NAME"
+  gnutls_args+=(--with-gnutls)
+fi
+
 set +e
 "$SHELL_BIN" "$SOURCE/configure" \
   --build="$HOST_TRIPLET" --host="$HOST_TRIPLET" \
@@ -61,7 +77,7 @@ set +e
   --without-x --without-wayland --without-coreaudio --without-cups \
   --without-dbus --without-ffmpeg --without-fontconfig \
   "${freetype_args[@]}" \
-  --without-gettext --without-gphoto --without-gnutls --without-gssapi \
+  --without-gettext --without-gphoto "${gnutls_args[@]}" --without-gssapi \
   --without-gstreamer --without-krb5 --without-netapi --without-opencl \
   --without-opengl --without-oss --without-pcap --without-pcsclite \
   --without-pulse --without-sane --without-sdl --without-udev --without-usb \
@@ -93,4 +109,9 @@ fi
 grep -Fq "#define SONAME_LIBVULKAN \"$JUICE_MOLTENVK_RUNTIME_NAME\"" include/config.h || {
   echo "Wine configure did not enable bundled MoltenVK." >&2; exit 5;
 }
-echo "JUICE_WINE_CONFIGURE_OK path=$BUILD freetype=$freetype_status vulkan=moltenvk"
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+  grep -Fq "#define SONAME_LIBGNUTLS \"$JUICE_GNUTLS_RUNTIME_NAME\"" include/config.h || {
+    echo "Wine configure did not enable bundled GnuTLS/Schannel." >&2; exit 5;
+  }
+fi
+echo "JUICE_WINE_CONFIGURE_OK path=$BUILD freetype=$freetype_status gnutls=$gnutls_status vulkan=moltenvk"

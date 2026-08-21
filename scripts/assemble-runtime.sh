@@ -9,6 +9,7 @@ PEBUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 MODULES="${JUICE_RUNTIME_MODULES:-$ROOT/config/runtime-modules.txt}"
 STAGE="${JUICE_RUNTIME_STAGE:-$ROOT/build/runtime-stage}"
 GRAPE="$STAGE/Grape"
+NETWORK_SMOKES="${JUICE_NETWORK_SMOKE_BUILD:-$ROOT/build/network-smokes}"
 
 case "$STAGE" in "$ROOT"/build/*) ;; *) echo "Unsafe runtime stage: $STAGE" >&2; exit 2;; esac
 test -f "$MODULES" || { echo "Missing runtime module manifest: $MODULES" >&2; exit 2; }
@@ -16,6 +17,7 @@ rm -rf "$GRAPE"
 mkdir -p "$GRAPE/build/wine-ios/server" "$GRAPE/build/wine-ios/loader" \
   "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows" \
   "$GRAPE/build/wine-ios/dlls/crypt32" \
+  "$GRAPE/build/wine-ios/dlls/secur32" \
   "$GRAPE/build/wine-ios/dlls/dwrite" \
   "$GRAPE/build/wine-ios/dlls/mountmgr.sys" \
   "$GRAPE/build/wine-ios/dlls/opengl32" \
@@ -24,7 +26,8 @@ mkdir -p "$GRAPE/build/wine-ios/server" "$GRAPE/build/wine-ios/loader" \
   "$GRAPE/build/wine-ios/dlls/ws2_32" \
   "$GRAPE/build/wine-ios/include" "$GRAPE/build/wine-ios/nls" \
   "$GRAPE/runtime/lib/wine/aarch64-windows" \
-  "$GRAPE/tools"
+  "$GRAPE/runtime/lib/wine/aarch64-unix" \
+  "$GRAPE/tools" "$GRAPE/tests"
 
 cp "$NATIVE/server/wineserver" "$GRAPE/build/wine-ios/server/"
 cp "$NATIVE/loader/wine" "$GRAPE/build/wine-ios/loader/"
@@ -37,6 +40,7 @@ cp "$NATIVE/dlls/ntdll/ntdll.so" "$GRAPE/build/wine-ios/dlls/ntdll/"
 cp "$PEBUILD/dlls/ntdll/aarch64-windows/ntdll.dll" \
   "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows/"
 cp "$NATIVE/dlls/crypt32/crypt32.so" "$GRAPE/build/wine-ios/dlls/crypt32/"
+cp "$NATIVE/dlls/secur32/secur32.so" "$GRAPE/build/wine-ios/dlls/secur32/"
 dwrite_unixlib=0
 if test -s "$NATIVE/dlls/dwrite/dwrite.so"; then
   cp "$NATIVE/dlls/dwrite/dwrite.so" "$GRAPE/build/wine-ios/dlls/dwrite/"
@@ -63,12 +67,33 @@ cp "$NATIVE/dlls/wineios.drv/wineios.so" "$GRAPE/runtime/lib/wine/aarch64-window
 cp "$NATIVE/dlls/winevulkan/winevulkan.so" "$GRAPE/runtime/lib/wine/aarch64-windows/winevulkan.so"
 cp "$NATIVE/dlls/ws2_32/ws2_32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/ws2_32.so"
 cp "$NATIVE/dlls/crypt32/crypt32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/crypt32.so"
+cp "$NATIVE/dlls/secur32/secur32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/secur32.so"
 if test "$dwrite_unixlib" = 1; then
   cp "$NATIVE/dlls/dwrite/dwrite.so" "$GRAPE/runtime/lib/wine/aarch64-windows/dwrite.so"
 fi
 cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$GRAPE/runtime/lib/wine/aarch64-windows/mountmgr.so"
 cp "$NATIVE/dlls/opengl32/opengl32.so" "$GRAPE/runtime/lib/wine/aarch64-windows/opengl32.so"
 cp "$NATIVE/dlls/win32u/win32u.so" "$GRAPE/runtime/lib/wine/aarch64-windows/win32u.so"
+
+# Modern Wine resolves a PE module's Unix side in the architecture-specific
+# sibling directory (aarch64-windows/../aarch64-unix). Keep the historical
+# aarch64-windows mirrors above for older Juice loaders, but always provide the
+# canonical layout used by current ntdll. This is required by networking and
+# by any other DLL that calls __wine_init_unix_lib.
+UNIX_RUNTIME="$GRAPE/runtime/lib/wine/aarch64-unix"
+cp "$NATIVE/dlls/ntdll/ntdll.so" "$UNIX_RUNTIME/ntdll.so"
+cp "$NATIVE/dlls/crypt32/crypt32.so" "$UNIX_RUNTIME/crypt32.so"
+cp "$NATIVE/dlls/secur32/secur32.so" "$UNIX_RUNTIME/secur32.so"
+cp "$NATIVE/dlls/mountmgr.sys/mountmgr.so" "$UNIX_RUNTIME/mountmgr.so"
+cp "$NATIVE/dlls/opengl32/opengl32.so" "$UNIX_RUNTIME/opengl32.so"
+cp "$NATIVE/dlls/win32u/win32u.so" "$UNIX_RUNTIME/win32u.so"
+cp "$NATIVE/dlls/wineios.drv/wineios.so" "$UNIX_RUNTIME/wineios.so"
+cp "$NATIVE/dlls/winevulkan/winevulkan.so" "$UNIX_RUNTIME/winevulkan.so"
+cp "$NATIVE/dlls/ws2_32/ws2_32.so" "$UNIX_RUNTIME/ws2_32.so"
+if test "$dwrite_unixlib" = 1; then
+  cp "$NATIVE/dlls/dwrite/dwrite.so" "$UNIX_RUNTIME/dwrite.so"
+fi
+echo "JUICE_UNIXLIB_LAYOUT_READY path=$UNIX_RUNTIME modules=$(find "$UNIX_RUNTIME" -maxdepth 1 -type f | wc -l | tr -d ' ')"
 
 mapfile -t pe_targets < <(sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$MODULES")
 for target in "${pe_targets[@]}"; do
@@ -120,6 +145,10 @@ cp "$ROOT/build/launchers/grape-trace-parent" \
    "$ROOT/build/launchers/juice-lowva-helper" \
    "$GRAPE/tools/"
 chmod 755 "$GRAPE/build/wine-ios/server/wineserver" "$GRAPE/build/wine-ios/loader/wine" "$GRAPE/tools/"*
+if test -s "$NETWORK_SMOKES/network-smoke-arm64.exe"; then
+  cp "$NETWORK_SMOKES/network-smoke-arm64.exe" "$GRAPE/tests/"
+  echo "JUICE_NETWORK_SMOKE_STAGED arch=arm64 path=$GRAPE/tests/network-smoke-arm64.exe"
+fi
 
 (
   cd "$STAGE"

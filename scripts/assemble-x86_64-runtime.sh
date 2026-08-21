@@ -18,6 +18,7 @@ WOW64="${JUICE_WOW64_PE_BUILD:-$ROOT/build/wine-wow64-pe}"
 FEX_WOW64_BUILD="${JUICE_FEX_WOW64_BUILD:-$ROOT/build/fex-wow64}"
 FEX_WOW64_DLL="$FEX_WOW64_BUILD/Bin/libwow64fex.dll"
 X86_SMOKE="${JUICE_X86_SMOKE_OUTPUT:-$ROOT/build/x86-smoke.exe}"
+NETWORK_SMOKES="${JUICE_NETWORK_SMOKE_BUILD:-$ROOT/build/network-smokes}"
 REQUIRE_WIN32="${JUICE_REQUIRE_WIN32:-0}"
 
 case "$STAGE" in
@@ -78,6 +79,13 @@ for target in "${targets[@]}"; do
 done
 cp "$HYBRID/dlls/ntdll/aarch64-windows/ntdll.dll" \
   "$GRAPE/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll"
+# ntdll's early API-set bootstrap intentionally resolves data-only
+# apisetschema.dll through the Wine build-tree layout before ordinary module
+# lookup is available.  Preserve that expected layout in packaged Grape-X64;
+# keeping only the runtime copy makes every api-ms-win-* import fail.
+mkdir -p "$GRAPE/build/wine-ios/dlls/apisetschema/aarch64-windows"
+cp "$HYBRID/dlls/apisetschema/aarch64-windows/apisetschema.dll" \
+  "$GRAPE/build/wine-ios/dlls/apisetschema/aarch64-windows/apisetschema.dll"
 cp "$FEX_DLL" "$GRAPE/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll"
 cp "$FEX_DLL" "$GRAPE/prefix-template/drive_c/windows/system32/libarm64ecfex.dll"
 cp "$GRAPE/runtime/lib/wine/aarch64-windows/JuiceGUI.exe" \
@@ -86,6 +94,10 @@ cp "$GRAPE/runtime/lib/wine/aarch64-windows/winemine.exe" \
   "$GRAPE/prefix-template/drive_c/windows/system32/winemine.exe"
 cp "$SMOKE" "$GRAPE/tests/x86_64-smoke.exe"
 cp "$SMOKE" "$GRAPE/runtime/lib/wine/aarch64-windows/x86_64-smoke.exe"
+if test -s "$NETWORK_SMOKES/network-smoke-x86_64.exe"; then
+  cp "$NETWORK_SMOKES/network-smoke-x86_64.exe" "$GRAPE/tests/"
+  echo "JUICE_NETWORK_SMOKE_STAGED arch=x86_64 path=$GRAPE/tests/network-smoke-x86_64.exe"
+fi
 
 for target in "${targets[@]}"; do
   staged="$GRAPE/runtime/lib/wine/aarch64-windows/$(basename "$target")"
@@ -118,11 +130,27 @@ echo "JUICE_X64_HYBRID_LAYOUT arm64_programs=$arm64_programs hybrid_modules=$hyb
 
 if test "$win32_ready" = 1; then
   mkdir -p "$GRAPE/runtime/lib/wine/i386-windows" \
+    "$GRAPE/build/wine-ios/dlls/ntdll/i386-windows" \
     "$GRAPE/prefix-template/drive_c/windows/syswow64"
   test -f "$WOW64/Makefile" || {
     echo "Legacy Win32 build is missing its generated Makefile: $WOW64/Makefile" >&2
     exit 3
   }
+
+  # Wine's 64-bit ARM64 WoW64 control layer loads the i386 ntdll and delegates
+  # guest instructions to HODLL.  These are native ARM64 control DLLs, not
+  # i386 payload DLLs, and therefore come from the ARM64EC multiarch tree.
+  for control_target in \
+    dlls/wow64/aarch64-windows/wow64.dll \
+    dlls/wow64win/aarch64-windows/wow64win.dll; do
+    control_module="$HYBRID/$control_target"
+    test -s "$control_module" || {
+      echo "Missing Legacy Win32 control module: $control_target" >&2
+      exit 3
+    }
+    cp "$control_module" "$GRAPE/runtime/lib/wine/aarch64-windows/$(basename "$control_target")"
+    cp "$control_module" "$GRAPE/prefix-template/drive_c/windows/system32/$(basename "$control_target")"
+  done
 
   x86_targets=()
   x86_skipped_targets=()
@@ -151,10 +179,21 @@ if test "$win32_ready" = 1; then
     cp "$module" "$GRAPE/runtime/lib/wine/i386-windows/$(basename "$target")"
   done
 
+  # load_wow64_ntdll() resolves the bootstrap ntdll through Wine's build-tree
+  # layout before the normal syswow64 search path is active. Keep the runtime
+  # copy for ordinary module loading and mirror this one required bootstrap
+  # DLL where the native loader expects it.
+  cp "$WOW64/dlls/ntdll/i386-windows/ntdll.dll" \
+    "$GRAPE/build/wine-ios/dlls/ntdll/i386-windows/ntdll.dll"
+
   cp "$FEX_WOW64_DLL" "$GRAPE/runtime/lib/wine/aarch64-windows/libwow64fex.dll"
   cp "$FEX_WOW64_DLL" "$GRAPE/prefix-template/drive_c/windows/system32/libwow64fex.dll"
   cp "$X86_SMOKE" "$GRAPE/tests/x86-smoke.exe"
   cp "$X86_SMOKE" "$GRAPE/runtime/lib/wine/i386-windows/x86-smoke.exe"
+  if test -s "$NETWORK_SMOKES/network-smoke-i386.exe"; then
+    cp "$NETWORK_SMOKES/network-smoke-i386.exe" "$GRAPE/tests/"
+    echo "JUICE_NETWORK_SMOKE_STAGED arch=i386 path=$GRAPE/tests/network-smoke-i386.exe"
+  fi
 
   for target in "${x86_targets[@]}"; do
     staged="$GRAPE/runtime/lib/wine/i386-windows/$(basename "$target")"

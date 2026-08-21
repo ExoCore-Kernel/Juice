@@ -19,6 +19,11 @@ Juice currently provides:
 
 The 2026-08-11 v20 device pass verified ARM64 WineMine, the native JuiceGUI desktop, visible GDI text, UTF-16 edit-control input, FEX-translated x86-64 execution, MSI install/launch/persistence/uninstall, and an ordinary ARM64 setup executable. The deterministic control peer exercised the same versioned request/response protocol used by the UIKit document picker and retained every marker, log, and framebuffer under `proofs/verified/2026-08-11/final-v20/`. A real foreground picker selection is still a manual release check because it requires an unlocked, attended iPad.
 
+The 2026-08-21 application pass additionally verified the full unmodified
+Chocolate Doom 3.1.1 x86-64 game on the iPad with Freedoom gameplay, readable
+text/HUD, and sound enabled. Its checksummed frame and device log are under
+`proofs/verified/apps/chocolate-doom-game-x86_64-v10-full-20260821/`.
+
 ## Supported target
 
 Juice targets rootless-jailbroken ARM64 iPhones and iPads installed through TrollStore. The audited target is an iPad12,1 running iPadOS 16.6 (20G75). Private entitlements and CoreTrust signing are required, so Juice is not App Store compatible.
@@ -116,6 +121,10 @@ make verify
 ```
 
 checks source syntax and safety markers, validates the runtime module manifest, and proves that `patches/wine-ios.patch` reverses cleanly from the included modified Wine tree. This prevents the full tree and standalone patch from silently drifting apart.
+
+The same verification also checks the pinned FEX parent and rpmalloc submodule
+patch workflow. `patches/fex-rpmalloc-juice-ios.patch` is intentionally kept
+separate because rpmalloc is a nested upstream Git revision.
 
 ## Using Juice
 

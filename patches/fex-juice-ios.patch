@@ -206,7 +206,7 @@ index fd8fd6bac..1117b0637 100644
        add(ARMEmitter::Size::i64Bit, ARMEmitter::Reg::rsp, StaticRegisters[X86State::REG_RSP], 0);
        InsertGuestRIPMove(EC_CALL_CHECKER_PC_REG, NewRIP);
 diff --git a/FEXCore/Source/Interface/Core/JIT/JIT.cpp b/FEXCore/Source/Interface/Core/JIT/JIT.cpp
-index dd9c27e29..720bfdca9 100644
+index dd9c27e29..59f6f8a3b 100644
 --- a/FEXCore/Source/Interface/Core/JIT/JIT.cpp
 +++ b/FEXCore/Source/Interface/Core/JIT/JIT.cpp
 @@ -497,6 +497,23 @@ void Arm64JITCore::Op_Unhandled(const IR::IROp_Header* IROp, IR::Ref Node) {
@@ -263,7 +263,26 @@ index dd9c27e29..720bfdca9 100644
  
    // No need to reset HostCode here as the exit linker pointer is stored separately, and if the block is relinked it will be updated.
  }
-@@ -589,10 +618,20 @@ uint64_t Arm64JITCore::ExitFunctionLink(FEXCore::Core::CpuStateFrame* Frame, FEX
+@@ -555,6 +584,18 @@ uint64_t Arm64JITCore::ExitFunctionLink(FEXCore::Core::CpuStateFrame* Frame, FEX
+     }
+   }
+ 
++#ifdef FEX_JUICE_IOS
++  /*
++   * Published JIT pages must remain executable on iOS.  FEX's normal block
++   * linker rewrites instructions in-place, which requires making the whole
++   * 16 KiB host page writable and can concurrently remove execute permission
++   * from a different translated thread.  Keep the original linker thunk and
++   * return the cached target without backpatching.  This costs a lookup at a
++   * block edge but removes a process-wide W^X race for every translated app.
++   */
++  return HostCode;
++#endif
++
+   // See ExitFunction in BranchOps.cpp for an assembly level view of the handled cases.
+   uintptr_t JumpThunkStartAddress = reinterpret_cast<uintptr_t>(Record) - 0x10;
+   uintptr_t CallerAddress = JumpThunkStartAddress + Record->CallerOffset;
+@@ -589,10 +630,20 @@ uint64_t Arm64JITCore::ExitFunctionLink(FEXCore::Core::CpuStateFrame* Frame, FEX
          GuestRip, Record, [](FEXCore::Context::ExitFunctionLinkData* Record) { DirectBlockDelinker(Record, false); }, lk);
      }
  
@@ -284,7 +303,7 @@ index dd9c27e29..720bfdca9 100644
      std::atomic_ref<uint64_t>(Record->HostCode).store(HostCode, std::memory_order::seq_cst);
  #ifdef ARCHITECTURE_arm64
      // Make memory write visible to other threads reading the same location
-@@ -604,6 +643,10 @@ uint64_t Arm64JITCore::ExitFunctionLink(FEXCore::Core::CpuStateFrame* Frame, FEX
+@@ -604,6 +655,10 @@ uint64_t Arm64JITCore::ExitFunctionLink(FEXCore::Core::CpuStateFrame* Frame, FEX
      LdrEmit.ldr(TMP1, reinterpret_cast<uint64_t>(&Record->HostCode) - JumpThunkStartAddress);
      std::atomic_ref<uint32_t>(*reinterpret_cast<uint32_t*>(JumpThunkStartAddress)).store(LdrInst, std::memory_order::relaxed);
      ARMEmitter::Emitter::ClearICache(reinterpret_cast<void*>(JumpThunkStartAddress), 4);
@@ -295,7 +314,7 @@ index dd9c27e29..720bfdca9 100644
  
      Thread->LookupCache->AddBlockLink(GuestRip, Record, IndirectBlockDelinker, lk);
    }
-@@ -1077,6 +1120,10 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+@@ -1077,6 +1132,10 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
  
      // Query size of generated code
      const auto TempSize = GetCursorOffset();
@@ -306,7 +325,7 @@ index dd9c27e29..720bfdca9 100644
  
      // Bring CodeBuffer up to date
      {
-@@ -1088,14 +1135,35 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+@@ -1088,14 +1147,44 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
          ThreadState->LookupCache->ChangeGuestToHostMapping(*Prev, *CurrentCodeBuffer->LookupCache, lk);
        }
  
@@ -316,7 +335,17 @@ index dd9c27e29..720bfdca9 100644
 -      SetCursorOffset(CodeBuffers.LatestOffset);
 -      Align16B();
 -      if ((GetCursorOffset() + TempSize) > CurrentCodeBuffer->UsableSize()) {
++#ifdef FEX_JUICE_IOS
++      /*
++       * Never reopen a page that already contains published code.  Darwin's
++       * W^X protection is page-wide, so compiling into the unused tail of an
++       * RX page can make code executing on another thread non-executable.
++       */
++      constexpr uint64_t JuiceHostPageSize = 0x4000;
++      const auto AlignedOffset = AlignUp(CodeBuffers.LatestOffset, JuiceHostPageSize);
++#else
 +      const auto AlignedOffset = AlignUp(CodeBuffers.LatestOffset, static_cast<uint64_t>(16));
++#endif
 +      if ((AlignedOffset + TempSize) > CurrentCodeBuffer->UsableSize()) {
          CTX->ClearCodeCache(ThreadState);
        }
@@ -327,11 +356,10 @@ index dd9c27e29..720bfdca9 100644
 +       * that padding in the W^X write interval; protecting only the memcpy
 +       * destination is too late when the preceding block left this page RX.
 +       */
-+      constexpr uintptr_t JuiceHostPageSize = 0x4000;
 +      constexpr uintptr_t JuiceHostPageMask = JuiceHostPageSize - 1;
 +      const uintptr_t BufferBase = reinterpret_cast<uintptr_t>(CurrentCodeBuffer->Ptr);
-+      const uintptr_t CopyOffset = AlignUp(CodeBuffers.LatestOffset, static_cast<uint64_t>(16));
-+      ProtectStart = (BufferBase + CodeBuffers.LatestOffset) & ~JuiceHostPageMask;
++      const uintptr_t CopyOffset = AlignedOffset;
++      ProtectStart = BufferBase + CopyOffset;
 +      ProtectEnd = (BufferBase + CopyOffset + TempSize + JuiceHostPageMask) & ~JuiceHostPageMask;
 +      LOGMAN_THROW_A_FMT(
 +        FEXCore::Allocator::VirtualProtect(reinterpret_cast<void*>(ProtectStart), ProtectEnd - ProtectStart,
@@ -341,12 +369,12 @@ index dd9c27e29..720bfdca9 100644
 +
 +      // NOTE: 16-byte alignment of the new cursor offset must be preserved for block linking records
 +      SetBuffer(CurrentCodeBuffer->Ptr, CurrentCodeBuffer->AllocatedSize);
-+      SetCursorOffset(CodeBuffers.LatestOffset);
++      SetCursorOffset(AlignedOffset);
 +      Align16B();
        CodeBuffers.LatestOffset = GetCursorOffset();
      }
  
-@@ -1112,7 +1180,26 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
+@@ -1112,7 +1201,26 @@ CPUBackend::CompiledCode Arm64JITCore::CompileCode(uint64_t Entry, uint64_t Size
      }
  
      // Copy over CodeBuffer contents
@@ -914,6 +942,19 @@ index 0643e062f..c0dac1cc2 100644
 +#endif
  }
  } // namespace FEX::Windows::Allocator
+diff --git a/Source/Windows/Common/CRT/Misc.cpp b/Source/Windows/Common/CRT/Misc.cpp
+index 76f8b997b..a1f15fb94 100644
+--- a/Source/Windows/Common/CRT/Misc.cpp
++++ b/Source/Windows/Common/CRT/Misc.cpp
+@@ -18,7 +18,7 @@ char** EnvArray;
+ namespace {
+ void InitEnv() {
+   RtlAcquirePebLock();
+-  auto ProcessParams = reinterpret_cast<RTL_USER_PROCESS_PARAMETERS64*>(NtCurrentTeb()->ProcessEnvironmentBlock->ProcessParameters);
++  auto ProcessParams = reinterpret_cast<RTL_USER_PROCESS_PARAMETERS64*>(GetCurrentPEB()->ProcessParameters);
+   wchar_t* EnvW = reinterpret_cast<wchar_t*>(ProcessParams->Environment);
+   DWORD SizeW = 4;
+   // The PEB environment is terminated by two null wchars.
 diff --git a/Source/Windows/Common/CallRetStack.h b/Source/Windows/Common/CallRetStack.h
 index d2ddee3e0..37c0845be 100644
 --- a/Source/Windows/Common/CallRetStack.h
@@ -1076,3 +1117,42 @@ index 807d6a842..9e4cf363f 100644
    PfxFindPrefix PRIVATE
    PfxInitialize PRIVATE
    PfxInsertPrefix PRIVATE
+diff --git a/Source/Windows/WOW64/Module.cpp b/Source/Windows/WOW64/Module.cpp
+index b2027a0cd..e7e4b906f 100644
+--- a/Source/Windows/WOW64/Module.cpp
++++ b/Source/Windows/WOW64/Module.cpp
+@@ -30,6 +30,7 @@ $end_info$
+ 
+ #include "Windows/Common/Allocator.h"
+ #include "Windows/Common/EnvironmentVariablesHandling.h"
++#include "Windows/Common/Priv.h"
+ #include "Common/CallRetStack.h"
+ #include "Common/JITGuardPage.h"
+ #include "Common/Config.h"
+@@ -145,7 +146,7 @@ std::pair<NTSTATUS, TLS> GetThreadTLS(HANDLE Thread) {
+ }
+ 
+ TLS GetTLS() {
+-  return TLS {NtCurrentTeb()};
++  return TLS {reinterpret_cast<_TEB*>(GetCurrentTEB())};
+ }
+ 
+ FrontendThreadData* GetFrontendThreadData(FEXCore::Core::InternalThreadState* Thread) {
+@@ -361,7 +362,7 @@ void LockJITContext(TLS TLS) {
+   if (Expected & ControlBits::WOW_CPU_AREA_DIRTY) {
+     WOW64_CONTEXT* WowContext;
+     RtlWow64GetCurrentCpuArea(nullptr, reinterpret_cast<void**>(&WowContext), nullptr);
+-    Context::LoadStateFromWowContext(TLS.ThreadState(), GetWowTEB(NtCurrentTeb()), WowContext);
++    Context::LoadStateFromWowContext(TLS.ThreadState(), GetWowTEB(reinterpret_cast<_TEB*>(GetCurrentTEB())), WowContext);
+   }
+ }
+ 
+@@ -544,7 +545,7 @@ void BTCpuProcessInit() {
+   InvalidationTracker.emplace(*CTX, Threads);
+   ImageTracker.emplace(*CTX, false);
+ 
+-  auto MainModule = reinterpret_cast<__TEB*>(NtCurrentTeb())->Peb->ImageBaseAddress;
++  auto MainModule = GetCurrentTEB()->Peb->ImageBaseAddress;
+   HandleImageMap(reinterpret_cast<uint64_t>(MainModule), true);
+ 
+   auto NtDllX86 = reinterpret_cast<SYSTEM_DLL_INIT_BLOCK*>(GetProcAddress(NtDll, "LdrSystemDllInitBlock"))->ntdll_handle;

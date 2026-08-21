@@ -6,7 +6,7 @@ required=(
   app/main.m app/JuiceZip.m app/tests/ZipExtractorTests.m
   launcher/grape-trace-parent.c launcher/grape-nested-wrapper.c
   config/runtime-modules.txt config/wine-base.txt patches/wine-ios.patch
-  config/x86_64-build.env patches/fex-juice-ios.patch
+  config/x86_64-build.env patches/fex-juice-ios.patch patches/fex-rpmalloc-juice-ios.patch
   scripts/build-all-device.sh scripts/build-pe-compiler-wrapper-device.sh
   scripts/detect-freetype-soname-linux.sh scripts/patch-ios-wow64-pagezero.py
   scripts/regenerate-wine-patch.sh
@@ -29,6 +29,10 @@ required=(
   packaging/prefix-template/system.reg packaging/prefix-template/user.reg
   proofs/verified/2026-08-11/final-v20/README.md
   proofs/verified/2026-08-11/final-v20/SHA256SUMS
+  proofs/verified/apps/chocolate-doom-game-x86_64-v10-full-20260821/README.md
+  proofs/verified/apps/chocolate-doom-game-x86_64-v10-full-20260821/SHA256SUMS
+  proofs/verified/x86_64-post-chocolate-doom-v8-20260821/README.md
+  proofs/verified/x86_64-post-chocolate-doom-v8-20260821/SHA256SUMS
 )
 for path in "${required[@]}"; do
   test -e "$ROOT/$path" || { echo "Missing $path" >&2; exit 2; }
@@ -81,7 +85,8 @@ grep -q 'FREETYPE_CFLAGS' "$ROOT/scripts/configure-wine-device.sh"
 grep -q 'ac_cv_lib_soname_freetype' "$ROOT/scripts/configure-wine-linux.sh"
 grep -q '@executable_path/../../../../Libraries/' "$ROOT/scripts/configure-wine-linux.sh"
 grep -q 'JUICE_FREETYPE_CONFIG_RETROFIT' "$ROOT/scripts/build-all-linux-x86_64.sh"
-grep -q 'JUICE_FREETYPE_BUNDLED' "$ROOT/scripts/package-tipa.sh"
+grep -q 'JUICE_RUNTIME_LIBRARIES_READY' "$ROOT/scripts/package-tipa.sh"
+grep -q 'JUICE_IOS_LIBRARIES_BUNDLED' "$ROOT/scripts/bundle-ios-libraries.sh"
 grep -q 'JUICE_WOW64_PAGEZERO_PATCHED' "$ROOT/scripts/patch-ios-wow64-pagezero.py"
 # The experimental x64 loader now keeps its signed 4 GiB __PAGEZERO intact so
 # iOS will exec it. Low VA is unlocked in the live task by the bundled root
@@ -218,5 +223,13 @@ if test -d "$ROOT/screenshots"; then
 fi
 if test -d "$ROOT/proofs/verified/2026-08-11/final-v20"; then
   (cd "$ROOT/proofs/verified/2026-08-11/final-v20" && sha256sum -c SHA256SUMS)
+fi
+if test -d "$ROOT/proofs/verified/apps/chocolate-doom-game-x86_64-v10-full-20260821"; then
+  (cd "$ROOT/proofs/verified/apps/chocolate-doom-game-x86_64-v10-full-20260821" &&
+    sha256sum -c SHA256SUMS)
+fi
+if test -d "$ROOT/proofs/verified/x86_64-post-chocolate-doom-v8-20260821"; then
+  (cd "$ROOT/proofs/verified/x86_64-post-chocolate-doom-v8-20260821" &&
+    sha256sum -c SHA256SUMS)
 fi
 echo "JUICE_SOURCE_VERIFY_OK"

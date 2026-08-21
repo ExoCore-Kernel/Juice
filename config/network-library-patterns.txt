@@ -1,0 +1,18 @@
+# Fallback discovery patterns for a native-device package build. Linux builds
+# use the exact .juice-network-libraries list generated from the checksum-pinned
+# packages; these patterns cover the same Procursus GnuTLS runtime closure.
+libgnutls*.dylib
+libiosexec*.dylib
+libintl*.dylib
+libgmp*.dylib
+libidn2*.dylib
+libunistring*.dylib
+libnettle*.dylib
+libhogweed*.dylib
+libp11-kit*.dylib
+libtasn1*.dylib
+libzstd*.dylib
+libbrotli*.dylib
+libffi*.dylib
+liblz4*.dylib
+liblzma*.dylib

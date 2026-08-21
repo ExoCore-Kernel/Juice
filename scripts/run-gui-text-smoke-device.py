@@ -118,6 +118,7 @@ class DisplayHost:
         self.lock = threading.Lock()
         self.latest_frame: tuple[int, int, int, bytes] | None = None
         self.latest_expected_frame: tuple[int, int, int, bytes] | None = None
+        self.first_frame_time: float | None = None
         self.expected_window_hwnds: set[int] = set()
         self.first_frame_written = False
         self.client_threads: list[threading.Thread] = []
@@ -281,6 +282,7 @@ class DisplayHost:
             write_first = not self.first_frame_written
             if write_first:
                 self.first_frame_written = True
+                self.first_frame_time = time.monotonic()
         if write_first:
             path = self.output_dir / "frame-before-input.png"
             write_bgra_png(path, width, height, stride, pixels)
@@ -294,6 +296,13 @@ class DisplayHost:
     def has_frame(self) -> bool:
         with self.lock:
             return self.latest_frame is not None
+
+    def frame_age(self) -> float | None:
+        with self.lock:
+            first_frame_time = self.first_frame_time
+        if first_frame_time is None:
+            return None
+        return time.monotonic() - first_frame_time
 
     def save_latest(self, name: str) -> Path | None:
         with self.lock:
@@ -493,11 +502,8 @@ def main() -> int:
                 expectation_met = (
                     args.expect_window is None or host.expected_window_seen.is_set()
                 )
-                if (
-                    host.has_frame()
-                    and expectation_met
-                    and time.monotonic() - marker_time >= args.settle
-                ):
+                frame_age = host.frame_age()
+                if frame_age is not None and expectation_met and frame_age >= args.settle:
                     success = True
                     break
             if process.poll() is not None:

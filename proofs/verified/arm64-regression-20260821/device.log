@@ -1,0 +1,75 @@
+[JuiceWine parent] bundle libraries path=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Libraries:/var/jb/usr/lib
+[JuiceWine parent] launching /var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=7638
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=7638 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=7638 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceStage] wineboot disabled by JUICE_SKIP_WINEBOOT=1
+[JuiceWine] anonymous PE executable section .text at 0x140010000 size=131072
+[JuiceStage] loading Windows ntdll; transfer=0x14002a578 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceWine] anonymous PE executable section .text at 0x17fc00000 size=524288
+[JuiceStage] load_ntdll returned; transfer=0x14002a578
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x103900000 stack_limit=0x103808000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x17ffd8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x28010fcd0 stack_base=0x103900000 stack_limit=0x103808000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=0 transfer=0x14002a578 teb=0x17ffd8000 peb=0x17ffdc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x14002a578 arg=0x17ffdc000 teb=0x17ffd8000 data=0x280000000 frame=0x28010fcd0 stack_base=0x103900000 stack_limit=0x103808000
+[JuiceStage] calling signal_set_full_context; ctx=0x1038ffc70 target_pc=0x17fc575a0 target_sp=0x103900000 target_x18=0x17ffd8000 LdrInitializeThunk=0x17fc575c0 RtlUserThreadStart=0x17fc575a0
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x17fc575a0 frame_sp=0x103900000 frame_x18=0x17ffd8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x17fc575c0 user_sp=0x1038ffc70 x16=0x17fc575c0 x17=0x1038ffc70 x18=0x17ffd8000 restore=00400007
+[JuiceX18] broad #1 pc=0x17fc34344 fault=0x17ee instr=796fde48 x8=0x0 x16=0x17fc575c0 x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #2 pc=0x17fc5c3cc fault=0x48 instr=b9404a48 x8=0x17fcb02a0 x16=0x17fc34344 x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #3 pc=0x17fc5df3c fault=0x60 instr=f940324c x8=0x0 x16=0x17fc5c3cc x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #4 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x18 x16=0x102bbdc10 x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #5 pc=0x17fc5e9a4 fault=0x60 instr=f9403248 x8=0x102b00090 x16=0x17fc554a4 x17=0x1038ffa40 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #6 pc=0x17fc34460 fault=0x180c instr=b9580e48 x8=0x0 x16=0x17fc554a4 x17=0x1038ffa70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #7 pc=0x17fc277ec fault=0x60 instr=f9403248 x8=0x17fcb2460 x16=0x17fc34460 x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #8 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x94 x16=0x5c5c x17=0x1038ff446 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #9 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x9 x16=0x5c5c x17=0x1038ff69b x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #10 pc=0x17fc27c0c fault=0x60 instr=f9403248 x8=0x0 x16=0x5c5c x17=0x1038ff6ac x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #11 pc=0x17fc67524 fault=0x60 instr=f9403248 x8=0x0 x16=0x17fc553e4 x17=0x1038ffae0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #12 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x21 x16=0x102bbdc10 x17=0x1038ff750 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #13 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x98 x16=0x5c5c x17=0x1038ff95a x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #14 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x10 x16=0x5c5c x17=0x1038ff682 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #15 pc=0x17fc184b0 fault=0x2c8 instr=f9416648 x8=0x17fc8a790 x16=0x17fc5dea4 x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17fa30000 size=196608
+[JuiceX18] broad #16 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x50 x16=0x102bbdc10 x17=0x1038ff890 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #17 pc=0x17fc5dea4 fault=0x3000 instr=b9700248 x8=0x6 x16=0x17fc55ba4 x17=0x1038ff890 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #18 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x17fa6f180 x16=0x17fc5dea4 x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17f650000 size=524288
+[JuiceX18] broad #19 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x50 x16=0x102bbdc10 x17=0x1038ff2e0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #20 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x17f6f7a08 x16=0x17fc55ba4 x17=0x1038ff2e0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #21 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x50 x16=0x102bbdc10 x17=0x1038fef80 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #22 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x50 x16=0x102bbdc10 x17=0x1038ff3b0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #23 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x17f6f716b x16=0x17fc55ba4 x17=0x1038ff530 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #24 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x50 x16=0x102bbdc10 x17=0x1038ff530 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #25 pc=0x17fc5c3ac fault=0x48 instr=b9404a49 x8=0x24 x16=0x17fc55384 x17=0x1038ff960 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #26 pc=0x17fc5c3ac fault=0x48 instr=b9404a49 x8=0x24 x16=0x17fc5c3ac x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #27 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x15 x16=0x102bbdc10 x17=0x1038ff9c0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #28 pc=0x17fc35494 fault=0x60 instr=f9403248 x8=0x0 x16=0x17fc565c4 x17=0x1038ff9c0 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #29 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x140033c48 x16=0x17fc35494 x17=0x1038ffc70 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17ea30000 size=524288
+[JuiceX18] broad #30 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x50 x16=0x102bbdc10 x17=0x1038ff530 x18=0x0 teb=0x17ffd8000
+[JuiceX18] broad #31 pc=0x17fc36e74 fault=0x60 instr=f9403248 x8=0x17eae1d38 x16=0x17fc55ba4 x17=0x1038ff530 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17e8f0000 size=131072
+[JuiceX18] broad #32 pc=0x102bbdc14 fault=0x378 instr=f941be4a x8=0x50 x16=0x102bbdc10 x17=0x1038fef80 x18=0x0 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17e830000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x17e6c0000 size=196608
+[JuiceWine] anonymous PE executable section .text at 0x17e5e0000 size=65536
+[JuiceWine] anonymous PE executable section .text at 0x17e250000 size=655360
+[JuiceWine] anonymous PE executable section .text at 0x17df40000 size=524288
+[JuiceWine] anonymous PE executable section .text at 0x17da40000 size=589824
+[JuiceWine] anonymous PE executable section .text at 0x17d7c0000 size=327680
+[JuiceWine] anonymous PE executable section .text at 0x17d6d0000 size=196608
+[JuiceX18] tls #1 pc=0x17f6bc608 fault=0x1490 instr=f90a4101 x8=0x10 fixed_x8=0x17ffd8010 x18=0x17ffd8000 teb=0x17ffd8000
+[JuiceWine] anonymous PE executable section .text at 0x17d5e0000 size=65536
+[JuiceWine parent] child exited with 0

@@ -2,14 +2,16 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/network-build.env"
 NATIVE="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
+ROOTLESS="${JUICE_IOS_ROOTLESS_SYSROOT:-$ROOT/build/deps/rootless-sysroot}"
 FT_BUILD="${JUICE_STATIC_FREETYPE_BUILD:-$ROOT/build/freetype-static-ios}"
 FT_PREFIX="$FT_BUILD/install"
 FT_LIB="$FT_PREFIX/lib/libfreetype.a"
 FT_SHIM="$FT_BUILD/shim/juice-static-freetype.o"
 FT_HEADER="$FT_BUILD/shim/juice-static-freetype.h"
 STATIC_SONAME="juice-static-freetype"
-MARKER="$NATIVE/.juice-static-freetype-v2"
+MARKER="$NATIVE/.juice-static-freetype-v3"
 JOBS="${JOBS:-${JUICE_JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 2)}}"
 MAKE="${MAKE:-make}"
 SHELL_BIN="${SHELL_BIN:-/bin/bash}"
@@ -28,6 +30,7 @@ ft_cflags="-I$FT_PREFIX/include/freetype2 -include $FT_HEADER"
 ft_libs="$FT_SHIM $FT_LIB"
 fingerprint="$(sha256sum "$FT_LIB" "$FT_SHIM" "$FT_HEADER" \
   "$ROOT/wine/dlls/win32u/Makefile.in" "$ROOT/wine/dlls/dwrite/Makefile.in" \
+  "$ROOT/config/network-build.env" "$ROOT/config/network-packages.txt" \
   "$ROOT/scripts/build-freetype-static-linux.sh" "$ROOT/scripts/prepare-static-freetype-wine-linux.sh" \
   | sha256sum | awk '{print $1}')"
 old_fingerprint="$(cat "$MARKER" 2>/dev/null || true)"
@@ -39,6 +42,9 @@ elif ! grep -Fq "#define SONAME_LIBFREETYPE \"$STATIC_SONAME\"" "$NATIVE/include
 elif ! grep -Fq "$FT_LIB" "$NATIVE/Makefile" 2>/dev/null; then
   need_configure=1
 elif ! grep -Fq "$FT_HEADER" "$NATIVE/Makefile" 2>/dev/null; then
+  need_configure=1
+elif test "${JUICE_WITHOUT_GNUTLS:-0}" != 1 && \
+     ! grep -Fq "#define SONAME_LIBGNUTLS \"$JUICE_GNUTLS_RUNTIME_NAME\"" "$NATIVE/include/config.h" 2>/dev/null; then
   need_configure=1
 fi
 
@@ -125,11 +131,18 @@ grep -Fq 'dlls/dwrite/dwrite.so:' "$NATIVE/Makefile" || {
   echo "Native Wine Makefile did not generate the dwrite Unixlib target." >&2
   exit 4
 }
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+  grep -Fq "#define SONAME_LIBGNUTLS \"$JUICE_GNUTLS_RUNTIME_NAME\"" "$NATIVE/include/config.h" || {
+    echo "Bundled GnuTLS SONAME was not installed in native Wine config." >&2
+    exit 4
+  }
+fi
 
 if test "$old_fingerprint" != "$fingerprint" || test "$need_configure" = 1; then
   rm -f \
     "$NATIVE/dlls/win32u/freetype.o" "$NATIVE/dlls/win32u/win32u.so" \
-    "$NATIVE/dlls/dwrite/freetype.o" "$NATIVE/dlls/dwrite/dwrite.so"
+    "$NATIVE/dlls/dwrite/freetype.o" "$NATIVE/dlls/dwrite/dwrite.so" \
+    "$NATIVE/dlls/secur32/gnutls.o" "$NATIVE/dlls/secur32/secur32.so"
   printf '%s\n' "$fingerprint" > "$MARKER"
   echo "JUICE_STATIC_FREETYPE_OBJECT_REFRESH fingerprint=$fingerprint"
 else

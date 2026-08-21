@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/graphics-build.env"
+source "$ROOT/config/network-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 export PATH="$JBROOT/usr/bin:$JBROOT/usr/sbin:/usr/bin:/bin:$PATH"
 
@@ -15,6 +16,11 @@ KEEP_STAGE="${JUICE_KEEP_REUSE_STAGE:-0}"
 ALLOW_COPY="${JUICE_REUSE_ALLOW_COPY:-0}"
 MOLTENVK_ROOT="${JUICE_GRAPHICS_DEPS:-$ROOT/build/deps}/moltenvk-$JUICE_MOLTENVK_VERSION"
 MOLTENVK_FRAMEWORK="${JUICE_MOLTENVK_FRAMEWORK:-$MOLTENVK_ROOT/MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework/ios-arm64/MoltenVK.framework}"
+if test "$(uname -s)" = Darwin; then
+  ROOTLESS="${JUICE_IOS_ROOTLESS_SYSROOT:-/var/jb}"
+else
+  ROOTLESS="${JUICE_IOS_ROOTLESS_SYSROOT:-$ROOT/build/deps/rootless-sysroot}"
+fi
 
 usage()
 {
@@ -89,6 +95,33 @@ find_runtime()
     fi
   done < <(find "$BINARIES" -type d -name "$name" -print 2>/dev/null)
 
+  return 1
+}
+
+valid_libraries()
+{
+  local path="$1"
+  test -d "$path" || return 1
+  if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+    test -f "$path/$JUICE_GNUTLS_SONAME" || return 1
+  fi
+}
+
+find_libraries()
+{
+  local candidate
+  for candidate in \
+    "$(dirname "$RUNTIME")/Libraries" \
+    "$BINARIES/Libraries" \
+    "$BINARIES/Payload/Juice.app/Libraries" \
+    "$BINARIES/Juice.app/Libraries" \
+    "$BINARIES/build/package/Payload/Juice.app/Libraries"
+  do
+    if valid_libraries "$candidate"; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
   return 1
 }
 
@@ -189,6 +222,35 @@ runtime_roots=("$APP/Grape" "$APP/Frameworks")
 if test -n "$X64_RUNTIME"; then
   stage_runtime "$X64_RUNTIME" "$APP/Grape-X64"
   runtime_roots+=("$APP/Grape-X64")
+fi
+
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1 || \
+   { test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test "${JUICE_STATIC_FREETYPE:-1}" = 0; }; then
+  LIBRARIES_SOURCE="$(find_libraries || true)"
+  if test -n "$LIBRARIES_SOURCE"; then
+    stage_runtime "$LIBRARIES_SOURCE" "$APP/Libraries"
+    # The patch/normalization pass must never alter hardlinked source binaries.
+    if test "$LINK_MODE" = 1; then
+      while IFS= read -r -d '' candidate; do
+        temporary="$candidate.juice-library-detach.$$"
+        cp -p "$candidate" "$temporary"
+        mv -f "$temporary" "$candidate"
+      done < <(find "$APP/Libraries" -maxdepth 1 -type f -print0)
+    fi
+    python3 "$ROOT/scripts/patch-bundled-dylib-paths.py" "$APP/Libraries"
+    echo "JUICE_REUSE_LIBRARIES source=$LIBRARIES_SOURCE"
+  else
+    JUICE_IOS_ROOTLESS_SYSROOT="$ROOTLESS" \
+      bash "$ROOT/scripts/bundle-ios-libraries.sh" "$APP/Libraries"
+    echo "JUICE_REUSE_LIBRARIES source=$ROOTLESS/usr/lib"
+  fi
+  if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+    test -f "$APP/Libraries/$JUICE_GNUTLS_SONAME" || {
+      echo "Reusable package is missing bundled GnuTLS: $JUICE_GNUTLS_SONAME" >&2
+      exit 4
+    }
+  fi
+  runtime_roots+=("$APP/Libraries")
 fi
 
 # Never sign a hardlinked file in place: that would mutate the prebuilt source.

@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/graphics-build.env"
+source "$ROOT/config/network-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 export PATH="$JBROOT/usr/bin:$JBROOT/usr/sbin:/usr/bin:/bin:$PATH"
 RUNTIME="${JUICE_RUNTIME_STAGE:-$ROOT/build/runtime-stage}/Grape"
@@ -81,43 +82,17 @@ if test -n "$X64_RUNTIME"; then
   echo "JUICE_X64_LOADER_VALID path=$x64_loader strategy=runtime-low-va-release"
 fi
 
-# Wine deliberately loads FreeType at runtime with dlopen(SONAME_LIBFREETYPE).
-# Procursus libfreetype6 itself depends on libbrotli1 and libpng16-16. Bundle
-# that small runtime closure and rewrite only intra-bundle dylib references to
-# @loader_path so rootless /var/jb install names do not leak into the TIPA.
-if test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
-  test -e "$ROOTLESS/usr/lib/libfreetype.dylib" || {
-    echo "Missing packaged FreeType input: $ROOTLESS/usr/lib/libfreetype.dylib" >&2
-    exit 3
-  }
-  freetype_soname="$(JUICE_IOS_ROOTLESS_SYSROOT="$ROOTLESS" bash "$ROOT/scripts/detect-freetype-soname-linux.sh")"
+# Bundle the target dylib closure used by Wine's runtime dlopen paths. The
+# helper rewrites all intra-bundle references to @loader_path and converts
+# Procursus symlinks to signed regular files so TIPA extraction is reliable.
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1 || \
+   { test "${JUICE_WITHOUT_FREETYPE:-0}" != 1 && test "${JUICE_STATIC_FREETYPE:-1}" = 0; }; then
   mkdir -p "$APP/Libraries"
-  shopt -s nullglob
-  freetype_libs=("$ROOTLESS/usr/lib"/libfreetype*.dylib)
-  brotli_libs=("$ROOTLESS/usr/lib"/libbrotli*.dylib)
-  png_libs=("$ROOTLESS/usr/lib"/libpng*.dylib)
-  shopt -u nullglob
-  test "${#freetype_libs[@]}" -gt 0 || {
-    echo "No FreeType dylibs were found in $ROOTLESS/usr/lib." >&2
-    exit 3
-  }
-  test "${#brotli_libs[@]}" -gt 0 || {
-    echo "No Brotli dylibs were found in $ROOTLESS/usr/lib; refresh the FreeType dependency cache." >&2
-    exit 3
-  }
-  test "${#png_libs[@]}" -gt 0 || {
-    echo "No libpng dylibs were found in $ROOTLESS/usr/lib; refresh the FreeType dependency cache." >&2
-    exit 3
-  }
-  cp -a "${freetype_libs[@]}" "${brotli_libs[@]}" "${png_libs[@]}" "$APP/Libraries/"
-  test -e "$APP/Libraries/$freetype_soname" || {
-    echo "Bundled FreeType is missing configured soname $freetype_soname." >&2
-    exit 3
-  }
-  python3 "$ROOT/scripts/patch-bundled-dylib-paths.py" "$APP/Libraries"
+  JUICE_IOS_ROOTLESS_SYSROOT="$ROOTLESS" \
+    bash "$ROOT/scripts/bundle-ios-libraries.sh" "$APP/Libraries"
   runtime_roots+=("$APP/Libraries")
-  bundled_library_count="$(find "$APP/Libraries" -type f -name '*.dylib' | wc -l | tr -d ' ')"
-  echo "JUICE_FREETYPE_BUNDLED soname=$freetype_soname path=$APP/Libraries/$freetype_soname libraries=$bundled_library_count closure=libfreetype6,libbrotli1,libpng16-16"
+  bundled_library_count="$(find "$APP/Libraries" -maxdepth 1 -type f | wc -l | tr -d ' ')"
+  echo "JUICE_RUNTIME_LIBRARIES_READY path=$APP/Libraries libraries=$bundled_library_count gnutls=$([ "${JUICE_WITHOUT_GNUTLS:-0}" = 1 ] && echo 0 || echo 1)"
 fi
 
 LDID_BIN="${LDID:-}"

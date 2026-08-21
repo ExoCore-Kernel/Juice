@@ -1,0 +1,828 @@
+JUICE_TEXT_HOST_LISTENING socket=/var/mobile/Documents/JuiceData/proofs/chocolate-doom-setup-x86_64-v5-rendered-20260821/display.sock
+[JuiceWine parent] bundle libraries path=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Libraries:/var/jb/usr/lib
+[JuiceWine parent] launching /var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=22386
+[JuiceWine] iOS low-VA release start=0x10000 end=0x100000000 status=0 OK
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=22386 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=22386 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceStage] wineboot disabled by JUICE_SKIP_WINEBOOT=1
+[JuiceWine] host-page expanding executable section .text: section=0x140001000 mapping=0x140000000 size=131072
+[JuiceWine] anonymous PE executable section .text at 0x140000000 size=131072
+[JuiceStage] loading Windows ntdll; transfer=0x1400013e0 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll machine=8664 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d78f0000 size=983040
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d79e0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll status=40000003 module=0x2d78e0000 size=6a0000
+[JuiceStage] load_ntdll returned; transfer=0x1400013e0
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x105200000 stack_limit=0x105008000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x2d7ff8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x10450fcd0 stack_base=0x105200000 stack_limit=0x105008000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=0 transfer=0x1400013e0 teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x1400013e0 arg=0x2d7ffc000 teb=0x2d7ff8000 data=0x104400000 frame=0x10450fcd0 stack_base=0x105200000 stack_limit=0x105008000
+[JuiceStage] calling signal_set_full_context; ctx=0x1051ffc70 target_pc=0x2d79b0354 target_sp=0x105200000 target_x18=0x2d7ff8000 LdrInitializeThunk=0x2d79b0388 RtlUserThreadStart=0x2d79b0354
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d79b0354 frame_sp=0x105200000 frame_x18=0x2d7ff8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d79b0388 user_sp=0x1051ffc70 x16=0x2d79b0388 x17=0x1051ffc70 x18=0x2d7ff8000 restore=00400007
+[JuiceX18] broad #1 pc=0x2d7986548 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2b002b x17=0x100 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #2 pc=0x2d79b44f8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7986548 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #3 pc=0x2d79b6268 fault=0x30 instr=f9401a55 x8=0x0 x16=0x2d79b44f8 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #4 pc=0x2d79ac240 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d79b6268 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #5 pc=0x2d79b6dec fault=0x30 instr=f9401a48 x8=0x0 x16=0x1025d0108 x17=0x1025d0888 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #6 pc=0x2d79b6268 fault=0x30 instr=f9401a55 x8=0xff x16=0x2d79ac444 x17=0x1051fefc0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #7 pc=0x2d79b61d4 fault=0x30 instr=f9401a54 x8=0x1051fee8a x16=0x725c x17=0x225c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #8 pc=0x2d79775a8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7ffb058 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #9 pc=0x103831864 fault=0x378 instr=f941be4a x8=0x33 x16=0x103831860 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #10 pc=0x2d79b61d4 fault=0x30 instr=f9401a54 x8=0x1051ff13c x16=0x725c x17=0x225c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #11 pc=0x2d7977ef0 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7ffb080 x17=0x225c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #12 pc=0x2d7977f84 fault=0x30 instr=f9401a48 x8=0x0 x16=0x1025d6718 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #13 pc=0x2d7977ef0 fault=0x30 instr=f9401a48 x8=0x0 x16=0x1051ff398 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #14 pc=0x2d7977f84 fault=0x30 instr=f9401a48 x8=0x0 x16=0x1025d8fd0 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #15 pc=0x103831864 fault=0x378 instr=f941be4a x8=0xf x16=0x103831860 x17=0x1051ff590 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #16 pc=0x2d79b6268 fault=0x30 instr=f9401a55 x8=0xff x16=0x2d79ab354 x17=0x1051ff1e0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #17 pc=0x103831864 fault=0x378 instr=f941be4a x8=0x17 x16=0x103831860 x17=0x1051ff1e0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #18 pc=0x2d79775a8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d79ab69c x17=0x1051ff590 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #19 pc=0x2d79b6268 fault=0x30 instr=f9401a55 x8=0x0 x16=0x1025d43a8 x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #20 pc=0x2d79b61d4 fault=0x30 instr=f9401a54 x8=0x1051ff3c8 x16=0x725c x17=0x225c x18=0x0 teb=0x2d7ff8000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/libarm64ecfex/aarch64-windows/libarm64ecfex.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/libarm64ecfex.dll/aarch64-windows/libarm64ecfex.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll machine=0000 status=00000000
+[JuiceWine] host-page expanding executable section .text: section=0x2d74a1000 mapping=0x2d74a0000 size=2080768
+[JuiceWine] anonymous PE executable section .text at 0x2d74a0000 size=2080768
+[JuiceWine] host-page expanding executable section .hexpthk: section=0x2d7699000 mapping=0x2d7698000 size=16384
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d7698000 size=16384
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/libarm64ecfex.dll status=40000003 module=0x2d74a0000 size=3bd000
+[JuiceX18] broad #21 pc=0x2d79aa540 fault=0x30 instr=f9401a48 x8=0x0 x16=0xc40 x17=0x117f20000 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #22 pc=0x2d79aa540 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d79ad718 x17=0x1051fecf0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #23 pc=0x2d79b61d4 fault=0x30 instr=f9401a54 x8=0x1051feb30 x16=0x725c x17=0x225c x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #24 pc=0x2d79b6268 fault=0x30 instr=f9401a55 x8=0x1051feb31 x16=0x2d7ffb17a x17=0x1051ffc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #25 pc=0x2d79b6268 fault=0x30 instr=f9401a55 x8=0x2d79e0450 x16=0x2d79ad718 x17=0x1051fea90 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #26 pc=0x2d79a9af4 fault=0x60 instr=f9403250 x8=0x2d79b063c x16=0x2d79a9af4 x17=0x1051fbff0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #27 pc=0x103831864 fault=0x378 instr=f941be4a x8=0x18 x16=0x103831860 x17=0xccccfffa01760000 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #28 pc=0x2d79a9af4 fault=0x60 instr=f9403250 x8=0x2d7a625dc x16=0x2d79a9af4 x17=0x1051fcf80 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #29 pc=0x103831864 fault=0x378 instr=f941be4a x8=0x50 x16=0x103831860 x17=0x1051fcf80 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #30 pc=0x103831864 fault=0x378 instr=f941be4a x8=0x36 x16=0x103831860 x17=0x105200000 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #31 pc=0x2d79b44f8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x1009a0 x17=0x105200000 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #32 pc=0x2d79b4494 fault=0x30 instr=f9401a49 x8=0x24 x16=0x1004e0 x17=0x105200000 x18=0x0 teb=0x2d7ff8000
+starting FEX based libarm64ecfex.dll
+[JuiceFEX] profiler ready
+[JuiceFEX] handlers ready
+[JuiceFEX] allocator hooks ready
+[JuiceFEX] host features ready
+[JuiceFEX] context created
+[JuiceFEX] core initialized
+[JuiceFEX] trackers ready
+[JuiceFEX] images and CPU features ready
+[JuiceFEX] x64 return thunk ready
+[JuiceFEX] process init complete
+[JuiceFEX] call-ret live allocation=0x2c6010000-0x2c6430000 committed=0x2c6020000 default=0x2c6120000 state=0x2c6120000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/kernel32/aarch64-windows/kernel32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/kernel32.dll/aarch64-windows/kernel32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernel32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c5ce0000 size=393216
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c5d40000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernel32.dll status=40000003 module=0x2c5cd0000 size=340000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/kernelbase/aarch64-windows/kernelbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/kernelbase.dll/aarch64-windows/kernelbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernelbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c5590000 size=1048576
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c5690000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernelbase.dll status=40000003 module=0x2c5580000 size=750000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/advapi32/aarch64-windows/advapi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/advapi32.dll/aarch64-windows/advapi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/advapi32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c5330000 size=327680
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c5380000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/advapi32.dll status=40000003 module=0x2c5320000 size=260000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/sechost/aarch64-windows/sechost.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/sechost.dll/aarch64-windows/sechost.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/sechost.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c51e0000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c5200000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/sechost.dll status=40000003 module=0x2c51d0000 size=150000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ucrtbase/aarch64-windows/ucrtbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/ucrtbase.dll/aarch64-windows/ucrtbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ucrtbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c4b40000 size=1245184
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c4c70000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ucrtbase.dll status=40000003 module=0x2c4b30000 size=6a0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/msvcrt/aarch64-windows/msvcrt.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/msvcrt.dll/aarch64-windows/msvcrt.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msvcrt.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c4580000 size=983040
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c4670000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msvcrt.dll status=40000003 module=0x2c4570000 size=5c0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/gdi32/aarch64-windows/gdi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/gdi32.dll/aarch64-windows/gdi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/gdi32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c40f0000 size=655360
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c4190000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/gdi32.dll status=40000003 module=0x2c40e0000 size=490000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/user32/aarch64-windows/user32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/user32.dll/aarch64-windows/user32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/user32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c3800000 size=1179648
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c3920000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/user32.dll status=40000003 module=0x2c37f0000 size=8f0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/win32u/aarch64-windows/win32u.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/win32u.dll/aarch64-windows/win32u.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/win32u.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c36d0000 size=262144
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c3710000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/win32u.dll status=40000003 module=0x2c36c0000 size=130000
+[JuiceWine] host-page expanding executable section .text: section=0x2c3471000 mapping=0x2c3470000 size=1818624
+[JuiceWine] anonymous PE executable section .text at 0x2c3470000 size=1818624
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/imm32/aarch64-windows/imm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/imm32.dll/aarch64-windows/imm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/imm32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c3310000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c3340000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/imm32.dll status=40000003 module=0x2c3300000 size=170000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ole32/aarch64-windows/ole32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/ole32.dll/aarch64-windows/ole32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ole32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c2ce0000 size=720896
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c2d90000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ole32.dll status=40000003 module=0x2c2cd0000 size=630000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/combase/aarch64-windows/combase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/combase.dll/aarch64-windows/combase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/combase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c29e0000 size=393216
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c2a40000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/combase.dll status=40000003 module=0x2c29d0000 size=300000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/rpcrt4/aarch64-windows/rpcrt4.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/rpcrt4.dll/aarch64-windows/rpcrt4.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/rpcrt4.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c2580000 size=655360
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c2620000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/rpcrt4.dll status=40000003 module=0x2c2570000 size=460000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/cryptbase/aarch64-windows/cryptbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/cryptbase.dll/aarch64-windows/cryptbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/cryptbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c24a0000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c24b0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/cryptbase.dll status=40000003 module=0x2c2490000 size=e0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/coml2/aarch64-windows/coml2.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/coml2.dll/aarch64-windows/coml2.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/coml2.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c2370000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c2380000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/coml2.dll status=40000003 module=0x2c2360000 size=130000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/oleaut32/aarch64-windows/oleaut32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/oleaut32.dll/aarch64-windows/oleaut32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/oleaut32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c1db0000 size=786432
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c1e70000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/oleaut32.dll status=40000003 module=0x2c1da0000 size=5c0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/setupapi/aarch64-windows/setupapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/setupapi.dll/aarch64-windows/setupapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/setupapi.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c1a30000 size=458752
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c1aa0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/setupapi.dll status=40000003 module=0x2c1a20000 size=380000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/cfgmgr32/aarch64-windows/cfgmgr32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/cfgmgr32.dll/aarch64-windows/cfgmgr32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/cfgmgr32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c18c0000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c18f0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/cfgmgr32.dll status=40000003 module=0x2c18b0000 size=170000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/shell32/aarch64-windows/shell32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/shell32.dll/aarch64-windows/shell32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shell32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c08d0000 size=1048576
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c09d0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shell32.dll status=40000003 module=0x2c08c0000 size=ff0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/shlwapi/aarch64-windows/shlwapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/shlwapi.dll/aarch64-windows/shlwapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shlwapi.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c0690000 size=262144
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c06d0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shlwapi.dll status=40000003 module=0x2c0680000 size=240000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/shcore/aarch64-windows/shcore.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/shcore.dll/aarch64-windows/shcore.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shcore.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c0580000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c05a0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shcore.dll status=40000003 module=0x2c0570000 size=110000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/version/aarch64-windows/version.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/version.dll/aarch64-windows/version.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/version.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c0490000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c04a0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/version.dll status=40000003 module=0x2c0480000 size=f0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/winmm/aarch64-windows/winmm.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/winmm.dll/aarch64-windows/winmm.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/winmm.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c0240000 size=327680
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c0290000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/winmm.dll status=40000003 module=0x2c0230000 size=250000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/msacm32/aarch64-windows/msacm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/msacm32.dll/aarch64-windows/msacm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msacm32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2c00f0000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2c0110000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msacm32.dll status=40000003 module=0x2c00e0000 size=150000
+[JuiceWine] host-page expanding executable section .text: section=0x2c00d1000 mapping=0x2c00d0000 size=16384
+[JuiceWine] anonymous PE executable section .text at 0x2c00d0000 size=16384
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/iphlpapi/aarch64-windows/iphlpapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/iphlpapi.dll/aarch64-windows/iphlpapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/iphlpapi.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2bff20000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2bff40000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/iphlpapi.dll status=40000003 module=0x2bff10000 size=1c0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/dnsapi/aarch64-windows/dnsapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/dnsapi.dll/aarch64-windows/dnsapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/dnsapi.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2bfdf0000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2bfe10000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/dnsapi.dll status=40000003 module=0x2bfde0000 size=130000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/nsi/aarch64-windows/nsi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/nsi.dll/aarch64-windows/nsi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/nsi.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2bfd10000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2bfd20000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/nsi.dll status=40000003 module=0x2bfd00000 size=e0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ws2_32/aarch64-windows/ws2_32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/ws2_32.dll/aarch64-windows/ws2_32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ws2_32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2bfb60000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2bfb90000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ws2_32.dll status=40000003 module=0x2bfb50000 size=1b0000
+[JuiceUnixlib] failed to load /var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so: dlopen(/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so, 0x0002): tried: '/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Libraries/dnsapi.so' (no such file), '/var/jb/usr/lib/dnsapi.so' (no such file), '/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so' (no such file), '/private/preboot/Cryptexes/OS/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so' (no such file), '/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so' (no such file), '/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Libraries/dnsapi.so' (no such file), '/var/jb/usr/lib/dnsapi.so' (no such file), '/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so' (no such file), '/private/preboot/Cryptexes/OS/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so' (no such file), '/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-unix/dnsapi.so' (no such file)
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/wineios.drv/aarch64-windows/wineios.drv machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/wineios.drv/aarch64-windows/wineios.drv machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wineios.drv machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2be1d0000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2be1e0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wineios.drv status=40000003 module=0x2be1c0000 size=f0000
+[JuiceInput] display connected path=/var/mobile/Documents/JuiceData/proofs/chocolate-doom-setup-x86_64-v5-rendered-20260821/display.sock desktop=1024x768 dpi=96
+[JuiceInput] queue fd registered fd=13 tid=0x24
+[JuiceDriver] ios init set driver create=0x129214e78 client_surface=0x1292159fc size=1216
+[JuiceDriver] install prev=0x12727d3a8 lazy=0x12727d3a8 null=0x1272a9f10 candidate=0x10300ca00 create=0x129214e78 installed=1
+[JuiceDriver] direct-load status=00000000 driver=0x10300ca00
+JUICE_TEXT_HOST_HELLO pid=22386 desktop=1024x768 dpi=96
+JUICE_MOLTENVK_DRIVER_READY version=48 handle=0x7058d0
+[mvk-info] MoltenVK version 1.4.2, supporting Vulkan version 1.4.357.
+	The following 152 Vulkan extensions are supported:
+	VK_KHR_16bit_storage v1
+	VK_KHR_8bit_storage v1
+	VK_KHR_bind_memory2 v1
+	VK_KHR_buffer_device_address v1
+	VK_KHR_calibrated_timestamps v1
+	VK_KHR_copy_commands2 v1
+	VK_KHR_create_renderpass2 v1
+	VK_KHR_dedicated_allocation v3
+	VK_KHR_deferred_host_operations v4
+	VK_KHR_depth_stencil_resolve v1
+	VK_KHR_descriptor_update_template v1
+	VK_KHR_device_group v4
+	VK_KHR_device_group_creation v1
+	VK_KHR_driver_properties v1
+	VK_KHR_dynamic_rendering v1
+	VK_KHR_dynamic_rendering_local_read v1
+	VK_KHR_external_fence v1
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_memory v1
+	VK_KHR_external_memory_capabilities v1
+	VK_KHR_external_semaphore v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_format_feature_flags2 v2
+	VK_KHR_fragment_shader_barycentric v1
+	VK_KHR_get_memory_requirements2 v1
+	VK_KHR_get_physical_device_properties2 v2
+	VK_KHR_get_surface_capabilities2 v1
+	VK_KHR_global_priority v1
+	VK_KHR_image_format_list v1
+	VK_KHR_imageless_framebuffer v1
+	VK_KHR_incremental_present v2
+	VK_KHR_index_type_uint8 v1
+	VK_KHR_line_rasterization v1
+	VK_KHR_load_store_op_none v1
+	VK_KHR_maintenance1 v2
+	VK_KHR_maintenance2 v1
+	VK_KHR_maintenance3 v1
+	VK_KHR_maintenance4 v2
+	VK_KHR_maintenance5 v1
+	VK_KHR_maintenance6 v1
+	VK_KHR_maintenance7 v1
+	VK_KHR_maintenance8 v1
+	VK_KHR_maintenance9 v1
+	VK_KHR_map_memory2 v1
+	VK_KHR_multiview v1
+	VK_KHR_portability_subset v1
+	VK_KHR_present_id v1
+	VK_KHR_present_id2 v1
+	VK_KHR_present_wait v1
+	VK_KHR_present_wait2 v1
+	VK_KHR_push_descriptor v2
+	VK_KHR_relaxed_block_layout v1
+	VK_KHR_robustness2 v1
+	VK_KHR_sampler_mirror_clamp_to_edge v3
+	VK_KHR_sampler_ycbcr_conversion v14
+	VK_KHR_separate_depth_stencil_layouts v1
+	VK_KHR_shader_draw_parameters v1
+	VK_KHR_shader_expect_assume v1
+	VK_KHR_shader_float_controls v4
+	VK_KHR_shader_float_controls2 v1
+	VK_KHR_shader_float16_int8 v1
+	VK_KHR_shader_fma v1
+	VK_KHR_shader_integer_dot_product v1
+	VK_KHR_shader_maximal_reconvergence v1
+	VK_KHR_shader_non_semantic_info v1
+	VK_KHR_shader_quad_control v1
+	VK_KHR_shader_relaxed_extended_instruction v1
+	VK_KHR_shader_subgroup_extended_types v1
+	VK_KHR_shader_subgroup_rotate v2
+	VK_KHR_shader_subgroup_uniform_control_flow v1
+	VK_KHR_shader_terminate_invocation v1
+	VK_KHR_spirv_1_4 v1
+	VK_KHR_storage_buffer_storage_class v1
+	VK_KHR_surface v25
+	VK_KHR_surface_maintenance1 v1
+	VK_KHR_surface_protected_capabilities v1
+	VK_KHR_swapchain v70
+	VK_KHR_swapchain_maintenance1 v1
+	VK_KHR_swapchain_mutable_format v1
+	VK_KHR_synchronization2 v1
+	VK_KHR_timeline_semaphore v2
+	VK_KHR_uniform_buffer_standard_layout v1
+	VK_KHR_variable_pointers v1
+	VK_KHR_vertex_attribute_divisor v1
+	VK_KHR_vulkan_memory_model v3
+	VK_KHR_zero_initialize_workgroup_memory v1
+	VK_EXT_4444_formats v1
+	VK_EXT_buffer_device_address v2
+	VK_EXT_calibrated_timestamps v2
+	VK_EXT_debug_marker v4
+	VK_EXT_debug_report v10
+	VK_EXT_debug_utils v2
+	VK_EXT_depth_clip_control v1
+	VK_EXT_descriptor_indexing v2
+	VK_EXT_extended_dynamic_state v1
+	VK_EXT_extended_dynamic_state2 v1
+	VK_EXT_extended_dynamic_state3 v2
+	VK_EXT_external_memory_host v1
+	VK_EXT_external_memory_metal v1
+	VK_EXT_fragment_shader_interlock v1
+	VK_EXT_global_priority v2
+	VK_EXT_global_priority_query v1
+	VK_EXT_headless_surface v1
+	VK_EXT_host_image_copy v1
+	VK_EXT_host_query_reset v1
+	VK_EXT_image_2d_view_of_3d v1
+	VK_EXT_image_robustness v1
+	VK_EXT_index_type_uint8 v1
+	VK_EXT_inline_uniform_block v1
+	VK_EXT_layer_settings v2
+	VK_EXT_legacy_dithering v2
+	VK_EXT_line_rasterization v1
+	VK_EXT_load_store_op_none v1
+	VK_EXT_memory_budget v1
+	VK_EXT_metal_objects v2
+	VK_EXT_metal_surface v1
+	VK_EXT_non_seamless_cube_map v1
+	VK_EXT_pipeline_creation_cache_control v3
+	VK_EXT_pipeline_creation_feedback v1
+	VK_EXT_pipeline_robustness v1
+	VK_EXT_post_depth_coverage v1
+	VK_EXT_primitive_topology_list_restart v1
+	VK_EXT_private_data v1
+	VK_EXT_provoking_vertex v1
+	VK_EXT_robustness2 v1
+	VK_EXT_sample_locations v1
+	VK_EXT_scalar_block_layout v1
+	VK_EXT_separate_stencil_usage v1
+	VK_EXT_shader_atomic_float v1
+	VK_EXT_shader_demote_to_helper_invocation v1
+	VK_EXT_shader_stencil_export v1
+	VK_EXT_shader_subgroup_ballot v1
+	VK_EXT_shader_subgroup_vote v1
+	VK_EXT_shader_viewport_index_layer v1
+	VK_EXT_subgroup_size_control v2
+	VK_EXT_surface_maintenance1 v1
+	VK_EXT_swapchain_colorspace v5
+	VK_EXT_swapchain_maintenance1 v1
+	VK_EXT_texel_buffer_alignment v1
+	VK_EXT_texture_compression_astc_hdr v1
+	VK_EXT_tooling_info v1
+	VK_EXT_vertex_attribute_divisor v3
+	VK_AMD_gpu_shader_half_float v2
+	VK_AMD_negative_viewport_height v1
+	VK_AMD_shader_image_load_store_lod v1
+	VK_AMD_shader_trinary_minmax v1
+	VK_GOOGLE_display_timing v1
+	VK_IMG_format_pvrtc v1
+	VK_INTEL_shader_integer_functions2 v1
+	VK_MVK_ios_surface v3
+	VK_MVK_moltenvk v37
+	VK_NV_fragment_shader_barycentric v1
+[mvk-error] VK_ERROR_INCOMPATIBLE_DRIVER: Vulkan is not supported on this device. MoltenVK requires Metal, which is not available on this device.
+[mvk-info] Created VkInstance for Vulkan version 1.0.357, as requested by app, with the following 3 Vulkan extensions enabled:
+	VK_KHR_external_fence_capabilities v1
+	VK_KHR_external_semaphore_capabilities v1
+	VK_KHR_get_physical_device_properties2 v2
+[mvk-info] Destroying VkInstance for Vulkan version 1.0.357 with 3 Vulkan extensions enabled.
+[JuiceWine parent] bundle libraries path=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Libraries:/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Libraries:/var/jb/usr/lib
+[JuiceWine parent] launching /private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=22392
+[JuiceWine] iOS low-VA release start=0x10000 end=0x100000000 status=0 OK
+[JuiceWine] PT_TRACE_ME succeeded; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceWine] requesting controlled tracer detach
+[JuiceWine parent] child stopped pid=22392 signal=17 (Suspended (signal): 17)
+[JuiceWine parent] PT_DETACH pid=22392 result=0
+[JuiceWine parent] child now running untraced
+[JuiceWine] resumed after tracer detach; csflags=0x3280780d CS_DEBUGGED=YES
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/explorer.exe/aarch64-windows/explorer.exe machine=aa64 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/explorer/aarch64-windows/explorer.exe machine=aa64 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/explorer.exe machine=aa64 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x140010000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/explorer.exe status=00000000 module=0x140000000 size=110000
+[JuiceStage] loading Windows ntdll; transfer=0x14001d3dc teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll machine=aa64 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d78f0000 size=983040
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d79e0000 size=65536
+[JuiceHybrid] map name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ntdll/aarch64-windows/ntdll.dll status=40000003 module=0x2d78e0000 size=6a0000
+[JuiceStage] load_ntdll returned; transfer=0x14001d3dc
+[JuiceStage] load_wow64_ntdll returned
+[JuiceStage] calling load_apiset_dll
+[JuiceStage] load_apiset_dll returned; stack_base=0x103f80000 stack_limit=0x103e88000
+[JuiceStage] calling server_init_process_done
+[JuiceStage] server_init_process_done entered
+[JuiceStage] calling signal_init_process; teb=0x2d7ff8000
+[JuiceStage] signal_init_process returned
+[JuiceStage] init_teb_data returned; syscall_frame=0x103e7fcd0 stack_base=0x103f80000 stack_limit=0x103e88000
+[JuiceStage] init_process_done server call returned; status=00000000 suspend=1 transfer=0x14001d3dc teb=0x2d7ff8000 peb=0x2d7ffc000
+[JuiceStage] calling signal_start_thread
+[JuiceStage] init_syscall_frame entered; entry=0x14001d3dc arg=0x2d7ffc000 teb=0x2d7ff8000 data=0x103d70000 frame=0x103e7fcd0 stack_base=0x103f80000 stack_limit=0x103e88000
+[JuiceStage] calling signal_set_full_context; ctx=0x103f7fc70 target_pc=0x2d7949650 target_sp=0x103f80000 target_x18=0x2d7ff8000 LdrInitializeThunk=0x2d7949670 RtlUserThreadStart=0x2d7949650
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7949650 frame_sp=0x103f80000 frame_x18=0x2d7ff8000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7949670 user_sp=0x103f7fc70 x16=0x2d7949670 x17=0x103f7fc70 x18=0x2d7ff8000 restore=00400007
+[JuiceX18] broad #1 pc=0x2d7925920 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7949670 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #2 pc=0x2d794e748 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7925920 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #3 pc=0x2d7950344 fault=0x30 instr=f9401a59 x8=0x103f7fa50 x16=0x2d794e748 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #4 pc=0x2d795037c fault=0x30 instr=f9401a4a x8=0x103f7fa50 x16=0x2d7950344 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #5 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x18 x16=0x1038cd860 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #6 pc=0x2d7950e88 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7947554 x17=0x103f7fa40 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #7 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x18 x16=0x1038cd860 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #8 pc=0x2d7950344 fault=0x30 instr=f9401a59 x8=0x103f7faa0 x16=0x2d7947554 x17=0x103f7fa70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #9 pc=0x2d79502b4 fault=0x30 instr=f9401a54 x8=0x103f7f3ce x16=0x5c5c x17=0x103f7f3cd x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #10 pc=0x2d79172ec fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d79502b4 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #11 pc=0x2d7940744 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7947b74 x17=0x103f7f7b0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #12 pc=0x2d7917bac fault=0x30 instr=f9401a48 x8=0x0 x16=0x5c5c x17=0x103f7f6ac x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #13 pc=0x2d7917bac fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7917bac x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #14 pc=0x2d7950344 fault=0x30 instr=f9401a59 x8=0x103f7f6d0 x16=0x2d7947914 x17=0x103f7f750 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #15 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x1d x16=0x1038cd860 x17=0x103f7f670 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #16 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x17 x16=0x1038cd860 x17=0x103f7f750 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #17 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x17 x16=0x1038cd860 x17=0x103f7f750 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #18 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x58 x16=0x1038cd860 x17=0x103f7f750 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #19 pc=0x2d7929e7c fault=0x30 instr=f9401a49 x8=0x48 x16=0x2d7947574 x17=0x103f7fae0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #20 pc=0x2d7950344 fault=0x30 instr=f9401a59 x8=0x103f7f930 x16=0x2d7929e7c x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #21 pc=0x2d79502b4 fault=0x30 instr=f9401a54 x8=0x103f7f8f0 x16=0x5c5c x17=0x103f7f8ef x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #22 pc=0x2d79502b4 fault=0x30 instr=f9401a54 x8=0x103f7f683 x16=0x5c5c x17=0x103f7f682 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #23 pc=0x2d7950344 fault=0x30 instr=f9401a59 x8=0x103f7f7a0 x16=0x2d79502b4 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/kernel32/aarch64-windows/kernel32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/kernel32.dll/aarch64-windows/kernel32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernel32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d75b0000 size=393216
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d7610000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernel32.dll status=40000003 module=0x2d75a0000 size=340000
+[JuiceX18] broad #24 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x50 x16=0x1038cd860 x17=0x103f7f890 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #25 pc=0x2d79502b4 fault=0x30 instr=f9401a54 x8=0x5 x16=0x2d7947c54 x17=0x103f7f890 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #26 pc=0x2d79286c8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d79502b4 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/kernelbase/aarch64-windows/kernelbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/kernelbase.dll/aarch64-windows/kernelbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernelbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d6e60000 size=1048576
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d6f60000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/kernelbase.dll status=40000003 module=0x2d6e50000 size=750000
+[JuiceX18] broad #27 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x50 x16=0x1038cd860 x17=0x103f7f2e0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #28 pc=0x2d79286c8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7947c54 x17=0x103f7f2e0 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #29 pc=0x2d7950344 fault=0x30 instr=f9401a59 x8=0x103f7ef60 x16=0x2d7947c54 x17=0x103f7ef80 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #30 pc=0x1038cd864 fault=0x378 instr=f941be4a x8=0x50 x16=0x1038cd860 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #31 pc=0x2d79286c8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d7947c54 x17=0x103f7f530 x18=0x0 teb=0x2d7ff8000
+[JuiceX18] broad #32 pc=0x2d79286c8 fault=0x30 instr=f9401a48 x8=0x0 x16=0x2d79286c8 x17=0x103f7fc70 x18=0x0 teb=0x2d7ff8000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/rpcrt4/aarch64-windows/rpcrt4.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/rpcrt4.dll/aarch64-windows/rpcrt4.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/rpcrt4.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d6a00000 size=655360
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d6aa0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/rpcrt4.dll status=40000003 module=0x2d69f0000 size=460000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/advapi32/aarch64-windows/advapi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/advapi32.dll/aarch64-windows/advapi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/advapi32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d67a0000 size=327680
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d67f0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/advapi32.dll status=40000003 module=0x2d6790000 size=260000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/sechost/aarch64-windows/sechost.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/sechost.dll/aarch64-windows/sechost.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/sechost.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d6650000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d6670000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/sechost.dll status=40000003 module=0x2d6640000 size=150000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ucrtbase/aarch64-windows/ucrtbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/ucrtbase.dll/aarch64-windows/ucrtbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ucrtbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d5fb0000 size=1245184
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d60e0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ucrtbase.dll status=40000003 module=0x2d5fa0000 size=6a0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/msvcrt/aarch64-windows/msvcrt.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/msvcrt.dll/aarch64-windows/msvcrt.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msvcrt.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d59f0000 size=983040
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d5ae0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/msvcrt.dll status=40000003 module=0x2d59e0000 size=5c0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/cryptbase/aarch64-windows/cryptbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/cryptbase.dll/aarch64-windows/cryptbase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/cryptbase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d5910000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d5920000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/cryptbase.dll status=40000003 module=0x2d5900000 size=e0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/user32/aarch64-windows/user32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/user32.dll/aarch64-windows/user32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/user32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d5020000 size=1179648
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d5140000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/user32.dll status=40000003 module=0x2d5010000 size=8f0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/gdi32/aarch64-windows/gdi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/gdi32.dll/aarch64-windows/gdi32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/gdi32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d4b90000 size=655360
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d4c30000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/gdi32.dll status=40000003 module=0x2d4b80000 size=490000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/win32u/aarch64-windows/win32u.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/win32u.dll/aarch64-windows/win32u.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/win32u.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d4a60000 size=262144
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d4aa0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/win32u.dll status=40000003 module=0x2d4a50000 size=130000
+[JuiceX18] trampoline #1 retry=0x2d794e748 restored_x17=0x103e7fcd0 teb=0x2d7ff8000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/imm32/aarch64-windows/imm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/imm32.dll/aarch64-windows/imm32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/imm32.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d48f0000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d4920000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/imm32.dll status=40000003 module=0x2d48e0000 size=170000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/wineios.drv/aarch64-windows/wineios.drv machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/wineios.drv/aarch64-windows/wineios.drv machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wineios.drv machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d4800000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d4810000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/wineios.drv status=40000003 module=0x2d47f0000 size=f0000
+[JuiceInput] display connected path=/var/mobile/Documents/JuiceData/proofs/chocolate-doom-setup-x86_64-v5-rendered-20260821/display.sock desktop=1024x768 dpi=96
+[JuiceInput] queue fd registered fd=8 tid=0x2c
+[JuiceDriver] ios init set driver create=0x108208e78 client_surface=0x1082099fc size=1216
+[JuiceDriver] install prev=0x10608d3a8 lazy=0x10608d3a8 null=0x1060b9f10 candidate=0x104011000 create=0x108208e78 installed=1
+JUICE_TEXT_HOST_HELLO pid=22392 desktop=1024x768 dpi=96
+[JuiceCreate] ex=00000000 class=0x103f7ef10 version=0x0 name=0x103f7eef0 style=86000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x103f7f240 flags=00000000 inst=0x0 classptr=0x8001 ansi=0
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/uxtheme/aarch64-windows/uxtheme.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/uxtheme.dll/aarch64-windows/uxtheme.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/uxtheme.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d4630000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d4660000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/uxtheme.dll status=40000003 module=0x2d4620000 size=1d0000
+[JuiceRect] input hwnd=0x10022 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10022 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10022 flags=3c ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceRect] input hwnd=0x10022 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10022 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10022 flags=18 ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x10022
+[JuiceDriver] create-success hwnd=0x10022
+[JuiceCreate] ex=00000000 class=0x103f7ef10 version=0x0 name=0x103f7eef0 style=86000000 x=0 y=0 cx=100 cy=100 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140020ca0 ansi=0
+[JuiceRect] input hwnd=0x1002a dpi=96/1 raw=96/1 win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceRect] mapped hwnd=0x1002a win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceGeom] changed hwnd=0x1002a flags=3c ptr=0x103e7f620 window=0,0,100,100 client=0,0,100,100 visible=0,0,100,100 surface=0x10609c4f0 shown=0
+[JuiceRect] input hwnd=0x1002a dpi=96/1 raw=96/1 win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceRect] mapped hwnd=0x1002a win=0,0,100,100 client=0,0,100,100 visible=0,0,100,100
+[JuiceGeom] changed hwnd=0x1002a flags=18 ptr=0x103e7f620 window=0,0,100,100 client=0,0,100,100 visible=0,0,100,100 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x1002a
+[JuiceDriver] create-success hwnd=0x1002a
+[JuiceGeom] surface hwnd=0x10022 rect=0,0,1024,768 size=1024x768 previous=0x10609c4f0
+[JuiceRect] input hwnd=0x10022 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10022 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10022 flags=8000116a ptr=0x103e7f820 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x102f36e80 shown=1
+JUICE_TEXT_HOST_WINDOW pid=22392 hwnd=0x10022 rect=0,0 1024x768 visible=1
+[JuiceStage] init_syscall_frame entered; entry=0x140012694 arg=0x0 teb=0x2d7ff4000 data=0x108a00000 frame=0x108b0fb00 stack_base=0x108c10000 stack_limit=0x108b18000
+[JuiceStage] calling signal_set_full_context; ctx=0x108c0fc70 target_pc=0x2d7949650 target_sp=0x108c10000 target_x18=0x2d7ff4000 LdrInitializeThunk=0x2d7949670 RtlUserThreadStart=0x2d7949650
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7949650 frame_sp=0x108c10000 frame_x18=0x2d7ff4000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7949670 user_sp=0x108c0fc70 x16=0x2d7949670 x17=0x108c0fc70 x18=0x2d7ff4000 restore=00400007
+[JuiceCreate] ex=00000000 class=0x108c0fa70 version=0x0 name=0x108c0fa50 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140020500 ansi=0
+[JuiceMonitor] callee hwnd=0x10030 hmon=0x1 info=0x108b0f550 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10030 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x10030 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10030 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10030 flags=14 ptr=0x108b0f450 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceCreate] failed hwnd=0x10030 stage=wm-nccreate
+[JuiceStage] init_syscall_frame entered; entry=0x140012c30 arg=0x0 teb=0x2d7ff0000 data=0x108cd0000 frame=0x108ddfb00 stack_base=0x108ee0000 stack_limit=0x108de8000
+[JuiceStage] calling signal_set_full_context; ctx=0x108edfc70 target_pc=0x2d7949650 target_sp=0x108ee0000 target_x18=0x2d7ff0000 LdrInitializeThunk=0x2d7949670 RtlUserThreadStart=0x2d7949650
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7949650 frame_sp=0x108ee0000 frame_x18=0x2d7ff0000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7949670 user_sp=0x108edfc70 x16=0x2d7949670 x17=0x108edfc70 x18=0x2d7ff0000 restore=00400007
+[JuiceCreate] ex=00000000 class=0x103f7ee90 version=0x0 name=0x103f7ee70 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140020140 ansi=0
+[JuiceMonitor] callee hwnd=0x20032 hmon=0x1 info=0x103e7f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x20032 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x20032 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x20032 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x20032 flags=14 ptr=0x103e7f620 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceCreate] ex=00000000 class=0x108edfc10 version=0x0 name=0x108edfbf0 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140021320 ansi=0
+[JuiceRect] input hwnd=0x20032 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x20032 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceMonitor] callee hwnd=0x20030 hmon=0x1 info=0x108ddf550 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x20030 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceGeom] changed hwnd=0x20032 flags=10 ptr=0x103e7f620 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceDriver] create-enter hwnd=0x20032
+[JuiceDriver] create-success hwnd=0x20032
+[JuiceRect] input hwnd=0x20030 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x20030 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x20030 flags=14 ptr=0x108ddf450 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceRect] input hwnd=0x20030 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x20030 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceCreate] ex=00000000 class=0x103f7ee80 version=0x0 name=0x103f7ee60 style=00c80000 x=-2147483648 y=-2147483648 cx=166 cy=45 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x140026378 ansi=0
+[JuiceMonitor] callee hwnd=0x0 hmon=0x1 info=0x103e7fa00 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMonitor] caller hwnd=0x0 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceGeom] changed hwnd=0x20030 flags=10 ptr=0x108ddf450 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceDriver] create-enter hwnd=0x20030
+[JuiceInput] queue fd registered fd=8 tid=0x34
+[JuiceDriver] create-success hwnd=0x20030
+[JuiceMonitor] callee hwnd=0x1003a hmon=0x1 info=0x103e7f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x1003a min=112,27 maxtrack=1036,780 max=1030,774 pos=-3,-3
+[JuiceRect] input hwnd=0x1003a dpi=96/1 raw=96/1 win=0,0,166,45 client=0,0,166,45 visible=0,0,166,45
+[JuiceRect] mapped hwnd=0x1003a win=0,0,166,45 client=0,0,166,45 visible=0,0,166,45
+[JuiceGeom] changed hwnd=0x1003a flags=3c ptr=0x103e7f620 window=0,0,166,45 client=0,0,166,45 visible=0,0,166,45 surface=0x10609c4f0 shown=0
+[JuiceCreate] ex=00000000 class=0x103e7f590 version=0x0 name=0x103e7f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+[JuiceRect] input hwnd=0x10040 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10040 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10040 flags=3c ptr=0x103e7eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x10609c4f0 shown=0
+[JuiceRect] input hwnd=0x10040 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10040 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10040 flags=18 ptr=0x103e7eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x10040
+[JuiceDriver] create-success hwnd=0x10040
+[JuiceRect] input hwnd=0x1003a dpi=96/1 raw=96/1 win=0,0,166,45 client=3,22,163,42 visible=0,0,166,45
+[JuiceRect] mapped hwnd=0x1003a win=0,0,166,45 client=3,22,163,42 visible=0,0,166,45
+[JuiceGeom] changed hwnd=0x1003a flags=18 ptr=0x103e7f620 window=0,0,166,45 client=3,22,163,42 visible=0,0,166,45 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x1003a
+[JuiceDriver] create-success hwnd=0x1003a
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/shell32/aarch64-windows/shell32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/shell32.dll/aarch64-windows/shell32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shell32.dll machine=0000 status=00000000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/uxtheme/aarch64-windows/uxtheme.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/uxtheme.dll/aarch64-windows/uxtheme.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/uxtheme.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2be000000 size=196608
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2be030000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/uxtheme.dll status=40000003 module=0x2bdff0000 size=1d0000
+[JuiceWine] anonymous PE executable section .text at 0x2d3650000 size=1048576
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d3750000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shell32.dll status=40000003 module=0x2d3640000 size=ff0000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/shlwapi/aarch64-windows/shlwapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/shlwapi.dll/aarch64-windows/shlwapi.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shlwapi.dll machine=0000 status=00000000
+[JuiceCreate] ex=00000000 class=0x1051ff7a0 version=0x0 name=0x1051ff780 style=06ca0000 x=189 y=162 cx=646 cy=425 parent=0x0 menu=0x0 classinst=0x140000000 params=0x0 flags=00000000 inst=0x140000000 classptr=0x126c49080 ansi=0
+[JuiceMonitor] callee hwnd=0x20048 hmon=0x1 info=0x10450f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x20048 min=112,27 maxtrack=1036,780 max=1030,774 pos=-3,-3
+[JuiceRect] input hwnd=0x20048 dpi=96/1 raw=96/1 win=189,162,835,587 client=189,162,835,587 visible=189,162,835,587
+[JuiceRect] mapped hwnd=0x20048 win=189,162,835,587 client=189,162,835,587 visible=189,162,835,587
+[JuiceGeom] changed hwnd=0x20048 flags=3c ptr=0x10450f620 window=189,162,835,587 client=189,162,835,587 visible=189,162,835,587 surface=0x12728c4f0 shown=0
+[JuiceCreate] ex=00000000 class=0x10450f590 version=0x0 name=0x10450f580 style=8c000000 x=0 y=0 cx=1 cy=1 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x0 ansi=0
+JUICE_TEXT_HOST_WINDOW pid=22386 hwnd=0x20048 rect=189,162 646x425 visible=0
+[JuiceRect] input hwnd=0x10052 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10052 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10052 flags=3c ptr=0x10450eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x12728c4f0 shown=0
+[JuiceRect] input hwnd=0x10052 dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x10052 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x10052 flags=18 ptr=0x10450eed0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x12728c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x10052
+[JuiceDriver] create-success hwnd=0x10052
+[JuiceRect] input hwnd=0x20048 dpi=96/1 raw=96/1 win=189,162,835,587 client=192,184,832,584 visible=189,162,835,587
+[JuiceRect] mapped hwnd=0x20048 win=189,162,835,587 client=192,184,832,584 visible=189,162,835,587
+[JuiceGeom] changed hwnd=0x20048 flags=18 ptr=0x10450f620 window=189,162,835,587 client=192,184,832,584 visible=189,162,835,587 surface=0x12728c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x20048
+[JuiceDriver] create-success hwnd=0x20048
+JUICE_TEXT_HOST_WINDOW pid=22386 hwnd=0x20048 rect=189,162 646x425 visible=0
+[JuiceRect] input hwnd=0x20048 dpi=96/1 raw=96/1 win=189,162,835,587 client=192,184,832,584 visible=189,162,835,587
+[JuiceRect] mapped hwnd=0x20048 win=189,162,835,587 client=192,184,832,584 visible=189,162,835,587
+[JuiceGeom] changed hwnd=0x20048 flags=183f ptr=0x10450f820 window=189,162,835,587 client=192,184,832,584 visible=189,162,835,587 surface=0x12728c4f0 shown=0
+JUICE_TEXT_HOST_WINDOW pid=22386 hwnd=0x20048 rect=189,162 646x425 visible=0
+[JuiceWine] anonymous PE executable section .text at 0x2d3410000 size=262144
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d3450000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shlwapi.dll status=40000003 module=0x2d3400000 size=240000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/shcore/aarch64-windows/shcore.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/shcore.dll/aarch64-windows/shcore.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shcore.dll machine=0000 status=00000000
+[JuiceGeom] surface hwnd=0x20048 rect=0,0,768,512 size=768x512 previous=0x12728c4f0
+[JuiceRect] input hwnd=0x20048 dpi=96/1 raw=96/1 win=189,162,835,587 client=192,184,832,584 visible=189,162,835,587
+[JuiceRect] mapped hwnd=0x20048 win=189,162,835,587 client=192,184,832,584 visible=189,162,835,587
+[JuiceGeom] changed hwnd=0x20048 flags=1967 ptr=0x10450f760 window=189,162,835,587 client=192,184,832,584 visible=189,162,835,587 surface=0x126f044f0 shown=1
+JUICE_TEXT_HOST_WINDOW pid=22386 hwnd=0x20048 rect=189,162 646x425 visible=1
+[JuiceCreate] ex=00000000 class=0x1051ff330 version=0x0 name=0x1051ff310 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x2c29d0000 params=0x0 flags=00000000 inst=0x2c29d0000 classptr=0x2c2a5a0c0 ansi=0
+[JuiceMonitor] callee hwnd=0x10054 hmon=0x1 info=0x10450e5f0 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10054 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x10054 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10054 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10054 flags=14 ptr=0x10450e4f0 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceRect] input hwnd=0x10054 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10054 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10054 flags=10 ptr=0x10450e4f0 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceDriver] create-enter hwnd=0x10054
+[JuiceDriver] create-success hwnd=0x10054
+[JuiceCreate] ex=00000080 class=0x1051feb30 version=0x0 name=0x1051feb10 style=80000000 x=0 y=0 cx=1 cy=1 parent=0x10052 menu=0x0 classinst=0x2c3300000 params=0x0 flags=00000000 inst=0x2c3300000 classptr=0x126c4dfc4 ansi=0
+[JuiceRect] input hwnd=0x1005a dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1005a win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1005a flags=3c ptr=0x10450c9f0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x12728c4f0 shown=0
+[JuiceRect] input hwnd=0x1005a dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1005a win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1005a flags=18 ptr=0x10450c9f0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x12728c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x1005a
+[JuiceDriver] create-success hwnd=0x1005a
+[JuiceRect] input hwnd=0x1005a dpi=96/1 raw=96/1 win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceRect] mapped hwnd=0x1005a win=0,0,1,1 client=0,0,1,1 visible=0,0,1,1
+[JuiceGeom] changed hwnd=0x1005a flags=181b ptr=0x10450cbf0 window=0,0,1,1 client=0,0,1,1 visible=0,0,1,1 surface=0x12728c4f0 shown=0
+[JuiceMonitor] callee hwnd=0x20048 hmon=0x1 info=0x10450f570 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceWine] anonymous PE executable section .text at 0x2d46f0000 size=131072
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d4710000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/shcore.dll status=40000003 module=0x2d46e0000 size=110000
+[JuiceCreate] ex=00000000 class=0x103f7ee30 version=0x0 name=0x103f7ee10 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d51584f0 ansi=0
+[JuiceRect] input hwnd=0x1005c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005c flags=3c ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceRect] input hwnd=0x1005c dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005c win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005c flags=18 ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x1005c
+[JuiceDriver] create-success hwnd=0x1005c
+[JuiceCreate] ex=00000000 class=0x103f7ee30 version=0x0 name=0x103f7ee10 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d5159248 ansi=0
+[JuiceRect] input hwnd=0x1005e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005e flags=3c ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceRect] input hwnd=0x1005e dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x1005e win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x1005e flags=18 ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x1005e
+[JuiceDriver] create-success hwnd=0x1005e
+[JuiceCreate] ex=00000000 class=0x103f7ee30 version=0x0 name=0x103f7ee10 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d5159248 ansi=0
+[JuiceRect] input hwnd=0x10060 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10060 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10060 flags=3c ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceRect] input hwnd=0x10060 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10060 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10060 flags=18 ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x10060
+[JuiceDriver] create-success hwnd=0x10060
+[JuiceCreate] ex=00000000 class=0x103f7ee60 version=0x0 name=0x103f7ee40 style=80000000 x=0 y=0 cx=0 cy=0 parent=0x0 menu=0x0 classinst=0x0 params=0x0 flags=00000000 inst=0x0 classptr=0x2d5159248 ansi=0
+[JuiceRect] input hwnd=0x10062 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10062 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10062 flags=3c ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceRect] input hwnd=0x10062 dpi=96/1 raw=96/1 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceRect] mapped hwnd=0x10062 win=0,0,0,0 client=0,0,0,0 visible=0,0,0,0
+[JuiceGeom] changed hwnd=0x10062 flags=18 ptr=0x103e7f620 window=0,0,0,0 client=0,0,0,0 visible=0,0,0,0 surface=0x10609c4f0 shown=0
+[JuiceDriver] create-enter hwnd=0x10062
+[JuiceDriver] create-success hwnd=0x10062
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/ole32/aarch64-windows/ole32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/ole32.dll/aarch64-windows/ole32.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ole32.dll machine=0000 status=00000000
+JUICE_TEXT_HOST_FRAME hwnd=0x20048 size=768x512 path=/var/mobile/Documents/JuiceData/proofs/chocolate-doom-setup-x86_64-v5-rendered-20260821/frame-before-input.png
+[JuiceWine] anonymous PE executable section .text at 0x2d2de0000 size=720896
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d2e90000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/ole32.dll status=40000003 module=0x2d2dd0000 size=630000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/combase/aarch64-windows/combase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/combase.dll/aarch64-windows/combase.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/combase.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d2ae0000 size=393216
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d2b40000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/combase.dll status=40000003 module=0x2d2ad0000 size=300000
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/dlls/coml2/aarch64-windows/coml2.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/private/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/build/wine-ios/programs/coml2.dll/aarch64-windows/coml2.dll machine=0000 status=c0000135
+[JuiceHybrid] open name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/coml2.dll machine=0000 status=00000000
+[JuiceWine] anonymous PE executable section .text at 0x2d29b0000 size=65536
+[JuiceWine] anonymous PE executable section .hexpthk at 0x2d29c0000 size=65536
+[JuiceHybrid] map name=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape-X64/runtime/lib/wine/aarch64-windows/coml2.dll status=40000003 module=0x2d29a0000 size=130000
+[JuiceCreate] ex=00000000 class=0x103f7ee80 version=0x0 name=0x103f7ee60 style=00000000 x=0 y=0 cx=0 cy=0 parent=0xfffffffffffffffd menu=0x0 classinst=0x2d2ad0000 params=0x0 flags=00000000 inst=0x2d2ad0000 classptr=0x2d2b53868 ansi=0
+[JuiceMonitor] callee hwnd=0x10066 hmon=0x1 info=0x103e7f720 monitor=0,0,1024,768 work=0,0,1024,768 flags=00000001
+[JuiceMinMax] hwnd=0x10066 min=112,27 maxtrack=1036,780 max=106,106 pos=-3,-3
+[JuiceRect] input hwnd=0x10066 dpi=96/1 raw=96/1 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10066 win=0,0,112,27 client=0,0,112,27 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10066 flags=14 ptr=0x103e7f620 window=0,0,112,27 client=0,0,112,27 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceRect] input hwnd=0x10066 dpi=96/1 raw=96/1 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceRect] mapped hwnd=0x10066 win=0,0,112,27 client=3,22,109,24 visible=0,0,112,27
+[JuiceGeom] changed hwnd=0x10066 flags=10 ptr=0x103e7f620 window=0,0,112,27 client=3,22,109,24 visible=0,0,112,27 surface=0x0 shown=0
+[JuiceDriver] create-enter hwnd=0x10066
+[JuiceDriver] create-success hwnd=0x10066
+[JuiceStage] init_syscall_frame entered; entry=0x2d6a35360 arg=0x108102280 teb=0x2d7fec000 data=0x10a040000 frame=0x10a14fb00 stack_base=0x10a250000 stack_limit=0x10a158000
+[JuiceStage] calling signal_set_full_context; ctx=0x10a24fc70 target_pc=0x2d7949650 target_sp=0x10a250000 target_x18=0x2d7fec000 LdrInitializeThunk=0x2d7949670 RtlUserThreadStart=0x2d7949650
+[JuiceStage] signal_set_full_context returned; status=00000000 frame_pc=0x2d7949650 frame_sp=0x10a250000 frame_x18=0x2d7fec000 restore=00400007
+[JuiceStage] init_syscall_frame complete; dispatcher_pc=0x2d7949670 user_sp=0x10a24fc70 x16=0x2d7949670 x17=0x10a24fc70 x18=0x2d7fec000 restore=00400007
+[JuiceGeom] surface hwnd=0x10022 rect=0,0,1024,768 size=1024x768 previous=0x102f36e80
+[JuiceRect] input hwnd=0x10022 dpi=96/1 raw=96/1 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceRect] mapped hwnd=0x10022 win=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768
+[JuiceGeom] changed hwnd=0x10022 flags=8000181b ptr=0x103e7f750 window=0,0,1024,768 client=0,0,1024,768 visible=0,0,1024,768 surface=0x102f36e80 shown=1
+JUICE_TEXT_HOST_WINDOW pid=22392 hwnd=0x10022 rect=0,0 1024x768 visible=1
+JUICE_TEXT_HOST_RESULT success=1 marker=/var/mobile/Documents/JuiceData/proofs/chocolate-doom-setup-x86_64-v5-rendered-20260821/process-started.marker frame=/var/mobile/Documents/JuiceData/proofs/chocolate-doom-setup-x86_64-v5-rendered-20260821/frame-after-input.png expected_frame=missing child_rc=None
+Terminated: 15

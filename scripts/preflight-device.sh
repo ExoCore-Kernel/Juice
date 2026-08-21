@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/network-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 SDK="${IOS_SDK:-$JBROOT/usr/share/SDKs/iPhoneOS.sdk}"
 MIN_FREE_KB="${JUICE_MIN_FREE_KB:-4194304}"
@@ -51,6 +52,22 @@ EOF
 else
   freetype_version="$("$JBROOT/usr/bin/pkg-config" --modversion freetype2 2>/dev/null || echo installed)"
   echo "JUICE_FREETYPE version=$freetype_version header=$freetype_header"
+fi
+
+gnutls_header="$JBROOT/usr/include/gnutls/gnutls.h"
+gnutls_library="$JBROOT/usr/lib/$JUICE_GNUTLS_SONAME"
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+  if test ! -f "$gnutls_header" || test ! -e "$gnutls_library"; then
+    cat >&2 <<EOF
+GnuTLS development files are required for Windows HTTPS/Schannel support.
+Install them once on the build device, then rerun this check:
+  sudo $JBROOT/usr/bin/apt-get install libgnutls30-dev
+Set JUICE_WITHOUT_GNUTLS=1 only for an explicit offline diagnostic build.
+EOF
+    exit 4
+  fi
+  gnutls_version="$("$JBROOT/usr/bin/pkg-config" --modversion gnutls 2>/dev/null || echo installed)"
+  echo "JUICE_GNUTLS version=$gnutls_version header=$gnutls_header library=$gnutls_library"
 fi
 
 helper="$(find /var/containers/Bundle/Application -type f \

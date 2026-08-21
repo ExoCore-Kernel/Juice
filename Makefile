@@ -4,7 +4,7 @@ REUSE_X64 ?= auto
 
 .DEFAULT_GOAL := all
 
-.PHONY: all verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build input-smoke-build input-smoke-device graphics-smokes moltenvk x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa reuse reuse-install verify-fex linux-x86_64 linux-x86_64-x64 linux-x86_64-deps linux-x86_64-sdk linux-x86_64-freetype linux-x86_64-preflight linux-x86_64-ios-toolchain linux-x86_64-toolchain linux-x86_64-host-tools linux-x86_64-configure linux-x86_64-configure-pe linux-x86_64-build
+.PHONY: all verify preflight bootstrap pe-wrapper app launchers configure-wine build-wine runtime tipa install zip-test device source-archive installer-smokes arm64-smoke-build input-smoke-build input-smoke-device network-smokes graphics-smokes moltenvk x64-components x64-runtime x64-tipa win32-components win32-runtime win32-tipa win32-smoke-device reuse reuse-install verify-fex linux-x86_64 linux-x86_64-x64 linux-x86_64-deps linux-x86_64-sdk linux-x86_64-freetype linux-x86_64-network linux-x86_64-preflight linux-x86_64-ios-toolchain linux-x86_64-toolchain linux-x86_64-host-tools linux-x86_64-configure linux-x86_64-configure-pe linux-x86_64-build
 
 # Primary build: complete Juice TIPA from an x86_64 Linux host.
 all: linux-x86_64-x64
@@ -27,6 +27,7 @@ installer-smokes: ; $(BASH) scripts/build-installer-smokes-device.sh
 arm64-smoke-build: ; $(BASH) scripts/build-arm64-smoke-linux.sh
 input-smoke-build: ; $(BASH) scripts/build-input-smoke-linux.sh
 input-smoke-device: ; $(BASH) scripts/run-input-smoke-device.sh
+network-smokes: ; $(BASH) scripts/build-network-smokes-linux.sh
 graphics-smokes: moltenvk linux-x86_64-toolchain ; $(BASH) scripts/build-graphics-smokes-linux.sh
 moltenvk: ; $(BASH) scripts/fetch-moltenvk-linux.sh
 x64-components: ; $(BASH) scripts/build-experimental-x86_64-linux.sh
@@ -35,6 +36,7 @@ x64-tipa: ; JUICE_X64_RUNTIME_STAGE="$(ROOT)/build/x86_64-runtime-stage" $(BASH)
 win32-components: ; $(BASH) scripts/build-experimental-win32-linux.sh
 win32-runtime: ; JUICE_REQUIRE_WIN32=1 $(BASH) scripts/assemble-x86_64-runtime.sh
 win32-tipa: ; JUICE_X64_RUNTIME_STAGE="$(ROOT)/build/x86_64-runtime-stage" $(BASH) scripts/package-tipa.sh
+win32-smoke-device: ; $(BASH) scripts/run-x86-smoke-device.sh
 reuse:
 	@test -n "$(BINARIES)" || { echo "Usage: make reuse BINARIES=/path/to/prebuilt [REUSE_X64=auto|0|1]" >&2; exit 2; }
 	@BINARIES="$(BINARIES)" JUICE_REUSE_X64="$(REUSE_X64)" $(BASH) scripts/package-reuse-tipa.sh
@@ -49,7 +51,9 @@ verify-fex: ; $(BASH) scripts/fetch-fex-linux.sh && $(BASH) scripts/verify-fex-p
 linux-x86_64-sdk: ; $(BASH) scripts/fetch-ios-sdk-linux.sh
 linux-x86_64-freetype:
 	@if test "$${JUICE_WITHOUT_FREETYPE:-0}" != 1; then $(BASH) scripts/fetch-freetype-linux.sh; fi
-linux-x86_64-deps: linux-x86_64-sdk linux-x86_64-freetype moltenvk
+linux-x86_64-network: linux-x86_64-freetype
+	@if test "$${JUICE_WITHOUT_GNUTLS:-0}" != 1; then $(BASH) scripts/fetch-network-deps-linux.sh; fi
+linux-x86_64-deps: linux-x86_64-sdk linux-x86_64-network moltenvk
 linux-x86_64-ios-toolchain: linux-x86_64-sdk
 	@v="$${JUICE_IOS_SDK_VERSION:-16.5}"; \
 	 IOS_SDK="$${IOS_SDK:-$(ROOT)/build/deps/theos-sdks/iPhoneOS$$v.sdk}" \

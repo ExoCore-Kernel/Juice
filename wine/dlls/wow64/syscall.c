@@ -148,6 +148,16 @@ static void DECLSPEC_NORETURN stub_syscall( const char *name )
 #define SYSCALL_STUB(name) NTSTATUS WINAPI wow64_ ## name( UINT *args ) { stub_syscall( #name ); }
 ALL_SYSCALL_STUBS
 
+/* Juice's native ARM64EC startup uses this private syscall to obtain an
+ * AArch64 TEB accessor.  A 32-bit guest cannot represent or call that native
+ * function pointer, and no Win32 code path requires it.  Keep the syscall
+ * table complete without leaking a truncated host address into the guest. */
+NTSTATUS WINAPI wow64_NtWineGetCurrentTebAccessor( UINT *args )
+{
+    (void)args;
+    return STATUS_NOT_SUPPORTED;
+}
+
 static EXCEPTION_RECORD *exception_record_32to64( const EXCEPTION_RECORD32 *rec32 )
 {
     EXCEPTION_RECORD *rec;
@@ -903,6 +913,26 @@ static HMODULE load_64bit_module( const WCHAR *name )
     return module;
 }
 
+static DWORD wow64GetEnvironmentVariableW( LPCWSTR name, LPWSTR val, DWORD size )
+{
+    UNICODE_STRING us_name, us_value;
+    NTSTATUS status;
+    DWORD len;
+
+    RtlInitUnicodeString( &us_name, name );
+    us_value.Length = 0;
+    us_value.MaximumLength = (size ? size - 1 : 0) * sizeof(WCHAR);
+    us_value.Buffer = val;
+
+    status = RtlQueryEnvironmentVariable_U( NULL, &us_name, &us_value );
+    len = us_value.Length / sizeof(WCHAR);
+    if (status == STATUS_BUFFER_TOO_SMALL) return len + 1;
+    if (status) return 0;
+    if (!size) return len + 1;
+    val[len] = 0;
+    return len;
+}
+
 
 /**********************************************************************
  *           get_cpu_dll_name
@@ -911,11 +941,20 @@ static const WCHAR *get_cpu_dll_name(void)
 {
     static ULONG buffer[32];
     KEY_VALUE_PARTIAL_INFORMATION *info = (KEY_VALUE_PARTIAL_INFORMATION *)buffer;
+    WCHAR *cpu_dll = (WCHAR *)buffer;
     OBJECT_ATTRIBUTES attr;
     UNICODE_STRING nameW;
     const WCHAR *ret;
     HANDLE key;
     ULONG size;
+    UINT res;
+
+    /* Hangover-compatible per-process CPU backend selection.  Keep this in
+     * the experimental WoW64 control DLL so the native ARM64 Grape runtime
+     * remains untouched. */
+    if ((res = wow64GetEnvironmentVariableW( L"HODLL", cpu_dll, ARRAY_SIZE(buffer))) &&
+        res < ARRAY_SIZE(buffer))
+        return cpu_dll;
 
     switch (current_machine)
     {

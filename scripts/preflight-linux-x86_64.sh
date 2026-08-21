@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/network-build.env"
 TOOLCHAIN="${JUICE_IOS_TOOLCHAIN:-$ROOT/build/ios-toolchain}"
 PREFIX="${JUICE_IOS_TRIPLE_PREFIX:-arm-apple-darwin11}"
 SDK="${IOS_SDK:-}"
@@ -16,7 +17,7 @@ case "$(uname -m)" in
   *) echo "This target requires a 64-bit x86 or ARM Linux host; found $(uname -m)." >&2; exit 2;;
 esac
 
-for tool in bash bison cmake curl file flex git make m4 python3 rsync sha256sum tar xz zip clang; do
+for tool in bash bison cmake curl dpkg-deb file flex git make m4 python3 rsync sha256sum tar xz zip clang; do
   command -v "$tool" >/dev/null 2>&1 || missing+=("$tool")
 done
 
@@ -27,6 +28,15 @@ done
 LDID_BIN="${LDID:-$TOOLCHAIN/bin/ldid}"
 if test ! -x "$LDID_BIN"; then
   LDID_BIN="$(command -v ldid 2>/dev/null || true)"
+fi
+
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+  test -n "$ROOTLESS" || missing+=("JUICE_IOS_ROOTLESS_SYSROOT=<extracted rootless iOS sysroot>")
+  if test -n "$ROOTLESS"; then
+    test -f "$ROOTLESS/usr/include/gnutls/gnutls.h" || missing+=("$ROOTLESS/usr/include/gnutls/gnutls.h")
+    test -e "$ROOTLESS/usr/lib/libgnutls.dylib" || missing+=("$ROOTLESS/usr/lib/libgnutls.dylib")
+    test -e "$ROOTLESS/usr/lib/$JUICE_GNUTLS_SONAME" || missing+=("$ROOTLESS/usr/lib/$JUICE_GNUTLS_SONAME")
+  fi
 fi
 test -n "$LDID_BIN" && test -x "$LDID_BIN" || missing+=("ldid (cctools target/bin/ldid or PATH)")
 

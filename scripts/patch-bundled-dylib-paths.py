@@ -13,6 +13,11 @@ case create a compact local alias (j0, j1, ...) and point the dependency at
 ``@loader_path/<alias>``. Alias files are copied only after all original dylibs
 have been patched, so aliases contain the same already-fixed dependency graph.
 Apple/system dependencies are left untouched.
+
+Zip-based iOS installers do not consistently preserve symbolic links. After
+patching each canonical dylib, replace every Procursus soname symlink with a
+regular copy of its fully patched target. The resulting Juice.app is therefore
+self-contained even when a TIPA extractor flattens link metadata.
 """
 
 from __future__ import annotations
@@ -163,6 +168,29 @@ def patch_one(path: pathlib.Path, available: set[str], aliases: AliasTable) -> i
     return changed
 
 
+def materialize_symlinks(directory: pathlib.Path, entries: list[pathlib.Path]) -> int:
+    links: list[tuple[pathlib.Path, pathlib.Path]] = []
+    directory_resolved = directory.resolve()
+    for entry in entries:
+        if not entry.is_symlink():
+            continue
+        try:
+            target = entry.resolve(strict=True)
+        except FileNotFoundError:
+            fail(f"dangling bundled dylib symlink: {entry}")
+        if target.parent != directory_resolved:
+            fail(f"bundled dylib symlink escapes its directory: {entry} -> {target}")
+        if not target.is_file():
+            fail(f"bundled dylib symlink target is not a file: {entry} -> {target}")
+        links.append((entry, target))
+
+    for entry, target in sorted(links):
+        entry.unlink()
+        shutil.copy2(target, entry)
+        print(f"JUICE_DYLIB_SYMLINK_COPY name={entry.name} target={target.name}")
+    return len(links)
+
+
 def main(directory: pathlib.Path) -> None:
     if not directory.is_dir():
         fail(f"not a directory: {directory}")
@@ -181,10 +209,12 @@ def main(directory: pathlib.Path) -> None:
             patched_files += 1
             rewritten_commands += count
 
+    symlink_count = materialize_symlinks(directory, entries)
     alias_count = aliases.materialize()
     print(
         f"JUICE_BUNDLED_DYLIB_PATHS_OK path={directory} "
-        f"files={patched_files} rewrites={rewritten_commands} aliases={alias_count}"
+        f"files={patched_files} rewrites={rewritten_commands} "
+        f"symlinks={symlink_count} aliases={alias_count}"
     )
 
 

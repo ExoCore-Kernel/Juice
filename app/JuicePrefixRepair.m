@@ -6,9 +6,9 @@
  * Prefix health check for the UIKit launcher.
  *
  * Juice deliberately keeps the bundled prefix template small and lets the
- * first controlled Wineboot populate generated Windows state such as WinSxS
- * manifests. A prefix from an older/failed build can still have the Juice
- * ready marker even when that generated state is incomplete. In that case the
+ * first controlled Wineboot populate generated Windows state. A prefix from
+ * an older/failed build can still have a stale or truncated Juice ready marker
+ * even when the generated registry state is incomplete. In that case the
  * normal launcher would keep setting JUICE_SKIP_WINEBOOT=1 forever.
  *
  * Validate only generated state that Wine itself owns. If it is missing,
@@ -32,18 +32,21 @@ static void JuiceAppend(id self, NSString *text)
         ((void (*)(id, SEL, id))objc_msgSend)(self, selector, text);
 }
 
-static BOOL JuiceDirectoryContainsManifest(NSString *directory)
+static BOOL JuiceFileIsNonempty(NSString *path)
 {
     NSFileManager *files = NSFileManager.defaultManager;
-    BOOL isDirectory = NO;
+    NSDictionary *attributes = [files attributesOfItemAtPath:path error:nil];
+    return [attributes[NSFileSize] unsignedLongLongValue] != 0;
+}
 
-    if (![files fileExistsAtPath:directory isDirectory:&isDirectory] || !isDirectory)
-        return NO;
-
-    for (NSString *name in [files contentsOfDirectoryAtPath:directory error:nil] ?: @[])
-        if ([name.pathExtension.lowercaseString isEqualToString:@"manifest"])
-            return YES;
-    return NO;
+static BOOL JuiceReadyMarkerIsValid(NSString *path)
+{
+    NSString *contents = [NSString stringWithContentsOfFile:path
+                                                    encoding:NSUTF8StringEncoding
+                                                       error:nil];
+    NSString *marker = [contents stringByTrimmingCharactersInSet:
+                         NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    return [marker isEqualToString:@"JUICE_PREFIX_READY"];
 }
 
 static NSString *JuicePrefixDataRoot(void)
@@ -61,17 +64,24 @@ static void JuiceRepairPrefixIfNeeded(id self)
     NSString *prefixName = usingX64 ? @"GrapePrefix-x86_64" : @"GrapePrefix";
     NSString *prefix = [JuicePrefixDataRoot() stringByAppendingPathComponent:prefixName];
     NSString *ready = [prefix stringByAppendingPathComponent:@".juice-prefix-ready"];
-    NSString *manifests = [prefix stringByAppendingPathComponent:@"drive_c/windows/winsxs/manifests"];
+    NSString *systemRegistry = [prefix stringByAppendingPathComponent:@"system.reg"];
+    NSString *userRegistry = [prefix stringByAppendingPathComponent:@"user.reg"];
     NSFileManager *files = NSFileManager.defaultManager;
 
     if (![files fileExistsAtPath:ready]) return;
-    if (JuiceDirectoryContainsManifest(manifests)) return;
+    if (JuiceReadyMarkerIsValid(ready) && JuiceFileIsNonempty(systemRegistry) &&
+        JuiceFileIsNonempty(userRegistry))
+    {
+        JuiceAppend(self, [NSString stringWithFormat:
+            @"PREFIX_HEALTH_OK marker=valid registry=valid prefix=%@\n", prefix]);
+        return;
+    }
 
     NSError *error = nil;
     if ([files removeItemAtPath:ready error:&error])
     {
         JuiceAppend(self, [NSString stringWithFormat:
-            @"PREFIX_REPAIR_REQUIRED reason=missing-winsxs-manifests prefix=%@\n", prefix]);
+            @"PREFIX_REPAIR_REQUIRED reason=invalid-ready-or-registry prefix=%@\n", prefix]);
     }
     else
     {

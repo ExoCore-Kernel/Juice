@@ -94,3 +94,26 @@ curated screenshots and their hashes under `screenshots/`. Direct UIKit picker
 presentation remains an attended release check; the headless MSI/setup tests
 used a deterministic peer for the exact same control protocol so they did not
 depend on private UI automation.
+
+## Chocolate Doom x86-64 game
+
+On 2026-08-21, the official Chocolate Doom 3.1.1 x86-64 portable build ran on
+the iPad through the separate Grape-X64 ARM64EC/FEX path and loaded Freedoom:
+Phase 2. The final run used the application's ordinary software-renderer
+configuration, retained sound and music initialization, produced a readable
+live gameplay frame and HUD, and ended the framebuffer proof host with
+`success=1`.
+
+Two generic iOS/FEX corrections made the full game stable:
+
+- rpmalloc uses a 64 MiB span under the Juice iOS build instead of requesting
+  512 MiB for each new 256 MiB-aligned span;
+- generated multiblocks start on fresh 16 KiB host pages and published code is
+  not reopened for instruction-link backpatching, avoiding page-wide W^X races
+  with concurrently executing translated threads.
+
+The build reproduces both changes from `patches/fex-juice-ios.patch` and the
+pinned nested `patches/fex-rpmalloc-juice-ios.patch`. The verified frame, full
+device log, run metadata and checksums are under
+`proofs/verified/apps/chocolate-doom-game-x86_64-v10-full-20260821/`; the
+curated screenshot is `screenshots/08-chocolate-doom-x86_64.png`.

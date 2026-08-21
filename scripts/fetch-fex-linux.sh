@@ -5,6 +5,7 @@ ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/x86_64-build.env"
 SOURCE="${JUICE_FEX_SOURCE:-$ROOT/build/fex-source}"
 PATCH="$ROOT/patches/fex-juice-ios.patch"
+RPMALLOC_PATCH="$ROOT/patches/fex-rpmalloc-juice-ios.patch"
 
 test "$(uname -s)" = Linux || { echo "FEX source preparation requires Linux." >&2; exit 2; }
 case "$SOURCE" in
@@ -15,6 +16,7 @@ case "$SOURCE" in
      };;
 esac
 test -s "$PATCH" || { echo "Missing FEX iOS patch: $PATCH" >&2; exit 2; }
+test -s "$RPMALLOC_PATCH" || { echo "Missing FEX rpmalloc iOS patch: $RPMALLOC_PATCH" >&2; exit 2; }
 
 if test ! -d "$SOURCE/.git"; then
   if test -d "$SOURCE" && test -n "$(find "$SOURCE" -mindepth 1 -print -quit)"; then
@@ -43,11 +45,23 @@ fi
 test "$(git -C "$SOURCE" rev-parse HEAD)" = "$JUICE_FEX_REVISION"
 
 git -C "$SOURCE" submodule update --init --recursive --depth 1
+RPMALLOC_SOURCE="$SOURCE/External/rpmalloc"
+test "$(git -C "$RPMALLOC_SOURCE" rev-parse HEAD)" = "$JUICE_FEX_RPMALLOC_REVISION" || {
+  echo "FEX rpmalloc submodule is not at the pinned revision." >&2
+  exit 3
+}
 if git -C "$SOURCE" apply --reverse --check "$PATCH" 2>/dev/null; then
   :
 else
   git -C "$SOURCE" apply --check "$PATCH"
   git -C "$SOURCE" apply "$PATCH"
 fi
+if git -C "$RPMALLOC_SOURCE" apply --reverse --check "$RPMALLOC_PATCH" 2>/dev/null; then
+  :
+else
+  git -C "$RPMALLOC_SOURCE" apply --check "$RPMALLOC_PATCH"
+  git -C "$RPMALLOC_SOURCE" apply "$RPMALLOC_PATCH"
+fi
 git -C "$SOURCE" diff --check
+git -C "$RPMALLOC_SOURCE" diff --check
 echo "JUICE_FEX_SOURCE_OK path=$SOURCE revision=$JUICE_FEX_REVISION"

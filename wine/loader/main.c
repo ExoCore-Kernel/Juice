@@ -219,7 +219,16 @@ int main( int argc, char *argv[] )
     if ((handle = try_dlopen( get_self_exe() )) ||
         (handle = try_dlopen( argv[0] )))
     {
-        void (*init_func)(int, char **) = dlsym( handle, "__wine_main" );
+        void (*init_func)(int, char **);
+
+#ifdef JUICE_IOS_LOWVA_BOOTSTRAP
+        /* Load native ntdll while iOS still keeps its normal >4 GiB VM
+           minimum. Only then expose the low range for fixed Win32/FEX maps;
+           otherwise dyld can place this arm64 Mach-O inside the Windows
+           address space and fault while applying its segment protections. */
+        juice_ios_lowva_bootstrap();
+#endif
+        init_func = dlsym( handle, "__wine_main" );
         if (init_func) init_func( argc, argv );
         fprintf( stderr, "wine: __wine_main function not found in ntdll.so\n" );
         exit(1);

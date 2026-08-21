@@ -17,8 +17,11 @@
  *
  * This intentionally tiny helper runs as root on a jailbroken device and
  * uses Dopamine's libjailbreak primitives to lower ONLY the target Wine
- * process' vm_map minimum. The Wine process is blocked waiting for us while
- * this happens and immediately performs a userspace mmap probe afterwards.
+ * process' vm_map minimum. Before invoking this helper, the Wine process uses
+ * XNU's debug.toggle_address_reuse sysctl to disable its hole-list allocator
+ * under vm_map_lock. The Wine process is blocked waiting for us while the
+ * remaining field change happens and immediately performs a userspace mmap
+ * probe afterwards.
  *
  * The Darwin 22 / XNU 8796 arm64 layout is:
  *   _vm_map.lock              0x00 (lck_rw_t is 16 bytes)
@@ -87,9 +90,9 @@ int main(int argc, char **argv)
     uint64_t proc, task, map, min_field, max_field, old_min, old_max, verify;
     int rc;
 
-    if (argc != 2)
+    if (argc != 3 || strcmp(argv[2], "holes-disabled-v1"))
     {
-        fprintf(stderr, "usage: %s <pid>\n", argv[0]);
+        fprintf(stderr, "usage: %s <pid> holes-disabled-v1\n", argv[0]);
         return 64;
     }
     pid = (pid_t)strtol(argv[1], NULL, 10);

@@ -1338,10 +1338,26 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
   [f copyItemAtPath:[self.grape stringByAppendingPathComponent:@"prefix-template"] toPath:self.prefix error:nil];
  NSString *dos=[self.prefix stringByAppendingPathComponent:@"dosdevices"];
  [f createDirectoryAtPath:dos withIntermediateDirectories:YES attributes:nil error:nil];
+ NSString *c=[dos stringByAppendingPathComponent:@"c:"];
  NSString *z=[dos stringByAppendingPathComponent:@"z:"];
- [f removeItemAtPath:z error:nil];
- [f createSymbolicLinkAtPath:z withDestinationPath:@"/" error:nil];
- NSString *pe=[self.grape stringByAppendingPathComponent:@"runtime/lib/wine/aarch64-windows"];
+ NSString *cTarget=[f destinationOfSymbolicLinkAtPath:c error:nil];
+ NSString *zTarget=[f destinationOfSymbolicLinkAtPath:z error:nil];
+ NSError *cError=nil,*zError=nil;
+ if(![cTarget isEqualToString:@"../drive_c"])
+ {
+  [f removeItemAtPath:c error:nil];
+  [f createSymbolicLinkAtPath:c withDestinationPath:@"../drive_c" error:&cError];
+ }
+ if(![zTarget isEqualToString:@"/"])
+ {
+  [f removeItemAtPath:z error:nil];
+  [f createSymbolicLinkAtPath:z withDestinationPath:@"/" error:&zError];
+ }
+ [self append:[NSString stringWithFormat:@"PREFIX_DRIVE_LINKS c=%d z=%d c_error=%@ z_error=%@\n",
+  [[f destinationOfSymbolicLinkAtPath:c error:nil] isEqualToString:@"../drive_c"],
+  [[f destinationOfSymbolicLinkAtPath:z error:nil] isEqualToString:@"/"],
+  cError.localizedDescription?:@"none",zError.localizedDescription?:@"none"]];
+ NSString *pe=[self.grape stringByAppendingPathComponent:@"runtime/lib/wine"];
  NSString *system32=[self.prefix stringByAppendingPathComponent:@"drive_c/windows/system32"];
  [f createDirectoryAtPath:system32 withIntermediateDirectories:YES attributes:nil error:nil];
  NSUInteger linkedModules=0;
@@ -1388,7 +1404,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
   [@"WINELOADER=" stringByAppendingString:[self.grape stringByAppendingPathComponent:@"tools/grape-nested-wrapper"]],
   @"WINELOADERNOEXEC=1",
   [@"WINESERVER=" stringByAppendingString:[b stringByAppendingPathComponent:@"server/wineserver"]],
-  [@"WINEDLLPATH=" stringByAppendingString:[NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@:%@",pe,[JuiceDataRoot() stringByAppendingPathComponent:@"native"],[b stringByAppendingPathComponent:@"dlls/crypt32"],[b stringByAppendingPathComponent:@"dlls/wineios.drv"],[b stringByAppendingPathComponent:@"dlls/winevulkan"],[b stringByAppendingPathComponent:@"dlls/win32u"],[b stringByAppendingPathComponent:@"dlls/ws2_32"]]],
+  [@"WINEDLLPATH=" stringByAppendingString:[NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@:%@:%@",pe,[JuiceDataRoot() stringByAppendingPathComponent:@"native"],[b stringByAppendingPathComponent:@"dlls/crypt32"],[b stringByAppendingPathComponent:@"dlls/secur32"],[b stringByAppendingPathComponent:@"dlls/wineios.drv"],[b stringByAppendingPathComponent:@"dlls/winevulkan"],[b stringByAppendingPathComponent:@"dlls/win32u"],[b stringByAppendingPathComponent:@"dlls/ws2_32"]]],
   @"DYLD_LIBRARY_PATH=/var/jb/usr/lib",
   [@"JUICE_IOS_SOCKET=" stringByAppendingString:self.socketPath],
   [@"JUICE_IOS_CONTROL_SOCKET=" stringByAppendingString:self.controlSocketPath],

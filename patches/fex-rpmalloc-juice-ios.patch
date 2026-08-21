@@ -1,0 +1,24 @@
+diff --git a/rpmalloc/rpmalloc.c b/rpmalloc/rpmalloc.c
+index eada1f2..02afeba 100644
+--- a/rpmalloc/rpmalloc.c
++++ b/rpmalloc/rpmalloc.c
+@@ -185,7 +185,19 @@ madvise(caddr_t, size_t, int);
+ #define LARGE_PAGE_SIZE (1 << LARGE_PAGE_SIZE_SHIFT)
+ #define LARGE_PAGE_MASK (~((uintptr_t)LARGE_PAGE_SIZE - 1))
+ 
++/*
++ * A span is also the alignment used by rpmalloc's Windows mapper.  The
++ * default 256 MiB span therefore makes VirtualAlloc reserve 512 MiB for
++ * every new backing span (size + alignment).  That quickly fragments the
++ * constrained ARM64EC address window on iOS as translated applications add
++ * worker threads.  64 MiB still holds rpmalloc's largest page class while
++ * reducing each mapping request to 128 MiB.
++ */
++#if defined(FEX_JUICE_IOS)
++#define SPAN_SIZE (64 * 1024 * 1024)
++#else
+ #define SPAN_SIZE (256 * 1024 * 1024)
++#endif
+ #define SPAN_MASK (~((uintptr_t)(SPAN_SIZE - 1)))
+ 
+ ////////////

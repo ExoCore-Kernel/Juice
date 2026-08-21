@@ -191,7 +191,7 @@ int main(int argc, char **argv)
     }
 
     add_loader_alias = i386_target && i386_ntdll_loader;
-    clang_arguments = calloc((size_t)argc + (add_loader_alias ? 2u : 1u), sizeof(*clang_arguments));
+    clang_arguments = calloc((size_t)argc + (add_loader_alias ? 3u : 2u), sizeof(*clang_arguments));
     if (!clang_arguments)
     {
         fprintf(stderr, "juice-pe-clang: out of memory\n");
@@ -200,6 +200,10 @@ int main(int argc, char **argv)
     }
     clang_arguments[0] = (char *)clang;
     output_index = 1;
+    /* Every PE binary produced by this wrapper executes inside Juice's iOS
+     * host and needs the guarded ARM64 NtCurrentTeb() accessor.  The macro is
+     * architecture-gated in winnt.h, so i386 compilation remains unchanged. */
+    clang_arguments[output_index++] = "-DJUICE_IOS_PE=1";
     for (index = 1; index < argc; index++) clang_arguments[output_index++] = argv[index];
     if (add_loader_alias)
     {

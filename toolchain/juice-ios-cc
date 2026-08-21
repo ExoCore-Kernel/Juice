@@ -61,7 +61,7 @@ for arg in "$@"; do
       extra_args=(-include "$ROOT/toolchain/juice-ios-map-tryfixed.h")
       ;;
     */loader/main.c|loader/main.c)
-      extra_args=(-include "$ROOT/toolchain/juice-ios-lowva-bootstrap.h")
+      extra_args=(-DJUICE_IOS_LOWVA_BOOTSTRAP=1 -include "$ROOT/toolchain/juice-ios-lowva-bootstrap.h")
       ;;
   esac
 

@@ -1121,6 +1121,17 @@ static volatile sig_atomic_t juice_tls_recovery_count;
 static volatile sig_atomic_t juice_trampoline_recovery_count;
 static volatile sig_atomic_t juice_derived_teb_recovery_count;
 static volatile sig_atomic_t juice_multibase_teb_recovery_count;
+static volatile sig_atomic_t juice_static_unicode_teb_recovery_count;
+static volatile sig_atomic_t juice_static_unicode_buffer_recovery_count;
+static volatile sig_atomic_t juice_static_unicode_sort_recovery_count;
+static volatile sig_atomic_t juice_debug_buffer_recovery_count;
+
+enum
+{
+    JUICE_DEBUG_INFO_OFFSET = 0x2000 + sizeof(TEB32),
+    JUICE_DEBUG_INFO_SIZE = 0x800,
+    JUICE_DEBUG_OUTPUT_OFFSET = 0x404
+};
 
 __ASM_GLOBAL_FUNC( juice_ios_restore_x18_and_retry,
                    "mov x18, x17\n\t"
@@ -1214,6 +1225,181 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
             return;
         }
     }
+
+    /*
+     * Some ARM64EC ntdll callers pass &NtCurrentTeb()->StaticUnicodeString
+     * across a normal function call.  If physical x18 was clear when that
+     * address was formed, RtlAnsiStringToUnicodeString() receives the bare
+     * field offset (0x1258 on Win64).  The later STRH is outside the producer
+     * basic block, so the generic derived-register recovery below cannot
+     * prove its origin.
+     *
+     * Match the exact RtlAnsiStringToUnicodeString instruction sequence and
+     * documented TEB member instead of treating arbitrary small pointers as
+     * TEB-relative.  This keeps unrelated null-object faults on the normal
+     * exception path while allowing fresh-prefix wineboot to initialize.
+     */
+    if (data->teb &&
+        (ULONG_PTR)siginfo->si_addr == FIELD_OFFSET( TEB, StaticUnicodeString ) &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
+        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8 &&
+        *(const ULONG *)(PC_sig(sigcontext) - 8) == 0x51000848 &&
+        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0x72001edf &&
+        *(const ULONG *)PC_sig(sigcontext) == 0x79000268 &&
+        REGn_sig(19, sigcontext) == FIELD_OFFSET( TEB, StaticUnicodeString ))
+    {
+        sig_atomic_t number = ++juice_static_unicode_teb_recovery_count;
+
+        REGn_sig(19, sigcontext) = (ULONG_PTR)data->teb +
+                                   FIELD_OFFSET( TEB, StaticUnicodeString );
+        if (number <= 32)
+        {
+            fprintf( stderr,
+                     "[JuiceX18] static-unicode #%d pc=%p fault=%p "
+                     "fixed_x19=%p teb=%p\n",
+                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
+                     siginfo->si_addr,
+                     (void *)(ULONG_PTR)REGn_sig(19, sigcontext), data->teb );
+            fflush( stderr );
+        }
+        return;
+    }
+
+    /*
+     * Kernelbase's multibyte conversion helpers likewise receive
+     * NtCurrentTeb()->StaticUnicodeBuffer as an ordinary destination
+     * argument.  If Darwin cleared physical x18 while the caller formed the
+     * argument, the callee preserves a bare offset within that 261-character
+     * TEB array in x21 and faults much later, after the producing basic block
+     * and call boundary are no longer available to the generic recovery
+     * below.
+     *
+     * Restrict recovery to the documented TEB buffer, the exact unrolled
+     * SBCS conversion sequence, and its preserved destination register.
+     * This is a runtime-wide ARM64 fix and leaves unrelated small-pointer
+     * application faults on Wine's normal exception path.
+     */
+    if (data->teb &&
+        (ULONG_PTR)siginfo->si_addr >= FIELD_OFFSET( TEB, StaticUnicodeBuffer ) &&
+        (ULONG_PTR)siginfo->si_addr < FIELD_OFFSET( TEB, StaticUnicodeBuffer ) +
+                                           sizeof(((TEB *)0)->StaticUnicodeBuffer) &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
+        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8 &&
+        *(const ULONG *)(PC_sig(sigcontext) - 8) == 0x71007e7f &&
+        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0x78697909 &&
+        *(const ULONG *)PC_sig(sigcontext) == 0x790002a9 &&
+        REGn_sig(21, sigcontext) == (ULONG_PTR)siginfo->si_addr)
+    {
+        sig_atomic_t number = ++juice_static_unicode_buffer_recovery_count;
+
+        REGn_sig(21, sigcontext) += (ULONG_PTR)data->teb;
+        if (number <= 32)
+        {
+            fprintf( stderr,
+                     "[JuiceX18] static-unicode-buffer #%d pc=%p fault=%p "
+                     "fixed_x21=%p teb=%p\n",
+                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
+                     siginfo->si_addr,
+                     (void *)(ULONG_PTR)REGn_sig(21, sigcontext), data->teb );
+            fflush( stderr );
+        }
+        return;
+    }
+
+    /*
+     * CompareStringA() divides StaticUnicodeBuffer into two conversion
+     * buffers, then passes either bare TEB-relative pointer across the
+     * conversion call into the locale sorting code.  Repairing mbstowcs_sbcs'
+     * private destination above cannot update the pointer retained by its
+     * caller, so append_weights() can later fault while reading src[pos].
+     *
+     * Match append_weights' exact src + pos setup and first LDRH, and require
+     * both the source argument and effective address to remain inside the
+     * documented TEB array.  This covers all ANSI comparisons which reuse the
+     * per-thread buffer without accepting arbitrary low application pointers.
+     */
+    if (data->teb &&
+        (ULONG_PTR)siginfo->si_addr >= FIELD_OFFSET( TEB, StaticUnicodeBuffer ) &&
+        (ULONG_PTR)siginfo->si_addr < FIELD_OFFSET( TEB, StaticUnicodeBuffer ) +
+                                           sizeof(((TEB *)0)->StaticUnicodeBuffer) &&
+        REGn_sig(2, sigcontext) >= FIELD_OFFSET( TEB, StaticUnicodeBuffer ) &&
+        REGn_sig(2, sigcontext) < FIELD_OFFSET( TEB, StaticUnicodeBuffer ) +
+                                      sizeof(((TEB *)0)->StaticUnicodeBuffer) &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
+        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 0x18 &&
+        *(const ULONG *)(PC_sig(sigcontext) - 0x18) == 0x8b24c459 &&
+        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0xb9004be6 &&
+        *(const ULONG *)PC_sig(sigcontext) == 0x79400328 &&
+        REGn_sig(25, sigcontext) == (ULONG_PTR)siginfo->si_addr)
+    {
+        sig_atomic_t number = ++juice_static_unicode_sort_recovery_count;
+
+        REGn_sig(2, sigcontext) += (ULONG_PTR)data->teb;
+        REGn_sig(25, sigcontext) += (ULONG_PTR)data->teb;
+        if (number <= 32)
+        {
+            fprintf( stderr,
+                     "[JuiceX18] static-unicode-sort #%d pc=%p fault=%p "
+                     "fixed_x2=%p fixed_x25=%p teb=%p\n",
+                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
+                     siginfo->si_addr,
+                     (void *)(ULONG_PTR)REGn_sig(2, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(25, sigcontext), data->teb );
+            fflush( stderr );
+        }
+        return;
+    }
+
+    /*
+     * Win64 ntdll stores each thread's debug formatting state immediately
+     * after the shadow TEB32 at TEB + 0x2000.  If Darwin clears physical x18
+     * while get_info() forms that address, append_output() eventually calls
+     * memcpy() with a destination such as the bare output offset 0x3404.
+     * The TEB-relative origin is no longer visible by the time memcpy faults.
+     *
+     * Recover only Wine's fixed 0x800-byte debug-info allocation and the
+     * exact forward byte-copy loop used by this ntdll build.  Repair both the
+     * live destination and memcpy's return value when it has the same proven
+     * TEB-relative origin.  Ordinary small application pointers continue to
+     * Wine's normal exception path.
+     */
+    if (data->teb &&
+        (ULONG_PTR)siginfo->si_addr >= JUICE_DEBUG_INFO_OFFSET &&
+        (ULONG_PTR)siginfo->si_addr < JUICE_DEBUG_INFO_OFFSET + JUICE_DEBUG_INFO_SIZE &&
+        (ULONG_PTR)siginfo->si_addr >=
+            JUICE_DEBUG_INFO_OFFSET + JUICE_DEBUG_OUTPUT_OFFSET &&
+        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
+         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
+        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8 &&
+        *(const ULONG *)(PC_sig(sigcontext) - 8) == 0x3840150b &&
+        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0xf100054a &&
+        *(const ULONG *)PC_sig(sigcontext) == 0x3800152b &&
+        REGn_sig(9, sigcontext) == (ULONG_PTR)siginfo->si_addr)
+    {
+        ULONG_PTR original_x0 = REGn_sig(0, sigcontext);
+        sig_atomic_t number = ++juice_debug_buffer_recovery_count;
+
+        REGn_sig(9, sigcontext) += (ULONG_PTR)data->teb;
+        if (original_x0 >= JUICE_DEBUG_INFO_OFFSET &&
+            original_x0 < JUICE_DEBUG_INFO_OFFSET + JUICE_DEBUG_INFO_SIZE)
+            REGn_sig(0, sigcontext) += (ULONG_PTR)data->teb;
+        if (number <= 32)
+        {
+            fprintf( stderr,
+                     "[JuiceX18] debug-buffer #%d pc=%p fault=%p "
+                     "fixed_x9=%p fixed_x0=%p teb=%p\n",
+                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
+                     siginfo->si_addr,
+                     (void *)(ULONG_PTR)REGn_sig(9, sigcontext),
+                     (void *)(ULONG_PTR)REGn_sig(0, sigcontext), data->teb );
+            fflush( stderr );
+        }
+        return;
+    }
+
     /*
      * A single ARM64EC basic block can copy x18 into more than one temporary
      * before dereferencing either one.  If Darwin cleared physical x18, the

@@ -104,6 +104,10 @@ test "${#manifest_targets[@]}" -gt 0 || { echo "Hybrid runtime manifest is empty
 # Keep those data images native instead of rejecting a correct build for not
 # being COFF-ARM64X.
 hybrid_targets=()
+wow64_control_targets=(
+  dlls/wow64/aarch64-windows/wow64.dll
+  dlls/wow64win/aarch64-windows/wow64win.dll
+)
 program_count=0
 for target in "${manifest_targets[@]}"; do
   case "$target" in
@@ -111,6 +115,7 @@ for target in "${manifest_targets[@]}"; do
     *) hybrid_targets+=("$target") ;;
   esac
 done
+hybrid_targets+=("${wow64_control_targets[@]}")
 
 test "${#hybrid_targets[@]}" -gt 0 || { echo "Hybrid DLL target list is empty." >&2; exit 2; }
 echo "JUICE_ARM64EC_TARGETS hybrid=${#hybrid_targets[@]} arm64_program_fallback=$program_count"
@@ -159,7 +164,9 @@ for target in "${hybrid_targets[@]}"; do
   format="$("$TOOLCHAIN/bin/llvm-readobj" --file-headers "$module" 2>/dev/null |
     sed -n 's/^Format: //p')"
   case "$target" in
-    dlls/apisetschema/aarch64-windows/apisetschema.dll)
+    dlls/apisetschema/aarch64-windows/apisetschema.dll|\
+    dlls/wow64/aarch64-windows/wow64.dll|\
+    dlls/wow64win/aarch64-windows/wow64win.dll)
       valid_formats=" COFF-ARM64 COFF-ARM64X "
       ;;
     *)

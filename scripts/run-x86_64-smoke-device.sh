@@ -11,6 +11,7 @@ LOADER="$GRAPE/build/wine-ios/loader/wine"
 SERVER="$GRAPE/build/wine-ios/server/wineserver"
 TRACER="$GRAPE/tools/grape-trace-parent"
 PE="$GRAPE/runtime/lib/wine/aarch64-windows"
+PE_ROOT="$GRAPE/runtime/lib/wine"
 NATIVE="$GRAPE/build/wine-ios/dlls"
 SMOKE="$GRAPE/tests/x86_64-smoke.exe"
 
@@ -18,6 +19,7 @@ test "$(uname -s)" = Darwin || { echo "This smoke runner must execute on the iPa
 for path in "$LOADER" "$SERVER" "$TRACER" "$SMOKE"; do
   test -e "$path" || { echo "Missing x86-64 smoke dependency: $path" >&2; exit 2; }
 done
+mkdir -p "$(dirname "$MARKER")" "$(dirname "$LOG")"
 if test ! -f "$PREFIX/system.reg"; then
   mkdir -p "$(dirname "$PREFIX")"
   rsync -a "$GRAPE/prefix-template/" "$PREFIX/"
@@ -44,7 +46,7 @@ for module in "$PE"/*.dll "$PE"/*.exe "$PE"/*.drv; do
   fi ;;
   esac
 done
-rm -f "$MARKER"
+rm -f "$MARKER" "$LOG"
 case "$MARKER" in
   /*) export JUICE_X64_MARKER_WINDOWS="Z:${MARKER//\//\\}" ;;
   *) echo "JUICE_X64_MARKER must be an absolute Unix path: $MARKER" >&2; exit 2 ;;
@@ -56,7 +58,7 @@ export WINEPREFIX="$PREFIX"
 export WINELOADER="$GRAPE/tools/grape-nested-wrapper"
 export WINELOADERNOEXEC=1
 export WINESERVER="$SERVER"
-export WINEDLLPATH="$PE:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/winevulkan:$NATIVE/win32u:$NATIVE/ws2_32"
+export WINEDLLPATH="$PE_ROOT:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/winevulkan:$NATIVE/win32u:$NATIVE/ws2_32"
 export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH:-/var/jb/usr/lib}"
 export JUICE_IOS_SOCKET="$SOCKET"
 # This runner verifies the translator, not prefix initialization.  Keep the

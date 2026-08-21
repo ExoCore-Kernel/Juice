@@ -25,6 +25,9 @@ underlying `proofs/` evidence directories, not in this gallery.
   temporary user-supplied BMP from Juice's persistent data directory. The test
   bitmap was removed from the iPad after capture so it does not become the
   user's wallpaper.
+- `08-chocolate-doom-x86_64.png`: readable live Freedoom gameplay rendered by
+  the unmodified Chocolate Doom 3.1.1 x86-64 binary through ARM64EC/FEX on the
+  iPad, with its title and HUD visible.
 
 See `SHA256SUMS` for integrity hashes and `proofs/verified/` for the complete
 logs and marker files behind each screenshot.

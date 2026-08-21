@@ -1,0 +1,19 @@
+# package|version|Procursus repository filename|sha256
+# Suite 1800, architecture iphoneos-arm64. This is the complete recursive
+# runtime closure declared by libgnutls30, plus the GnuTLS development headers.
+libgnutls30-dev|3.8.5|pool/main/iphoneos-arm64-rootless/1800/gnutls/libgnutls30-dev_3.8.5_iphoneos-arm64.deb|41cee8fb614e93906f5efc5ad157cca7b8d3dda729337e8fc775a99163ffa842
+libgnutls30|3.8.5|pool/main/iphoneos-arm64-rootless/1800/gnutls/libgnutls30_3.8.5_iphoneos-arm64.deb|02fb05b9b34bc3ee933309829b31880de3feef698b4fc90c2425637162df72d3
+libiosexec1|1.3.1|pool/main/iphoneos-arm64-rootless/1800/libiosexec/libiosexec1_1.3.1_iphoneos-arm64.deb|91f1b16dc69121ebca9bef020c91fcca8be6b9c7f9f2652b378530ecb0ea2fa6
+libintl8|0.22|pool/main/iphoneos-arm64-rootless/1800/gettext/libintl8_0.22_iphoneos-arm64.deb|c39d5aa868ee8bbae1c91dbfe85b442f30b182d50df242c2d2851dfb18b82c12
+libgmp10|6.3.0|pool/main/iphoneos-arm64-rootless/1800/libgmp10/libgmp10_6.3.0_iphoneos-arm64.deb|f08e294e37bf43e04dffe465354eff64f287020c4d12a3253809f803fc6e9569
+libidn2-0|2.3.7|pool/main/iphoneos-arm64-rootless/1800/libidn2/libidn2-0_2.3.7_iphoneos-arm64.deb|66ff1b5d714a7278b78d0d13442aeab205827f2b860d2a9abad7d72ace24598e
+libunistring5|1.2|pool/main/iphoneos-arm64-rootless/1800/libunistring/libunistring5_1.2_iphoneos-arm64.deb|d08db049a4338276f46ea36c06209b3459a03641910d6eb7c4877341f089ce70
+libnettle8|3.9.1|pool/main/iphoneos-arm64-rootless/1800/nettle/libnettle8_3.9.1_iphoneos-arm64.deb|306db0091a7284166e8d4f614887f78b8ba7a8c528ec73c1c281a71b5b08ca82
+libhogweed6|3.9.1|pool/main/iphoneos-arm64-rootless/1800/nettle/libhogweed6_3.9.1_iphoneos-arm64.deb|64d60d24d3144683b973e5da92192a0a2a27f83bdadc487c0e7f01e56836a608
+libp11-kit0|0.25.3|pool/main/iphoneos-arm64-rootless/1800/p11-kit/libp11-kit0_0.25.3_iphoneos-arm64.deb|490df5c7ca0ebccfb72df27f0e6a4cfe75b96a971f1f8b4a1efa3641f256ba0f
+libtasn1-6|4.19.0|pool/main/iphoneos-arm64-rootless/1800/libtasn1/libtasn1-6_4.19.0_iphoneos-arm64.deb|6f4f4dd9b44107c5c0869497628be97606a2a76cbbb3c2589e025249c817b9c4
+libzstd1|1.5.5|pool/main/iphoneos-arm64-rootless/1800/zstd/libzstd1_1.5.5_iphoneos-arm64.deb|20ab0f42bc7e8821da704acc46cc2538e0843934526f57423851496dabf6f5ee
+libbrotli1|1.1.0|pool/main/iphoneos-arm64-rootless/1800/brotli/libbrotli1_1.1.0_iphoneos-arm64.deb|f4365ce8d46449811730c6d1a20e7a8c92c449005a12ae3254c9eed3ca21ec09
+libffi8|3.4.6|pool/main/iphoneos-arm64-rootless/1800/libffi/libffi8_3.4.6_iphoneos-arm64.deb|aefed7d6bfcb084bf02c3040e9c9711195a24cc08b96aab777d0a3d3214c8862
+liblz4-1|1.9.4|pool/main/iphoneos-arm64-rootless/1800/lz4/liblz4-1_1.9.4_iphoneos-arm64.deb|b5deeb488a2977e8630aed948d2a27e25ef1dae0f513b6834d873f7654c2cf5e
+liblzma5|5.4.4|pool/main/iphoneos-arm64-rootless/1800/xz/liblzma5_5.4.4_iphoneos-arm64.deb|86aaf3078469abab30b0658ec93b3efbb6a5e5f9aa067bf7c3b31752ad5f17f2

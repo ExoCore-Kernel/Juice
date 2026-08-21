@@ -30,6 +30,7 @@ SERVER="$GRAPE/build/wine-ios/server/wineserver"
 TRACER="$GRAPE/tools/grape-trace-parent"
 SMOKE="$GRAPE/tests/x86_64-smoke.exe"
 PE="$GRAPE/runtime/lib/wine/aarch64-windows"
+PE_ROOT="$GRAPE/runtime/lib/wine"
 NATIVE="$GRAPE/build/wine-ios/dlls"
 MARKER="$PROOF_DIR/current.ok"
 
@@ -49,7 +50,7 @@ export WINEPREFIX="$PREFIX"
 export WINELOADER="$GRAPE/tools/grape-nested-wrapper"
 export WINELOADERNOEXEC=1
 export WINESERVER="$SERVER"
-export WINEDLLPATH="$PE:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/winevulkan:$NATIVE/win32u:$NATIVE/ws2_32"
+export WINEDLLPATH="$PE_ROOT:$NATIVE/crypt32:$NATIVE/wineios.drv:$NATIVE/winevulkan:$NATIVE/win32u:$NATIVE/ws2_32"
 export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH:-/var/jb/usr/lib}"
 export JUICE_SKIP_WINEBOOT=1
 export JUICE_WINESERVER_ROOT="${JUICE_WINESERVER_ROOT:-/var/mobile/Documents/JuiceData/wineserver}"

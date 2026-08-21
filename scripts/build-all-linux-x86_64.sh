@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+source "$ROOT/config/network-build.env"
 OUTPUT="${JUICE_TIPA_OUTPUT:-}"
 TOOLS="${JUICE_WINE_TOOLS_BUILD:-$ROOT/build/wine-tools-linux}"
 WINE_BUILD="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
@@ -139,13 +140,35 @@ PY
   fi
 fi
 
+gnutls_reconfigure=0
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1 && test -f "$WINE_BUILD/Makefile"; then
+  native_config="$WINE_BUILD/include/config.h"
+  if ! grep -Fq "#define SONAME_LIBGNUTLS \"$JUICE_GNUTLS_RUNTIME_NAME\"" "$native_config" 2>/dev/null; then
+    if test "$STATIC_FREETYPE" = 1 && test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
+      echo "Static FreeType preparation failed to migrate the Wine tree to bundled GnuTLS." >&2
+      exit 5
+    fi
+    echo "JUICE_GNUTLS_CONFIG_REPAIR mode=reconfigure reason=missing-soname path=$native_config"
+    gnutls_reconfigure=1
+  else
+    echo "JUICE_GNUTLS_CONFIG_REUSE path=$native_config soname=$JUICE_GNUTLS_RUNTIME_NAME"
+  fi
+fi
+
 if test "$STATIC_FREETYPE" = 1 && test "${JUICE_WITHOUT_FREETYPE:-0}" != 1; then
   test -f "$WINE_BUILD/Makefile" || { echo "Static FreeType preparation did not configure native Wine." >&2; exit 5; }
   echo "JUICE_WINE_CONFIGURE_REUSE path=$WINE_BUILD mode=static-freetype"
-elif test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile" || test "$freetype_reconfigure" = 1; then
+elif test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$WINE_BUILD/Makefile" || \
+     test "$freetype_reconfigure" = 1 || test "$gnutls_reconfigure" = 1; then
   bash "$ROOT/scripts/configure-wine-linux.sh"
 else
   echo "JUICE_WINE_CONFIGURE_REUSE path=$WINE_BUILD"
+fi
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+  grep -Fq "#define SONAME_LIBGNUTLS \"$JUICE_GNUTLS_RUNTIME_NAME\"" "$WINE_BUILD/include/config.h" || {
+    echo "Native Wine build is missing the bundled GnuTLS configuration." >&2
+    exit 5
+  }
 fi
 if test "${JUICE_RECONFIGURE:-0}" = 1 || test ! -f "$PE_BUILD/Makefile"; then
   bash "$ROOT/scripts/configure-wine-pe-linux.sh"
@@ -154,6 +177,7 @@ else
 fi
 
 bash "$ROOT/scripts/build-wine-linux.sh"
+bash "$ROOT/scripts/build-network-smokes-linux.sh"
 
 # Reuse the upstream app/runtime assembly paths; they inherit these cross-build inputs.
 export CC="${JUICE_IOS_CC:-$ROOT/toolchain/juice-ios-cc}"

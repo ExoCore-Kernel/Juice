@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <sys/sysctl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -120,6 +121,43 @@ static inline int juice_lowva_spawn(pid_t *pid, const char *helper, char *const 
     return result;
 }
 
+/*
+ * XNU's normal user maps maintain a separate circular hole list. Lowering
+ * vm_map::min_offset without extending that list leaves the allocator's two
+ * views of free space inconsistent and can panic in vm_map_store_rb.c.
+ *
+ * debug.toggle_address_reuse is CTLFLAG_ANYBODY on Darwin 22. Setting it for
+ * the current process takes vm_map_lock and calls
+ * vm_map_disable_hole_optimization(), switching this map to the entry-list
+ * allocator safely. Clearing it afterwards restores address reuse but, by
+ * design, does not recreate the discarded hole list.
+ */
+static inline int juice_lowva_set_address_reuse_mode(int enabled)
+{
+    static const char name[] = "debug.toggle_address_reuse";
+    int old_value = -1, new_value = enabled ? 1 : 0, verify = -1;
+    size_t old_size = sizeof(old_value), verify_size = sizeof(verify);
+
+    if (sysctlbyname(name, &old_value, &old_size, &new_value, sizeof(new_value)) != 0)
+    {
+        fprintf(stderr,
+                "JUICE_LOWVA_HOLELIST_ERROR stage=set requested=%d errno=%d\n",
+                new_value, errno);
+        return -1;
+    }
+    if (sysctlbyname(name, &verify, &verify_size, NULL, 0) != 0 || verify != new_value)
+    {
+        fprintf(stderr,
+                "JUICE_LOWVA_HOLELIST_ERROR stage=verify requested=%d got=%d errno=%d\n",
+                new_value, verify, errno);
+        return -1;
+    }
+    fprintf(stderr,
+            "JUICE_LOWVA_HOLELIST_OK old_reuse=%d new_reuse=%d allocator=entry-list\n",
+            old_value, verify);
+    return 0;
+}
+
 static inline int juice_lowva_probe(void)
 {
     const uintptr_t address = 0x20000ull;
@@ -151,18 +189,26 @@ static inline int juice_lowva_probe(void)
     return 0;
 }
 
-__attribute__((constructor))
-static void juice_ios_lowva_bootstrap(void)
+static inline void juice_ios_lowva_bootstrap(void)
 {
     char bundled_helper[PATH_MAX];
     const char *helper;
     char pid_text[32];
-    char *argv[3];
+    char *argv[4];
     pid_t helper_pid = -1;
     int needs_root_persona = 0;
     int spawn_status, status = 0;
 
     if (!juice_lowva_enabled()) return;
+
+    /* This must precede the privileged min_offset change. It is the operation
+       that makes lowering the minimum safe for XNU's allocator invariants. */
+    if (juice_lowva_set_address_reuse_mode(1) != 0)
+    {
+        fprintf(stderr,
+                "JUICE_LOWVA_FATAL reason=unable-to-disable-kernel-holelist\n");
+        _exit(78);
+    }
 
     helper = juice_lowva_helper_path(bundled_helper, sizeof(bundled_helper),
                                      &needs_root_persona);
@@ -176,7 +222,8 @@ static void juice_ios_lowva_bootstrap(void)
     snprintf(pid_text, sizeof(pid_text), "%d", getpid());
     argv[0] = (char *)helper;
     argv[1] = pid_text;
-    argv[2] = NULL;
+    argv[2] = (char *)"holes-disabled-v1";
+    argv[3] = NULL;
 
     fprintf(stderr,
             "JUICE_LOWVA_HELPER_BEGIN path=%s target_pid=%d root_persona=%d\n",
@@ -218,6 +265,9 @@ static void juice_ios_lowva_bootstrap(void)
         _exit(78);
     }
 
+    /* Keep disable_vmentry_reuse enabled for this Wine child. Fixed Windows
+       mappings can still occupy the exposed low range, while dyld, malloc,
+       and later native dylibs continue allocating above existing images. */
     setenv("JUICE_LOWVA_READY", "1", 1);
     fprintf(stderr, "JUICE_LOWVA_READY target_pid=%d\n", getpid());
 }

@@ -46,9 +46,11 @@ native_targets=(
   server/wineserver
   dlls/ntdll/ntdll.so
   dlls/crypt32/crypt32.so
+  dlls/secur32/secur32.so
   dlls/opengl32/opengl32.so
   dlls/win32u/win32u.so
   dlls/wineios.drv/wineios.so
+  dlls/winevulkan/winevulkan.so
   dlls/ws2_32/ws2_32.so
 )
 native_data_targets=(

@@ -1,5 +1,5 @@
 diff --git a/.gitattributes b/.gitattributes
-index 1051bd31a7..a38905c27b 100644
+index 1051bd31a7d..a38905c27b6 100644
 --- a/.gitattributes
 +++ b/.gitattributes
 @@ -1,60 +1,58 @@
@@ -110,7 +110,7 @@ index 1051bd31a7..a38905c27b 100644
 +nls/*.nls gitlab-generated linguist-generated=true
 diff --git a/UPSTREAM-JUICE.txt b/UPSTREAM-JUICE.txt
 new file mode 100644
-index 0000000000..c6389d07ab
+index 00000000000..c6389d07ab5
 --- /dev/null
 +++ b/UPSTREAM-JUICE.txt
 @@ -0,0 +1,8 @@
@@ -123,7 +123,7 @@ index 0000000000..c6389d07ab
 +audit patch is ../patches/wine-ios.patch. Wine's own COPYING.LIB and LICENSE
 +files govern this directory.
 diff --git a/configure b/configure
-index 73a4d6a4b6..1c6571c7c9 100755
+index 73a4d6a4b6b..e517b3ec910 100755
 --- a/configure
 +++ b/configure
 @@ -1747,6 +1747,9 @@ enable_icacls
@@ -158,17 +158,18 @@ index 73a4d6a4b6..1c6571c7c9 100755
  wine_fn_config_makefile dlls/winemapi enable_winemapi
  wine_fn_config_makefile dlls/wineoss.drv enable_wineoss_drv
  wine_fn_config_makefile dlls/wineps.drv enable_wineps_drv
-@@ -23318,6 +23329,9 @@ wine_fn_config_makefile programs/icacls enable_icacls
+@@ -23318,6 +23329,10 @@ wine_fn_config_makefile programs/icacls enable_icacls
  wine_fn_config_makefile programs/icinfo enable_icinfo
  wine_fn_config_makefile programs/iexplore enable_iexplore
  wine_fn_config_makefile programs/ipconfig enable_ipconfig
 +wine_fn_config_makefile programs/juicegui enable_juicegui
++wine_fn_config_makefile programs/juiceinputsmoke enable_juiceinputsmoke
 +wine_fn_config_makefile programs/juicesetupsmoke enable_juicesetupsmoke
 +wine_fn_config_makefile programs/juicetextsmoke enable_juicetextsmoke
  wine_fn_config_makefile programs/klist enable_klist
  wine_fn_config_makefile programs/lodctr enable_lodctr
  wine_fn_config_makefile programs/makecab enable_makecab
-@@ -23439,7 +23453,9 @@ ac_config_commands="$ac_config_commands Makefile"
+@@ -23439,7 +23454,9 @@ ac_config_commands="$ac_config_commands Makefile"
  
  
  
@@ -179,14 +180,14 @@ index 73a4d6a4b6..1c6571c7c9 100755
  
  
  
-@@ -24883,5 +24899,3 @@ IFS="$ac_save_IFS"
+@@ -24883,5 +24900,3 @@ IFS="$ac_save_IFS"
  printf '%s\n' "
  $as_me: Finished.  Do '${MAKE-make}' to compile Wine.
  " >&6
 -
 -
 diff --git a/configure.ac b/configure.ac
-index ee0b1c483d..b25b178b6a 100644
+index ee0b1c483d4..e2ea9f4beee 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -990,6 +990,15 @@ case $host_os in
@@ -213,17 +214,18 @@ index ee0b1c483d..b25b178b6a 100644
  WINE_CONFIG_MAKEFILE(dlls/winemapi)
  WINE_CONFIG_MAKEFILE(dlls/wineoss.drv)
  WINE_CONFIG_MAKEFILE(dlls/wineps.drv)
-@@ -3611,6 +3621,9 @@ WINE_CONFIG_MAKEFILE(programs/icacls)
+@@ -3611,6 +3621,10 @@ WINE_CONFIG_MAKEFILE(programs/icacls)
  WINE_CONFIG_MAKEFILE(programs/icinfo)
  WINE_CONFIG_MAKEFILE(programs/iexplore)
  WINE_CONFIG_MAKEFILE(programs/ipconfig)
 +WINE_CONFIG_MAKEFILE(programs/juicegui)
++WINE_CONFIG_MAKEFILE(programs/juiceinputsmoke)
 +WINE_CONFIG_MAKEFILE(programs/juicesetupsmoke)
 +WINE_CONFIG_MAKEFILE(programs/juicetextsmoke)
  WINE_CONFIG_MAKEFILE(programs/klist)
  WINE_CONFIG_MAKEFILE(programs/lodctr)
  WINE_CONFIG_MAKEFILE(programs/makecab)
-@@ -3761,7 +3774,10 @@ _WINE_EOF
+@@ -3761,7 +3775,10 @@ _WINE_EOF
  
  dnl Main makefile
  
@@ -236,7 +238,7 @@ index ee0b1c483d..b25b178b6a 100644
  dnl Rules for re-running configure
  
 diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
-index 8a3755f4bd..64ec01e485 100644
+index 8a3755f4bde..64ec01e4851 100644
 --- a/dlls/crypt32/unixlib.c
 +++ b/dlls/crypt32/unixlib.c
 @@ -30,6 +30,7 @@
@@ -266,7 +268,7 @@ index 8a3755f4bd..64ec01e485 100644
          kSecTrustSettingsDomainSystem,
          kSecTrustSettingsDomainAdmin,
 diff --git a/dlls/kernel32/process.c b/dlls/kernel32/process.c
-index 98313f4634..4496f09000 100644
+index 98313f4634c..4496f090009 100644
 --- a/dlls/kernel32/process.c
 +++ b/dlls/kernel32/process.c
 @@ -39,7 +39,7 @@
@@ -279,7 +281,7 @@ index 98313f4634..4496f09000 100644
  typedef struct
  {
 diff --git a/dlls/kernel32/sync.c b/dlls/kernel32/sync.c
-index 5b2a8489a0..0939959e97 100644
+index 5b2a8489a01..0939959e979 100644
 --- a/dlls/kernel32/sync.c
 +++ b/dlls/kernel32/sync.c
 @@ -42,7 +42,7 @@
@@ -292,7 +294,7 @@ index 5b2a8489a0..0939959e97 100644
  
  static void get_create_object_attributes( OBJECT_ATTRIBUTES *attr, UNICODE_STRING *nameW,
 diff --git a/dlls/kernelbase/sync.c b/dlls/kernelbase/sync.c
-index 94036acfad..d588594a1e 100644
+index 94036acfad4..d588594a1eb 100644
 --- a/dlls/kernelbase/sync.c
 +++ b/dlls/kernelbase/sync.c
 @@ -39,7 +39,7 @@
@@ -305,7 +307,7 @@ index 94036acfad..d588594a1e 100644
  /* check if current version is NT or Win95 */
  static inline BOOL is_version_nt(void)
 diff --git a/dlls/mountmgr.sys/cred.c b/dlls/mountmgr.sys/cred.c
-index 791e9704f3..b488319b9a 100644
+index 791e9704f3c..b488319b9af 100644
 --- a/dlls/mountmgr.sys/cred.c
 +++ b/dlls/mountmgr.sys/cred.c
 @@ -28,6 +28,10 @@
@@ -344,7 +346,7 @@ index 791e9704f3..b488319b9a 100644
 -#endif /* __APPLE__ */
 +#endif /* macOS credential APIs */
 diff --git a/dlls/mountmgr.sys/diskarb.c b/dlls/mountmgr.sys/diskarb.c
-index 8c81d679b8..9a6bc3900b 100644
+index 8c81d679b84..9a6bc3900bf 100644
 --- a/dlls/mountmgr.sys/diskarb.c
 +++ b/dlls/mountmgr.sys/diskarb.c
 @@ -32,6 +32,9 @@
@@ -387,7 +389,7 @@ index 8c81d679b8..9a6bc3900b 100644
  static UInt8 map_option( unsigned int option )
  {
 diff --git a/dlls/ntdll/loader.c b/dlls/ntdll/loader.c
-index 443b984117..e85bcc58d3 100644
+index 443b9841170..e85bcc58d34 100644
 --- a/dlls/ntdll/loader.c
 +++ b/dlls/ntdll/loader.c
 @@ -2172,6 +2172,21 @@ static void update_load_config( void *module )
@@ -582,7 +584,7 @@ index 443b984117..e85bcc58d3 100644
  /***********************************************************************
   *           RtlImageDirectoryEntryToData   (NTDLL.@)
 diff --git a/dlls/ntdll/ntdll.spec b/dlls/ntdll/ntdll.spec
-index 0b6d9b2cbf..d8810b66f0 100644
+index 0b6d9b2cbf4..d8810b66f03 100644
 --- a/dlls/ntdll/ntdll.spec
 +++ b/dlls/ntdll/ntdll.spec
 @@ -470,6 +470,7 @@
@@ -602,7 +604,7 @@ index 0b6d9b2cbf..d8810b66f0 100644
  @ stdcall RtlWriteRegistryValue(long ptr wstr long ptr long)
  @ stub RtlZeroHeap
 diff --git a/dlls/ntdll/ntdll_misc.h b/dlls/ntdll/ntdll_misc.h
-index 1ac221bf15..88fbe13cd3 100644
+index 1ac221bf156..88fbe13cd30 100644
 --- a/dlls/ntdll/ntdll_misc.h
 +++ b/dlls/ntdll/ntdll_misc.h
 @@ -74,6 +74,7 @@ extern void WINAPI KiUserApcDispatcher(CONTEXT*,ULONG_PTR,ULONG_PTR,ULONG_PTR,PN
@@ -614,7 +616,7 @@ index 1ac221bf15..88fbe13cd3 100644
  /* debug helpers */
  extern LPCSTR debugstr_us( const UNICODE_STRING *str );
 diff --git a/dlls/ntdll/ntsyscalls.h b/dlls/ntdll/ntsyscalls.h
-index 05b121f258..611fe4c663 100644
+index 05b121f2580..611fe4c663a 100644
 --- a/dlls/ntdll/ntsyscalls.h
 +++ b/dlls/ntdll/ntsyscalls.h
 @@ -265,12 +265,13 @@
@@ -648,7 +650,7 @@ index 05b121f258..611fe4c663 100644
  #define ALL_SYSCALLS ALL_SYSCALLS32
  #endif
 diff --git a/dlls/ntdll/signal_arm64.c b/dlls/ntdll/signal_arm64.c
-index e560718c77..0403c5e2e6 100644
+index e560718c770..0403c5e2e68 100644
 --- a/dlls/ntdll/signal_arm64.c
 +++ b/dlls/ntdll/signal_arm64.c
 @@ -673,6 +673,73 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
@@ -755,7 +757,7 @@ index e560718c77..0403c5e2e6 100644
  /***********************************************************************
   *           process_breakpoint
 diff --git a/dlls/ntdll/signal_arm64ec.c b/dlls/ntdll/signal_arm64ec.c
-index 140775d1a7..34309bbaf4 100644
+index 140775d1a72..34309bbaf49 100644
 --- a/dlls/ntdll/signal_arm64ec.c
 +++ b/dlls/ntdll/signal_arm64ec.c
 @@ -194,6 +194,9 @@ NTSTATUS arm64ec_process_init( HMODULE module )
@@ -813,7 +815,7 @@ index 140775d1a7..34309bbaf4 100644
  /*************************************************************************
   *		RtlWalkFrameChain (NTDLL.@)
 diff --git a/dlls/ntdll/signal_x86_64.c b/dlls/ntdll/signal_x86_64.c
-index b94e4a23a9..5bb14b3ac2 100644
+index b94e4a23a99..5bb14b3ac24 100644
 --- a/dlls/ntdll/signal_x86_64.c
 +++ b/dlls/ntdll/signal_x86_64.c
 @@ -866,6 +866,13 @@ BOOLEAN WINAPI RtlIsProcessorFeaturePresent( UINT feature )
@@ -831,7 +833,7 @@ index b94e4a23a9..5bb14b3ac2 100644
  /*************************************************************************
   *		RtlWalkFrameChain (NTDLL.@)
 diff --git a/dlls/ntdll/thread.c b/dlls/ntdll/thread.c
-index fe083befbc..4785565c05 100644
+index fe083befbca..4785565c055 100644
 --- a/dlls/ntdll/thread.c
 +++ b/dlls/ntdll/thread.c
 @@ -35,7 +35,7 @@ WINE_DECLARE_DEBUG_CHANNEL(relay);
@@ -844,7 +846,7 @@ index fe083befbc..4785565c05 100644
  struct debug_info
  {
 diff --git a/dlls/ntdll/unix/cdrom.c b/dlls/ntdll/unix/cdrom.c
-index 2ed5b5dc68..c5fab6d687 100644
+index 2ed5b5dc680..c5fab6d6870 100644
 --- a/dlls/ntdll/unix/cdrom.c
 +++ b/dlls/ntdll/unix/cdrom.c
 @@ -27,6 +27,17 @@
@@ -1064,7 +1066,7 @@ index 2ed5b5dc68..c5fab6d687 100644
          char name[100];
  
 diff --git a/dlls/ntdll/unix/env.c b/dlls/ntdll/unix/env.c
-index 460888b95d..39e5137510 100644
+index 460888b95df..39e51375106 100644
 --- a/dlls/ntdll/unix/env.c
 +++ b/dlls/ntdll/unix/env.c
 @@ -1538,6 +1538,17 @@ static WCHAR *build_command_line( WCHAR **wargv )
@@ -1114,7 +1116,7 @@ index 460888b95d..39e5137510 100644
  }
  
 diff --git a/dlls/ntdll/unix/file.c b/dlls/ntdll/unix/file.c
-index b641e4ca33..a81f04fc67 100644
+index b641e4ca336..a81f04fc672 100644
 --- a/dlls/ntdll/unix/file.c
 +++ b/dlls/ntdll/unix/file.c
 @@ -26,6 +26,16 @@
@@ -1179,7 +1181,7 @@ index b641e4ca33..a81f04fc67 100644
  #endif
                      break;
 diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
-index c1321ce679..ebaf4007eb 100644
+index c1321ce679d..ebaf4007eb5 100644
 --- a/dlls/ntdll/unix/loader.c
 +++ b/dlls/ntdll/unix/loader.c
 @@ -382,6 +382,7 @@ static void set_config_dir(void)
@@ -1430,7 +1432,7 @@ index c1321ce679..ebaf4007eb 100644
      /* We use this run loop source for two purposes.  First, a run loop exits
       * if it has no more sources scheduled.  So, we need at least one source
 diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
-index 730a0cd9a9..a18dfe6815 100644
+index 730a0cd9a94..1e9a673e6d9 100644
 --- a/dlls/ntdll/unix/server.c
 +++ b/dlls/ntdll/unix/server.c
 @@ -24,6 +24,17 @@
@@ -1451,7 +1453,30 @@ index 730a0cd9a9..a18dfe6815 100644
  #include <assert.h>
  #include <ctype.h>
  #include <errno.h>
-@@ -1469,9 +1480,16 @@ static int server_connect(void)
+@@ -1303,13 +1314,20 @@ int server_pipe( int fd[2] )
+  */
+ static const char *init_server_dir( dev_t dev, ino_t ino )
+ {
++    const char *server_root = getenv( "JUICE_WINESERVER_ROOT" );
+     char *dir = NULL;
+ 
++    if (server_root && server_root[0] == '/')
++        asprintf( &dir, "%s/.wine-%u/server-%llx-%llx", server_root, getuid(),
++                  (unsigned long long)dev, (unsigned long long)ino );
++    else
++    {
+ #ifdef __ANDROID__  /* there's no /tmp dir on Android */
+-    asprintf( &dir, "%s/.wineserver/server-%llx-%llx", config_dir, (unsigned long long)dev, (unsigned long long)ino );
++        asprintf( &dir, "%s/.wineserver/server-%llx-%llx", config_dir, (unsigned long long)dev, (unsigned long long)ino );
+ #else
+-    asprintf( &dir, "/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
++        asprintf( &dir, "/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
+ #endif
++    }
+     return dir;
+ }
+ 
+@@ -1469,9 +1487,16 @@ static int server_connect(void)
  }
  
  
@@ -1468,7 +1493,7 @@ index 730a0cd9a9..a18dfe6815 100644
  #include <servers/bootstrap.h>
  
  /* send our task port to the server */
-@@ -1516,7 +1534,7 @@ static void send_server_task_port(void)
+@@ -1516,7 +1541,7 @@ static void send_server_task_port(void)
  
      mach_port_deallocate(mach_task_self(), wineserver_port);
  }
@@ -1477,7 +1502,7 @@ index 730a0cd9a9..a18dfe6815 100644
  
  
  /***********************************************************************
-@@ -1744,6 +1762,13 @@ size_t server_init_process(void)
+@@ -1744,6 +1769,13 @@ size_t server_init_process(void)
  void server_init_process_done(void)
  {
      unsigned int status;
@@ -1491,7 +1516,7 @@ index 730a0cd9a9..a18dfe6815 100644
      FILE_FS_DEVICE_INFORMATION info;
      struct thread_data *data = get_thread_data();
      TEB64 *teb64 = get_teb64( data->teb );
-@@ -1752,16 +1777,45 @@ void server_init_process_done(void)
+@@ -1752,16 +1784,45 @@ void server_init_process_done(void)
          chdir( "/" );
      close( initial_cwd );
  
@@ -1539,7 +1564,7 @@ index 730a0cd9a9..a18dfe6815 100644
      /* Signal the parent process to continue */
      SERVER_START_REQ( init_process_done )
      {
-@@ -1772,8 +1826,41 @@ void server_init_process_done(void)
+@@ -1772,8 +1833,41 @@ void server_init_process_done(void)
      }
      SERVER_END_REQ;
  
@@ -1583,7 +1608,7 @@ index 730a0cd9a9..a18dfe6815 100644
  
  
 diff --git a/dlls/ntdll/unix/signal_arm64.c b/dlls/ntdll/unix/signal_arm64.c
-index 522ade368f..3ef3172798 100644
+index 522ade368f0..77c95182296 100644
 --- a/dlls/ntdll/unix/signal_arm64.c
 +++ b/dlls/ntdll/unix/signal_arm64.c
 @@ -367,6 +367,19 @@ NTSTATUS signal_set_full_context( CONTEXT *context )
@@ -1606,7 +1631,7 @@ index 522ade368f..3ef3172798 100644
      if (is_arm64ec() && !is_ec_code( frame->pc ))
      {
          CONTEXT *user_context = (CONTEXT *)((frame->sp - sizeof(CONTEXT)) & ~15);
-@@ -1100,6 +1113,23 @@ static BOOL handle_syscall_fault( struct thread_data *data, ucontext_t *context,
+@@ -1100,6 +1113,36 @@ static BOOL handle_syscall_fault( struct thread_data *data, ucontext_t *context,
  }
  
  
@@ -1617,6 +1642,18 @@ index 522ade368f..3ef3172798 100644
 +static volatile sig_atomic_t juice_tls_recovery_count;
 +static volatile sig_atomic_t juice_trampoline_recovery_count;
 +static volatile sig_atomic_t juice_derived_teb_recovery_count;
++static volatile sig_atomic_t juice_multibase_teb_recovery_count;
++static volatile sig_atomic_t juice_static_unicode_teb_recovery_count;
++static volatile sig_atomic_t juice_static_unicode_buffer_recovery_count;
++static volatile sig_atomic_t juice_static_unicode_sort_recovery_count;
++static volatile sig_atomic_t juice_debug_buffer_recovery_count;
++
++enum
++{
++    JUICE_DEBUG_INFO_OFFSET = 0x2000 + sizeof(TEB32),
++    JUICE_DEBUG_INFO_SIZE = 0x800,
++    JUICE_DEBUG_OUTPUT_OFFSET = 0x404
++};
 +
 +__ASM_GLOBAL_FUNC( juice_ios_restore_x18_and_retry,
 +                   "mov x18, x17\n\t"
@@ -1626,14 +1663,17 @@ index 522ade368f..3ef3172798 100644
 +                   "1:\tbr x16" )
 +#endif
 +
++static volatile sig_atomic_t juice_segv_count;
 +
  /**********************************************************************
   *		segv_handler
   *
-@@ -1113,6 +1143,347 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
+@@ -1112,6 +1155,620 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
+     CONTEXT context;
      EXCEPTION_RECORD rec = { .ExceptionAddress = (void *)PC_sig(sigcontext) };
      DWORD64 esr = get_fault_esr( sigcontext );
- 
++    sig_atomic_t juice_number;
++
 +#ifdef __APPLE__
 +    /*
 +     * A nested fault can occur at the trampoline's TEB load if Darwin
@@ -1702,7 +1742,193 @@ index 522ade368f..3ef3172798 100644
 +            return;
 +        }
 +    }
-+    if ((ULONG_PTR)siginfo->si_addr == 0 && data->teb &&
++
++    /*
++     * Some ARM64EC ntdll callers pass &NtCurrentTeb()->StaticUnicodeString
++     * across a normal function call.  If physical x18 was clear when that
++     * address was formed, RtlAnsiStringToUnicodeString() receives the bare
++     * field offset (0x1258 on Win64).  The later STRH is outside the producer
++     * basic block, so the generic derived-register recovery below cannot
++     * prove its origin.
++     *
++     * Match the exact RtlAnsiStringToUnicodeString instruction sequence and
++     * documented TEB member instead of treating arbitrary small pointers as
++     * TEB-relative.  This keeps unrelated null-object faults on the normal
++     * exception path while allowing fresh-prefix wineboot to initialize.
++     */
++    if (data->teb &&
++        (ULONG_PTR)siginfo->si_addr == FIELD_OFFSET( TEB, StaticUnicodeString ) &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
++        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8 &&
++        *(const ULONG *)(PC_sig(sigcontext) - 8) == 0x51000848 &&
++        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0x72001edf &&
++        *(const ULONG *)PC_sig(sigcontext) == 0x79000268 &&
++        REGn_sig(19, sigcontext) == FIELD_OFFSET( TEB, StaticUnicodeString ))
++    {
++        sig_atomic_t number = ++juice_static_unicode_teb_recovery_count;
++
++        REGn_sig(19, sigcontext) = (ULONG_PTR)data->teb +
++                                   FIELD_OFFSET( TEB, StaticUnicodeString );
++        if (number <= 32)
++        {
++            fprintf( stderr,
++                     "[JuiceX18] static-unicode #%d pc=%p fault=%p "
++                     "fixed_x19=%p teb=%p\n",
++                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
++                     siginfo->si_addr,
++                     (void *)(ULONG_PTR)REGn_sig(19, sigcontext), data->teb );
++            fflush( stderr );
++        }
++        return;
++    }
++
++    /*
++     * Kernelbase's multibyte conversion helpers likewise receive
++     * NtCurrentTeb()->StaticUnicodeBuffer as an ordinary destination
++     * argument.  If Darwin cleared physical x18 while the caller formed the
++     * argument, the callee preserves a bare offset within that 261-character
++     * TEB array in x21 and faults much later, after the producing basic block
++     * and call boundary are no longer available to the generic recovery
++     * below.
++     *
++     * Restrict recovery to the documented TEB buffer, the exact unrolled
++     * SBCS conversion sequence, and its preserved destination register.
++     * This is a runtime-wide ARM64 fix and leaves unrelated small-pointer
++     * application faults on Wine's normal exception path.
++     */
++    if (data->teb &&
++        (ULONG_PTR)siginfo->si_addr >= FIELD_OFFSET( TEB, StaticUnicodeBuffer ) &&
++        (ULONG_PTR)siginfo->si_addr < FIELD_OFFSET( TEB, StaticUnicodeBuffer ) +
++                                           sizeof(((TEB *)0)->StaticUnicodeBuffer) &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
++        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8 &&
++        *(const ULONG *)(PC_sig(sigcontext) - 8) == 0x71007e7f &&
++        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0x78697909 &&
++        *(const ULONG *)PC_sig(sigcontext) == 0x790002a9 &&
++        REGn_sig(21, sigcontext) == (ULONG_PTR)siginfo->si_addr)
++    {
++        sig_atomic_t number = ++juice_static_unicode_buffer_recovery_count;
++
++        REGn_sig(21, sigcontext) += (ULONG_PTR)data->teb;
++        if (number <= 32)
++        {
++            fprintf( stderr,
++                     "[JuiceX18] static-unicode-buffer #%d pc=%p fault=%p "
++                     "fixed_x21=%p teb=%p\n",
++                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
++                     siginfo->si_addr,
++                     (void *)(ULONG_PTR)REGn_sig(21, sigcontext), data->teb );
++            fflush( stderr );
++        }
++        return;
++    }
++
++    /*
++     * CompareStringA() divides StaticUnicodeBuffer into two conversion
++     * buffers, then passes either bare TEB-relative pointer across the
++     * conversion call into the locale sorting code.  Repairing mbstowcs_sbcs'
++     * private destination above cannot update the pointer retained by its
++     * caller, so append_weights() can later fault while reading src[pos].
++     *
++     * Match append_weights' exact src + pos setup and first LDRH, and require
++     * both the source argument and effective address to remain inside the
++     * documented TEB array.  This covers all ANSI comparisons which reuse the
++     * per-thread buffer without accepting arbitrary low application pointers.
++     */
++    if (data->teb &&
++        (ULONG_PTR)siginfo->si_addr >= FIELD_OFFSET( TEB, StaticUnicodeBuffer ) &&
++        (ULONG_PTR)siginfo->si_addr < FIELD_OFFSET( TEB, StaticUnicodeBuffer ) +
++                                           sizeof(((TEB *)0)->StaticUnicodeBuffer) &&
++        REGn_sig(2, sigcontext) >= FIELD_OFFSET( TEB, StaticUnicodeBuffer ) &&
++        REGn_sig(2, sigcontext) < FIELD_OFFSET( TEB, StaticUnicodeBuffer ) +
++                                      sizeof(((TEB *)0)->StaticUnicodeBuffer) &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
++        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 0x18 &&
++        *(const ULONG *)(PC_sig(sigcontext) - 0x18) == 0x8b24c459 &&
++        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0xb9004be6 &&
++        *(const ULONG *)PC_sig(sigcontext) == 0x79400328 &&
++        REGn_sig(25, sigcontext) == (ULONG_PTR)siginfo->si_addr)
++    {
++        sig_atomic_t number = ++juice_static_unicode_sort_recovery_count;
++
++        REGn_sig(2, sigcontext) += (ULONG_PTR)data->teb;
++        REGn_sig(25, sigcontext) += (ULONG_PTR)data->teb;
++        if (number <= 32)
++        {
++            fprintf( stderr,
++                     "[JuiceX18] static-unicode-sort #%d pc=%p fault=%p "
++                     "fixed_x2=%p fixed_x25=%p teb=%p\n",
++                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
++                     siginfo->si_addr,
++                     (void *)(ULONG_PTR)REGn_sig(2, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(25, sigcontext), data->teb );
++            fflush( stderr );
++        }
++        return;
++    }
++
++    /*
++     * Win64 ntdll stores each thread's debug formatting state immediately
++     * after the shadow TEB32 at TEB + 0x2000.  If Darwin clears physical x18
++     * while get_info() forms that address, append_output() eventually calls
++     * memcpy() with a destination such as the bare output offset 0x3404.
++     * The TEB-relative origin is no longer visible by the time memcpy faults.
++     *
++     * Recover only Wine's fixed 0x800-byte debug-info allocation and the
++     * exact forward byte-copy loop used by this ntdll build.  Repair both the
++     * live destination and memcpy's return value when it has the same proven
++     * TEB-relative origin.  Ordinary small application pointers continue to
++     * Wine's normal exception path.
++     */
++    if (data->teb &&
++        (ULONG_PTR)siginfo->si_addr >= JUICE_DEBUG_INFO_OFFSET &&
++        (ULONG_PTR)siginfo->si_addr < JUICE_DEBUG_INFO_OFFSET + JUICE_DEBUG_INFO_SIZE &&
++        (ULONG_PTR)siginfo->si_addr >=
++            JUICE_DEBUG_INFO_OFFSET + JUICE_DEBUG_OUTPUT_OFFSET &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
++        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 8 &&
++        *(const ULONG *)(PC_sig(sigcontext) - 8) == 0x3840150b &&
++        *(const ULONG *)(PC_sig(sigcontext) - 4) == 0xf100054a &&
++        *(const ULONG *)PC_sig(sigcontext) == 0x3800152b &&
++        REGn_sig(9, sigcontext) == (ULONG_PTR)siginfo->si_addr)
++    {
++        ULONG_PTR original_x0 = REGn_sig(0, sigcontext);
++        sig_atomic_t number = ++juice_debug_buffer_recovery_count;
++
++        REGn_sig(9, sigcontext) += (ULONG_PTR)data->teb;
++        if (original_x0 >= JUICE_DEBUG_INFO_OFFSET &&
++            original_x0 < JUICE_DEBUG_INFO_OFFSET + JUICE_DEBUG_INFO_SIZE)
++            REGn_sig(0, sigcontext) += (ULONG_PTR)data->teb;
++        if (number <= 32)
++        {
++            fprintf( stderr,
++                     "[JuiceX18] debug-buffer #%d pc=%p fault=%p "
++                     "fixed_x9=%p fixed_x0=%p teb=%p\n",
++                     (int)number, (void *)(ULONG_PTR)PC_sig(sigcontext),
++                     siginfo->si_addr,
++                     (void *)(ULONG_PTR)REGn_sig(9, sigcontext),
++                     (void *)(ULONG_PTR)REGn_sig(0, sigcontext), data->teb );
++            fflush( stderr );
++        }
++        return;
++    }
++
++    /*
++     * A single ARM64EC basic block can copy x18 into more than one temporary
++     * before dereferencing either one.  If Darwin cleared physical x18, the
++     * first low-address fault may repair a different derived register while
++     * a later load/store still uses a zero temporary.  Match the exact
++     * ``mov x<base>, x18`` which produced that zero base and replay from it
++     * through the x18 trampoline.  The load/store and 16-KiB bounds keep
++     * ordinary application null dereferences on the normal exception path.
++     */
++    if (data->teb && (ULONG_PTR)siginfo->si_addr < 0x4000 &&
++        (ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW ||
++         ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_CUR) &&
 +        !(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 0x20)
 +    {
 +        ULONG_PTR retry;
@@ -1714,20 +1940,38 @@ index 522ade368f..3ef3172798 100644
 +         * register a few instructions before dereferencing it. Darwin can
 +         * clear x18 across the native setjmp helper used by Wine builtins.
 +         */
-+        for (retry = PC_sig(sigcontext) - 4;
-+             retry >= PC_sig(sigcontext) - 0x20;
-+             retry -= 4)
++        if ((fault_instruction & 0x0a000000) == 0x08000000 &&
++            base_register <= 28 && !REGn_sig(base_register, sigcontext))
 +        {
-+            ULONG instruction = *(const ULONG *)retry;
-+
-+            if ((instruction & 0xffffffe0) == 0xaa1203e0 &&
-+                (instruction & 0x1f) == base_register)
++            for (retry = PC_sig(sigcontext) - 4;
++                 retry >= PC_sig(sigcontext) - 0x20;
++                 retry -= 4)
 +            {
-+                REGn_sig(16, sigcontext) = retry;
-+                REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
-+                PC_sig(sigcontext) =
-+                    (ULONG_PTR)juice_ios_restore_x18_and_retry;
-+                return;
++                ULONG instruction = *(const ULONG *)retry;
++
++                if ((instruction & 0xffffffe0) == 0xaa1203e0 &&
++                    (instruction & 0x1f) == base_register)
++                {
++                    sig_atomic_t number =
++                        ++juice_multibase_teb_recovery_count;
++
++                    if (number <= 32)
++                    {
++                        fprintf( stderr,
++                                 "[JuiceX18] multibase #%d pc=%p fault=%p "
++                                 "instr=%08x base=x%u replay=%p teb=%p\n",
++                                 (int)number,
++                                 (void *)(ULONG_PTR)PC_sig(sigcontext),
++                                 siginfo->si_addr, fault_instruction,
++                                 base_register, (void *)retry, data->teb );
++                        fflush( stderr );
++                    }
++                    REGn_sig(16, sigcontext) = retry;
++                    REGn_sig(17, sigcontext) = (ULONG_PTR)data->teb;
++                    PC_sig(sigcontext) =
++                        (ULONG_PTR)juice_ios_restore_x18_and_retry;
++                    return;
++                }
 +            }
 +        }
 +    }
@@ -1820,8 +2064,42 @@ index 522ade368f..3ef3172798 100644
 +        {
 +            ULONG_PTR base = REGn_sig(base_register, sigcontext);
 +            ULONG_PTR fault = (ULONG_PTR)siginfo->si_addr;
++            ULONG_PTR scan;
++            BOOL derived_from_x18 = FALSE;
 +
-+            if (fault >= base && fault - base < 0x1000)
++            /*
++             * A small base is not by itself evidence of a lost x18: a null
++             * object plus a field offset has exactly the same shape.  Only
++             * repair it when this basic block actually materialised that
++             * base from x18.  This keeps allocator failures and ordinary
++             * application null dereferences on the normal exception path.
++             */
++            if (PC_sig(sigcontext) >= 0x20)
++            {
++                for (scan = PC_sig(sigcontext) - 4;
++                     scan >= PC_sig(sigcontext) - 0x20;
++                     scan -= 4)
++                {
++                    ULONG producer = *(const ULONG *)scan;
++
++                    /* mov x<base>, x18 (ORR alias). */
++                    if ((producer & 0xffffffe0) == 0xaa1203e0 &&
++                        (producer & 0x1f) == base_register)
++                    {
++                        derived_from_x18 = TRUE;
++                        break;
++                    }
++                    /* add x<base>, x18, #imm{, lsl #12}. */
++                    if ((producer & 0xff0003e0) == 0x91000240 &&
++                        (producer & 0x1f) == base_register)
++                    {
++                        derived_from_x18 = TRUE;
++                        break;
++                    }
++                }
++            }
++
++            if (derived_from_x18 && fault >= base && fault - base < 0x1000)
 +            {
 +                sig_atomic_t number = ++juice_derived_teb_recovery_count;
 +
@@ -1939,15 +2217,14 @@ index 522ade368f..3ef3172798 100644
 +        return;
 +    }
 +#endif
-+    static volatile sig_atomic_t juice_segv_count;
-+    sig_atomic_t juice_number = ++juice_segv_count;
++    juice_number = ++juice_segv_count;
 +
 +    if (juice_number <= 16)
 +    {
 +        fprintf(
 +            stderr,
 +            "[JuiceStage] native segv #%d; "
-+            "signal=%d code=%d pc=%p lr=%p "
++            "signal=%d code=%d pc=%p instruction=%08x lr=%p "
 +            "sp=%p x8=%p x16=%p x17=%p x18=%p "
 +            "addr=%p esr=%016llx ec=%02llx "
 +            "teb=%p frame=%p\n",
@@ -1955,6 +2232,7 @@ index 522ade368f..3ef3172798 100644
 +            signal,
 +            siginfo->si_code,
 +            (void *)(ULONG_PTR)PC_sig(sigcontext),
++            !(PC_sig(sigcontext) & 3) ? *(const ULONG *)PC_sig(sigcontext) : 0,
 +            (void *)(ULONG_PTR)LR_sig(sigcontext),
 +            (void *)(ULONG_PTR)SP_sig(sigcontext),
 +            (void *)(ULONG_PTR)
@@ -1972,13 +2250,46 @@ index 522ade368f..3ef3172798 100644
 +            data->teb,
 +            get_syscall_frame( data )
 +        );
++        fprintf(
++            stderr,
++            "[JuiceStage] native regs x0=%p x1=%p x2=%p x3=%p "
++            "x4=%p x5=%p x6=%p x7=%p x9=%p x10=%p x11=%p "
++            "x12=%p x13=%p x14=%p x15=%p\n",
++            (void *)(ULONG_PTR)REGn_sig(0, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(1, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(2, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(3, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(4, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(5, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(6, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(7, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(9, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(10, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(11, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(12, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(13, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(14, sigcontext),
++            (void *)(ULONG_PTR)REGn_sig(15, sigcontext)
++        );
++        if (!(PC_sig(sigcontext) & 3) && PC_sig(sigcontext) >= 0x20)
++        {
++            const ULONG *pc = (const ULONG *)PC_sig(sigcontext);
++
++            fprintf(
++                stderr,
++                "[JuiceStage] native code -20=%08x -1c=%08x -18=%08x "
++                "-14=%08x -10=%08x -0c=%08x -08=%08x -04=%08x "
++                "+00=%08x +04=%08x +08=%08x +0c=%08x\n",
++                pc[-8], pc[-7], pc[-6], pc[-5], pc[-4], pc[-3],
++                pc[-2], pc[-1], pc[0], pc[1], pc[2], pc[3]
++            );
++        }
 +        fflush( stderr );
 +    }
-+
+ 
      switch (ESR_ELx_EC(esr))
      {
-     case ESR_ELx_EC_IABT_LOW:
-@@ -1163,6 +1534,21 @@ static void ill_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
+@@ -1163,6 +1820,21 @@ static void ill_handler( int signal, siginfo_t *siginfo, void *_sigcontext )
      EXCEPTION_RECORD rec = { .ExceptionCode = EXCEPTION_ILLEGAL_INSTRUCTION,
                               .ExceptionAddress = (void *)PC_sig(sigcontext) };
  
@@ -2000,12 +2311,14 @@ index 522ade368f..3ef3172798 100644
      if (!(PSTATE_sig( sigcontext ) & 0x10) && /* AArch64 (not WoW) */
          !(PC_sig( sigcontext ) & 3))
      {
-@@ -1526,6 +1912,22 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
+@@ -1526,9 +2198,24 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
      struct thread_data *data = get_thread_data();
      struct syscall_frame *frame = get_syscall_frame( data );
      CONTEXT *ctx, context = { CONTEXT_ALL };
 +    NTSTATUS juice_context_status;
-+
+     I386_CONTEXT *i386_context;
+     ARM_CONTEXT *arm_context;
+ 
 +    fprintf(
 +        stderr,
 +        "[JuiceStage] init_syscall_frame entered; "
@@ -2020,10 +2333,10 @@ index 522ade368f..3ef3172798 100644
 +        teb->Tib.StackLimit
 +    );
 +    fflush( stderr );
-     I386_CONTEXT *i386_context;
-     ARM_CONTEXT *arm_context;
- 
-@@ -1570,18 +1972,82 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
+     context.X0  = (DWORD64)entry;
+     context.X1  = (DWORD64)arg;
+     context.X18 = (DWORD64)teb;
+@@ -1570,18 +2257,82 @@ void init_syscall_frame( LPTHREAD_START_ROUTINE entry, void *arg, TEB *teb )
          wait_suspend( &context );
      }
  
@@ -2113,7 +2426,7 @@ index 522ade368f..3ef3172798 100644
  
  
 diff --git a/dlls/ntdll/unix/system.c b/dlls/ntdll/unix/system.c
-index 2d6e3184ac..5fd54b9cc0 100644
+index 2d6e3184ac9..5fd54b9cc04 100644
 --- a/dlls/ntdll/unix/system.c
 +++ b/dlls/ntdll/unix/system.c
 @@ -24,6 +24,16 @@
@@ -2180,7 +2493,7 @@ index 2d6e3184ac..5fd54b9cc0 100644
  
  #include <dev/acpica/acpiio.h>
 diff --git a/dlls/ntdll/unix/thread.c b/dlls/ntdll/unix/thread.c
-index 546963a424..7a20128731 100644
+index 546963a4241..7a201287313 100644
 --- a/dlls/ntdll/unix/thread.c
 +++ b/dlls/ntdll/unix/thread.c
 @@ -1662,6 +1662,41 @@ NTSTATUS WINAPI NtRaiseException( EXCEPTION_RECORD *rec, CONTEXT *context, BOOL
@@ -2226,7 +2539,7 @@ index 546963a424..7a20128731 100644
   *           NtCurrentTeb   (NTDLL.@)
   */
 diff --git a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
-index c8ca97d21a..425e04ca03 100644
+index c8ca97d21a0..425e04ca031 100644
 --- a/dlls/ntdll/unix/unix_private.h
 +++ b/dlls/ntdll/unix/unix_private.h
 @@ -280,6 +280,7 @@ extern void set_process_instrumentation_callback( void *callback );
@@ -2238,10 +2551,10 @@ index c8ca97d21a..425e04ca03 100644
  extern void DECLSPEC_NORETURN abort_thread( int status );
  extern void DECLSPEC_NORETURN abort_process( int status );
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index eda3fee3d8..abecc93188 100644
+index eda3fee3d8b..6c13ea14a35 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -24,6 +24,17 @@
+@@ -24,6 +24,20 @@
  
  #include "config.h"
  
@@ -2254,12 +2567,15 @@ index eda3fee3d8..abecc93188 100644
 +    !defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
 +# define JUICE_MACOS_MACH_VM 1
 +#endif
++#if defined(__APPLE__)
++# define JUICE_MACH_VM_QUERY 1
++#endif
 +
 +
  #include <assert.h>
  #include <errno.h>
  #include <fcntl.h>
-@@ -66,7 +77,9 @@
+@@ -66,10 +80,13 @@
  #if defined(__APPLE__)
  #define host_page_size mac_host_page_size
  # include <mach/mach_init.h>
@@ -2270,7 +2586,11 @@ index eda3fee3d8..abecc93188 100644
  # include <mach/task.h>
  # include <mach/thread_state.h>
  # include <mach/vm_map.h>
-@@ -202,7 +215,7 @@ static void *host_addr_space_limit;  /* top of the host virtual address space */
++# include <libkern/OSCacheControl.h>
+ #undef host_page_size
+ #endif
+ 
+@@ -202,7 +219,7 @@ static void *host_addr_space_limit;  /* top of the host virtual address space */
  static struct file_view *arm64ec_view;
  
  ULONG_PTR user_space_wow_limit = 0;
@@ -2279,7 +2599,7 @@ index eda3fee3d8..abecc93188 100644
  
  /* TEB allocation blocks */
  static void *teb_block;
-@@ -220,6 +233,33 @@ static struct list teb_list = LIST_INIT( teb_list );
+@@ -220,6 +237,33 @@ static struct list teb_list = LIST_INIT( teb_list );
  #define MAP_NORESERVE 0
  #endif
  
@@ -2313,7 +2633,7 @@ index eda3fee3d8..abecc93188 100644
  #ifdef _WIN64  /* on 64-bit the page protection bytes use a 2-level table */
  static const size_t pages_vprot_shift = 20;
  static const size_t pages_vprot_mask = (1 << 20) - 1;
-@@ -270,12 +310,16 @@ void *anon_mmap_fixed( void *start, size_t size, int prot, int flags )
+@@ -270,12 +314,16 @@ void *anon_mmap_fixed( void *start, size_t size, int prot, int flags )
      return mmap( start, size, prot, MAP_PRIVATE | MAP_ANON | MAP_FIXED | flags, -1, 0 );
  }
  
@@ -2333,7 +2653,7 @@ index eda3fee3d8..abecc93188 100644
  }
  
  #ifdef USE_UFFD_WRITEWATCH
-@@ -598,7 +642,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
+@@ -598,7 +646,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
  #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
      ptr = mmap( start, size, prot, MAP_FIXED | MAP_EXCL | MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
      if (ptr == MAP_FAILED && errno == EINVAL) errno = EEXIST;
@@ -2342,7 +2662,7 @@ index eda3fee3d8..abecc93188 100644
      mach_vm_address_t result = (mach_vm_address_t)start;
      kern_return_t ret = mach_vm_map( mach_task_self(), &result, size, 0, VM_FLAGS_FIXED,
                                       MEMORY_OBJECT_NULL, 0, 0, prot, VM_PROT_ALL, VM_INHERIT_COPY );
-@@ -628,7 +672,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
+@@ -628,7 +676,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
  
  static void reserve_area( void *addr, void *end )
  {
@@ -2351,7 +2671,16 @@ index eda3fee3d8..abecc93188 100644
  
  #ifdef __i386__
      static const mach_vm_address_t max_address = VM_MAX_ADDRESS;
-@@ -696,7 +740,7 @@ static void reserve_area( void *addr, void *end )
+@@ -646,7 +694,7 @@ static void reserve_area( void *addr, void *end )
+         mach_vm_address_t hole_address = address;
+         kern_return_t ret;
+         mach_vm_size_t size;
+-        vm_region_basic_info_data_64_t info;
++        vm_region_basic_info_data_64_t info = {0};
+         mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
+         mach_port_t dummy_object_name = MACH_PORT_NULL;
+ 
+@@ -696,7 +744,7 @@ static void reserve_area( void *addr, void *end )
          reserve_area( addr, (char *)addr + size );
          reserve_area( (char *)addr + size, end );
      }
@@ -2360,7 +2689,7 @@ index eda3fee3d8..abecc93188 100644
  }
  
  
-@@ -865,7 +909,7 @@ static NTSTATUS load_builtin_unixlib( void *module, BOOL wow, const void **funcs
+@@ -865,7 +913,7 @@ static NTSTATUS load_builtin_unixlib( void *module, BOOL wow, const void **funcs
          {
              builtin->unix_handle = dlopen( builtin->unix_path, RTLD_NOW );
              if (!builtin->unix_handle)
@@ -2369,7 +2698,7 @@ index eda3fee3d8..abecc93188 100644
          }
          if (builtin->unix_handle) status = get_unixlib_funcs( builtin->unix_handle, wow, funcs, &entry );
      }
-@@ -1543,11 +1587,11 @@ static struct wine_rb_entry *find_view_inside_range( void **base_ptr, void **end
+@@ -1543,11 +1591,11 @@ static struct wine_rb_entry *find_view_inside_range( void **base_ptr, void **end
   * retrying inside it, and return where it actually succeeded, or NULL.
   */
  static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
@@ -2383,7 +2712,7 @@ index eda3fee3d8..abecc93188 100644
          TRACE( "Found free area is already mapped, start %p.\n", start );
          if (errno != EEXIST)
          {
-@@ -1572,7 +1616,8 @@ static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
+@@ -1572,7 +1620,8 @@ static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
   * Find a free area between views inside the specified range and map it.
   * virtual_mutex must be held by caller.
   */
@@ -2393,7 +2722,7 @@ index eda3fee3d8..abecc93188 100644
  {
      struct wine_rb_entry *first = find_view_inside_range( &base, &end, top_down );
      ptrdiff_t step = top_down ? -(align_mask + 1) : (align_mask + 1);
-@@ -1587,7 +1632,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
+@@ -1587,7 +1636,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
          {
              struct file_view *view = WINE_RB_ENTRY_VALUE( first, struct file_view, entry );
              if ((start = try_map_free_area( (char *)view->base + view->size, (char *)start + size, step,
@@ -2402,7 +2731,7 @@ index eda3fee3d8..abecc93188 100644
              start = ROUND_ADDR( (char *)view->base - size, align_mask );
              /* stop if remaining space is not large enough */
              if (!start || start >= end || start < base) return NULL;
-@@ -1603,7 +1648,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
+@@ -1603,7 +1652,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
          {
              struct file_view *view = WINE_RB_ENTRY_VALUE( first, struct file_view, entry );
              if ((start = try_map_free_area( start, view->base, step,
@@ -2411,7 +2740,7 @@ index eda3fee3d8..abecc93188 100644
              start = ROUND_ADDR( (char *)view->base + view->size + align_mask, align_mask );
              /* stop if remaining space is not large enough */
              if (!start || start >= end || (char *)end - (char *)start < size) return NULL;
-@@ -1612,7 +1657,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
+@@ -1612,7 +1661,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
      }
  
      if (!first)
@@ -2420,7 +2749,64 @@ index eda3fee3d8..abecc93188 100644
  
      if (!start)
          ERR( "couldn't map free area in range %p-%p, size %p\n", base, end, (void *)size );
-@@ -2141,7 +2186,7 @@ static void *find_reserved_free_area_outside_preloader( void *start, void *end,
+@@ -2134,6 +2183,56 @@ static void *find_reserved_free_area_outside_preloader( void *start, void *end,
+     return find_reserved_free_area( start, end, size, top_down, align_mask );
+ }
+ 
++#ifdef JUICE_MACH_VM_QUERY
++/***********************************************************************
++ *           reserved_area_is_still_empty
++ *
++ * Wine reserves large address ranges early in process startup and later
++ * replaces pieces of those PROT_NONE mappings with Win32 allocations.  On
++ * Darwin, pthread stacks and other native mappings can be installed inside
++ * one of those ranges without updating Wine's reserved-area bookkeeping.
++ * Replacing such a range with MAP_FIXED destroys the native mapping.
++ *
++ * Confirm that every live Mach region covered by the candidate is still a
++ * no-access reservation before allowing the destructive replacement.  A
++ * changed mapping is left alone; map_free_area() will subsequently probe the
++ * live VM map with anon_mmap_tryfixed() and choose a genuinely free address.
++ */
++static BOOL reserved_area_is_still_empty( void *base, size_t size )
++{
++    static unsigned int changed_mapping_count;
++    vm_address_t cursor = (vm_address_t)base;
++    const vm_address_t end = cursor + size;
++
++    while (cursor < end)
++    {
++        vm_address_t region = cursor;
++        vm_size_t region_size = 0;
++        vm_region_basic_info_data_64_t info;
++        mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
++        mach_port_t object_name = MACH_PORT_NULL;
++        kern_return_t ret;
++
++        ret = vm_region_64( mach_task_self(), &region, &region_size,
++                            VM_REGION_BASIC_INFO_64, (vm_region_info_t)&info,
++                            &count, &object_name );
++        if (object_name != MACH_PORT_NULL)
++            mach_port_deallocate( mach_task_self(), object_name );
++        if (ret != KERN_SUCCESS || !region_size || region > cursor ||
++            region + region_size <= cursor || info.protection != VM_PROT_NONE)
++        {
++            if (changed_mapping_count++ < 16)
++                fprintf( stderr, "[JuiceVM] preserved live native mapping candidate=%p-%p cursor=%p region=%p-%p prot=%x status=%x\n",
++                         base, (char *)base + size, (void *)cursor, (void *)region,
++                         (char *)region + region_size, info.protection, ret );
++            return FALSE;
++        }
++        cursor = min( region + region_size, end );
++    }
++    return TRUE;
++}
++#endif
++
+ /***********************************************************************
+  *           map_reserved_area
+  *
+@@ -2141,7 +2240,7 @@ static void *find_reserved_free_area_outside_preloader( void *start, void *end,
   * virtual_mutex must be held by caller.
   */
  static void *map_reserved_area( void *limit_low, void *limit_high, size_t size, int top_down,
@@ -2429,16 +2815,22 @@ index eda3fee3d8..abecc93188 100644
  {
      void *ptr = NULL;
      struct reserved_area *area;
-@@ -2176,7 +2221,7 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size,
+@@ -2176,7 +2275,13 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size,
              if (ptr) break;
          }
      }
 -    if (ptr && anon_mmap_fixed( ptr, size, unix_prot, 0 ) != ptr) ptr = NULL;
-+    if (ptr && anon_mmap_fixed( ptr, size, unix_prot, mmap_flags ) != ptr) ptr = NULL;
++    if (ptr)
++    {
++#ifdef JUICE_MACH_VM_QUERY
++        if (!reserved_area_is_still_empty( ptr, size )) ptr = NULL;
++#endif
++        if (ptr && anon_mmap_fixed( ptr, size, unix_prot, mmap_flags ) != ptr) ptr = NULL;
++    }
      return ptr;
  }
  
-@@ -2186,7 +2231,7 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size,
+@@ -2186,7 +2291,7 @@ static void *map_reserved_area( void *limit_low, void *limit_high, size_t size,
   * Map a memory area at a fixed address.
   * virtual_mutex must be held by caller.
   */
@@ -2447,7 +2839,7 @@ index eda3fee3d8..abecc93188 100644
  {
      struct reserved_area *area;
      NTSTATUS status;
-@@ -2204,19 +2249,19 @@ static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot )
+@@ -2204,19 +2309,19 @@ static NTSTATUS map_fixed_area( void *base, size_t size, int unix_prot )
          if (area_end <= start) continue;
          if (area_start > start)
          {
@@ -2471,7 +2863,7 @@ index eda3fee3d8..abecc93188 100644
      return STATUS_SUCCESS;
  
  failed:
-@@ -2247,6 +2292,8 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+@@ -2247,6 +2352,8 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
                            ULONG_PTR limit_low, ULONG_PTR limit_high, size_t align_mask )
  {
      int top_down = alloc_type & MEM_TOP_DOWN;
@@ -2480,7 +2872,7 @@ index eda3fee3d8..abecc93188 100644
      void *ptr;
      int unix_prot = get_unix_prot( vprot );
      NTSTATUS status;
-@@ -2254,6 +2301,19 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+@@ -2254,6 +2361,19 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
      if (!align_mask) align_mask = granularity_mask;
      assert( align_mask >= host_page_mask );
  
@@ -2500,7 +2892,7 @@ index eda3fee3d8..abecc93188 100644
      if (alloc_type & MEM_REPLACE_PLACEHOLDER)
      {
          struct file_view *view;
-@@ -2280,7 +2340,22 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+@@ -2280,7 +2400,22 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
      if (use_kernel_writewatch && vprot & VPROT_WRITEWATCH)
          unix_prot = get_unix_prot( vprot & ~VPROT_WRITEWATCH );
  
@@ -2523,7 +2915,7 @@ index eda3fee3d8..abecc93188 100644
  
      if (base)
      {
-@@ -2288,7 +2363,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+@@ -2288,7 +2423,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
          if (limit_low && base < (void *)limit_low) return STATUS_CONFLICTING_ADDRESSES;
          if (limit_high && is_beyond_limit( base, size, (void *)limit_high )) return STATUS_CONFLICTING_ADDRESSES;
          if (is_beyond_limit( base, size, host_addr_space_limit )) return STATUS_CONFLICTING_ADDRESSES;
@@ -2532,7 +2924,7 @@ index eda3fee3d8..abecc93188 100644
          if (is_beyond_limit( base, size, working_set_limit )) working_set_limit = address_space_limit;
          ptr = base;
      }
-@@ -2302,15 +2377,21 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+@@ -2302,15 +2437,21 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
          if (limit_low && (void *)limit_low > start) start = (void *)limit_low;
          if (limit_high && (void *)limit_high < end) end = (char *)limit_high + 1;
  
@@ -2557,7 +2949,7 @@ index eda3fee3d8..abecc93188 100644
                  return STATUS_NO_MEMORY;
              TRACE( "got mem with map_free_area %p-%p\n", ptr, (char *)ptr + size );
              goto done;
-@@ -2318,7 +2399,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+@@ -2318,7 +2459,7 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
  
          for (;;)
          {
@@ -2566,7 +2958,7 @@ index eda3fee3d8..abecc93188 100644
              {
                  status = (errno == ENOMEM) ? STATUS_NO_MEMORY : STATUS_INVALID_PARAMETER;
                  ERR( "anon mmap error %s, size %p, unix_prot %#x\n",
-@@ -2798,7 +2879,8 @@ static void *get_host_addr_space_limit(void)
+@@ -2798,7 +2939,8 @@ static void *get_host_addr_space_limit(void)
  static void alloc_arm64ec_map(void)
  {
      unsigned int status;
@@ -2576,7 +2968,7 @@ index eda3fee3d8..abecc93188 100644
  
      size = ROUND_SIZE( 0, size, host_page_mask );
      status = map_view( &arm64ec_view, NULL, size, MEM_TOP_DOWN, VPROT_READ | VPROT_COMMITTED, 0, 0, 0 );
-@@ -3234,6 +3316,127 @@ static NTSTATUS map_image_into_view( struct file_view *view, const UNICODE_STRIN
+@@ -3234,6 +3376,127 @@ static NTSTATUS map_image_into_view( struct file_view *view, const UNICODE_STRIN
          }
      }
  
@@ -2704,7 +3096,7 @@ index eda3fee3d8..abecc93188 100644
      /* set the image protections */
  
      set_vprot( view, ptr, ROUND_SIZE( 0, header_size, align_mask ), VPROT_COMMITTED | VPROT_READ );
-@@ -4057,6 +4260,132 @@ TEB *virtual_alloc_first_teb(void)
+@@ -4057,6 +4320,132 @@ TEB *virtual_alloc_first_teb(void)
      SIZE_T total = 32 * block_size;
      struct thread_data *thread_data;
  
@@ -2837,7 +3229,7 @@ index eda3fee3d8..abecc93188 100644
      /* reserve space for shared user data */
      status = NtAllocateVirtualMemory( NtCurrentProcess(), (void **)&user_shared_data, 0, &data_size,
                                        MEM_RESERVE | MEM_COMMIT, PAGE_READONLY );
-@@ -4066,8 +4395,24 @@ TEB *virtual_alloc_first_teb(void)
+@@ -4066,8 +4455,24 @@ TEB *virtual_alloc_first_teb(void)
          exit(1);
      }
  
@@ -2864,7 +3256,7 @@ index eda3fee3d8..abecc93188 100644
      teb_block_pos = 30;
      ptr = (char *)teb_block + 30 * block_size;
      data_size = 2 * block_size;
-@@ -5123,6 +5468,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+@@ -5123,6 +5528,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
      sigset_t sigset;
      SIZE_T size = *size_ptr;
      NTSTATUS status = STATUS_SUCCESS;
@@ -2872,7 +3264,7 @@ index eda3fee3d8..abecc93188 100644
  
      /* Round parameters to a page boundary */
  
-@@ -5150,6 +5496,9 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+@@ -5150,6 +5556,9 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
      {
          base = NULL;
          size = ROUND_SIZE( 0, size, page_mask );
@@ -2882,7 +3274,7 @@ index eda3fee3d8..abecc93188 100644
      }
  
      /* Compute the alloc type flags */
-@@ -5163,6 +5512,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+@@ -5163,6 +5572,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
  
      if (type & MEM_RESERVE_PLACEHOLDER && (protect != PAGE_NOACCESS)) return STATUS_INVALID_PARAMETER;
      if (!arm64ec_view && (attributes & MEM_EXTENDED_PARAMETER_EC_CODE)) return STATUS_INVALID_PARAMETER;
@@ -2890,7 +3282,7 @@ index eda3fee3d8..abecc93188 100644
  
      /* Reserve the memory */
  
-@@ -5179,7 +5529,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+@@ -5179,7 +5589,7 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
  
              if (vprot & VPROT_WRITECOPY) status = STATUS_INVALID_PAGE_PROTECTION;
              else if (is_dos_memory) status = allocate_dos_memory( &view, vprot );
@@ -2899,8 +3291,33 @@ index eda3fee3d8..abecc93188 100644
                                      align ? align - 1 : granularity_mask );
  
              if (status == STATUS_SUCCESS)
+@@ -6987,6 +7397,24 @@ NTSTATUS WINAPI NtFlushInstructionCache( HANDLE handle, const void *addr, SIZE_T
+ {
+ #if defined(__x86_64__) || defined(__i386__)
+     /* no-op */
++#elif defined(__APPLE__)
++    /*
++     * Clang provides __builtin___clear_cache() on Darwin, but Wine's
++     * configure probe does not currently expose it as __clear_cache when
++     * cross-compiling for iOS.  FEX relies on this syscall after publishing
++     * translated ARM64EC code, so silently treating it as a no-op leaves the
++     * CPU free to execute stale instruction-cache lines.  Use Darwin's
++     * public cache-control API directly on Apple ARM targets.
++     */
++    if (handle == GetCurrentProcess())
++    {
++        sys_icache_invalidate( (void *)addr, size );
++    }
++    else
++    {
++        static int once;
++        if (!once++) FIXME( "%p %p %ld other process not supported\n", handle, addr, size );
++    }
+ #elif defined(HAVE___CLEAR_CACHE)
+     if (handle == GetCurrentProcess())
+     {
 diff --git a/dlls/ntoskrnl.exe/instr.c b/dlls/ntoskrnl.exe/instr.c
-index 31e1e6e28a..a68e46fb0f 100644
+index 31e1e6e28a4..a68e46fb0fa 100644
 --- a/dlls/ntoskrnl.exe/instr.c
 +++ b/dlls/ntoskrnl.exe/instr.c
 @@ -490,7 +490,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(int);
@@ -2912,8 +3329,70 @@ index 31e1e6e28a..a68e46fb0f 100644
  static const BYTE *user_shared_data      = (BYTE *)0xfffff78000000000;
  
  static inline DWORD64 *get_int_reg( CONTEXT *context, int index )
+diff --git a/dlls/opengl32/Makefile.in b/dlls/opengl32/Makefile.in
+index d2ec942dd76..d199476f453 100644
+--- a/dlls/opengl32/Makefile.in
++++ b/dlls/opengl32/Makefile.in
+@@ -16,5 +16,5 @@ VER_LEGALCOPYRIGHT_STR  = "Copyright (c) 1993-2026 the Wine project. Not Microso
+ SOURCES = \
+ 	thunks.c \
+ 	unix_thunks.c \
+-	unix_wgl.c \
++	unix_wgl_juice.c \
+ 	wgl.c
+diff --git a/dlls/opengl32/unix_wgl_juice.c b/dlls/opengl32/unix_wgl_juice.c
+new file mode 100644
+index 00000000000..5e6737e0a92
+--- /dev/null
++++ b/dlls/opengl32/unix_wgl_juice.c
+@@ -0,0 +1,45 @@
++/*
++ * Juice iOS wrapper for Wine's OpenGL Unix-side implementation.
++ *
++ * ARM64EC/FEX can transiently lose the PE-side x18 TEB carrier while
++ * crossing a Unix-call boundary.  The native Wine side has restored x18 by
++ * the time the call arrives, but the explicit TEB argument may already have
++ * been materialised as NULL.  Wine's OpenGL thread_attach() immediately
++ * stores null_opengl_funcs into TEB::glTable, so that stale argument becomes
++ * a write to address offsetof(TEB, glTable) (0x1238 on Win64).
++ *
++ * Compile the upstream implementation under a private name and expose a
++ * narrow wrapper which recovers only a missing thread-attach TEB.  This does
++ * not turn unrelated application null dereferences into TEB accesses.
++ *
++ * LGPL-2.1-or-later, matching the included Wine source.
++ */
++
++#if 0
++#pragma makedep unix
++#endif
++
++/* Wine's makedep requires config.h to be a literal top-level include in each
++ * Unix translation unit; the include inside unix_wgl.c is not sufficient when
++ * that source is compiled through this wrapper. */
++#include "config.h"
++
++#define thread_attach juice_opengl_thread_attach_impl
++#include "unix_wgl.c"
++#undef thread_attach
++
++NTSTATUS thread_attach( void *args )
++{
++    TEB *teb = args;
++
++#ifdef __APPLE__
++    if (!teb)
++    {
++        teb = NtCurrentTeb();
++        WARN( "Juice recovered null OpenGL thread-attach TEB from native state: %p.\n", teb );
++    }
++#endif
++
++    if (!teb) return STATUS_UNSUCCESSFUL;
++    return juice_opengl_thread_attach_impl( teb );
++}
 diff --git a/dlls/win32u/Makefile.in b/dlls/win32u/Makefile.in
-index 454fb2555b..bb83d60b0a 100644
+index 454fb2555bc..bb83d60b0a4 100644
 --- a/dlls/win32u/Makefile.in
 +++ b/dlls/win32u/Makefile.in
 @@ -4,7 +4,7 @@ UNIXLIB   = win32u.so
@@ -2926,7 +3405,7 @@ index 454fb2555b..bb83d60b0a 100644
  EXTRADLLFLAGS = -nodefaultlibs
  
 diff --git a/dlls/win32u/defwnd.c b/dlls/win32u/defwnd.c
-index d6852b33ce..f69f95547f 100644
+index d6852b33ce2..f69f95547fc 100644
 --- a/dlls/win32u/defwnd.c
 +++ b/dlls/win32u/defwnd.c
 @@ -489,7 +489,8 @@ static LONG handle_window_pos_changing( HWND hwnd, WINDOWPOS *winpos )
@@ -2949,10 +3428,40 @@ index d6852b33ce..f69f95547f 100644
      get_window_rect_rel( hwnd, COORDS_PARENT, &sizing_rect, dpi );
      orig_rect = sizing_rect;
 diff --git a/dlls/win32u/driver.c b/dlls/win32u/driver.c
-index 6270d9bbe1..740e1301f9 100644
+index 6270d9bbe10..3b468e333ca 100644
 --- a/dlls/win32u/driver.c
 +++ b/dlls/win32u/driver.c
-@@ -1367,7 +1367,7 @@ void __wine_set_user_driver( const struct user_driver_funcs *funcs, UINT version
+@@ -1036,9 +1036,29 @@ static BOOL load_desktop_driver( HWND hwnd )
+ 
+ static void load_display_driver(void)
+ {
++    static const WCHAR wineiosW[] = {'w','i','n','e','i','o','s','.','d','r','v',0};
+     USEROBJECTFLAGS flags;
+     HWINSTA winstation;
+ 
++    /*
++     * A normal Wine desktop records its graphics driver beneath the dynamic
++     * video-device GUID before win32u asks for it.  Juice can intentionally
++     * start a Windows application against a persistent prefix without first
++     * launching explorer, so that GUID is not guaranteed to exist yet.  The
++     * UIKit socket is an explicit host contract; use it to load the iOS driver
++     * directly instead of silently installing the null driver.
++     */
++    if (getenv( "JUICE_IOS_SOCKET" ))
++    {
++        void *ret_ptr;
++        ULONG ret_len;
++        NTSTATUS status = KeUserModeCallback( NtUserLoadDriver, wineiosW, sizeof(wineiosW),
++                                              &ret_ptr, &ret_len );
++
++        fprintf( stderr, "[JuiceDriver] direct-load status=%08x driver=%p\n", status, user_driver );
++        if (!status && user_driver != &lazy_load_driver) return;
++    }
++
+     if (is_service_process() || !load_desktop_driver( get_desktop_window() ) || user_driver == &lazy_load_driver)
+     {
+         winstation = NtUserGetProcessWindowStation();
+@@ -1367,7 +1387,7 @@ void __wine_set_user_driver( const struct user_driver_funcs *funcs, UINT version
      if (!funcs)
      {
          prev = InterlockedExchangePointer( (void **)&user_driver, (void *)&lazy_load_driver );
@@ -2961,20 +3470,30 @@ index 6270d9bbe1..740e1301f9 100644
              free( prev );
          return;
      }
-@@ -1443,8 +1443,9 @@ void __wine_set_user_driver( const struct user_driver_funcs *funcs, UINT version
+@@ -1443,12 +1463,18 @@ void __wine_set_user_driver( const struct user_driver_funcs *funcs, UINT version
      SET_USER_FUNC(ThreadDetach);
  #undef SET_USER_FUNC
  
 -    prev = InterlockedCompareExchangePointer( (void **)&user_driver, driver, (void *)&lazy_load_driver );
 -    if (prev != &lazy_load_driver)
-+    prev = InterlockedExchangePointer( (void **)&user_driver, driver );
-+    fprintf( stderr, "[JuiceDriver] install prev=%p lazy=%p null=%p new=%p create=%p\n", prev, &lazy_load_driver, &null_user_driver, driver, driver->pCreateWindow );
++    prev = InterlockedCompareExchangePointer( (void **)&user_driver, driver,
++                                              (void *)&lazy_load_driver );
++    if (prev == &null_user_driver)
++        prev = InterlockedCompareExchangePointer( (void **)&user_driver, driver,
++                                                  (void *)&null_user_driver );
++    fprintf( stderr, "[JuiceDriver] install prev=%p lazy=%p null=%p candidate=%p create=%p installed=%d\n",
++             prev, &lazy_load_driver, &null_user_driver, driver, driver->pCreateWindow,
++             prev == &lazy_load_driver || prev == &null_user_driver );
 +    if (prev != &lazy_load_driver && prev != &null_user_driver)
      {
          /* another thread beat us to it */
          free( driver );
+-        driver = prev;
+     }
+ }
+ 
 diff --git a/dlls/win32u/menu.c b/dlls/win32u/menu.c
-index a700f44af7..5c1483b7fa 100644
+index a700f44af78..5c1483b7fab 100644
 --- a/dlls/win32u/menu.c
 +++ b/dlls/win32u/menu.c
 @@ -2226,6 +2226,7 @@ UINT get_menu_bar_height( HWND hwnd, UINT width, INT org_x, INT org_y )
@@ -3008,7 +3527,7 @@ index a700f44af7..5c1483b7fa 100644
  
  static void draw_popup_arrow( HDC hdc, RECT rect, UINT arrow_width, UINT arrow_height )
 diff --git a/dlls/win32u/message.c b/dlls/win32u/message.c
-index d432eb3c1a..1789b3eeda 100644
+index d432eb3c1af..1789b3eeda3 100644
 --- a/dlls/win32u/message.c
 +++ b/dlls/win32u/message.c
 @@ -45,7 +45,7 @@ WINE_DECLARE_DEBUG_CHANNEL(relay);
@@ -3021,7 +3540,7 @@ index d432eb3c1a..1789b3eeda 100644
  static const struct ratio no_dpi;
  
 diff --git a/dlls/win32u/sysparams.c b/dlls/win32u/sysparams.c
-index fdcdfc0a94..06e9a11e06 100644
+index fdcdfc0a946..06e9a11e06a 100644
 --- a/dlls/win32u/sysparams.c
 +++ b/dlls/win32u/sysparams.c
 @@ -4782,6 +4782,7 @@ MONITORINFO monitor_info_from_window( HWND hwnd, UINT flags )
@@ -3071,7 +3590,7 @@ index fdcdfc0a94..06e9a11e06 100644
  
  /* load a font (binary) parameter from the registry */
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 4e2b9283ba..a7a7069e4e 100644
+index 4e2b9283ba1..a7a7069e4ec 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -284,7 +284,7 @@ extern HWND get_full_window_handle( HWND hwnd );
@@ -3084,7 +3603,7 @@ index 4e2b9283ba..a7a7069e4e 100644
  extern DWORD get_window_thread( HWND hwnd, DWORD *process );
  extern HWND is_current_process_window( HWND hwnd );
 diff --git a/dlls/win32u/window.c b/dlls/win32u/window.c
-index 924990e8d4..c1125d7188 100644
+index 924990e8d4f..45c35f769e6 100644
 --- a/dlls/win32u/window.c
 +++ b/dlls/win32u/window.c
 @@ -2249,6 +2249,7 @@ static BOOL apply_window_pos( HWND hwnd, HWND insert_after, UINT swp_flags, stru
@@ -3179,15 +3698,17 @@ index 924990e8d4..c1125d7188 100644
  
          if (is_default_coord( cs->x ))
          {
-@@ -5805,6 +5833,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+@@ -5804,7 +5832,9 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+     RECT surface_rect;
      UINT context;
      WND *win;
++    const char *failure_stage = "unknown";
  
 +    fprintf( stderr, "[JuiceCreate] ex=%08x class=%p version=%p name=%p style=%08x x=%d y=%d cx=%d cy=%d parent=%p menu=%p classinst=%p params=%p flags=%08x inst=%p classptr=%p ansi=%d\n", ex_style, class_name, version, window_name, style, x, y, cx, cy, parent, menu, class_instance, params, flags, instance, class, ansi );
      TRACE( "ex_style %#x, class_name %s, version %s, window_name %s, style %#x, x %u, y %u, cx %u, cy %u, "
             "parent %p, menu %p, class_instance %p, params %p, flags %#x, instance %p, class %s, ansi %u\n",
             ex_style, debugstr_us(class_name), debugstr_us(version), debugstr_us(window_name), style, x, y, cx, cy,
-@@ -5969,13 +5998,16 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+@@ -5969,13 +5999,16 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
      cy = cs.cy;
      if ((cs.style & WS_THICKFRAME) || !(cs.style & (WS_POPUP | WS_CHILD)))
      {
@@ -3205,16 +3726,77 @@ index 924990e8d4..c1125d7188 100644
      SetRect( &new_rects.window, cs.x, cs.y, cs.x + cx, cs.y + cy );
      /* check for wraparound */
      if (cs.x > 0x7fffffff - cx) new_rects.window.right = 0x7fffffff;
+@@ -5986,6 +6019,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+     if (!apply_window_pos( hwnd, 0, SWP_NOZORDER | SWP_NOACTIVATE, surface, &new_rects, NULL ))
+     {
+         if (surface) window_surface_release( surface );
++        failure_stage = "initial-apply-window-pos";
+         goto failed;
+     }
+     if (surface) window_surface_release( surface );
+@@ -5996,6 +6030,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+     if (!send_message_timeout( hwnd, WM_NCCREATE, 0, (LPARAM)&cs, SMTO_NORMAL, 0, ansi ))
+     {
+         WARN( "%p: aborted by WM_NCCREATE\n", hwnd );
++        failure_stage = "wm-nccreate";
+         goto failed;
+     }
+ 
+@@ -6025,15 +6060,26 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+         apply_window_pos( hwnd, insert_after, SWP_NOACTIVATE, surface, &new_rects, NULL );
+         if (surface) window_surface_release( surface );
+     }
+-    else goto failed;
++    else
++    {
++        failure_stage = "get-window-rect";
++        goto failed;
++    }
+ 
+     /* send WM_CREATE */
+     if (send_message_timeout( hwnd, WM_CREATE, 0, (LPARAM)&cs, SMTO_NORMAL, 0, ansi ) == -1)
++    {
++        failure_stage = "wm-create";
+         goto failed;
++    }
+ 
+     /* call the driver */
+ 
+-    if (!user_driver->pCreateWindow( hwnd )) goto failed;
++    if (!user_driver->pCreateWindow( hwnd ))
++    {
++        failure_stage = "driver-create-window";
++        goto failed;
++    }
+ 
+     NtUserNotifyWinEvent( EVENT_OBJECT_CREATE, hwnd, OBJID_WINDOW, 0 );
+ 
+@@ -6068,6 +6114,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+     send_parent_notify( hwnd, WM_CREATE );
+     if (!is_window( hwnd ))
+     {
++        fprintf( stderr, "[JuiceCreate] failed hwnd=%p stage=destroyed-after-parent-notify\n", hwnd );
+         set_thread_dpi_awareness_context( context );
+         return 0;
+     }
+@@ -6105,6 +6152,7 @@ HWND WINAPI NtUserCreateWindowEx( DWORD ex_style, UNICODE_STRING *class_name,
+     return hwnd;
+ 
+ failed:
++    fprintf( stderr, "[JuiceCreate] failed hwnd=%p stage=%s\n", hwnd, failure_stage );
+     destroy_window( hwnd );
+     set_thread_dpi_awareness_context( context );
+     return 0;
 diff --git a/dlls/wineios.drv/Makefile.in b/dlls/wineios.drv/Makefile.in
 new file mode 100644
-index 0000000000..f4494e4256
+index 00000000000..a1def25b2e1
 --- /dev/null
 +++ b/dlls/wineios.drv/Makefile.in
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,14 @@
 +MODULE    = wineios.drv
 +UNIXLIB   = wineios.so
 +IMPORTS   = user32 gdi32 win32u
-+UNIX_LIBS = -lwin32u -framework CoreGraphics -framework Foundation -framework QuartzCore -framework UIKit
++UNIX_LIBS = -lwin32u -framework CoreGraphics -framework Foundation -framework Metal -framework QuartzCore -framework UIKit
 +
 +VER_FILEDESCRIPTION_STR = "Wine iOS driver"
 +
@@ -3223,10 +3805,11 @@ index 0000000000..f4494e4256
 +	dllmain.c \
 +	ipc.c \
 +	iosdrv.c \
++	vulkan.m \
 +	wineios.drv.spec
 diff --git a/dlls/wineios.drv/control.c b/dlls/wineios.drv/control.c
 new file mode 100644
-index 0000000000..4eeb48e33f
+index 00000000000..4eeb48e33f7
 --- /dev/null
 +++ b/dlls/wineios.drv/control.c
 @@ -0,0 +1,260 @@
@@ -3492,7 +4075,7 @@ index 0000000000..4eeb48e33f
 +#endif
 diff --git a/dlls/wineios.drv/control.h b/dlls/wineios.drv/control.h
 new file mode 100644
-index 0000000000..abad28e67a
+index 00000000000..abad28e67a7
 --- /dev/null
 +++ b/dlls/wineios.drv/control.h
 @@ -0,0 +1,44 @@
@@ -3542,7 +4125,7 @@ index 0000000000..abad28e67a
 +#endif
 diff --git a/dlls/wineios.drv/control_protocol.h b/dlls/wineios.drv/control_protocol.h
 new file mode 100644
-index 0000000000..7a3d0dbf1f
+index 00000000000..7a3d0dbf1fe
 --- /dev/null
 +++ b/dlls/wineios.drv/control_protocol.h
 @@ -0,0 +1,54 @@
@@ -3602,7 +4185,7 @@ index 0000000000..7a3d0dbf1f
 +#endif
 diff --git a/dlls/wineios.drv/dllmain.c b/dlls/wineios.drv/dllmain.c
 new file mode 100644
-index 0000000000..c929ebb38c
+index 00000000000..c929ebb38cd
 --- /dev/null
 +++ b/dlls/wineios.drv/dllmain.c
 @@ -0,0 +1,54 @@
@@ -3662,10 +4245,10 @@ index 0000000000..c929ebb38c
 +}
 diff --git a/dlls/wineios.drv/iosdrv.c b/dlls/wineios.drv/iosdrv.c
 new file mode 100644
-index 0000000000..2469d14452
+index 00000000000..e72c59e0ae3
 --- /dev/null
 +++ b/dlls/wineios.drv/iosdrv.c
-@@ -0,0 +1,170 @@
+@@ -0,0 +1,186 @@
 +/* UIKit/software framebuffer driver for Wine on iOS. LGPL-2.1-or-later. */
 +#if 0
 +#pragma makedep unix
@@ -3733,7 +4316,15 @@ index 0000000000..2469d14452
 +}
 +static BOOL ios_CreateDesktop(const WCHAR *name,UINT width,UINT height){init_metrics();return TRUE;}
 +static void ios_SetDesktopWindow(HWND hwnd){}
-+static BOOL ios_CreateWindow(HWND hwnd){init_metrics();ios_ipc_register_queue();TRACE("create %p\n",hwnd);return TRUE;}
++static BOOL ios_CreateWindow(HWND hwnd)
++{
++    fprintf(stderr,"[JuiceDriver] create-enter hwnd=%p\n",hwnd);
++    init_metrics();
++    ios_ipc_register_queue();
++    TRACE("create %p\n",hwnd);
++    fprintf(stderr,"[JuiceDriver] create-success hwnd=%p\n",hwnd);
++    return TRUE;
++}
 +static void ios_DestroyWindow(HWND hwnd){if(host_window_destroyed)host_window_destroyed(HandleToUlong(hwnd));ios_ipc_destroy(hwnd);}
 +static UINT ios_ShowWindow(HWND hwnd,INT cmd,RECT *rect,UINT swp)
 +{
@@ -3742,6 +4333,14 @@ index 0000000000..2469d14452
 +    ios_ipc_window(hwnd,rect,cmd!=SW_HIDE); return swp;
 +}
 +static BOOL ios_WindowPosChanging(HWND hwnd,UINT flags,BOOL shaped,const struct window_rects *rects){return TRUE;}
++static BOOL ios_SystemParametersInfo(UINT action,UINT val,void *ptr,UINT winini)
++{
++    (void)action;
++    (void)val;
++    (void)ptr;
++    (void)winini;
++    return FALSE; /* Let win32u supply its registry-backed defaults. */
++}
 +static void ios_WindowPosChanged(HWND hwnd,HWND after,HWND owner,UINT flags,const struct window_rects *rects,struct window_surface *surface)
 +{
 +    BOOL visible;
@@ -3822,8 +4421,6 @@ index 0000000000..2469d14452
 +}
 +static UINT ios_OpenGLInit(UINT version,const struct opengl_funcs *funcs,const struct opengl_driver_funcs **driver)
 +{FIXME("OpenGL unavailable; Metal translation backend required\n");return STATUS_NOT_SUPPORTED;}
-+static UINT ios_VulkanInit(UINT version,void *handle,const struct vulkan_driver_funcs **driver)
-+{FIXME("Vulkan unavailable until a MoltenVK bridge is provided\n");return STATUS_NOT_SUPPORTED;}
 +static struct user_driver_funcs iosdrv_funcs={
 +    .dc_funcs.pCreateCompatibleDC=ios_CreateCompatibleDC,.dc_funcs.pCreateDC=ios_CreateDC,
 +    .dc_funcs.pDeleteDC=ios_DeleteDC,.dc_funcs.pGetDeviceCaps=ios_GetDeviceCaps,.dc_funcs.priority=GDI_PRIORITY_GRAPHICS_DRV,
@@ -3832,16 +4429,18 @@ index 0000000000..2469d14452
 +    .pDesktopWindowProc=ios_DesktopWindowProc,.pDestroyWindow=ios_DestroyWindow,.pProcessEvents=ios_ProcessEvents,
 +    .pSetCapture=ios_SetCapture,.pSetParent=ios_SetParent,.pShowWindow=ios_ShowWindow,.pWindowMessage=ios_WindowMessage,
 +    .pWindowPosChanging=ios_WindowPosChanging,.pCreateWindowSurface=ios_CreateWindowSurface,
-+    .pWindowPosChanged=ios_WindowPosChanged,.pOpenGLInit=ios_OpenGLInit,.pVulkanInit=ios_VulkanInit};
++    .pCreateClientSurface=iosdrv_CreateClientSurface,
++    .pWindowPosChanged=ios_WindowPosChanged,.pSystemParametersInfo=ios_SystemParametersInfo,
++    .pOpenGLInit=ios_OpenGLInit,.pVulkanInit=iosdrv_VulkanInit};
 +NTSTATUS iosdrv_unix_init(void *args)
 +{(void)args;host_desktop_changed=dlsym(RTLD_DEFAULT,"wineios_host_desktop_changed");host_window_changed=dlsym(RTLD_DEFAULT,"wineios_host_window_changed");host_window_destroyed=dlsym(RTLD_DEFAULT,"wineios_host_window_destroyed");host_present_bgra=dlsym(RTLD_DEFAULT,"wineios_host_present_bgra");
-+init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p size=%zu\n",iosdrv_funcs.pCreateWindow,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;}
++init_metrics();iosdrv_funcs.pCreateWindow=ios_CreateWindow;iosdrv_funcs.pCreateDesktop=ios_CreateDesktop;iosdrv_funcs.pCreateWindowSurface=ios_CreateWindowSurface;iosdrv_funcs.pCreateClientSurface=iosdrv_CreateClientSurface;fprintf(stderr,"[JuiceDriver] ios init set driver create=%p client_surface=%p size=%zu\n",iosdrv_funcs.pCreateWindow,iosdrv_funcs.pCreateClientSurface,sizeof(iosdrv_funcs));__wine_set_user_driver(&iosdrv_funcs,WINE_GDI_DRIVER_VERSION);TRACE("Wine iOS driver initialized\n");return STATUS_SUCCESS;}
 diff --git a/dlls/wineios.drv/iosdrv.h b/dlls/wineios.drv/iosdrv.h
 new file mode 100644
-index 0000000000..773f776120
+index 00000000000..f7efcb17c4c
 --- /dev/null
 +++ b/dlls/wineios.drv/iosdrv.h
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,18 @@
 +#ifndef __WINE_IOSDRV_H
 +#define __WINE_IOSDRV_H
 +#include "windef.h"
@@ -3850,19 +4449,22 @@ index 0000000000..773f776120
 +#include "ntuser.h"
 +#include "wine/gdi_driver.h"
 +#include "wine/debug.h"
++#include "wine/vulkan_driver.h"
 +/* Optional Juice host ABI. Pixels are temporary, top-down BGRA8. */
 +extern void wineios_host_desktop_changed(unsigned int,unsigned int,unsigned int) __attribute__((weak_import));
 +extern void wineios_host_window_changed(UINT_PTR,const RECT *,BOOL) __attribute__((weak_import));
 +extern void wineios_host_window_destroyed(UINT_PTR) __attribute__((weak_import));
 +extern void wineios_host_present_bgra(UINT_PTR,const void *,unsigned int,unsigned int,unsigned int,const RECT *) __attribute__((weak_import));
 +BOOL iosdrv_present_now(HWND hwnd);
++struct client_surface *iosdrv_CreateClientSurface(HWND hwnd,int pixel_format);
++UINT iosdrv_VulkanInit(UINT version,void *vulkan_handle,const struct vulkan_driver_funcs **driver);
 +#endif
 diff --git a/dlls/wineios.drv/ipc.c b/dlls/wineios.drv/ipc.c
 new file mode 100644
-index 0000000000..d9700ee87c
+index 00000000000..dafdd3f11c8
 --- /dev/null
 +++ b/dlls/wineios.drv/ipc.c
-@@ -0,0 +1,245 @@
+@@ -0,0 +1,273 @@
 +/* Juice cross-process display transport. LGPL-2.1-or-later. */
 +#if 0
 +#pragma makedep unix
@@ -4037,6 +4639,27 @@ index 0000000000..d9700ee87c
 +   presented=iosdrv_present_now(hwnd);
 +   fprintf(stderr,"[JuiceInput] key surface=%p target=%p vk=%x delivered=%u length=%ld redraw=%u present=%u\n",hwnd,target,msg.flags&0xffffu,sent,(long)text_length,redrawn,presented);
 +  }
++  else if(msg.type==JUICE_IOS_HARDWARE_KEY&&!msg.size&&msg.y>0&&msg.y<=0xff&&
++          (msg.flags&(JUICE_IOS_KEY_DOWN|JUICE_IOS_KEY_UP)))
++  {
++   target=input_target?input_target:hwnd;
++   if(msg.flags&JUICE_IOS_KEY_DOWN)
++   {
++    NtUserSetForegroundWindow(hwnd);
++    NtUserSetActiveWindow(hwnd);
++    NtUserSetFocus(target);
++   }
++   input.type=INPUT_KEYBOARD;
++   input.ki.wVk=msg.x;
++   input.ki.wScan=msg.y;
++   input.ki.dwFlags=KEYEVENTF_SCANCODE;
++   if(msg.flags&JUICE_IOS_KEY_EXTENDED) input.ki.dwFlags|=KEYEVENTF_EXTENDEDKEY;
++   if(msg.flags&JUICE_IOS_KEY_UP) input.ki.dwFlags|=KEYEVENTF_KEYUP;
++   sent=NtUserSendHardwareInput(target,0,&input,0);
++   fprintf(stderr,"[JuiceInput] hardware-key surface=%p target=%p vk=%x scan=%x down=%u extended=%u repeat=%u sent=%u\n",
++           hwnd,target,msg.x,msg.y,!!(msg.flags&JUICE_IOS_KEY_DOWN),
++           !!(msg.flags&JUICE_IOS_KEY_EXTENDED),!!(msg.flags&JUICE_IOS_KEY_REPEAT),sent);
++  }
 +  else
 +  {
 +   fprintf(stderr,"[JuiceInput] ignored invalid message type=%u size=%u flags=%x\n",
@@ -4077,7 +4700,11 @@ index 0000000000..d9700ee87c
 + struct sockaddr_un addr;
 + struct juice_ios_msg hello={JUICE_IOS_MAGIC,JUICE_IOS_HELLO,0,0,0,0,(INT)width,(INT)height,dpi,(UINT)getpid()};
 +
-+ if(!path||!*path) return;
++ if(!path||!*path)
++ {
++  fprintf(stderr,"[JuiceInput] display socket disabled: JUICE_IOS_SOCKET is unset\n");
++  return;
++ }
 + memset(&addr,0,sizeof(addr));
 + addr.sun_family=AF_UNIX;
 + if(strlen(path)>=sizeof(addr.sun_path)) return;
@@ -4085,16 +4712,19 @@ index 0000000000..d9700ee87c
 + ipc_fd=socket(AF_UNIX,SOCK_STREAM,0);
 + if(ipc_fd<0||connect(ipc_fd,(struct sockaddr *)&addr,sizeof(addr))<0)
 + {
++  fprintf(stderr,"[JuiceInput] display socket connect failed path=%s errno=%d\n",path,errno);
 +  if(ipc_fd>=0) close(ipc_fd);
 +  ipc_fd=-1;
 +  return;
 + }
 + if(!write_all(ipc_fd,&hello,sizeof(hello)))
 + {
++  fprintf(stderr,"[JuiceInput] display hello failed path=%s errno=%d\n",path,errno);
 +  close(ipc_fd);
 +  ipc_fd=-1;
 +  return;
 + }
++ fprintf(stderr,"[JuiceInput] display connected path=%s desktop=%ux%u dpi=%u\n",path,width,height,dpi);
 + ios_ipc_register_queue();
 +}
 +void ios_ipc_window(HWND hwnd,const RECT *rect,BOOL visible){send_msg(JUICE_IOS_WINDOW,hwnd,rect,NULL,0,0,visible);}
@@ -4110,10 +4740,10 @@ index 0000000000..d9700ee87c
 +}
 diff --git a/dlls/wineios.drv/ipc.h b/dlls/wineios.drv/ipc.h
 new file mode 100644
-index 0000000000..d365e86ffe
+index 00000000000..0e004a6842b
 --- /dev/null
 +++ b/dlls/wineios.drv/ipc.h
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,31 @@
 +#ifndef __WINE_IOS_IPC_H
 +#define __WINE_IOS_IPC_H
 +#include "iosdrv.h"
@@ -4126,12 +4756,17 @@ index 0000000000..d365e86ffe
 +#define JUICE_IOS_INPUT 100u
 +#define JUICE_IOS_TEXT 101u
 +#define JUICE_IOS_KEY 102u
++#define JUICE_IOS_HARDWARE_KEY 103u
 +#define JUICE_IOS_LEFT_DOWN 1u
 +#define JUICE_IOS_LEFT_UP 2u
 +#define JUICE_IOS_RIGHT_DOWN 4u
 +#define JUICE_IOS_RIGHT_UP 8u
 +/* x/y are Wine desktop coordinates instead of window-local coordinates. */
 +#define JUICE_IOS_COORDS_DESKTOP 0x40000000u
++#define JUICE_IOS_KEY_DOWN 1u
++#define JUICE_IOS_KEY_UP 2u
++#define JUICE_IOS_KEY_EXTENDED 4u
++#define JUICE_IOS_KEY_REPEAT 8u
 +struct juice_ios_msg { UINT magic,type,size; UINT64 hwnd; INT x,y,width,height; UINT stride,flags; };
 +void ios_ipc_init(unsigned int width,unsigned int height,unsigned int dpi);
 +void ios_ipc_register_queue(void);
@@ -4140,9 +4775,285 @@ index 0000000000..d365e86ffe
 +void ios_ipc_present(HWND hwnd,const void *bits,unsigned int width,unsigned int height,unsigned int stride,const RECT *dirty);
 +BOOL ios_ipc_process_input(void);
 +#endif
+diff --git a/dlls/wineios.drv/vulkan.m b/dlls/wineios.drv/vulkan.m
+new file mode 100644
+index 00000000000..57f886f34f6
+--- /dev/null
++++ b/dlls/wineios.drv/vulkan.m
+@@ -0,0 +1,270 @@
++/* MoltenVK surface bridge for the Wine iOS driver. LGPL-2.1-or-later. */
++#if 0
++#pragma makedep unix
++#endif
++
++#include "config.h"
++
++/* Keep Cocoa's one-byte BOOL distinct from Win32's 32-bit BOOL. */
++#define BOOL JUICE_OBJC_BOOL
++#import <Foundation/Foundation.h>
++#import <Metal/Metal.h>
++#import <QuartzCore/CAMetalLayer.h>
++#undef BOOL
++
++#include <assert.h>
++#include <dlfcn.h>
++#include <pthread.h>
++
++#include "ntstatus.h"
++#include "iosdrv.h"
++#include "ipc.h"
++#include "wine/debug.h"
++#include "wine/vulkan.h"
++#include "wine/vulkan_driver.h"
++
++WINE_DEFAULT_DEBUG_CHANNEL(vulkan);
++
++@interface JuiceIOSMetalLayer : CAMetalLayer
++{
++    id<CAMetalDrawable> last_drawable;
++}
++-(id<CAMetalDrawable>)copyLastDrawable;
++@end
++
++@implementation JuiceIOSMetalLayer
++-(id<CAMetalDrawable>)nextDrawable
++{
++    id<CAMetalDrawable> drawable = [super nextDrawable];
++    @synchronized(self)
++    {
++        [last_drawable release];
++        last_drawable = [drawable retain];
++    }
++    return drawable;
++}
++-(id<CAMetalDrawable>)copyLastDrawable
++{
++    @synchronized(self) { return [last_drawable retain]; }
++}
++-(void)dealloc
++{
++    [last_drawable release];
++    [super dealloc];
++}
++@end
++
++struct iosdrv_client_surface
++{
++    struct client_surface client;
++    JuiceIOSMetalLayer *layer;
++    id<MTLDevice> device;
++    id<MTLCommandQueue> queue;
++    id<MTLBuffer> readback;
++    NSUInteger readback_size;
++    NSUInteger readback_stride;
++    unsigned int present_count;
++};
++
++static const struct client_surface_funcs iosdrv_client_surface_funcs;
++static const struct vulkan_driver_funcs iosdrv_vulkan_driver_funcs;
++
++static struct iosdrv_client_surface *impl_from_client_surface(struct client_surface *client)
++{
++    assert(client && client->funcs == &iosdrv_client_surface_funcs);
++    return CONTAINING_RECORD(client, struct iosdrv_client_surface, client);
++}
++
++static void iosdrv_client_surface_destroy(struct client_surface *client)
++{
++    struct iosdrv_client_surface *surface = impl_from_client_surface(client);
++    [surface->readback release];
++    [surface->queue release];
++    [surface->layer release];
++    [surface->device release];
++}
++
++static void iosdrv_client_surface_detach(struct client_surface *client)
++{
++    struct iosdrv_client_surface *surface = impl_from_client_surface(client);
++    surface->layer.hidden = YES;
++}
++
++static void iosdrv_client_surface_update(struct client_surface *client)
++{
++    struct iosdrv_client_surface *surface = impl_from_client_surface(client);
++    LONG width = max(1, client->monitor_rect.right - client->monitor_rect.left);
++    LONG height = max(1, client->monitor_rect.bottom - client->monitor_rect.top);
++    CGSize size = CGSizeMake(width, height);
++
++    if (!CGSizeEqualToSize(surface->layer.drawableSize, size))
++    {
++        surface->layer.bounds = CGRectMake(0, 0, width, height);
++        surface->layer.drawableSize = size;
++        TRACE("resized %s Metal surface to %dx%d\n", debugstr_client_surface(client), width, height);
++    }
++}
++
++static BOOL iosdrv_prepare_readback(struct iosdrv_client_surface *surface, NSUInteger width, NSUInteger height)
++{
++    NSUInteger stride = (width * 4u + 255u) & ~255u;
++    NSUInteger size;
++
++    if (height && stride > NSUIntegerMax / height) return FALSE;
++    size = stride * height;
++    if (surface->readback && surface->readback_size >= size && surface->readback_stride == stride) return TRUE;
++
++    [surface->readback release];
++    surface->readback = [surface->device newBufferWithLength:size options:MTLResourceStorageModeShared];
++    surface->readback_size = surface->readback ? size : 0;
++    surface->readback_stride = surface->readback ? stride : 0;
++    return surface->readback != nil;
++}
++
++static void iosdrv_client_surface_present(struct client_surface *client, HDC hdc)
++{
++    struct iosdrv_client_surface *surface = impl_from_client_surface(client);
++    id<CAMetalDrawable> drawable = [surface->layer copyLastDrawable];
++    id<MTLTexture> texture = drawable.texture;
++    id<MTLCommandBuffer> command;
++    id<MTLBlitCommandEncoder> blit;
++    NSUInteger width, height;
++    RECT dirty;
++
++    (void)hdc;
++    if (!drawable || !texture) goto done;
++    width = texture.width;
++    height = texture.height;
++    if (!width || !height || !iosdrv_prepare_readback(surface, width, height)) goto done;
++
++    command = [surface->queue commandBuffer];
++    blit = [command blitCommandEncoder];
++    if (!command || !blit) goto done;
++    [blit copyFromTexture:texture sourceSlice:0 sourceLevel:0
++             sourceOrigin:MTLOriginMake(0, 0, 0) sourceSize:MTLSizeMake(width, height, 1)
++               toBuffer:surface->readback destinationOffset:0
++      destinationBytesPerRow:surface->readback_stride
++    destinationBytesPerImage:surface->readback_stride * height];
++    [blit endEncoding];
++    [command commit];
++    [command waitUntilCompleted];
++    if (command.status != MTLCommandBufferStatusCompleted)
++    {
++        ERR("Metal readback failed for %s: %s\n", debugstr_client_surface(client),
++            [[command.error description] UTF8String]);
++        goto done;
++    }
++
++    SetRect(&dirty, 0, 0, (INT)width, (INT)height);
++    ios_ipc_present(client->hwnd, surface->readback.contents, (unsigned int)width,
++                    (unsigned int)height, (unsigned int)surface->readback_stride, &dirty);
++    if (surface->present_count++ < 3)
++        fprintf(stderr, "JUICE_MOLTENVK_PRESENT_OK hwnd=%p width=%lu height=%lu stride=%lu frame=%u\n",
++                client->hwnd, (unsigned long)width, (unsigned long)height,
++                (unsigned long)surface->readback_stride, surface->present_count);
++
++done:
++    [drawable release];
++}
++
++static const struct client_surface_funcs iosdrv_client_surface_funcs =
++{
++    .destroy = iosdrv_client_surface_destroy,
++    .detach = iosdrv_client_surface_detach,
++    .update = iosdrv_client_surface_update,
++    .present = iosdrv_client_surface_present,
++};
++
++struct client_surface *iosdrv_CreateClientSurface(HWND hwnd, int pixel_format)
++{
++    struct iosdrv_client_surface *surface;
++
++    (void)pixel_format;
++    if (!(surface = client_surface_create(sizeof(*surface), &iosdrv_client_surface_funcs, hwnd))) return NULL;
++    surface->device = [MTLCreateSystemDefaultDevice() retain];
++    surface->layer = [[JuiceIOSMetalLayer alloc] init];
++    surface->queue = [surface->device newCommandQueue];
++    if (!surface->device || !surface->layer || !surface->queue)
++    {
++        client_surface_release(&surface->client);
++        return NULL;
++    }
++    surface->layer.device = surface->device;
++    surface->layer.pixelFormat = MTLPixelFormatBGRA8Unorm;
++    surface->layer.framebufferOnly = NO;
++    surface->layer.opaque = YES;
++    surface->layer.contentsScale = 1.0;
++    surface->layer.maximumDrawableCount = 3;
++    surface->layer.allowsNextDrawableTimeout = YES;
++    iosdrv_client_surface_update(&surface->client);
++    fprintf(stderr, "JUICE_MOLTENVK_CLIENT_SURFACE_READY hwnd=%p device=%s size=%.0fx%.0f\n",
++            hwnd, [[surface->device name] UTF8String], surface->layer.drawableSize.width,
++            surface->layer.drawableSize.height);
++    return &surface->client;
++}
++
++static VkResult iosdrv_vulkan_surface_create(struct client_surface *client,
++                                             const struct vulkan_instance *instance,
++                                             VkSurfaceKHR *handle)
++{
++    struct iosdrv_client_surface *surface = impl_from_client_surface(client);
++    VkMetalSurfaceCreateInfoEXT create_info =
++    {
++        .sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT,
++        .pNext = NULL,
++        .flags = 0,
++        .pLayer = surface->layer,
++    };
++    VkResult result;
++
++    if (!instance->p_vkCreateMetalSurfaceEXT) return VK_ERROR_EXTENSION_NOT_PRESENT;
++    result = instance->p_vkCreateMetalSurfaceEXT(instance->host.instance, &create_info, NULL, handle);
++    fprintf(stderr, "JUICE_MOLTENVK_SURFACE_CREATE hwnd=%p result=%d host=0x%llx\n",
++            client->hwnd, result, result ? 0ull : (unsigned long long)*handle);
++    return result;
++}
++
++static VkBool32 iosdrv_get_physical_device_presentation_support(struct vulkan_physical_device *device,
++                                                                 uint32_t queue)
++{
++    (void)device;
++    (void)queue;
++    return VK_TRUE;
++}
++
++static void iosdrv_map_instance_extensions(struct vulkan_instance_extensions *extensions)
++{
++    if (extensions->has_VK_KHR_win32_surface) extensions->has_VK_EXT_metal_surface = 1;
++    if (extensions->has_VK_EXT_metal_surface) extensions->has_VK_KHR_win32_surface = 1;
++}
++
++static void iosdrv_map_device_extensions(struct vulkan_device_extensions *extensions)
++{
++    (void)extensions;
++}
++
++static const struct vulkan_driver_funcs iosdrv_vulkan_driver_funcs =
++{
++    .p_vulkan_surface_create = iosdrv_vulkan_surface_create,
++    .p_get_physical_device_presentation_support = iosdrv_get_physical_device_presentation_support,
++    .p_map_instance_extensions = iosdrv_map_instance_extensions,
++    .p_map_device_extensions = iosdrv_map_device_extensions,
++};
++
++UINT iosdrv_VulkanInit(UINT version, void *vulkan_handle, const struct vulkan_driver_funcs **driver)
++{
++    if (version != WINE_VULKAN_DRIVER_VERSION)
++    {
++        ERR("version mismatch, win32u wants %u but wineios has %u\n", version,
++            WINE_VULKAN_DRIVER_VERSION);
++        return STATUS_INVALID_PARAMETER;
++    }
++    if (!vulkan_handle || !dlsym(vulkan_handle, "vkCreateMetalSurfaceEXT"))
++    {
++        ERR("MoltenVK does not expose vkCreateMetalSurfaceEXT\n");
++        return STATUS_NOT_SUPPORTED;
++    }
++    *driver = &iosdrv_vulkan_driver_funcs;
++    fprintf(stderr, "JUICE_MOLTENVK_DRIVER_READY version=%u handle=%p\n", version, vulkan_handle);
++    return STATUS_SUCCESS;
++}
 diff --git a/dlls/wineios.drv/wineios.drv.spec b/dlls/wineios.drv/wineios.drv.spec
 new file mode 100644
-index 0000000000..3fc6eceac3
+index 00000000000..3fc6eceac37
 --- /dev/null
 +++ b/dlls/wineios.drv/wineios.drv.spec
 @@ -0,0 +1,3 @@
@@ -4150,7 +5061,7 @@ index 0000000000..3fc6eceac3
 +@ stdcall JuiceIOSPollFileImport(long ptr)
 +@ stdcall JuiceIOSHostAction(long wstr)
 diff --git a/dlls/wow64/process.c b/dlls/wow64/process.c
-index 98d1c600dd..72d011a9ff 100644
+index 98d1c600dd9..72d011a9ff1 100644
 --- a/dlls/wow64/process.c
 +++ b/dlls/wow64/process.c
 @@ -1120,10 +1120,9 @@ NTSTATUS WINAPI wow64_NtSuspendThread( UINT *args )
@@ -4166,7 +5077,7 @@ index 98d1c600dd..72d011a9ff 100644
   *           wow64_NtTerminateProcess
   */
 diff --git a/dlls/wow64/syscall.c b/dlls/wow64/syscall.c
-index cfeb8f4ae6..e8c15150f7 100644
+index cfeb8f4ae6b..08ef0aaf4d6 100644
 --- a/dlls/wow64/syscall.c
 +++ b/dlls/wow64/syscall.c
 @@ -102,6 +102,7 @@ static void     (WINAPI *pBTCpuProcessInit)(void);
@@ -4177,7 +5088,72 @@ index cfeb8f4ae6..e8c15150f7 100644
  static void *   (WINAPI *p__wine_get_unix_opcode)(void);
  static void *   (WINAPI *pKiRaiseUserExceptionDispatcher)(void);
  void     (WINAPI *pBTCpuFlushInstructionCache2)( const void *, SIZE_T ) = NULL;
-@@ -1015,6 +1016,7 @@ static DWORD WINAPI process_init( RTL_RUN_ONCE *once, void *param, void **contex
+@@ -147,6 +148,16 @@ static void DECLSPEC_NORETURN stub_syscall( const char *name )
+ #define SYSCALL_STUB(name) NTSTATUS WINAPI wow64_ ## name( UINT *args ) { stub_syscall( #name ); }
+ ALL_SYSCALL_STUBS
+ 
++/* Juice's native ARM64EC startup uses this private syscall to obtain an
++ * AArch64 TEB accessor.  A 32-bit guest cannot represent or call that native
++ * function pointer, and no Win32 code path requires it.  Keep the syscall
++ * table complete without leaking a truncated host address into the guest. */
++NTSTATUS WINAPI wow64_NtWineGetCurrentTebAccessor( UINT *args )
++{
++    (void)args;
++    return STATUS_NOT_SUPPORTED;
++}
++
+ static EXCEPTION_RECORD *exception_record_32to64( const EXCEPTION_RECORD32 *rec32 )
+ {
+     EXCEPTION_RECORD *rec;
+@@ -902,6 +913,26 @@ static HMODULE load_64bit_module( const WCHAR *name )
+     return module;
+ }
+ 
++static DWORD wow64GetEnvironmentVariableW( LPCWSTR name, LPWSTR val, DWORD size )
++{
++    UNICODE_STRING us_name, us_value;
++    NTSTATUS status;
++    DWORD len;
++
++    RtlInitUnicodeString( &us_name, name );
++    us_value.Length = 0;
++    us_value.MaximumLength = (size ? size - 1 : 0) * sizeof(WCHAR);
++    us_value.Buffer = val;
++
++    status = RtlQueryEnvironmentVariable_U( NULL, &us_name, &us_value );
++    len = us_value.Length / sizeof(WCHAR);
++    if (status == STATUS_BUFFER_TOO_SMALL) return len + 1;
++    if (status) return 0;
++    if (!size) return len + 1;
++    val[len] = 0;
++    return len;
++}
++
+ 
+ /**********************************************************************
+  *           get_cpu_dll_name
+@@ -910,11 +941,20 @@ static const WCHAR *get_cpu_dll_name(void)
+ {
+     static ULONG buffer[32];
+     KEY_VALUE_PARTIAL_INFORMATION *info = (KEY_VALUE_PARTIAL_INFORMATION *)buffer;
++    WCHAR *cpu_dll = (WCHAR *)buffer;
+     OBJECT_ATTRIBUTES attr;
+     UNICODE_STRING nameW;
+     const WCHAR *ret;
+     HANDLE key;
+     ULONG size;
++    UINT res;
++
++    /* Hangover-compatible per-process CPU backend selection.  Keep this in
++     * the experimental WoW64 control DLL so the native ARM64 Grape runtime
++     * remains untouched. */
++    if ((res = wow64GetEnvironmentVariableW( L"HODLL", cpu_dll, ARRAY_SIZE(buffer))) &&
++        res < ARRAY_SIZE(buffer))
++        return cpu_dll;
+ 
+     switch (current_machine)
+     {
+@@ -1015,6 +1055,7 @@ static DWORD WINAPI process_init( RTL_RUN_ONCE *once, void *param, void **contex
      GET_PTR( BTCpuProcessInit );
      GET_PTR( BTCpuThreadInit );
      GET_PTR( BTCpuResetToConsistentState );
@@ -4185,7 +5161,7 @@ index cfeb8f4ae6..e8c15150f7 100644
      GET_PTR( BTCpuSetContext );
      GET_PTR( BTCpuSimulate );
      GET_PTR( BTCpuFlushInstructionCache2 );
-@@ -1713,3 +1715,11 @@ NTSTATUS WINAPI Wow64RaiseException( int code, EXCEPTION_RECORD *rec )
+@@ -1713,3 +1754,11 @@ NTSTATUS WINAPI Wow64RaiseException( int code, EXCEPTION_RECORD *rec )
  
      return STATUS_SUCCESS;
  }
@@ -4198,7 +5174,7 @@ index cfeb8f4ae6..e8c15150f7 100644
 +    return pBTCpuSuspendLocalThread( thread, count );
 +}
 diff --git a/dlls/wow64/wow64.spec b/dlls/wow64/wow64.spec
-index 5b4e565e59..8f95dfcdbe 100644
+index 5b4e565e593..8f95dfcdbe5 100644
 --- a/dlls/wow64/wow64.spec
 +++ b/dlls/wow64/wow64.spec
 @@ -22,7 +22,7 @@
@@ -4210,737 +5186,258 @@ index 5b4e565e59..8f95dfcdbe 100644
  @ stdcall -norelay Wow64SystemServiceEx(long ptr)
  @ stub Wow64ValidateUserCallTarget
  @ stub Wow64ValidateUserCallTargetFilter
-diff --git a/dlls/ws2_32/hosts b/dlls/ws2_32/hosts
-index 619e717d50..a538995f99 100644
---- a/dlls/ws2_32/hosts
-+++ b/dlls/ws2_32/hosts
-@@ -1 +1 @@
--# 127.0.0.1 localhost
-+# 127.0.0.1 localhost
-diff --git a/dlls/ws2_32/networks b/dlls/ws2_32/networks
-index adbc95757a..0376b7ca39 100644
---- a/dlls/ws2_32/networks
-+++ b/dlls/ws2_32/networks
-@@ -1 +1 @@
--# loopback 127
-+# loopback 127
-diff --git a/dlls/ws2_32/protocol b/dlls/ws2_32/protocol
-index d47bf21c14..9c9e28b944 100644
---- a/dlls/ws2_32/protocol
-+++ b/dlls/ws2_32/protocol
-@@ -1,21 +1,21 @@
--# Internet protocols
--
--ip           0   IP
--icmp         1   ICMP
--ggp          3   GGP
--tcp          6   TCP
--egp          8   EGP
--pup          12  PUP
--udp          17  UDP
--hmp          20  HMP
--xns-idp      22  XNS-IDP
--rdp          27  RDP
--ipv6         41  IPv6
--ipv6-route   43  IPv6-Route
--ipv6-frag    44  IPv6-Frag
--esp          50  ESP
--ah           51  AH
--ipv6-icmp    58  IPv6-ICMP
--ipv6-nonxt   59  IPv6-NoNxt
--ipv6-opts    60  IPv6-Opts
--rvd          66  RVD
-+# Internet protocols
+diff --git a/dlls/xinput1_3/main.c b/dlls/xinput1_3/main.c
+index 8530b028d5e..1f7d6ef273a 100644
+--- a/dlls/xinput1_3/main.c
++++ b/dlls/xinput1_3/main.c
+@@ -41,6 +41,7 @@
+ #include "initguid.h"
+ #include "devguid.h"
+ #include "xinput.h"
++#include "juiceinput.h"
+ 
+ #include "wine/debug.h"
+ 
+@@ -97,6 +98,94 @@ static HMODULE xinput_instance;
+ static HANDLE start_event;
+ static HANDLE update_event;
+ 
++/* iOS cannot expose GameController.framework devices through Linux udev/HID.
++ * Juice therefore publishes one controller through a tiny read-only shared
++ * file.  Mapping it once keeps XInputGetState allocation-free and avoids a
++ * polling thread when no physical controller is connected. */
++static INIT_ONCE juice_gamepad_once = INIT_ONCE_STATIC_INIT;
++static HANDLE juice_gamepad_file = INVALID_HANDLE_VALUE;
++static HANDLE juice_gamepad_mapping;
++static const struct juice_gamepad_shared_state *juice_gamepad_state;
++static BOOL juice_gamepad_configured;
 +
-+ip           0   IP
-+icmp         1   ICMP
-+ggp          3   GGP
-+tcp          6   TCP
-+egp          8   EGP
-+pup          12  PUP
-+udp          17  UDP
-+hmp          20  HMP
-+xns-idp      22  XNS-IDP
-+rdp          27  RDP
-+ipv6         41  IPv6
-+ipv6-route   43  IPv6-Route
-+ipv6-frag    44  IPv6-Frag
-+esp          50  ESP
-+ah           51  AH
-+ipv6-icmp    58  IPv6-ICMP
-+ipv6-nonxt   59  IPv6-NoNxt
-+ipv6-opts    60  IPv6-Opts
-+rvd          66  RVD
-diff --git a/dlls/ws2_32/services b/dlls/ws2_32/services
-index 43e593daeb..20437a7597 100644
---- a/dlls/ws2_32/services
-+++ b/dlls/ws2_32/services
-@@ -1,325 +1,325 @@
--# Network services, Internet style
--
--echo            7/tcp
--echo            7/udp
--discard         9/tcp     sink null
--discard         9/udp     sink null
--systat          11/tcp    users
--daytime         13/tcp
--daytime         13/udp
--netstat         15/tcp
--qotd            17/tcp    quote
--qotd            17/udp    quote
--chargen         19/tcp    ttytst source
--chargen         19/udp    ttytst source
--ftp-data        20/tcp
--ftp             21/tcp
--fsp             21/udp    fspd
--ssh             22/tcp
--telnet          23/tcp
--smtp            25/tcp    mail
--time            37/tcp    timserver
--time            37/udp    timserver
--rlp             39/udp    resource
--nameserver      42/tcp    name
--nameserver      42/udp    name
--whois           43/tcp    nicname
--tacacs          49/tcp
--tacacs          49/udp
--domain          53/tcp
--domain          53/udp
--bootps          67/udp    dhcps
--bootpc          68/udp    dhcpc
--bootps          67/udp
--bootpc          68/udp
--tftp            69/udp
--gopher          70/tcp
--finger          79/tcp
--http            80/tcp    www
--hosts2-ns       81/tcp
--hosts2-ns       81/udp
--kerberos        88/tcp    kerberos5 krb5 kerberos-sec
--kerberos        88/udp    kerberos5 krb5 kerberos-sec
--hostname        101/tcp   hostnames
--iso-tsap        102/tcp   tsap
--acr-nema        104/tcp   dicom
--rtelnet         107/tcp
--pop2            109/tcp   postoffice
--pop3            110/tcp   pop-3
--sunrpc          111/tcp   rpcbind portmap
--sunrpc          111/udp   rpcbind portmap
--auth            113/tcp   authentication tap ident
--uucp-path       117/tcp
--sqlserv         118/tcp
--nntp            119/tcp   usenet readnews untp
--ntp             123/udp
--epmap           135/tcp   loc-srv
--epmap           135/ucp   loc-srv
--netbios-ns      137/tcp   nbname
--netbios-ns      137/udp   nbname
--netbios-dgm     138/udp   nbdatagram
--netbios-ssn     139/tcp   nbsession
--imap2           143/tcp   imap imap4
--sql-net         150/tcp
--sqlsrv          156/tcp
--pcmail-srv      158/tcp
--snmp            161/tcp
--snmp            161/udp
--snmp-trap       162/tcp   snmptrap
--snmp-trap       162/udp   snmptrap
--cmip-man        163/tcp
--cmip-man        163/udp
--cmip-agent      164/tcp
--cmip-agent      164/udp
--print-srv       170/tcp
--mailq           174/tcp
--xdmcp           177/udp
--bgp             179/tcp
--irc             194/tcp
--smux            199/tcp
--qmtp            209/tcp
--z3950           210/tcp   wais
--ipx             213/udp
--ptp-event       319/udp
--ptp-general     320/udp
--rtsps           322/tcp
--rtsps           322/udp
--pawserv         345/tcp
--zserv           346/tcp
--mftp            349/tcp
--mftp            349/udp
--rpc2portmap     369/tcp
--rpc2portmap     369/udp
--codaauth2       370/tcp
--codaauth2       370/udp
--clearcase       371/udp   Clearcase
--ldap            389/tcp
--ldap            389/udp
--svrloc          427/tcp
--svrloc          427/udp
--https           443/tcp   MCom
--https           443/udp   MCom
--snpp            444/tcp
--microsoft-ds    445/tcp
--microsoft-ds    445/udp
--kpasswd         464/tcp
--kpasswd         464/udp
--submissions     465/tcp   ssmtp smtps urd
--saft            487/tcp
--isakmp          500/udp   ike
--crs             507/tcp
--crs             507/udp
--exec            512/tcp
--biff            512/udp   comsat
--login           513/tcp
--who             513/udp   whod
--shell           514/tcp   cmd syslog
--syslog          514/udp
--printer         515/tcp   spooler
--talk            517/udp
--ntalk           518/udp
--efs             520/tcp
--route           520/udp   router routed
--ulp             522/tcp    
--ulp             522/udp    
--timed           525/udp   timeserver
--tempo           526/tcp   newdate
--irc-serv        529/tcp
--irc-serv        529/udp
--courier         530/tcp   rpc
--conference      531/tcp   chat
--netnews         532/tcp   readnews
--netwall         533/udp
--gdomap          538/tcp
--gdomap          538/udp
--uucp            540/tcp   uucpd
--klogin          543/tcp
--kshell          544/tcp   krcmd
--dhcpv6-client   546/tcp
--dhcpv6-client   546/udp
--dhcpv6-server   547/tcp
--dhcpv6-server   547/udp
--afpovertcp      548/tcp
--afpovertcp      548/udp
--new-rwho        550/udp   new-who
--rtsp            554/tcp
--rtsp            554/udp
--remotefs        556/tcp   rfs rfs_server
--rmonitor        560/udp   rmonitord
--monitor         561/udp
--nntps           563/tcp   snntp
--nntps           563/udp   snntp
--whoami          565/tcp
--whoami          565/udp
--ms-shuttle      568/tcp
--ms-shuttle      568/udp
--ms-rome         569/tcp
--ms-rome         569/udp
--submission      587/tcp
--http-rpc-epmap  593/tcp
--http-rpc-epmap  593/udp
--nqs             607/tcp
--hmmp-ind        612/tcp
--hmmp-ind        612/udp
--hmmp-op         613/tcp
--hmmp-op         613/udp
--asf-rmcp        623/udp
--qmqp            628/tcp
--ipp             631/tcp
--ldaps           636/tcp   sldap
--ldaps           636/udp
--ldp             646/tcp
--ldp             646/udp
--tinc            655/tcp
--tinc            655/udp
--doom            666/tcp
--doom            666/udp
--msexch-routing  691/tcp
--msexch-routing  691/udp
--silc            706/tcp
--kerberos-adm    749/tcp
--kerberos-adm    749/udp
--kerberos-iv     750/udp
--mdbs_daemon     800/tcp
--mdbs_daemon     800/udp
--domain-s        853/tcp
--domain-s        853/udp
--rsync           873/tcp
--ftps-data       989/tcp
--ftps            990/tcp
--telnets         992/tcp
--imaps           993/tcp
--ircs            994/tcp
--pop3s           995/tcp   spop3
--pop3s           995/udp   spop3
--kpop            1109/tcp
--nfsd-status     1110/tcp
--nfsd-keepalive  1110/udp
--nfa             1155/tcp
--nfa             1155/udp
--activesync      1034/tcp
--phone           1167/udp
--opsmgr          1270/tcp
--opsmgr          1270/udp
--ms-sql-s        1433/tcp
--ms-sql-s        1433/udp
--ms-sql-m        1434/tcp
--ms-sql-m        1434/udp
--ms-sna-server   1477/tcp
--ms-sna-server   1477/udp
--ms-sna-base     1478/tcp
--ms-sna-base     1478/udp
--wins            1512/tcp
--wins            1512/udp
--ingreslock      1524/tcp  ingres
--stt             1607/tcp
--stt             1607/udp
--l2tp            1701/udp
--pptconference   1711/tcp
--pptconference   1711/udp
--pptp            1723/tcp
--msiccp          1731/tcp
--msiccp          1731/udp
--remote-winsock  1745/tcp
--remote-winsock  1745/udp
--ms-streaming    1755/tcp
--ms-streaming    1755/udp
--msmq            1801/tcp
--msmq            1801/udp
--radius          1812/udp
--radacct         1813/udp
--msnp            1863/tcp
--msnp            1863/udp
--ssdp            1900/tcp
--ssdp            1900/udp
--close-combat    1944/tcp
--close-combat    1944/udp
--nfsd            2049/udp  nfs
--knetd           2053/tcp
--mzap            2106/tcp
--mzap            2106/udp
--qwave           2177/tcp
--qwave           2177/udp
--directplay      2234/tcp
--directplay      2234/udp
--ms-olap3        2382/tcp
--ms-olap3        2382/udp
--ms-olap4        2383/tcp
--ms-olap4        2383/udp
--ms-olap1        2393/tcp
--ms-olap1        2393/udp
--ms-olap2        2394/tcp
--ms-olap2        2394/udp
--ms-theater      2460/tcp
--ms-theater      2460/udp
--wlbs            2504/tcp
--wlbs            2504/udp
--ms-v-worlds     2525/tcp
--ms-v-worlds     2525/udp
--sms-rcinfo      2701/tcp
--sms-rcinfo      2701/udp
--sms-xfer        2702/tcp
--sms-xfer        2702/udp
--sms-chat        2703/tcp
--sms-chat        2703/udp
--sms-remctrl     2704/tcp
--sms-remctrl     2704/udp
--msolap-ptp2     2725/tcp
--msolap-ptp2     2725/udp
--icslap          2869/tcp
--icslap          2869/udp
--cifs            3020/tcp
--cifs            3020/udp
--xbox            3074/tcp
--xbox            3074/udp
--ms-dotnetster   3126/tcp
--ms-dotnetster   3126/udp
--ms-rule-engine  3132/tcp
--ms-rule-engine  3132/udp
--msft-gc         3268/tcp
--msft-gc         3268/udp
--msft-gc-ssl     3269/tcp
--msft-gc-ssl     3269/udp
--ms-cluster-net  3343/tcp
--ms-cluster-net  3343/udp
--ms-wbt-server   3389/tcp
--ms-wbt-server   3389/udp
--ms-la           3535/tcp
--ms-la           3535/udp
--pnrp-port       3540/tcp
--pnrp-port       3540/udp
--teredo          3544/tcp
--teredo          3544/udp
--p2pgroup        3587/tcp
--p2pgroup        3587/udp
--ws-discovery    3702/udp
--ws-discovery    3702/tcp
--dvcprov-port    3776/tcp
--dvcprov-port    3776/udp
--msfw-control    3847/tcp
--msdts1          3882/tcp
--sdp-portmapper  3935/tcp
--sdp-portmapper  3935/udp
--net-device      4350/tcp
--net-device      4350/udp
--ipsec-msft      4500/tcp
--ipsec-msft      4500/udp
--llmnr           5355/tcp
--llmnr           5355/udp
--wsd             5357/tcp
--wsd             5358/tcp
--rrac            5678/tcp
--rrac            5678/udp
--dccm            5679/tcp
--dccm            5679/udp
--ms-licensing    5720/tcp
--ms-licensing    5720/udp
--directplay8     6073/tcp
--directplay8     6073/udp
--man             9535/tcp
--rasadv          9753/tcp
--rasadv          9753/udp
--imip-channels   11320/tcp
--imip-channels   11320/udp
--directplaysrvr  47624/tcp
--directplaysrvr  47624/udp
-+# Network services, Internet style
++static BOOL CALLBACK init_juice_gamepad(INIT_ONCE *once, void *param, void **context)
++{
++    char path[MAX_PATH * 4];
++    DWORD length;
 +
-+echo            7/tcp
-+echo            7/udp
-+discard         9/tcp     sink null
-+discard         9/udp     sink null
-+systat          11/tcp    users
-+daytime         13/tcp
-+daytime         13/udp
-+netstat         15/tcp
-+qotd            17/tcp    quote
-+qotd            17/udp    quote
-+chargen         19/tcp    ttytst source
-+chargen         19/udp    ttytst source
-+ftp-data        20/tcp
-+ftp             21/tcp
-+fsp             21/udp    fspd
-+ssh             22/tcp
-+telnet          23/tcp
-+smtp            25/tcp    mail
-+time            37/tcp    timserver
-+time            37/udp    timserver
-+rlp             39/udp    resource
-+nameserver      42/tcp    name
-+nameserver      42/udp    name
-+whois           43/tcp    nicname
-+tacacs          49/tcp
-+tacacs          49/udp
-+domain          53/tcp
-+domain          53/udp
-+bootps          67/udp    dhcps
-+bootpc          68/udp    dhcpc
-+bootps          67/udp
-+bootpc          68/udp
-+tftp            69/udp
-+gopher          70/tcp
-+finger          79/tcp
-+http            80/tcp    www
-+hosts2-ns       81/tcp
-+hosts2-ns       81/udp
-+kerberos        88/tcp    kerberos5 krb5 kerberos-sec
-+kerberos        88/udp    kerberos5 krb5 kerberos-sec
-+hostname        101/tcp   hostnames
-+iso-tsap        102/tcp   tsap
-+acr-nema        104/tcp   dicom
-+rtelnet         107/tcp
-+pop2            109/tcp   postoffice
-+pop3            110/tcp   pop-3
-+sunrpc          111/tcp   rpcbind portmap
-+sunrpc          111/udp   rpcbind portmap
-+auth            113/tcp   authentication tap ident
-+uucp-path       117/tcp
-+sqlserv         118/tcp
-+nntp            119/tcp   usenet readnews untp
-+ntp             123/udp
-+epmap           135/tcp   loc-srv
-+epmap           135/ucp   loc-srv
-+netbios-ns      137/tcp   nbname
-+netbios-ns      137/udp   nbname
-+netbios-dgm     138/udp   nbdatagram
-+netbios-ssn     139/tcp   nbsession
-+imap2           143/tcp   imap imap4
-+sql-net         150/tcp
-+sqlsrv          156/tcp
-+pcmail-srv      158/tcp
-+snmp            161/tcp
-+snmp            161/udp
-+snmp-trap       162/tcp   snmptrap
-+snmp-trap       162/udp   snmptrap
-+cmip-man        163/tcp
-+cmip-man        163/udp
-+cmip-agent      164/tcp
-+cmip-agent      164/udp
-+print-srv       170/tcp
-+mailq           174/tcp
-+xdmcp           177/udp
-+bgp             179/tcp
-+irc             194/tcp
-+smux            199/tcp
-+qmtp            209/tcp
-+z3950           210/tcp   wais
-+ipx             213/udp
-+ptp-event       319/udp
-+ptp-general     320/udp
-+rtsps           322/tcp
-+rtsps           322/udp
-+pawserv         345/tcp
-+zserv           346/tcp
-+mftp            349/tcp
-+mftp            349/udp
-+rpc2portmap     369/tcp
-+rpc2portmap     369/udp
-+codaauth2       370/tcp
-+codaauth2       370/udp
-+clearcase       371/udp   Clearcase
-+ldap            389/tcp
-+ldap            389/udp
-+svrloc          427/tcp
-+svrloc          427/udp
-+https           443/tcp   MCom
-+https           443/udp   MCom
-+snpp            444/tcp
-+microsoft-ds    445/tcp
-+microsoft-ds    445/udp
-+kpasswd         464/tcp
-+kpasswd         464/udp
-+submissions     465/tcp   ssmtp smtps urd
-+saft            487/tcp
-+isakmp          500/udp   ike
-+crs             507/tcp
-+crs             507/udp
-+exec            512/tcp
-+biff            512/udp   comsat
-+login           513/tcp
-+who             513/udp   whod
-+shell           514/tcp   cmd syslog
-+syslog          514/udp
-+printer         515/tcp   spooler
-+talk            517/udp
-+ntalk           518/udp
-+efs             520/tcp
-+route           520/udp   router routed
-+ulp             522/tcp    
-+ulp             522/udp    
-+timed           525/udp   timeserver
-+tempo           526/tcp   newdate
-+irc-serv        529/tcp
-+irc-serv        529/udp
-+courier         530/tcp   rpc
-+conference      531/tcp   chat
-+netnews         532/tcp   readnews
-+netwall         533/udp
-+gdomap          538/tcp
-+gdomap          538/udp
-+uucp            540/tcp   uucpd
-+klogin          543/tcp
-+kshell          544/tcp   krcmd
-+dhcpv6-client   546/tcp
-+dhcpv6-client   546/udp
-+dhcpv6-server   547/tcp
-+dhcpv6-server   547/udp
-+afpovertcp      548/tcp
-+afpovertcp      548/udp
-+new-rwho        550/udp   new-who
-+rtsp            554/tcp
-+rtsp            554/udp
-+remotefs        556/tcp   rfs rfs_server
-+rmonitor        560/udp   rmonitord
-+monitor         561/udp
-+nntps           563/tcp   snntp
-+nntps           563/udp   snntp
-+whoami          565/tcp
-+whoami          565/udp
-+ms-shuttle      568/tcp
-+ms-shuttle      568/udp
-+ms-rome         569/tcp
-+ms-rome         569/udp
-+submission      587/tcp
-+http-rpc-epmap  593/tcp
-+http-rpc-epmap  593/udp
-+nqs             607/tcp
-+hmmp-ind        612/tcp
-+hmmp-ind        612/udp
-+hmmp-op         613/tcp
-+hmmp-op         613/udp
-+asf-rmcp        623/udp
-+qmqp            628/tcp
-+ipp             631/tcp
-+ldaps           636/tcp   sldap
-+ldaps           636/udp
-+ldp             646/tcp
-+ldp             646/udp
-+tinc            655/tcp
-+tinc            655/udp
-+doom            666/tcp
-+doom            666/udp
-+msexch-routing  691/tcp
-+msexch-routing  691/udp
-+silc            706/tcp
-+kerberos-adm    749/tcp
-+kerberos-adm    749/udp
-+kerberos-iv     750/udp
-+mdbs_daemon     800/tcp
-+mdbs_daemon     800/udp
-+domain-s        853/tcp
-+domain-s        853/udp
-+rsync           873/tcp
-+ftps-data       989/tcp
-+ftps            990/tcp
-+telnets         992/tcp
-+imaps           993/tcp
-+ircs            994/tcp
-+pop3s           995/tcp   spop3
-+pop3s           995/udp   spop3
-+kpop            1109/tcp
-+nfsd-status     1110/tcp
-+nfsd-keepalive  1110/udp
-+nfa             1155/tcp
-+nfa             1155/udp
-+activesync      1034/tcp
-+phone           1167/udp
-+opsmgr          1270/tcp
-+opsmgr          1270/udp
-+ms-sql-s        1433/tcp
-+ms-sql-s        1433/udp
-+ms-sql-m        1434/tcp
-+ms-sql-m        1434/udp
-+ms-sna-server   1477/tcp
-+ms-sna-server   1477/udp
-+ms-sna-base     1478/tcp
-+ms-sna-base     1478/udp
-+wins            1512/tcp
-+wins            1512/udp
-+ingreslock      1524/tcp  ingres
-+stt             1607/tcp
-+stt             1607/udp
-+l2tp            1701/udp
-+pptconference   1711/tcp
-+pptconference   1711/udp
-+pptp            1723/tcp
-+msiccp          1731/tcp
-+msiccp          1731/udp
-+remote-winsock  1745/tcp
-+remote-winsock  1745/udp
-+ms-streaming    1755/tcp
-+ms-streaming    1755/udp
-+msmq            1801/tcp
-+msmq            1801/udp
-+radius          1812/udp
-+radacct         1813/udp
-+msnp            1863/tcp
-+msnp            1863/udp
-+ssdp            1900/tcp
-+ssdp            1900/udp
-+close-combat    1944/tcp
-+close-combat    1944/udp
-+nfsd            2049/udp  nfs
-+knetd           2053/tcp
-+mzap            2106/tcp
-+mzap            2106/udp
-+qwave           2177/tcp
-+qwave           2177/udp
-+directplay      2234/tcp
-+directplay      2234/udp
-+ms-olap3        2382/tcp
-+ms-olap3        2382/udp
-+ms-olap4        2383/tcp
-+ms-olap4        2383/udp
-+ms-olap1        2393/tcp
-+ms-olap1        2393/udp
-+ms-olap2        2394/tcp
-+ms-olap2        2394/udp
-+ms-theater      2460/tcp
-+ms-theater      2460/udp
-+wlbs            2504/tcp
-+wlbs            2504/udp
-+ms-v-worlds     2525/tcp
-+ms-v-worlds     2525/udp
-+sms-rcinfo      2701/tcp
-+sms-rcinfo      2701/udp
-+sms-xfer        2702/tcp
-+sms-xfer        2702/udp
-+sms-chat        2703/tcp
-+sms-chat        2703/udp
-+sms-remctrl     2704/tcp
-+sms-remctrl     2704/udp
-+msolap-ptp2     2725/tcp
-+msolap-ptp2     2725/udp
-+icslap          2869/tcp
-+icslap          2869/udp
-+cifs            3020/tcp
-+cifs            3020/udp
-+xbox            3074/tcp
-+xbox            3074/udp
-+ms-dotnetster   3126/tcp
-+ms-dotnetster   3126/udp
-+ms-rule-engine  3132/tcp
-+ms-rule-engine  3132/udp
-+msft-gc         3268/tcp
-+msft-gc         3268/udp
-+msft-gc-ssl     3269/tcp
-+msft-gc-ssl     3269/udp
-+ms-cluster-net  3343/tcp
-+ms-cluster-net  3343/udp
-+ms-wbt-server   3389/tcp
-+ms-wbt-server   3389/udp
-+ms-la           3535/tcp
-+ms-la           3535/udp
-+pnrp-port       3540/tcp
-+pnrp-port       3540/udp
-+teredo          3544/tcp
-+teredo          3544/udp
-+p2pgroup        3587/tcp
-+p2pgroup        3587/udp
-+ws-discovery    3702/udp
-+ws-discovery    3702/tcp
-+dvcprov-port    3776/tcp
-+dvcprov-port    3776/udp
-+msfw-control    3847/tcp
-+msdts1          3882/tcp
-+sdp-portmapper  3935/tcp
-+sdp-portmapper  3935/udp
-+net-device      4350/tcp
-+net-device      4350/udp
-+ipsec-msft      4500/tcp
-+ipsec-msft      4500/udp
-+llmnr           5355/tcp
-+llmnr           5355/udp
-+wsd             5357/tcp
-+wsd             5358/tcp
-+rrac            5678/tcp
-+rrac            5678/udp
-+dccm            5679/tcp
-+dccm            5679/udp
-+ms-licensing    5720/tcp
-+ms-licensing    5720/udp
-+directplay8     6073/tcp
-+directplay8     6073/udp
-+man             9535/tcp
-+rasadv          9753/tcp
-+rasadv          9753/udp
-+imip-channels   11320/tcp
-+imip-channels   11320/udp
-+directplaysrvr  47624/tcp
-+directplaysrvr  47624/udp
++    length = GetEnvironmentVariableA("JUICE_GAMEPAD_STATE", path, ARRAY_SIZE(path));
++    if (!length || length >= ARRAY_SIZE(path)) return TRUE;
++    juice_gamepad_configured = TRUE;
++    juice_gamepad_file = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
++                                     NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
++    if (juice_gamepad_file == INVALID_HANDLE_VALUE)
++    {
++        WARN("failed to open Juice gamepad state %s, error %lu\n", debugstr_a(path), GetLastError());
++        return TRUE;
++    }
++    juice_gamepad_mapping = CreateFileMappingA(juice_gamepad_file, NULL, PAGE_READONLY, 0,
++                                                JUICE_GAMEPAD_SHARED_SIZE, NULL);
++    if (!juice_gamepad_mapping)
++    {
++        WARN("failed to map Juice gamepad state, error %lu\n", GetLastError());
++        CloseHandle(juice_gamepad_file);
++        juice_gamepad_file = INVALID_HANDLE_VALUE;
++        return TRUE;
++    }
++    juice_gamepad_state = MapViewOfFile(juice_gamepad_mapping, FILE_MAP_READ, 0, 0,
++                                        JUICE_GAMEPAD_SHARED_SIZE);
++    if (!juice_gamepad_state || juice_gamepad_state->magic != JUICE_GAMEPAD_MAGIC ||
++        juice_gamepad_state->version != JUICE_GAMEPAD_VERSION ||
++        juice_gamepad_state->size != JUICE_GAMEPAD_SHARED_SIZE)
++    {
++        WARN("invalid Juice gamepad state mapping\n");
++        if (juice_gamepad_state) UnmapViewOfFile(juice_gamepad_state);
++        juice_gamepad_state = NULL;
++        CloseHandle(juice_gamepad_mapping);
++        juice_gamepad_mapping = NULL;
++        CloseHandle(juice_gamepad_file);
++        juice_gamepad_file = INVALID_HANDLE_VALUE;
++        return TRUE;
++    }
++    TRACE("using Juice GameController XInput bridge at %s\n", debugstr_a(path));
++    return TRUE;
++}
++
++static BOOL is_juice_gamepad_configured(void)
++{
++    InitOnceExecuteOnce(&juice_gamepad_once, init_juice_gamepad, NULL, NULL);
++    return juice_gamepad_configured;
++}
++
++static BOOL read_juice_gamepad(XINPUT_STATE *state)
++{
++    struct juice_gamepad_shared_state snapshot;
++    unsigned int attempts;
++    uint32_t sequence;
++
++    if (!is_juice_gamepad_configured() || !juice_gamepad_state) return FALSE;
++    for (attempts = 0; attempts < 8; attempts++)
++    {
++        sequence = juice_gamepad_state->sequence;
++        if (sequence & 1) continue;
++        MemoryBarrier();
++        memcpy(&snapshot, juice_gamepad_state, sizeof(snapshot));
++        MemoryBarrier();
++        if (sequence == juice_gamepad_state->sequence && !(sequence & 1)) break;
++    }
++    if (attempts == 8 || snapshot.magic != JUICE_GAMEPAD_MAGIC || !snapshot.connected) return FALSE;
++    memset(state, 0, sizeof(*state));
++    state->dwPacketNumber = snapshot.packet ? snapshot.packet : 1;
++    state->Gamepad.wButtons = snapshot.buttons;
++    state->Gamepad.bLeftTrigger = snapshot.left_trigger;
++    state->Gamepad.bRightTrigger = snapshot.right_trigger;
++    state->Gamepad.sThumbLX = snapshot.thumb_lx;
++    state->Gamepad.sThumbLY = snapshot.thumb_ly;
++    state->Gamepad.sThumbRX = snapshot.thumb_rx;
++    state->Gamepad.sThumbRY = snapshot.thumb_ry;
++    return TRUE;
++}
++
+ static SRWLOCK state_lock = SRWLOCK_INIT;
+ static XINPUT_STATE current_state[XUSER_MAX_COUNT];
+ 
+@@ -813,6 +902,8 @@ void WINAPI DECLSPEC_HOTPATCH XInputEnable(BOOL enable)
+ 
+     TRACE("enable %d.\n", enable);
+ 
++    if (is_juice_gamepad_configured()) return;
++
+     /* Setting to false will stop messages from XInputSetState being sent
+     to the controllers. Setting to true will send the last vibration
+     value (sent to XInputSetState) to the controller and allow messages to
+@@ -835,6 +926,15 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputSetState(DWORD index, XINPUT_VIBRATION *vib
+ 
+     TRACE("index %lu, vibration %p.\n", index, vibration);
+ 
++    if (is_juice_gamepad_configured())
++    {
++        XINPUT_STATE state;
++        if (index >= XUSER_MAX_COUNT || !vibration) return ERROR_BAD_ARGUMENTS;
++        if (index || !read_juice_gamepad(&state)) return ERROR_DEVICE_NOT_CONNECTED;
++        /* GameController haptics are deliberately not advertised yet. */
++        return ERROR_SUCCESS;
++    }
++
+     start_update_thread();
+ 
+     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
+@@ -858,6 +958,13 @@ static DWORD xinput_get_state(DWORD index, XINPUT_STATE *state)
+ 
+     if (!state) return ERROR_BAD_ARGUMENTS;
+ 
++    if (is_juice_gamepad_configured())
++    {
++        if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
++        if (index || !read_juice_gamepad(state)) return ERROR_DEVICE_NOT_CONNECTED;
++        return ERROR_SUCCESS;
++    }
++
+     start_update_thread();
+ 
+     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
+@@ -1145,6 +1252,16 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetBatteryInformation(DWORD index, BYTE typ
+ 
+     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
+ 
++    if (is_juice_gamepad_configured())
++    {
++        XINPUT_STATE state;
++        if (!battery) return ERROR_BAD_ARGUMENTS;
++        if (index || !read_juice_gamepad(&state)) return ERROR_DEVICE_NOT_CONNECTED;
++        battery->BatteryType = BATTERY_TYPE_UNKNOWN;
++        battery->BatteryLevel = BATTERY_LEVEL_FULL;
++        return ERROR_SUCCESS;
++    }
++
+     EnterCriticalSection(&xinput_cs);
+     ret = controllers[index].device ? ERROR_NOT_SUPPORTED : ERROR_DEVICE_NOT_CONNECTED;
+     LeaveCriticalSection(&xinput_cs);
+@@ -1159,6 +1276,27 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetCapabilitiesEx(DWORD unk, DWORD index, D
+ 
+     TRACE("unk %lu, index %lu, flags %#lx, capabilities %p.\n", unk, index, flags, caps);
+ 
++    if (is_juice_gamepad_configured())
++    {
++        XINPUT_STATE state;
++        if (index >= XUSER_MAX_COUNT || !caps) return ERROR_BAD_ARGUMENTS;
++        if (index || !read_juice_gamepad(&state)) return ERROR_DEVICE_NOT_CONNECTED;
++        memset(caps, 0, sizeof(*caps));
++        caps->Capabilities.Type = XINPUT_DEVTYPE_GAMEPAD;
++        caps->Capabilities.SubType = XINPUT_DEVSUBTYPE_GAMEPAD;
++        caps->Capabilities.Gamepad.wButtons = 0xffff;
++        caps->Capabilities.Gamepad.bLeftTrigger = 0xff;
++        caps->Capabilities.Gamepad.bRightTrigger = 0xff;
++        caps->Capabilities.Gamepad.sThumbLX = 0x7fff;
++        caps->Capabilities.Gamepad.sThumbLY = 0x7fff;
++        caps->Capabilities.Gamepad.sThumbRX = 0x7fff;
++        caps->Capabilities.Gamepad.sThumbRY = 0x7fff;
++        caps->VendorId = 0x05ac;
++        caps->ProductId = 1;
++        caps->VersionNumber = JUICE_GAMEPAD_VERSION;
++        return ERROR_SUCCESS;
++    }
++
+     start_update_thread();
+ 
+     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
 diff --git a/include/Makefile.in b/include/Makefile.in
-index 72a8d43988..cb2fbd64a6 100644
+index 72a8d43988c..8ec3356e5c1 100644
 --- a/include/Makefile.in
 +++ b/include/Makefile.in
-@@ -419,6 +419,7 @@ SOURCES = \
+@@ -419,6 +419,8 @@ SOURCES = \
  	iptypes.h \
  	isguids.h \
  	ivectorchangedeventargs.idl \
 +	juiceios.h \
++	juiceinput.h \
  	kbd.h \
  	knownfolders.h \
  	ks.h \
+diff --git a/include/juiceinput.h b/include/juiceinput.h
+new file mode 100644
+index 00000000000..8af75ca2189
+--- /dev/null
++++ b/include/juiceinput.h
+@@ -0,0 +1,39 @@
++/* Shared Juice host-input protocol. LGPL-2.1-or-later. */
++#ifndef __WINE_JUICEINPUT_H
++#define __WINE_JUICEINPUT_H
++
++#include <stdint.h>
++
++#define JUICE_GAMEPAD_MAGIC 0x3147504au /* "JPG1" */
++#define JUICE_GAMEPAD_VERSION 1u
++#define JUICE_GAMEPAD_SHARED_SIZE 64u
++#define JUICE_GAMEPAD_WINDOWS_PATH "Z:\\var\\mobile\\Documents\\JuiceData\\controller-v1.bin"
++
++/* The button bits intentionally match XINPUT_GAMEPAD_* exactly. */
++struct juice_gamepad_shared_state
++{
++    uint32_t magic;
++    uint16_t version;
++    uint16_t size;
++    volatile uint32_t sequence;
++    uint32_t connected;
++    uint32_t packet;
++    uint16_t buttons;
++    uint8_t left_trigger;
++    uint8_t right_trigger;
++    int16_t thumb_lx;
++    int16_t thumb_ly;
++    int16_t thumb_rx;
++    int16_t thumb_ry;
++    uint32_t capabilities;
++    uint32_t battery_level;
++    uint64_t timestamp_ns;
++    uint8_t reserved[16];
++};
++
++#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
++_Static_assert(sizeof(struct juice_gamepad_shared_state) == JUICE_GAMEPAD_SHARED_SIZE,
++               "Juice gamepad protocol layout changed");
++#endif
++
++#endif
 diff --git a/include/juiceios.h b/include/juiceios.h
 new file mode 100644
-index 0000000000..3313a1c6e8
+index 00000000000..3313a1c6e8a
 --- /dev/null
 +++ b/include/juiceios.h
 @@ -0,0 +1,40 @@
@@ -4984,8 +5481,48 @@ index 0000000000..3313a1c6e8
 +typedef DWORD (WINAPI *juice_ios_host_action_fn)(DWORD action, const WCHAR *path);
 +
 +#endif
+diff --git a/include/winnt.h b/include/winnt.h
+index 2dc1aadddde..8c957e4caa9 100644
+--- a/include/winnt.h
++++ b/include/winnt.h
+@@ -2596,11 +2596,34 @@ static FORCEINLINE struct _TEB * WINAPI NtCurrentTeb(void)
+ {
+     return (struct _TEB *)__readfsdword( 0x18 );
+ }
+-#elif (defined(__aarch64__) || defined(__arm64ec__)) && defined(__GNUC__)
++#elif (defined(__aarch64__) || defined(__arm64ec__)) && (defined(__GNUC__) || defined(JUICE_IOS_PE))
+ register struct _TEB *__wine_current_teb __asm__("x18");
+ static FORCEINLINE struct _TEB * WINAPI NtCurrentTeb(void)
+ {
++#ifdef JUICE_IOS_PE
++    struct _TEB *teb;
++
++    /*
++     * Darwin can clear physical x18 while Wine's ARM64 PE code is running.
++     * Returning that zero value lets a bare TEB field offset survive across
++     * function calls, where the original x18 dependency can no longer be
++     * recovered safely.  Keep this sequence in inline assembly: optimizing C
++     * may treat a low TEB dereference as undefined and remove the guard.  The
++     * direct x18-relative load deliberately faults only for an implausibly-low
++     * value; the native signal bridge restores x18 and retries that load,
++     * yielding Tib.Self before callers can retain a stale pointer.  The normal
++     * path remains a move, one comparison and one branch.
++     */
++    __asm__ volatile( "mov %0, x18\n\t"
++                      "cmp %0, #0x10, lsl #12\n\t"
++                      "b.hs 1f\n\t"
++                      "ldr %0, [x18, #0x30]\n"
++                      "1:"
++                      : "=&r" (teb) :: "cc", "memory" );
++    return teb;
++#else
+     return __wine_current_teb;
++#endif
+ }
+ #elif (defined(__aarch64__) || defined(__arm64ec__)) && defined(_MSC_VER)
+ static FORCEINLINE struct _TEB * WINAPI NtCurrentTeb(void)
 diff --git a/include/winternl.h b/include/winternl.h
-index 81dc3db2b7..33d32b6de5 100644
+index 81dc3db2b74..33d32b6de5c 100644
 --- a/include/winternl.h
 +++ b/include/winternl.h
 @@ -5420,6 +5420,7 @@ NTSYSAPI USHORT    WINAPI RtlWow64GetCurrentMachine(void);
@@ -4997,7 +5534,7 @@ index 81dc3db2b7..33d32b6de5 100644
  NTSYSAPI NTSTATUS  WINAPI RtlZombifyActivationContext(struct _ACTIVATION_CONTEXT *);
  NTSYSAPI NTSTATUS  WINAPI RtlpNtCreateKey(PHANDLE,ACCESS_MASK,const OBJECT_ATTRIBUTES*,ULONG,const UNICODE_STRING*,ULONG,PULONG);
 diff --git a/loader/main.c b/loader/main.c
-index f8b113f313..b8b002f6c2 100644
+index f8b113f3136..6a589e912e6 100644
 --- a/loader/main.c
 +++ b/loader/main.c
 @@ -36,6 +36,7 @@
@@ -5052,7 +5589,7 @@ index f8b113f313..b8b002f6c2 100644
  /* canonicalize path and return its directory name */
  static char *realpath_dirname( const char *name )
  {
-@@ -175,6 +213,7 @@ int main( int argc, char *argv[] )
+@@ -175,12 +213,22 @@ int main( int argc, char *argv[] )
  {
      void *handle;
  
@@ -5060,9 +5597,40 @@ index f8b113f313..b8b002f6c2 100644
      init_reserved_areas();
  
      if ((handle = try_dlopen( get_self_exe() )) ||
+         (handle = try_dlopen( argv[0] )))
+     {
+-        void (*init_func)(int, char **) = dlsym( handle, "__wine_main" );
++        void (*init_func)(int, char **);
++
++#ifdef JUICE_IOS_LOWVA_BOOTSTRAP
++        /* Load native ntdll while iOS still keeps its normal >4 GiB VM
++           minimum. Only then expose the low range for fixed Win32/FEX maps;
++           otherwise dyld can place this arm64 Mach-O inside the Windows
++           address space and fault while applying its segment protections. */
++        juice_ios_lowva_bootstrap();
++#endif
++        init_func = dlsym( handle, "__wine_main" );
+         if (init_func) init_func( argc, argv );
+         fprintf( stderr, "wine: __wine_main function not found in ntdll.so\n" );
+         exit(1);
+diff --git a/loader/wine.inf.in b/loader/wine.inf.in
+index 738e98f4a83..65f8256be18 100644
+--- a/loader/wine.inf.in
++++ b/loader/wine.inf.in
+@@ -689,6 +689,10 @@ HKLM,SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86,"Version",2,"14.42.344
+ 
+ 11,,colorcnv.dll,1
+ 11,,cryptdlg.dll,1
++; CryptoAPI hashes and certificate-store imports require these provider keys.
++; Register the bundled implementation explicitly so both fresh prefixes and
++; controlled Wineboot repair passes receive its WINE_REGISTRY resources.
++11,,rsaenh.dll,1
+ 11,,cryptnet.dll,1
+ 11,,devenum.dll,1
+ 11,,l3codecx.ax,1
 diff --git a/programs/juicegui/Makefile.in b/programs/juicegui/Makefile.in
 new file mode 100644
-index 0000000000..e906f64c17
+index 00000000000..e906f64c174
 --- /dev/null
 +++ b/programs/juicegui/Makefile.in
 @@ -0,0 +1,6 @@
@@ -5074,7 +5642,7 @@ index 0000000000..e906f64c17
 +	juicegui.c
 diff --git a/programs/juicegui/juicegui.c b/programs/juicegui/juicegui.c
 new file mode 100644
-index 0000000000..ae4c30747e
+index 00000000000..ae4c30747e2
 --- /dev/null
 +++ b/programs/juicegui/juicegui.c
 @@ -0,0 +1,1097 @@
@@ -6175,9 +6743,29 @@ index 0000000000..ae4c30747e
 +    if (desktop_brush) DeleteObject( desktop_brush );
 +    return (int)message.wParam;
 +}
+diff --git a/programs/juiceinputsmoke/Makefile.in b/programs/juiceinputsmoke/Makefile.in
+new file mode 100644
+index 00000000000..669c7564011
+--- /dev/null
++++ b/programs/juiceinputsmoke/Makefile.in
+@@ -0,0 +1,6 @@
++MODULE = JuiceInputSmoke.exe
++IMPORTS = gdi32 user32
++EXTRADLLFLAGS = -mwindows -municode
++
++SOURCES = \
++	main.c
+diff --git a/programs/juiceinputsmoke/main.c b/programs/juiceinputsmoke/main.c
+new file mode 100644
+index 00000000000..d01025da158
+--- /dev/null
++++ b/programs/juiceinputsmoke/main.c
+@@ -0,0 +1,2 @@
++/* Keep the standalone and Wine-built ARM64 input probes identical. */
++#include "../../../tests/input/smoke.c"
 diff --git a/programs/juicesetupsmoke/Makefile.in b/programs/juicesetupsmoke/Makefile.in
 new file mode 100644
-index 0000000000..86593b7376
+index 00000000000..86593b73768
 --- /dev/null
 +++ b/programs/juicesetupsmoke/Makefile.in
 @@ -0,0 +1,6 @@
@@ -6189,7 +6777,7 @@ index 0000000000..86593b7376
 +	main.c
 diff --git a/programs/juicesetupsmoke/main.c b/programs/juicesetupsmoke/main.c
 new file mode 100644
-index 0000000000..7ea6440c3c
+index 00000000000..7ea6440c3c7
 --- /dev/null
 +++ b/programs/juicesetupsmoke/main.c
 @@ -0,0 +1,164 @@
@@ -6359,7 +6947,7 @@ index 0000000000..7ea6440c3c
 +}
 diff --git a/programs/juicetextsmoke/Makefile.in b/programs/juicetextsmoke/Makefile.in
 new file mode 100644
-index 0000000000..1733f5ded8
+index 00000000000..1733f5ded84
 --- /dev/null
 +++ b/programs/juicetextsmoke/Makefile.in
 @@ -0,0 +1,6 @@
@@ -6371,7 +6959,7 @@ index 0000000000..1733f5ded8
 +	main.c
 diff --git a/programs/juicetextsmoke/main.c b/programs/juicetextsmoke/main.c
 new file mode 100644
-index 0000000000..70c07799de
+index 00000000000..70c07799de5
 --- /dev/null
 +++ b/programs/juicetextsmoke/main.c
 @@ -0,0 +1,213 @@
@@ -6589,7 +7177,7 @@ index 0000000000..70c07799de
 +    return (int)message.wParam;
 +}
 diff --git a/server/mapping.c b/server/mapping.c
-index a53b6b6830..2ee4831c75 100644
+index a53b6b68304..2ee4831c750 100644
 --- a/server/mapping.c
 +++ b/server/mapping.c
 @@ -21,6 +21,7 @@
@@ -6636,7 +7224,7 @@ index a53b6b6830..2ee4831c75 100644
  
  static void ranges_dump( struct object *obj, int verbose )
 diff --git a/server/process.h b/server/process.h
-index dff766d60d..158ffafe1d 100644
+index dff766d60d3..158ffafe1d1 100644
 --- a/server/process.h
 +++ b/server/process.h
 @@ -126,7 +126,11 @@ extern void set_process_base_priority( struct process *process, int base_priorit
@@ -6652,8 +7240,49 @@ index dff766d60d..158ffafe1d 100644
  #define USE_MACH
  #elif defined(__sun)
  #define USE_PROCFS
+diff --git a/server/request.c b/server/request.c
+index fd09ca2ccc4..94908a48ddd 100644
+--- a/server/request.c
++++ b/server/request.c
+@@ -597,6 +597,7 @@ static void create_dir( const char *name, struct stat *st )
+ static char *create_server_dir( int force )
+ {
+     const char *prefix = getenv( "WINEPREFIX" );
++    const char *server_root = getenv( "JUICE_WINESERVER_ROOT" );
+     char *p, *config_dir, *base_dir;
+     struct stat st, st2;
+ 
+@@ -640,13 +641,24 @@ static char *create_server_dir( int force )
+ 
+     /* create the base directory if needed */
+ 
++    if (server_root && server_root[0])
++    {
++        if (server_root[0] != '/')
++            fatal_error( "invalid directory %s in JUICE_WINESERVER_ROOT: not an absolute path\n", server_root );
++        create_dir( server_root, &st2 );
++        if (asprintf( &base_dir, "%s/.wine-%u", server_root, getuid() ) == -1)
++            fatal_error( "out of memory\n" );
++    }
++    else
++    {
+ #ifdef __ANDROID__  /* there's no /tmp dir on Android */
+-    if (asprintf( &base_dir, "%s/.wineserver", config_dir ) == -1)
+-        fatal_error( "out of memory\n" );
++        if (asprintf( &base_dir, "%s/.wineserver", config_dir ) == -1)
++            fatal_error( "out of memory\n" );
+ #else
+-    if (asprintf( &base_dir, "/tmp/.wine-%u", getuid() ) == -1)
+-        fatal_error( "out of memory\n" );
++        if (asprintf( &base_dir, "/tmp/.wine-%u", getuid() ) == -1)
++            fatal_error( "out of memory\n" );
+ #endif
++    }
+     create_dir( base_dir, &st2 );
+ 
+     /* now create the server directory */
 diff --git a/tools/winebuild/res32.c b/tools/winebuild/res32.c
-index 798dee79b1..bdf9ee22a0 100644
+index 798dee79b1e..bdf9ee22a00 100644
 --- a/tools/winebuild/res32.c
 +++ b/tools/winebuild/res32.c
 @@ -196,12 +196,40 @@ static void load_next_resource( DLLSPEC *spec, const char *name )

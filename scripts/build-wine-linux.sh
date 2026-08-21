@@ -159,6 +159,7 @@ native_targets=(
   server/wineserver
   dlls/ntdll/ntdll.so
   dlls/crypt32/crypt32.so
+  dlls/secur32/secur32.so
   dlls/opengl32/opengl32.so
   dlls/win32u/win32u.so
   dlls/wineios.drv/wineios.so
@@ -227,6 +228,7 @@ for output in \
   "$NATIVE/loader/wine" \
   "$NATIVE/server/wineserver" \
   "$NATIVE/dlls/ntdll/ntdll.so" \
+  "$NATIVE/dlls/secur32/secur32.so" \
   "$NATIVE/dlls/wineios.drv/wineios.so"; do
   test -s "$output" || { echo "Missing native iOS output: $output" >&2; exit 6; }
   file "$output" | grep -Eq 'Mach-O 64-bit arm64' || {

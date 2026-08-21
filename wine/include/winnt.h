@@ -2596,11 +2596,34 @@ static FORCEINLINE struct _TEB * WINAPI NtCurrentTeb(void)
 {
     return (struct _TEB *)__readfsdword( 0x18 );
 }
-#elif (defined(__aarch64__) || defined(__arm64ec__)) && defined(__GNUC__)
+#elif (defined(__aarch64__) || defined(__arm64ec__)) && (defined(__GNUC__) || defined(JUICE_IOS_PE))
 register struct _TEB *__wine_current_teb __asm__("x18");
 static FORCEINLINE struct _TEB * WINAPI NtCurrentTeb(void)
 {
+#ifdef JUICE_IOS_PE
+    struct _TEB *teb;
+
+    /*
+     * Darwin can clear physical x18 while Wine's ARM64 PE code is running.
+     * Returning that zero value lets a bare TEB field offset survive across
+     * function calls, where the original x18 dependency can no longer be
+     * recovered safely.  Keep this sequence in inline assembly: optimizing C
+     * may treat a low TEB dereference as undefined and remove the guard.  The
+     * direct x18-relative load deliberately faults only for an implausibly-low
+     * value; the native signal bridge restores x18 and retries that load,
+     * yielding Tib.Self before callers can retain a stale pointer.  The normal
+     * path remains a move, one comparison and one branch.
+     */
+    __asm__ volatile( "mov %0, x18\n\t"
+                      "cmp %0, #0x10, lsl #12\n\t"
+                      "b.hs 1f\n\t"
+                      "ldr %0, [x18, #0x30]\n"
+                      "1:"
+                      : "=&r" (teb) :: "cc", "memory" );
+    return teb;
+#else
     return __wine_current_teb;
+#endif
 }
 #elif (defined(__aarch64__) || defined(__arm64ec__)) && defined(_MSC_VER)
 static FORCEINLINE struct _TEB * WINAPI NtCurrentTeb(void)

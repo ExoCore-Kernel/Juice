@@ -26,9 +26,10 @@
  * __PAGEZERO mapping from [0x10000, 4 GiB), specifically so Wine can own that
  * address range. iPhoneOS can still reject ordinary low-address hint probes in
  * that former __PAGEZERO range even after deallocation, so for the explicitly
- * enabled experimental x64 runtime map that released low range directly with
- * MAP_FIXED. Before the loader release there cannot have been unrelated
- * mappings there because __PAGEZERO covered the whole range.
+ * enabled Legacy Win32 runtime map that safely disabled XNU's hole-list
+ * allocator and released low range directly with MAP_FIXED. Requiring the
+ * JUICE_LOWVA_READY handshake also prevents ordinary x86-64 launches from
+ * issuing destructive fixed probes below 4 GiB.
  */
 #if defined(__APPLE__) && (defined(__aarch64__) || defined(__arm64__)) && \
     defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
@@ -48,10 +49,12 @@
 static inline int juice_ios_x64_low_range(void *address, size_t size)
 {
     const char *enabled = getenv("JUICE_EXPERIMENTAL_X64");
+    const char *ready = getenv("JUICE_LOWVA_READY");
     uintptr_t start = (uintptr_t)address;
     uintptr_t end = start + size;
 
     if (!enabled || enabled[0] != '1' || enabled[1] != '\0') return 0;
+    if (!ready || ready[0] != '1' || ready[1] != '\0') return 0;
     if (end < start) return 0;
     return start >= 0x10000ull && end <= 0x100000000ull;
 }

@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 source "$ROOT/config/graphics-build.env"
+source "$ROOT/config/network-build.env"
 SOURCE="$ROOT/wine"
 BUILD="${JUICE_WINE_BUILD:-$ROOT/build/wine-ios}"
 TOOLS="${JUICE_WINE_TOOLS_BUILD:-$ROOT/build/wine-tools-linux}"
@@ -82,6 +83,23 @@ else
   export ac_cv_lib_soname_freetype="$freetype_runtime_name"
 fi
 
+gnutls_args=()
+gnutls_status=enabled
+if test "${JUICE_WITHOUT_GNUTLS:-0}" = 1; then
+  gnutls_args+=(--without-gnutls)
+  gnutls_status=disabled
+else
+  test -f "$ROOTLESS/usr/include/gnutls/gnutls.h" && test -e "$ROOTLESS/usr/lib/libgnutls.dylib" || {
+    echo "Missing iOS GnuTLS sysroot. Run make linux-x86_64-preflight first." >&2; exit 3;
+  }
+  export GNUTLS_CFLAGS="${GNUTLS_CFLAGS:--I$ROOTLESS/usr/include}"
+  export GNUTLS_LIBS="${GNUTLS_LIBS:--L$ROOTLESS/usr/lib -lgnutls}"
+  # WINE_CHECK_SONAME cannot infer an app-relative dlopen path from a Darwin
+  # cross-link probe. Bake the self-contained Juice.app location explicitly.
+  export ac_cv_lib_soname_gnutls="$JUICE_GNUTLS_RUNTIME_NAME"
+  gnutls_args+=(--with-gnutls)
+fi
+
 set +e
 "$SHELL_BIN" "$SOURCE/configure" \
   --build="$BUILD_TRIPLET" --host="$HOST_TRIPLET" --with-wine-tools="$TOOLS" \
@@ -89,7 +107,7 @@ set +e
   --disable-tests --disable-win16 --without-mingw \
   --without-x --without-wayland --without-coreaudio --without-cups \
   --without-dbus --without-ffmpeg --without-fontconfig "${freetype_args[@]}" \
-  --without-gettext --without-gphoto --without-gnutls --without-gssapi \
+  --without-gettext --without-gphoto "${gnutls_args[@]}" --without-gssapi \
   --without-gstreamer --without-krb5 --without-netapi --without-opencl \
   --without-opengl --without-oss --without-pcap --without-pcsclite \
   --without-pulse --without-sane --without-sdl --without-udev --without-usb \
@@ -117,4 +135,11 @@ else
   freetype_status=disabled
 fi
 
-echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status vulkan=moltenvk${freetype_runtime_name:+ freetype_soname=$freetype_runtime_name}"
+if test "${JUICE_WITHOUT_GNUTLS:-0}" != 1; then
+  grep -Fq "#define SONAME_LIBGNUTLS \"$JUICE_GNUTLS_RUNTIME_NAME\"" include/config.h || {
+    echo "Wine Linux cross-configure did not enable bundled GnuTLS/Schannel ($JUICE_GNUTLS_RUNTIME_NAME)." >&2
+    exit 5
+  }
+fi
+
+echo "JUICE_WINE_LINUX_CONFIGURE_OK path=$BUILD tools=$TOOLS toolchain=$IOS_TOOLCHAIN freetype=$freetype_status gnutls=$gnutls_status vulkan=moltenvk${freetype_runtime_name:+ freetype_soname=$freetype_runtime_name}"
