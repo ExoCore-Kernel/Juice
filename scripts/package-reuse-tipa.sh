@@ -7,6 +7,17 @@ source "$ROOT/config/network-build.env"
 JBROOT="${JBROOT:-/var/jb}"
 export PATH="$JBROOT/usr/bin:$JBROOT/usr/sbin:/usr/bin:/bin:$PATH"
 
+LDID_BIN="${LDID:-}"
+if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then
+  LDID_BIN=/var/jb/usr/bin/ldid
+fi
+if test -z "$LDID_BIN" && test -x "$ROOT/build/ios-toolchain/bin/ldid"; then
+  LDID_BIN="$ROOT/build/ios-toolchain/bin/ldid"
+fi
+if test -z "$LDID_BIN"; then
+  LDID_BIN="$(command -v ldid 2>/dev/null || true)"
+fi
+
 BINARIES="${JUICE_PREBUILT_DIR:-${BINARIES:-}}"
 X64_MODE="${JUICE_REUSE_X64:-auto}"
 PACKAGE="$ROOT/build/reuse-package"
@@ -262,24 +273,24 @@ detach_for_signing()
   mv -f "$temporary" "$candidate"
 }
 
-if test -x /var/jb/usr/bin/ldid; then
+if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
   while IFS= read -r -d '' candidate; do
     if file "$candidate" | grep -q 'Mach-O'; then
       if test "$LINK_MODE" = 1; then detach_for_signing "$candidate"; fi
-      /var/jb/usr/bin/ldid -S"$ROOT/config/child-entitlements.plist" -Cadhoc "$candidate"
+      "$LDID_BIN" -S"$ROOT/config/child-entitlements.plist" -Cadhoc "$candidate"
     fi
   done < <(find "${runtime_roots[@]}" -type f -print0)
 
   if test -n "$X64_RUNTIME"; then
-    /var/jb/usr/bin/ldid -S"$ROOT/config/cli-allow-jit-entitlements.plist" -Cadhoc \
+    "$LDID_BIN" -S"$ROOT/config/cli-allow-jit-entitlements.plist" -Cadhoc \
       "$APP/Grape-X64/build/wine-ios/loader/wine"
   fi
 
   for runtime_root in "${runtime_roots[@]}"; do
     lowva_helper="$runtime_root/tools/juice-lowva-helper"
     if test -f "$lowva_helper" && file "$lowva_helper" | grep -q 'Mach-O'; then
-      /var/jb/usr/bin/ldid -S"$ROOT/config/lowva-helper-entitlements.plist" -Cadhoc "$lowva_helper"
-      helper_entitlements="$(/var/jb/usr/bin/ldid -e "$lowva_helper" 2>/dev/null || true)"
+      "$LDID_BIN" -S"$ROOT/config/lowva-helper-entitlements.plist" -Cadhoc "$lowva_helper"
+      helper_entitlements="$("$LDID_BIN" -e "$lowva_helper" 2>/dev/null || true)"
       printf '%s' "$helper_entitlements" | grep -q 'IOSurfaceRootUserClient' || {
         echo "Packaged low-VA helper is missing IOSurfaceRootUserClient: $lowva_helper" >&2
         exit 5
@@ -288,7 +299,7 @@ if test -x /var/jb/usr/bin/ldid; then
     fi
   done
 
-  /var/jb/usr/bin/ldid -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$APP/Juice"
+  "$LDID_BIN" -S"$ROOT/config/app-entitlements.plist" -Cadhoc "$APP/Juice"
 fi
 
 forbidden="$(find "$APP" \( -type d -name .git -o \

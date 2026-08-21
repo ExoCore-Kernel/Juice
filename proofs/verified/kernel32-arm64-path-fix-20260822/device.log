@@ -1,0 +1,6 @@
+/var/mobile/Documents/Juice-latest/scripts/run-grape-cli-device.sh: line 139: 35654 Bus error: 10           "$SERVER" -f
+[JuiceWine parent] bundle libraries path=/var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Libraries:/var/jb/usr/lib
+[JuiceWine parent] launching /var/containers/Bundle/Application/F3BC928B-CF6E-41E9-AA5B-114329A364D0/Juice.app/Grape/build/wine-ios/loader/wine
+[JuiceWine parent] child PID=35658
+[JuiceWine parent] child terminated by signal 10 (Bus error: 10)
+/var/mobile/Documents/Juice-latest/scripts/run-grape-cli-device.sh: line 130: 35659 Bus error: 10           "$TRACER" "$LOADER" "$@"

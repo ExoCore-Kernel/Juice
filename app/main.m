@@ -1357,7 +1357,7 @@ static JuiceKeyMap JuiceMapHIDUsage(NSUInteger usage)
   [[f destinationOfSymbolicLinkAtPath:c error:nil] isEqualToString:@"../drive_c"],
   [[f destinationOfSymbolicLinkAtPath:z error:nil] isEqualToString:@"/"],
   cError.localizedDescription?:@"none",zError.localizedDescription?:@"none"]];
- NSString *pe=[self.grape stringByAppendingPathComponent:@"runtime/lib/wine"];
+ NSString *pe=[self.grape stringByAppendingPathComponent:@"runtime/lib/wine/aarch64-windows"];
  NSString *system32=[self.prefix stringByAppendingPathComponent:@"drive_c/windows/system32"];
  [f createDirectoryAtPath:system32 withIntermediateDirectories:YES attributes:nil error:nil];
  NSUInteger linkedModules=0;

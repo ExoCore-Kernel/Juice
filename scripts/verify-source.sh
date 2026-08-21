@@ -211,11 +211,16 @@ if test -n "$excluded"; then
   echo "Wine tree contains excluded Git metadata or backup file: $excluded" >&2
   exit 3
 fi
-oversized="$(find "$ROOT" \
+oversized=()
+while IFS= read -r -d '' candidate; do
+  relative="${candidate#"$ROOT"/}"
+  filter="$(git -C "$ROOT" check-attr filter -- "$relative" | awk '{print $3}')"
+  test "$filter" = lfs || oversized+=("$candidate")
+done < <(find "$ROOT" \
   \( -path "$ROOT/.git" -o -path "$ROOT/build" -o -path "$ROOT/dist" \) -prune -o \
-  -type f -size +95M -print)"
-if test -n "$oversized"; then
-  echo "A tracked-source candidate exceeds GitHub's 100 MB limit: $oversized" >&2
+  -type f -size +95M -print0)
+if test "${#oversized[@]}" -gt 0; then
+  printf 'A tracked-source candidate exceeds GitHub\047s 100 MB limit: %s\n' "${oversized[@]}" >&2
   exit 4
 fi
 if test -d "$ROOT/screenshots"; then
