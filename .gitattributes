@@ -12,6 +12,7 @@
 *.nls binary
 *.png binary
 *.patch text eol=lf whitespace=-blank-at-eol,-space-before-tab
+releases/*.tipa filter=lfs diff=lfs merge=lfs -text
 
 # Device proof artifacts are checksummed byte-for-byte. Keep their original
 # iOS/Windows line endings and trailing diagnostic whitespace intact.
