@@ -232,4 +232,8 @@ if test -d "$ROOT/proofs/verified/x86_64-post-chocolate-doom-v8-20260821"; then
   (cd "$ROOT/proofs/verified/x86_64-post-chocolate-doom-v8-20260821" &&
     sha256sum -c SHA256SUMS)
 fi
+if test -d "$ROOT/proofs/verified/apps/steamsetup-i386-v2-entry-context"; then
+  (cd "$ROOT/proofs/verified/apps/steamsetup-i386-v2-entry-context" &&
+    sha256sum -c LOCAL-SHA256SUMS)
+fi
 echo "JUICE_SOURCE_VERIFY_OK"

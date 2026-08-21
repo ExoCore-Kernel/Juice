@@ -165,6 +165,7 @@ for target in "${hybrid_targets[@]}"; do
     sed -n 's/^Format: //p')"
   case "$target" in
     dlls/apisetschema/aarch64-windows/apisetschema.dll|\
+    dlls/normaliz/aarch64-windows/normaliz.dll|\
     dlls/wow64/aarch64-windows/wow64.dll|\
     dlls/wow64win/aarch64-windows/wow64win.dll)
       valid_formats=" COFF-ARM64 COFF-ARM64X "

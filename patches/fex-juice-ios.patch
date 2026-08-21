@@ -1118,7 +1118,7 @@ index 807d6a842..9e4cf363f 100644
    PfxInitialize PRIVATE
    PfxInsertPrefix PRIVATE
 diff --git a/Source/Windows/WOW64/Module.cpp b/Source/Windows/WOW64/Module.cpp
-index b2027a0cd..e7e4b906f 100644
+index b2027a0cd..d4c384ead 100644
 --- a/Source/Windows/WOW64/Module.cpp
 +++ b/Source/Windows/WOW64/Module.cpp
 @@ -30,6 +30,7 @@ $end_info$
@@ -1156,3 +1156,43 @@ index b2027a0cd..e7e4b906f 100644
    HandleImageMap(reinterpret_cast<uint64_t>(MainModule), true);
  
    auto NtDllX86 = reinterpret_cast<SYSTEM_DLL_INIT_BLOCK*>(GetProcAddress(NtDll, "LdrSystemDllInitBlock"))->ntdll_handle;
+@@ -764,6 +765,8 @@ __attribute__((naked)) void BTCpuSimulate() {
+       "add x0, sp, #0x10;"
+       "bl RtlCaptureContext;"
+       "add x0, sp, #0x10;"
++      "add x1, sp, #0x3a0;"
++      "ldr x2, [sp, #0x08];"
+       "bl BTCpuSimulateImpl;"
+       "ldp x29, x30, [sp], 0x10;"
+       "add sp, sp, #0x390;"
+@@ -771,7 +774,29 @@ __attribute__((naked)) void BTCpuSimulate() {
+       ".seh_endproc;");
+ }
+ 
+-extern "C" void BTCpuSimulateImpl(CONTEXT* entry_context) {
++extern "C" void BTCpuSimulateImpl(CONTEXT* entry_context, uint64_t caller_sp, uint64_t caller_pc) {
++#ifdef FEX_JUICE_IOS
++  /*
++   * Wine's ARM64EC RtlCaptureContext only replaces the captured register set
++   * when its one-frame unwind is classified as non-EC code.  A plain ARM64
++   * WoW64 translator is native code, but Wine records its pages in the EC
++   * bitmap on iOS.  That leaves Sp/Pc pointing inside this wrapper's 0x3a0
++   * byte scratch frame.  A later guest longjmp/APC unwind then resumes a
++   * native Wine epilogue with that scratch Sp and loads a bogus LR.
++   *
++   * The wrapper already owns the authoritative caller values: its original
++   * Sp is exactly 0x3a0 above the current frame and the incoming LR was saved
++   * at [sp + 8].  Normalize those two fields for every translated Win32 app;
++   * the remaining registers still come from RtlCaptureContext.
++   */
++  entry_context->Sp = caller_sp;
++  entry_context->Pc = caller_pc;
++  entry_context->Lr = caller_pc;
++  LogMan::Msg::EFmt("[JuiceFEX] normalized WoW64 entry context pc=0x{:x} sp=0x{:x}", caller_pc, caller_sp);
++#else
++  (void)caller_sp;
++  (void)caller_pc;
++#endif
+   const auto TLS = GetTLS();
+   TLS.EntryContext() = entry_context;
+   TLS.CachedCallRetSp() = TLS.ThreadState()->CurrentFrame->State.callret_sp;

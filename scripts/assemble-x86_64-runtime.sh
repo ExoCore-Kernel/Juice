@@ -107,10 +107,10 @@ for target in "${targets[@]}"; do
     programs/*)
       valid_formats=" COFF-ARM64 COFF-ARM64X "
       ;;
-    dlls/apisetschema/aarch64-windows/apisetschema.dll)
-      # apisetschema.dll is a data-only PE image. Wine intentionally emits an
-      # ordinary aarch64 image because there is no executable code requiring
-      # ARM64EC/ARM64X thunks.
+    dlls/apisetschema/aarch64-windows/apisetschema.dll|\
+    dlls/normaliz/aarch64-windows/normaliz.dll)
+      # Data-only PE images intentionally remain ordinary aarch64 because
+      # there is no executable code requiring ARM64EC/ARM64X thunks.
       valid_formats=" COFF-ARM64 COFF-ARM64X "
       ;;
     *)

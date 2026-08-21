@@ -119,6 +119,8 @@ class DisplayHost:
         self.latest_frame: tuple[int, int, int, bytes] | None = None
         self.latest_expected_frame: tuple[int, int, int, bytes] | None = None
         self.first_frame_time: float | None = None
+        self.last_frame_time: float | None = None
+        self.frame_count = 0
         self.expected_window_hwnds: set[int] = set()
         self.first_frame_written = False
         self.client_threads: list[threading.Thread] = []
@@ -278,11 +280,14 @@ class DisplayHost:
         ):
             return
         with self.lock:
+            now = time.monotonic()
             self.latest_frame = (width, height, stride, pixels)
+            self.frame_count += 1
+            self.last_frame_time = now
             write_first = not self.first_frame_written
             if write_first:
                 self.first_frame_written = True
-                self.first_frame_time = time.monotonic()
+                self.first_frame_time = now
         if write_first:
             path = self.output_dir / "frame-before-input.png"
             write_bgra_png(path, width, height, stride, pixels)
@@ -303,6 +308,25 @@ class DisplayHost:
         if first_frame_time is None:
             return None
         return time.monotonic() - first_frame_time
+
+    def save_frame_stats(self) -> Path:
+        with self.lock:
+            count = self.frame_count
+            first = self.first_frame_time
+            last = self.last_frame_time
+        elapsed = max(0.0, (last - first) if first is not None and last is not None else 0.0)
+        fps = ((count - 1) / elapsed) if count > 1 and elapsed > 0.0 else 0.0
+        path = self.output_dir / "frame-stats.env"
+        path.write_text(
+            f"frame_count={count}\nframe_elapsed_seconds={elapsed:.6f}\n"
+            f"frame_updates_per_second={fps:.3f}\n",
+            encoding="utf-8",
+        )
+        print(
+            f"JUICE_TEXT_HOST_FRAME_STATS count={count} elapsed={elapsed:.6f} fps={fps:.3f} path={path}",
+            flush=True,
+        )
+        return path
 
     def save_latest(self, name: str) -> Path | None:
         with self.lock:
@@ -511,6 +535,7 @@ def main() -> int:
             time.sleep(0.1)
         frame = host.save_latest("frame-after-input.png")
         expected_frame = host.save_expected("expected-window-frame.png")
+        host.save_frame_stats()
         print(
             f"JUICE_TEXT_HOST_RESULT success={int(success)} marker={args.marker} "
             f"frame={frame or 'missing'} expected_frame={expected_frame or 'missing'} "

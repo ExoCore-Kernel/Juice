@@ -53,6 +53,9 @@ dlls/mountmgr.sys/aarch64-windows/mountmgr.sys
 dlls/ncrypt/aarch64-windows/ncrypt.dll
 dlls/newdev/aarch64-windows/newdev.dll
 dlls/nsi/aarch64-windows/nsi.dll
+# Modern bootstrap installers (including Microsoft Click-to-Run) delay-load
+# Normaliz.dll for IDN and Unicode normalization before showing their UI.
+dlls/normaliz/aarch64-windows/normaliz.dll
 dlls/ntdll/aarch64-windows/ntdll.dll
 dlls/ntoskrnl.exe/aarch64-windows/ntoskrnl.exe
 dlls/odbccp32/aarch64-windows/odbccp32.dll
