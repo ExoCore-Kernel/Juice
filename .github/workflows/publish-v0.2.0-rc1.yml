@@ -1,0 +1,35 @@
+name: Publish Juice v0.2.0-rc1
+
+on:
+  push:
+    branches:
+      - agent/steam-chocolate-doom-dx12
+    paths:
+      - .github/workflows/publish-v0.2.0-rc1.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Verify release payload
+        working-directory: releases
+        run: sha256sum -c Juice-Steam-Chocolate-Network-v0.2.0-rc1.tipa.sha256
+      - name: Create prerelease and upload payload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.0-rc1 >/dev/null 2>&1 || gh release create v0.2.0-rc1 \
+            --title "Juice v0.2.0-rc1" \
+            --notes "Verified ARM64 kernel32 path fix, SteamSetup, Chocolate Doom, networking, and experimental x86-64/i386 FEX runtimes." \
+            --prerelease
+          gh release upload v0.2.0-rc1 \
+            releases/Juice-Steam-Chocolate-Network-v0.2.0-rc1.tipa \
+            releases/Juice-Steam-Chocolate-Network-v0.2.0-rc1.tipa.sha256 \
+            --clobber
